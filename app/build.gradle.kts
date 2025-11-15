@@ -36,7 +36,7 @@ android {
                 "proguard-rules.pro"
             )
             // Use Play Store display name from gradle.properties
-            val playStoreDisplayName: String by project
+            val playStoreDisplayName = project.findProperty("PLAY_STORE_DISPLAY_NAME") as String? ?: "SangeetMind"
             manifestPlaceholders["appLabel"] = playStoreDisplayName
         }
     }

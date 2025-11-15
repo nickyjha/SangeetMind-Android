@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SangeetMind</string>
+    
+    <!-- Home Screen -->
+    <string name="home_title">SangeetMind</string>
+    <string name="home_daily_raag">Daily Raag</string>
+    <string name="home_recommended">Recommended for You</string>
+    
+    <!-- Raag Library -->
+    <string name="raag_library_title">Raag Library</string>
+    <string name="raag_search_hint">Search raags...</string>
+    <string name="raag_filter">Filter</string>
+    <string name="raag_play">Play</string>
+    <string name="raag_download">Download</string>
+    <string name="raag_favorite">Favorite</string>
+    
+    <!-- Player -->
+    <string name="player_play">Play</string>
+    <string name="player_pause">Pause</string>
+    <string name="player_next">Next</string>
+    <string name="player_previous">Previous</string>
+    <string name="player_shuffle">Shuffle</string>
+    <string name="player_repeat">Repeat</string>
+    <string name="player_queue">Queue</string>
+    
+    <!-- Meditation -->
+    <string name="meditation_title">Meditation</string>
+    <string name="meditation_start">Start Session</string>
+    <string name="meditation_pause">Pause</string>
+    <string name="meditation_resume">Resume</string>
+    
+    <!-- Astrology -->
+    <string name="astrology_title">Astrology Profile</string>
+    <string name="astrology_name">Name</string>
+    <string name="astrology_dob">Date of Birth</string>
+    <string name="astrology_time">Time of Birth</string>
+    <string name="astrology_place">Place of Birth</string>
+    <string name="astrology_generate">Generate Recommendations</string>
+    
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_playback_quality">Playback Quality</string>
+    <string name="settings_download_wifi_only">Download on Wi-Fi only</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_privacy">Privacy</string>
+    <string name="settings_about">About</string>
+    
+    <!-- Auth -->
+    <string name="auth_login">Login</string>
+    <string name="auth_signup">Sign Up</string>
+    <string name="auth_email">Email</string>
+    <string name="auth_password">Password</string>
+    <string name="auth_name">Name</string>
+    <string name="auth_google_signin">Sign in with Google</string>
+    
+    <!-- Onboarding -->
+    <string name="onboarding_welcome">Welcome to SangeetMind</string>
+    <string name="onboarding_description">Discover the healing power of raag-based meditation</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_get_started">Get Started</string>
+    
+    <!-- Common -->
+    <string name="loading">Loading…</string>
+    <string name="error_generic">Something went wrong. Please try again.</string>
+    <string name="retry">Retry</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="save">Save</string>
+    <string name="search">Search</string>
+    <string name="filter">Filter</string>
+    
+    <!-- Content Descriptions (Accessibility) -->
+    <string name="cd_play_button">Play button</string>
+    <string name="cd_pause_button">Pause button</string>
+    <string name="cd_next_button">Next track button</string>
+    <string name="cd_previous_button">Previous track button</string>
+    <string name="cd_favorite_button">Add to favorites button</string>
+    <string name="cd_download_button">Download button</string>
+    <string name="cd_search_button">Search button</string>
+    <string name="cd_voice_search_button">Voice search button</string>
+    <string name="cd_raag_artwork">Raag artwork</string>
+</resources>
+

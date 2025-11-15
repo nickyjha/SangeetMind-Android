@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">संगीतमाइंड</string>
+    
+    <!-- Home Screen -->
+    <string name="home_title">संगीतमाइंड</string>
+    <string name="home_daily_raag">आज का राग</string>
+    <string name="home_recommended">आपके लिए सुझाव</string>
+    
+    <!-- Raag Library -->
+    <string name="raag_library_title">राग संग्रह</string>
+    <string name="raag_search_hint">राग खोजें...</string>
+    <string name="raag_filter">फ़िल्टर</string>
+    <string name="raag_play">चलाएं</string>
+    <string name="raag_download">डाउनलोड</string>
+    <string name="raag_favorite">पसंदीदा</string>
+    
+    <!-- Player -->
+    <string name="player_play">चलाएं</string>
+    <string name="player_pause">रोकें</string>
+    <string name="player_next">अगला</string>
+    <string name="player_previous">पिछला</string>
+    <string name="player_shuffle">शफ़ल</string>
+    <string name="player_repeat">दोहराएं</string>
+    <string name="player_queue">कतार</string>
+    
+    <!-- Meditation -->
+    <string name="meditation_title">ध्यान</string>
+    <string name="meditation_start">सत्र शुरू करें</string>
+    <string name="meditation_pause">रोकें</string>
+    <string name="meditation_resume">फिर से शुरू करें</string>
+    
+    <!-- Astrology -->
+    <string name="astrology_title">ज्योतिष प्रोफ़ाइल</string>
+    <string name="astrology_name">नाम</string>
+    <string name="astrology_dob">जन्म तिथि</string>
+    <string name="astrology_time">जन्म समय</string>
+    <string name="astrology_place">जन्म स्थान</string>
+    <string name="astrology_generate">सुझाव प्राप्त करें</string>
+    
+    <!-- Settings -->
+    <string name="settings_title">सेटिंग्स</string>
+    <string name="settings_language">भाषा</string>
+    <string name="settings_playback_quality">प्लेबैक गुणवत्ता</string>
+    <string name="settings_download_wifi_only">केवल Wi-Fi पर डाउनलोड करें</string>
+    <string name="settings_notifications">सूचनाएं</string>
+    <string name="settings_privacy">गोपनीयता</string>
+    <string name="settings_about">के बारे में</string>
+    
+    <!-- Auth -->
+    <string name="auth_login">लॉगिन</string>
+    <string name="auth_signup">साइन अप</string>
+    <string name="auth_email">ईमेल</string>
+    <string name="auth_password">पासवर्ड</string>
+    <string name="auth_name">नाम</string>
+    <string name="auth_google_signin">Google से साइन इन करें</string>
+    
+    <!-- Onboarding -->
+    <string name="onboarding_welcome">संगीतमाइंड में आपका स्वागत है</string>
+    <string name="onboarding_description">राग-आधारित ध्यान की उपचार शक्ति का अनुभव करें</string>
+    <string name="onboarding_next">अगला</string>
+    <string name="onboarding_skip">छोड़ें</string>
+    <string name="onboarding_get_started">शुरू करें</string>
+    
+    <!-- Common -->
+    <string name="loading">लोड हो रहा है…</string>
+    <string name="error_generic">कुछ गलत हो गया। कृपया पुनः प्रयास करें।</string>
+    <string name="retry">पुनः प्रयास करें</string>
+    <string name="cancel">रद्द करें</string>
+    <string name="ok">ठीक है</string>
+    <string name="save">सहेजें</string>
+    <string name="search">खोजें</string>
+    <string name="filter">फ़िल्टर</string>
+</resources>
+

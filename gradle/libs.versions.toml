@@ -19,6 +19,7 @@ timber = "5.0.1"
 composeCompiler = "1.5.6"
 mockito = "5.5.0"
 coroutinesTest = "1.7.3"
+coil = "2.5.0"
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -66,6 +67,7 @@ junit = { group = "junit", name = "junit", version = "4.13.2" }
 mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version = "5.1.0" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 
 [bundles]
 compose = ["androidx-compose-ui", "androidx-compose-foundation", "androidx-compose-material3", "androidx-compose-runtime"]

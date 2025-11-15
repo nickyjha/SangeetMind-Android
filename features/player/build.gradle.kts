@@ -54,6 +54,9 @@ dependencies {
     implementation(libs.com.google.dagger.hilt)
     kapt(libs.com.google.dagger.hilt.compiler)
 
+    // Image loading
+    implementation(libs.coil.compose)
+
     // Testing
     testImplementation(libs.junit)
 }

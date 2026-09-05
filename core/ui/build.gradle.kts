@@ -33,10 +33,13 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     
     // Compose
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.bundles.compose)
+    api(platform(libs.androidx.compose.bom))
+    api(libs.bundles.compose)
     implementation(libs.androidx.compose.ui.tooling)
-    
+    // Full icon set (Icons.Default.X beyond the small core-bundled subset). `api` so
+    // every feature module depending on core:ui gets it without repeating the BOM.
+    api(libs.androidx.compose.material.icons.extended)
+
     // Testing
     testImplementation(libs.junit)
 }

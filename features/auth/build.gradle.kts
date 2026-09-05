@@ -42,7 +42,12 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.androidx.lifecycle.compose)
     implementation(libs.org.jetbrains.kotlin.coroutines)
-    
+
+    // Firebase Auth (base artifact — see core:network's build.gradle.kts for why
+    // not -ktx). `api` so the BOM's constraint propagates to :app's resolution.
+    api(platform(libs.firebase.bom))
+    api(libs.firebase.auth)
+
     // Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)

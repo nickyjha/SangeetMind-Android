@@ -1,5 +1,7 @@
 package com.sangeetmind.core.network
 
+import com.google.android.gms.tasks.Tasks
+import com.google.firebase.auth.FirebaseAuth
 import com.sangeetmind.core.common.Constants
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -24,9 +26,17 @@ annotation class AuthInterceptorOkHttpClient
 @Retention(AnnotationRetention.BINARY)
 annotation class BaseOkHttpClient
 
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class GeocodingRetrofit
+
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
+
+    @Provides
+    @Singleton
+    fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 
     @Provides
     @Singleton
@@ -57,29 +67,42 @@ object NetworkModule {
         .addInterceptor(loggingInterceptor)
         .build()
 
+    /**
+     * Attaches the current Firebase user's ID token as a Bearer header (backend verifies
+     * it via Firebase Admin, see verify_firebase_user). Runs off the main thread — OkHttp
+     * interceptors always execute on the calling (background) dispatcher thread — so
+     * blocking on the token Task here is the standard Firebase+OkHttp pattern.
+     */
     @Provides
     @Singleton
-    fun provideAuthInterceptor(tokenManager: TokenManager): Interceptor =
+    fun provideAuthInterceptor(firebaseAuth: FirebaseAuth): Interceptor =
         Interceptor { chain ->
             val original = chain.request()
-            val token = tokenManager.getAccessToken()
-            
-            val request = if (token != null) {
-                original.newBuilder()
-                    .header("Authorization", "Bearer $token")
-                    .build()
-            } else {
-                original
+            val builder = original.newBuilder()
+
+            if (BuildConfig.CHART_API_KEY.isNotEmpty()) {
+                builder.header("x-api-key", BuildConfig.CHART_API_KEY)
             }
-            
-            val response = chain.proceed(request)
-            
-            // Handle 401 Unauthorized - token refresh logic
-            if (response.code == 401 && token != null) {
+
+            val user = firebaseAuth.currentUser
+            var idToken = user?.let { runCatching { Tasks.await(it.getIdToken(false)).token }.getOrNull() }
+            if (idToken != null) {
+                builder.header("Authorization", "Bearer $idToken")
+            }
+
+            val response = chain.proceed(builder.build())
+
+            if (response.code == 401 && user != null) {
                 response.close()
-                // TODO: Implement token refresh logic
-                // For now, just retry with the same token
-                chain.proceed(request)
+                idToken = runCatching { Tasks.await(user.getIdToken(true)).token }.getOrNull()
+                val retryBuilder = original.newBuilder()
+                if (BuildConfig.CHART_API_KEY.isNotEmpty()) {
+                    retryBuilder.header("x-api-key", BuildConfig.CHART_API_KEY)
+                }
+                if (idToken != null) {
+                    retryBuilder.header("Authorization", "Bearer $idToken")
+                }
+                chain.proceed(retryBuilder.build())
             } else {
                 response
             }
@@ -105,5 +128,74 @@ object NetworkModule {
         .client(okHttpClient)
         .addConverterFactory(MoshiConverterFactory.create(moshi))
         .build()
-}
 
+    /**
+     * Nominatim's usage policy requires a descriptive User-Agent — no API key involved.
+     * Deliberately built on [provideBaseOkHttpClient] (no Authorization/x-api-key) so
+     * SangeetMind backend credentials are never sent to this third-party host.
+     */
+    @Provides
+    @Singleton
+    @GeocodingRetrofit
+    fun provideGeocodingRetrofit(
+        @BaseOkHttpClient baseClient: OkHttpClient,
+        moshi: Moshi
+    ): Retrofit {
+        val client = baseClient.newBuilder()
+            .addInterceptor { chain ->
+                chain.proceed(
+                    chain.request().newBuilder()
+                        .header("User-Agent", "SangeetMind-Android/1.0")
+                        .build()
+                )
+            }
+            .build()
+        return Retrofit.Builder()
+            .baseUrl("https://nominatim.openstreetmap.org/")
+            .client(client)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideNominatimApi(@GeocodingRetrofit retrofit: Retrofit): NominatimApi =
+        retrofit.create(NominatimApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideApiService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideKundliApi(retrofit: Retrofit): KundliApi = retrofit.create(KundliApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideAstrologyApi(retrofit: Retrofit): AstrologyApi = retrofit.create(AstrologyApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideHoroscopeApi(retrofit: Retrofit): HoroscopeApi = retrofit.create(HoroscopeApi::class.java)
+
+    @Provides
+    @Singleton
+    fun providePanchangApi(retrofit: Retrofit): PanchangApi = retrofit.create(PanchangApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideMuhuratApi(retrofit: Retrofit): MuhuratApi = retrofit.create(MuhuratApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideMatchApi(retrofit: Retrofit): MatchApi = retrofit.create(MatchApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideNumerologyApi(retrofit: Retrofit): NumerologyApi = retrofit.create(NumerologyApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideInterpretationApi(retrofit: Retrofit): InterpretationApi =
+        retrofit.create(InterpretationApi::class.java)
+}

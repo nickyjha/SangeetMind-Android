@@ -162,9 +162,10 @@ fun RaagListItem(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                if (raag.nameHindi != null) {
+                val nameHindi = raag.nameHindi
+                if (nameHindi != null) {
                     Text(
-                        text = raag.nameHindi,
+                        text = nameHindi,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,

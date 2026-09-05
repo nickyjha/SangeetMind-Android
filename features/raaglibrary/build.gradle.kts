@@ -38,20 +38,21 @@ dependencies {
     implementation(project(":core:network"))
     implementation(project(":core:database"))
     implementation(project(":libs:models"))
+    implementation(project(":integration:backend-stub"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.androidx.lifecycle.compose)
     implementation(libs.org.jetbrains.kotlin.coroutines)
-    
+
     // Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)
-    
+
     // Navigation
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.hilt.navigation.compose)
-    
+
     // Hilt
     implementation(libs.com.google.dagger.hilt)
     kapt(libs.com.google.dagger.hilt.compiler)

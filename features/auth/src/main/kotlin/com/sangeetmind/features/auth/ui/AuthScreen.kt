@@ -19,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.features.auth.AuthMode
 import com.sangeetmind.features.auth.AuthViewModel
 
 @Composable
@@ -29,6 +30,10 @@ fun AuthScreen(
     viewModel: AuthViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(isSignup) {
+        viewModel.setMode(if (isSignup) AuthMode.SIGNUP else AuthMode.LOGIN)
+    }
 
     LaunchedEffect(uiState.isAuthenticated) {
         if (uiState.isAuthenticated) {
@@ -44,35 +49,52 @@ fun AuthScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Logo/Title
         Icon(
-            imageVector = Icons.Default.MusicNote,
+            imageVector = Icons.Default.AutoAwesome,
             contentDescription = null,
             modifier = Modifier.size(80.dp),
             tint = MaterialTheme.colorScheme.primary
         )
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         Text(
             text = "SangeetMind",
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.primary
         )
-        
+
         Spacer(modifier = Modifier.height(8.dp))
-        
+
         Text(
-            text = if (isSignup) "Create your account" else "Welcome back",
+            text = when (uiState.mode) {
+                AuthMode.SIGNUP -> "Create your account"
+                AuthMode.FORGOT_PASSWORD -> "Reset your password"
+                AuthMode.LOGIN -> "Welcome back"
+            },
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
         )
-        
+
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Name field (signup only)
-        if (isSignup) {
+        if (uiState.mode == AuthMode.FORGOT_PASSWORD) {
+            ForgotPasswordContent(
+                email = uiState.email,
+                isLoading = uiState.isLoading,
+                error = uiState.error,
+                resetEmailSent = uiState.resetEmailSent,
+                onEmailChange = viewModel::onEmailChange,
+                onSubmit = viewModel::sendPasswordReset,
+                onBackToLogin = { viewModel.setMode(AuthMode.LOGIN) }
+            )
+            return@Column
+        }
+
+        val isSignupMode = uiState.mode == AuthMode.SIGNUP
+
+        if (isSignupMode) {
             OutlinedTextField(
                 value = uiState.name,
                 onValueChange = viewModel::onNameChange,
@@ -88,7 +110,6 @@ fun AuthScreen(
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        // Email field
         OutlinedTextField(
             value = uiState.email,
             onValueChange = viewModel::onEmailChange,
@@ -101,10 +122,9 @@ fun AuthScreen(
                 imeAction = ImeAction.Next
             )
         )
-        
+
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Password field
         var passwordVisible by remember { mutableStateOf(false) }
         OutlinedTextField(
             value = uiState.password,
@@ -127,41 +147,29 @@ fun AuthScreen(
                 imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(
-                onDone = { if (isSignup) viewModel.signup() else viewModel.login() }
+                onDone = { if (isSignupMode) viewModel.signup() else viewModel.login() }
             )
         )
 
-        // Error message
+        if (!isSignupMode) {
+            Spacer(modifier = Modifier.height(8.dp))
+            TextButton(
+                onClick = { viewModel.setMode(AuthMode.FORGOT_PASSWORD) },
+                modifier = Modifier.align(Alignment.End)
+            ) {
+                Text("Forgot password?")
+            }
+        }
+
         if (uiState.error != null) {
             Spacer(modifier = Modifier.height(16.dp))
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer
-                )
-            ) {
-                Row(
-                    modifier = Modifier.padding(12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Warning,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.error
-                    )
-                    Text(
-                        text = uiState.error!!,
-                        color = MaterialTheme.colorScheme.onErrorContainer
-                    )
-                }
-            }
+            ErrorCard(uiState.error!!)
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Submit button
         Button(
-            onClick = { if (isSignup) viewModel.signup() else viewModel.login() },
+            onClick = { if (isSignupMode) viewModel.signup() else viewModel.login() },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
@@ -173,51 +181,15 @@ fun AuthScreen(
                     color = MaterialTheme.colorScheme.onPrimary
                 )
             } else {
-                Text(if (isSignup) "Sign Up" else "Log In")
+                Text(if (isSignupMode) "Sign Up" else "Log In")
             }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Divider
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Divider(modifier = Modifier.weight(1f))
-            Text(
-                text = "OR",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Divider(modifier = Modifier.weight(1f))
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Google Sign-In button
-        OutlinedButton(
-            onClick = viewModel::loginWithGoogle,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            enabled = !uiState.isLoading
-        ) {
-            Icon(
-                imageVector = Icons.Default.Login,
-                contentDescription = null
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text("Continue with Google")
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Toggle mode
         TextButton(onClick = onToggleMode) {
             Text(
-                text = if (isSignup) {
+                text = if (isSignupMode) {
                     "Already have an account? Log in"
                 } else {
                     "Don't have an account? Sign up"
@@ -227,3 +199,97 @@ fun AuthScreen(
     }
 }
 
+@Composable
+private fun ForgotPasswordContent(
+    email: String,
+    isLoading: Boolean,
+    error: String?,
+    resetEmailSent: Boolean,
+    onEmailChange: (String) -> Unit,
+    onSubmit: () -> Unit,
+    onBackToLogin: () -> Unit
+) {
+    if (resetEmailSent) {
+        Icon(
+            imageVector = Icons.Default.MarkEmailRead,
+            contentDescription = null,
+            modifier = Modifier.size(56.dp),
+            tint = MaterialTheme.colorScheme.primary
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "Check your email for a link to reset your password.",
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyLarge
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        TextButton(onClick = onBackToLogin) { Text("Back to log in") }
+        return
+    }
+
+    OutlinedTextField(
+        value = email,
+        onValueChange = onEmailChange,
+        label = { Text("Email") },
+        leadingIcon = { Icon(Icons.Default.Email, null) },
+        modifier = Modifier.fillMaxWidth(),
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Email,
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(onDone = { onSubmit() })
+    )
+
+    if (error != null) {
+        Spacer(modifier = Modifier.height(16.dp))
+        ErrorCard(error)
+    }
+
+    Spacer(modifier = Modifier.height(24.dp))
+
+    Button(
+        onClick = onSubmit,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp),
+        enabled = !isLoading
+    ) {
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(24.dp),
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+        } else {
+            Text("Send reset link")
+        }
+    }
+
+    Spacer(modifier = Modifier.height(16.dp))
+    TextButton(onClick = onBackToLogin) { Text("Back to log in") }
+}
+
+@Composable
+private fun ErrorCard(message: String) {
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer
+        )
+    ) {
+        Row(
+            modifier = Modifier.padding(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.Warning,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.error
+            )
+            Text(
+                text = message,
+                color = MaterialTheme.colorScheme.onErrorContainer
+            )
+        }
+    }
+}

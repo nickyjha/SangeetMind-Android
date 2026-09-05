@@ -2,7 +2,7 @@ package com.sangeetmind.core.common
 
 object Constants {
     // API Configuration
-    const val BASE_URL = "https://api.sangeetmind.com/" // TODO: Replace with actual API URL
+    const val BASE_URL = "https://sangeetmind-backend.fly.dev/"
     const val API_TIMEOUT_SECONDS = 30L
 
     // Preferences Keys

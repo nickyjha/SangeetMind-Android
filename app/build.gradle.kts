@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.kotlinKapt)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.googleServices)
 }
 
 android {
@@ -24,7 +25,11 @@ android {
 
     buildTypes {
         debug {
-            applicationIdSuffix = ".debug"
+            // No applicationIdSuffix: the registered Firebase Android app (and its
+            // google-services.json) is "com.sangeetmind.app" only, with no separate
+            // ".debug" entry. Keeping the suffix would make Firebase Auth unusable
+            // in debug builds. Re-add a suffix (and register a second Firebase app
+            // for it) if side-by-side debug/release installs are ever needed.
             versionNameSuffix = "-debug"
             isDebuggable = true
         }
@@ -86,6 +91,11 @@ dependencies {
     // Libs
     implementation(project(":libs:models"))
     implementation(project(":integration:backend-stub"))
+
+    // Firebase BOM must be declared in every module whose own dependency
+    // resolution touches a Firebase library — an upstream module's `api platform(...)`
+    // does not propagate the BOM's version constraints across project boundaries.
+    implementation(platform(libs.firebase.bom))
 
     // AndroidX Core
     implementation(libs.androidx.core.ktx)

@@ -4,16 +4,6 @@ import com.sangeetmind.libs.models.*
 import retrofit2.http.*
 
 interface ApiService {
-    // Auth endpoints
-    @POST("auth/login")
-    suspend fun login(@Body request: LoginRequest): AuthResponse
-
-    @POST("auth/signup")
-    suspend fun signup(@Body request: SignupRequest): AuthResponse
-
-    @POST("auth/refresh")
-    suspend fun refreshToken(@Body refreshToken: String): AuthToken
-
     // Raag endpoints
     @GET("raag")
     suspend fun getRaags(
@@ -35,12 +25,6 @@ interface ApiService {
 
     @GET("meditation/sessions/{id}")
     suspend fun getMeditationSessionById(@Path("id") id: String): MeditationSession
-
-    // Astrology endpoints
-    @POST("astrology/generate")
-    suspend fun generateAstrologyRecommendation(
-        @Body profile: AstrologyProfile
-    ): AstrologyRecommendation
 
     // User endpoints
     @GET("user/profile")

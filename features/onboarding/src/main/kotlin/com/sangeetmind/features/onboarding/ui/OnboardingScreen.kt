@@ -75,7 +75,7 @@ fun OnboardingScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End
             ) {
-                TextButton(onClick = onComplete) {
+                TextButton(onClick = { viewModel.completeOnboarding(onComplete) }) {
                     Text("Skip")
                 }
             }
@@ -148,8 +148,7 @@ fun OnboardingScreen(
                 Button(
                     onClick = {
                         if (pagerState.currentPage == onboardingPages.size - 1) {
-                            viewModel.completeOnboarding()
-                            onComplete()
+                            viewModel.completeOnboarding(onComplete)
                         } else {
                             scope.launch {
                                 pagerState.animateScrollToPage(pagerState.currentPage + 1)

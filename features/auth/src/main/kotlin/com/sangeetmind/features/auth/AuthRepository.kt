@@ -4,6 +4,7 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.core.network.PushTokenRegistrar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -11,7 +12,8 @@ import javax.inject.Singleton
 
 @Singleton
 class AuthRepository @Inject constructor(
-    private val firebaseAuth: FirebaseAuth
+    private val firebaseAuth: FirebaseAuth,
+    private val pushTokenRegistrar: PushTokenRegistrar
 ) {
     val currentUser: FirebaseUser?
         get() = firebaseAuth.currentUser
@@ -23,6 +25,7 @@ class AuthRepository @Inject constructor(
                 val user = result.user ?: return@withContext Result.Error(
                     IllegalStateException("No user returned"), "Sign in failed"
                 )
+                pushTokenRegistrar.registerCurrentToken()
                 Result.Success(user)
             } catch (e: Exception) {
                 Result.Error(e, e.message ?: "Sign in failed")
@@ -36,6 +39,7 @@ class AuthRepository @Inject constructor(
                 val user = result.user ?: return@withContext Result.Error(
                     IllegalStateException("No user returned"), "Sign up failed"
                 )
+                pushTokenRegistrar.registerCurrentToken()
                 Result.Success(user)
             } catch (e: Exception) {
                 Result.Error(e, e.message ?: "Sign up failed")

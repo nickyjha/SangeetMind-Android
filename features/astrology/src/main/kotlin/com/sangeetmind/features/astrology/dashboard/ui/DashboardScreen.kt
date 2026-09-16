@@ -29,6 +29,14 @@ fun DashboardScreen(
     onOpenMatch: () -> Unit,
     onOpenNumerology: () -> Unit,
     onOpenInterpretation: () -> Unit,
+    onOpenChart: () -> Unit,
+    onOpenChatMind: () -> Unit,
+    onOpenPayments: () -> Unit,
+    onOpenReports: () -> Unit,
+    onOpenReadings: () -> Unit,
+    onOpenMarketplace: () -> Unit,
+    onOpenReferrals: () -> Unit,
+    onOpenSangeet: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -101,12 +109,20 @@ fun DashboardScreen(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 val destinations = listOf(
+                    DashboardDestination("Birth Chart", Icons.Default.DonutLarge, onOpenChart),
                     DashboardDestination("Horoscope", Icons.Default.Insights, onOpenHoroscope),
                     DashboardDestination("Panchang", Icons.Default.CalendarMonth, onOpenPanchang),
                     DashboardDestination("Muhurat", Icons.Default.Schedule, onOpenMuhurat),
                     DashboardDestination("Match", Icons.Default.Favorite, onOpenMatch),
                     DashboardDestination("Numerology", Icons.Default.Tag, onOpenNumerology),
-                    DashboardDestination("Full Reading", Icons.Default.AutoStories, onOpenInterpretation)
+                    DashboardDestination("Full Reading", Icons.Default.AutoStories, onOpenInterpretation),
+                    DashboardDestination("ChatMind", Icons.Default.Chat, onOpenChatMind),
+                    DashboardDestination("Payments", Icons.Default.AccountBalanceWallet, onOpenPayments),
+                    DashboardDestination("Reports", Icons.Default.PictureAsPdf, onOpenReports),
+                    DashboardDestination("Readings", Icons.Default.Psychology, onOpenReadings),
+                    DashboardDestination("Astrologers", Icons.Default.SupportAgent, onOpenMarketplace),
+                    DashboardDestination("Referrals", Icons.Default.CardGiftcard, onOpenReferrals),
+                    DashboardDestination("Sangeet", Icons.Default.MusicNote, onOpenSangeet)
                 )
 
                 LazyVerticalGrid(

@@ -40,6 +40,11 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideFirebaseMessaging(): com.google.firebase.messaging.FirebaseMessaging =
+        com.google.firebase.messaging.FirebaseMessaging.getInstance()
+
+    @Provides
+    @Singleton
     fun provideMoshi(): Moshi = Moshi.Builder()
         .add(KotlinJsonAdapterFactory())
         .build()
@@ -164,6 +169,10 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideDeviceApi(retrofit: Retrofit): DeviceApi = retrofit.create(DeviceApi::class.java)
+
+    @Provides
+    @Singleton
     fun provideApiService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
 
     @Provides
@@ -198,4 +207,37 @@ object NetworkModule {
     @Singleton
     fun provideInterpretationApi(retrofit: Retrofit): InterpretationApi =
         retrofit.create(InterpretationApi::class.java)
+
+    @Provides
+    @Singleton
+    fun providePricingApi(retrofit: Retrofit): PricingApi = retrofit.create(PricingApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideRazorpayApi(retrofit: Retrofit): RazorpayApi = retrofit.create(RazorpayApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideWalletApi(retrofit: Retrofit): WalletApi = retrofit.create(WalletApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideMarketplaceApi(retrofit: Retrofit): MarketplaceApi =
+        retrofit.create(MarketplaceApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideReferralApi(retrofit: Retrofit): ReferralApi = retrofit.create(ReferralApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideReportsApi(retrofit: Retrofit): ReportsApi = retrofit.create(ReportsApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideLlmApi(retrofit: Retrofit): LlmApi = retrofit.create(LlmApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideSangeetApi(retrofit: Retrofit): SangeetApi = retrofit.create(SangeetApi::class.java)
 }

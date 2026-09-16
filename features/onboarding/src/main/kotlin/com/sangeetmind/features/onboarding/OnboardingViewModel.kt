@@ -2,6 +2,7 @@ package com.sangeetmind.features.onboarding
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sangeetmind.core.database.PreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +19,7 @@ data class OnboardingUiState(
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
-    // TODO: Inject PreferencesRepository
+    private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(OnboardingUiState())
@@ -40,10 +41,10 @@ class OnboardingViewModel @Inject constructor(
         _uiState.update { it.copy(hasAcceptedPrivacy = accepted) }
     }
 
-    fun completeOnboarding() {
+    fun completeOnboarding(onDone: () -> Unit) {
         viewModelScope.launch {
-            // TODO: Save onboarding completion to DataStore
+            preferencesRepository.setOnboardingCompleted(true)
+            onDone()
         }
     }
 }
-

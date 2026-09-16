@@ -26,6 +26,9 @@ class PlayerRepository @Inject constructor(
     private val _playbackPosition = MutableStateFlow(0L)
     val playbackPosition: StateFlow<Long> = _playbackPosition.asStateFlow()
 
+    private val _currentTitle = MutableStateFlow<String?>(null)
+    val currentTitle: StateFlow<String?> = _currentTitle.asStateFlow()
+
     init {
         player.addListener(object : Player.Listener {
             override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -42,6 +45,16 @@ class PlayerRepository @Inject constructor(
         player.play()
     }
 
+    /** For arbitrary backend-provided audio URLs that aren't a full [Raag] (e.g. Sangeet). */
+    fun playUrl(url: String, title: String) {
+        _currentRaag.value = null
+        _currentTitle.value = title
+        val mediaItem = MediaItem.fromUri(url)
+        player.setMediaItem(mediaItem)
+        player.prepare()
+        player.play()
+    }
+
     fun play() {
         player.play()
     }
@@ -53,6 +66,7 @@ class PlayerRepository @Inject constructor(
     fun stop() {
         player.stop()
         _currentRaag.value = null
+        _currentTitle.value = null
     }
 
     fun seekTo(positionMs: Long) {

@@ -46,8 +46,8 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.org.jetbrains.kotlin.coroutines)
     
-    // Retrofit & OkHttp
-    implementation(libs.bundles.retrofit)
+    // Retrofit & OkHttp — api so consumers can use Response/ResponseBody from API surfaces
+    api(libs.bundles.retrofit)
     implementation(libs.com.squareup.moshi)
 
     // Firebase Auth (ID token for the Authorization interceptor). Uses the base
@@ -55,6 +55,7 @@ dependencies {
     // the base artifacts and firebase-auth-ktx is no longer part of the current BOM.
     api(platform(libs.firebase.bom))
     api(libs.firebase.auth)
+    api(libs.firebase.messaging)
 
     // Hilt
     implementation(libs.com.google.dagger.hilt)

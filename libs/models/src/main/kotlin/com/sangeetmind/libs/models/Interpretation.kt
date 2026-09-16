@@ -3,8 +3,8 @@ package com.sangeetmind.libs.models
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
-// ---- POST /v1/chart (scoped subset — full response has many more fields: divisional
-// charts d2..d60, KP, jaimini, aspects, bhavabala. Out of scope for this MVP screen.) ----
+// ---- POST /v1/chart (MVP + Vimshottari timeline; full response also has d2..d60,
+// doshas, friendship, KP, jaimini — deferred to later chart sprints.) ----
 
 @JsonClass(generateAdapter = true)
 data class ChartRequest(
@@ -19,53 +19,84 @@ data class ChartRequest(
 @JsonClass(generateAdapter = true)
 data class LagnaInfo(
     val sign: String,
-    val degree: Double,
-    val absolute: Double
+    val degree: Double = 0.0,
+    val absolute: Double = 0.0,
+    @Json(name = "absolute_dms") val absoluteDms: String? = null
 )
 
 @JsonClass(generateAdapter = true)
 data class PlanetInfo(
     val sign: String,
-    val degree: Double,
-    val absolute: String,
+    val degree: Double = 0.0,
+    val absolute: String = "",
+    @Json(name = "absolute_dms") val absoluteDms: String? = null,
+    val house: Int? = null,
     val retrograde: Boolean = false,
     val combust: Boolean = false,
     val exalted: Boolean = false,
-    val debilitated: Boolean = false
+    val debilitated: Boolean = false,
+    val vargottama: Boolean = false
 )
 
 @JsonClass(generateAdapter = true)
 data class MoonNakshatraInfo(
-    val index: Int,
-    val pada: Int,
-    val lord: String
+    val index: Int = 0,
+    val pada: Int = 0,
+    val lord: String = "",
+    val name: String? = null
 )
 
 @JsonClass(generateAdapter = true)
 data class DashaPeriod(
     val lord: String,
     val start: String,
-    val end: String
+    val end: String,
+    val partial: Boolean = false
 )
 
 @JsonClass(generateAdapter = true)
 data class VimshottariCurrent(
-    val mahadasha: DashaPeriod?,
-    val antardasha: DashaPeriod?,
-    val pratyantardasha: DashaPeriod?
+    val mahadasha: DashaPeriod? = null,
+    val antardasha: DashaPeriod? = null,
+    val pratyantardasha: DashaPeriod? = null,
+    @Json(name = "pratyantar_dasha") val pratyantarDashaAlt: DashaPeriod? = null,
+    val pratyantar: DashaPeriod? = null,
+    val now: String? = null
+) {
+    val resolvedPratyantar: DashaPeriod?
+        get() = pratyantardasha ?: pratyantarDashaAlt ?: pratyantar
+}
+
+@JsonClass(generateAdapter = true)
+data class BhuktiPeriod(
+    val lord: String,
+    val start: String,
+    val end: String,
+    val partial: Boolean = false,
+    val pratyantars: List<DashaPeriod> = emptyList()
+)
+
+@JsonClass(generateAdapter = true)
+data class MahadashaPeriod(
+    val lord: String,
+    val start: String,
+    val end: String,
+    val partial: Boolean = false,
+    val bhuktis: List<BhuktiPeriod> = emptyList()
 )
 
 @JsonClass(generateAdapter = true)
 data class VimshottariInfo(
-    val current: VimshottariCurrent?
+    val current: VimshottariCurrent? = null,
+    val mahadashas: List<MahadashaPeriod> = emptyList()
 )
 
 @JsonClass(generateAdapter = true)
 data class ChartSummaryResponse(
     val lagna: LagnaInfo,
-    val planets: Map<String, PlanetInfo>,
-    @Json(name = "moon_nakshatra") val moonNakshatra: MoonNakshatraInfo,
-    val vimshottari: VimshottariInfo
+    val planets: Map<String, PlanetInfo> = emptyMap(),
+    @Json(name = "moon_nakshatra") val moonNakshatra: MoonNakshatraInfo = MoonNakshatraInfo(),
+    val vimshottari: VimshottariInfo = VimshottariInfo()
 )
 
 // ---- POST /rules-engine/analyze-chart ----
@@ -107,3 +138,17 @@ data class ChartAnalysisResponse(
     val success: Boolean,
     val analysis: ChartAnalysis?
 )
+
+/** Classical 27 nakshatras; API `moon_nakshatra.index` is 0-based when present. */
+val NAKSHATRA_NAMES: List<String> = listOf(
+    "Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashira", "Ardra", "Punarvasu",
+    "Pushya", "Ashlesha", "Magha", "Purva Phalguni", "Uttara Phalguni", "Hasta",
+    "Chitra", "Swati", "Vishakha", "Anuradha", "Jyeshtha", "Mula", "Purva Ashadha",
+    "Uttara Ashadha", "Shravana", "Dhanishta", "Shatabhisha", "Purva Bhadrapada",
+    "Uttara Bhadrapada", "Revati"
+)
+
+fun MoonNakshatraInfo.displayName(): String {
+    name?.takeIf { it.isNotBlank() }?.let { return it }
+    return NAKSHATRA_NAMES.getOrNull(index) ?: "Nakshatra $index"
+}

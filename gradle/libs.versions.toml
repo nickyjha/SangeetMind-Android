@@ -22,6 +22,7 @@ coroutinesTest = "1.7.3"
 coil = "2.5.0"
 firebaseBom = "33.1.2"
 googleServices = "4.4.2"
+razorpay = "1.6.41"
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -74,6 +75,8 @@ kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
+razorpay-checkout = { group = "com.razorpay", name = "checkout", version.ref = "razorpay" }
 
 [bundles]
 compose = ["androidx-compose-ui", "androidx-compose-foundation", "androidx-compose-material3", "androidx-compose-runtime"]

@@ -97,6 +97,9 @@ dependencies {
     // does not propagate the BOM's version constraints across project boundaries.
     implementation(platform(libs.firebase.bom))
 
+    // MainActivity implements Razorpay's PaymentResultWithDataListener directly.
+    implementation(libs.razorpay.checkout)
+
     // AndroidX Core
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime)

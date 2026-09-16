@@ -35,6 +35,7 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
     implementation(project(":core:network"))
+    implementation(project(":core:audio"))
     implementation(project(":libs:models"))
 
     implementation(libs.androidx.core.ktx)
@@ -53,6 +54,9 @@ dependencies {
     // Hilt
     implementation(libs.com.google.dagger.hilt)
     kapt(libs.com.google.dagger.hilt.compiler)
+
+    // Razorpay Checkout (Payments screen) — Activity-callback based, see MainActivity.
+    implementation(libs.razorpay.checkout)
 
     // Testing
     testImplementation(libs.junit)

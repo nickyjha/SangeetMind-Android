@@ -27,11 +27,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,7 +48,9 @@ import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.features.astrology.chart.ChartViewModel
 import com.sangeetmind.libs.models.BhuktiPeriod
 import com.sangeetmind.libs.models.ChartSummaryResponse
+import com.sangeetmind.libs.models.DIVISIONAL_CHART_META
 import com.sangeetmind.libs.models.DashaPeriod
+import com.sangeetmind.libs.models.DivisionalChart
 import com.sangeetmind.libs.models.LagnaInfo
 import com.sangeetmind.libs.models.MahadashaPeriod
 import com.sangeetmind.libs.models.PlanetInfo
@@ -132,6 +139,12 @@ private fun ChartContent(
     onToggleTimeline: () -> Unit
 ) {
     val moon = chart.planets["Moon"]
+    val availableCharts = chart.availableCharts
+    var selectedKey by remember(chart) { mutableStateOf("D1") }
+    val selected = availableCharts.firstOrNull { it.first == selectedKey }
+        ?: availableCharts.first()
+    val meta = DIVISIONAL_CHART_META[selected.first]
+
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
@@ -154,6 +167,22 @@ private fun ChartContent(
                 currentDasha = formatCurrentDasha(chart)
             )
         }
+        if (availableCharts.size > 1) {
+            item {
+                ScrollableTabRow(
+                    selectedTabIndex = availableCharts.indexOfFirst { it.first == selected.first }.coerceAtLeast(0),
+                    edgePadding = 0.dp
+                ) {
+                    availableCharts.forEach { (key, _) ->
+                        Tab(
+                            selected = key == selected.first,
+                            onClick = { selectedKey = key },
+                            text = { Text(chartTabLabel(key)) }
+                        )
+                    }
+                }
+            }
+        }
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -161,26 +190,28 @@ private fun ChartContent(
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 NorthIndianHouseChart(
-                    lagna = chart.lagna,
-                    planets = chart.planets,
-                    title = "D1 Rasi Chart",
-                    subtitle = "North Indian · whole-sign houses",
+                    lagna = selected.second.lagna,
+                    planets = selected.second.planets,
+                    title = meta?.first ?: selected.first,
+                    subtitle = meta?.second ?: "North Indian · whole-sign houses",
                     modifier = Modifier.padding(16.dp)
                 )
             }
         }
         item {
-            PlanetListCard(chart.lagna, chart.planets)
+            PlanetListCard(selected.second.lagna, selected.second.planets)
         }
-        item {
-            CurrentDashaCard(chart)
-        }
-        item {
-            TextButton(onClick = onToggleTimeline) {
-                Text(if (showFullTimeline) "Hide full timeline" else "View full Vimshottari timeline")
+        if (selected.first == "D1") {
+            item {
+                CurrentDashaCard(chart)
+            }
+            item {
+                TextButton(onClick = onToggleTimeline) {
+                    Text(if (showFullTimeline) "Hide full timeline" else "View full Vimshottari timeline")
+                }
             }
         }
-        if (showFullTimeline) {
+        if (selected.first == "D1" && showFullTimeline) {
             if (chart.vimshottari.mahadashas.isEmpty()) {
                 item {
                     Text(
@@ -197,6 +228,12 @@ private fun ChartContent(
         }
     }
 }
+
+/** "D2" -> "Wealth" — most people don't know varga numbers by heart, so the tab itself
+ * shows what the chart is actually for (the D-number + full name still shows once you're
+ * on the tab, as the card title/subtitle below). */
+private fun chartTabLabel(key: String): String =
+    DIVISIONAL_CHART_META[key]?.second?.substringBefore(',')?.trim() ?: key
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

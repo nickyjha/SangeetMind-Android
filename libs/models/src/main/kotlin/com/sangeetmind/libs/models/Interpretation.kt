@@ -3,7 +3,7 @@ package com.sangeetmind.libs.models
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
-// ---- POST /v1/chart (MVP + Vimshottari timeline; full response also has d2..d60,
+// ---- POST /v1/chart (MVP + Vimshottari timeline + divisional/varga charts d2..d60;
 // doshas, friendship, KP, jaimini — deferred to later chart sprints.) ----
 
 @JsonClass(generateAdapter = true)
@@ -91,12 +91,77 @@ data class VimshottariInfo(
     val mahadashas: List<MahadashaPeriod> = emptyList()
 )
 
+/** A divisional/varga chart (D2, D9, ...) — same shape as the D1 data on
+ * [ChartSummaryResponse] itself, just nested under its own key. */
+@JsonClass(generateAdapter = true)
+data class DivisionalChart(
+    val lagna: LagnaInfo,
+    val planets: Map<String, PlanetInfo> = emptyMap()
+)
+
 @JsonClass(generateAdapter = true)
 data class ChartSummaryResponse(
     val lagna: LagnaInfo,
     val planets: Map<String, PlanetInfo> = emptyMap(),
     @Json(name = "moon_nakshatra") val moonNakshatra: MoonNakshatraInfo = MoonNakshatraInfo(),
-    val vimshottari: VimshottariInfo = VimshottariInfo()
+    val vimshottari: VimshottariInfo = VimshottariInfo(),
+    val d2: DivisionalChart? = null,
+    val d3: DivisionalChart? = null,
+    val d4: DivisionalChart? = null,
+    val d7: DivisionalChart? = null,
+    val d9: DivisionalChart? = null,
+    val d10: DivisionalChart? = null,
+    val d12: DivisionalChart? = null,
+    val d16: DivisionalChart? = null,
+    val d20: DivisionalChart? = null,
+    val d24: DivisionalChart? = null,
+    val d27: DivisionalChart? = null,
+    val d30: DivisionalChart? = null,
+    val d40: DivisionalChart? = null,
+    val d45: DivisionalChart? = null,
+    val d60: DivisionalChart? = null
+) {
+    /** D1 plus every divisional chart the backend actually returned, in varga order —
+     * drives the chart-switcher tabs so we never show a tab with no data behind it. */
+    val availableCharts: List<Pair<String, DivisionalChart>>
+        get() = listOfNotNull(
+            "D1" to DivisionalChart(lagna, planets),
+            d2?.let { "D2" to it },
+            d3?.let { "D3" to it },
+            d4?.let { "D4" to it },
+            d7?.let { "D7" to it },
+            d9?.let { "D9" to it },
+            d10?.let { "D10" to it },
+            d12?.let { "D12" to it },
+            d16?.let { "D16" to it },
+            d20?.let { "D20" to it },
+            d24?.let { "D24" to it },
+            d27?.let { "D27" to it },
+            d30?.let { "D30" to it },
+            d40?.let { "D40" to it },
+            d45?.let { "D45" to it },
+            d60?.let { "D60" to it }
+        )
+}
+
+/** Label + what-it's-for, matching the website's CHART_LABELS so the two stay in sync. */
+val DIVISIONAL_CHART_META: Map<String, Pair<String, String>> = mapOf(
+    "D1" to ("D1 Rasi Chart" to "Birth chart"),
+    "D2" to ("D2 Hora" to "Wealth, income"),
+    "D3" to ("D3 Drekkana" to "Siblings, courage"),
+    "D4" to ("D4 Chaturthamsa" to "Property, fortune"),
+    "D7" to ("D7 Saptamsa" to "Children"),
+    "D9" to ("D9 Navamsa" to "Marriage, dharma"),
+    "D10" to ("D10 Dashamsa" to "Career, profession"),
+    "D12" to ("D12 Dwadasamsa" to "Parents, family"),
+    "D16" to ("D16 Shodashamsa" to "Vehicles, comforts"),
+    "D20" to ("D20 Vimsamsa" to "Spiritual progress"),
+    "D24" to ("D24 Chaturvimsamsa" to "Education"),
+    "D27" to ("D27 Saptavimsamsa" to "Strengths, weaknesses"),
+    "D30" to ("D30 Trimsamsa" to "Health, resilience"),
+    "D40" to ("D40 Khavedamsa" to "Auspicious effects"),
+    "D45" to ("D45 Akshavedamsa" to "Character, conduct"),
+    "D60" to ("D60 Sashtiamsa" to "Past karma")
 )
 
 // ---- POST /rules-engine/analyze-chart ----

@@ -17,13 +17,17 @@ import kotlin.math.roundToLong
 
 enum class ChatRole { USER, ASSISTANT }
 
-data class ChatMessage(val role: ChatRole, val text: String)
+/** [tier] is the model tier that produced an ASSISTANT reply ("standard"/"advanced"); null for USER messages. */
+data class ChatMessage(val role: ChatRole, val text: String, val tier: String? = null)
 
 data class ChatMindUiState(
     val messages: List<ChatMessage> = emptyList(),
     val input: String = "",
     val isSending: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    /** Mirrors the website's "Advanced analysis" toggle — off (standard/gemini-2.5-flash-lite)
+     * by default, since advanced (gemini-2.5-pro) costs more per reply from the user's wallet. */
+    val advancedAnalysis: Boolean = false
 )
 
 @HiltViewModel
@@ -41,9 +45,14 @@ class ChatMindViewModel @Inject constructor(
         _uiState.update { it.copy(input = value, error = null) }
     }
 
+    fun setAdvancedAnalysis(enabled: Boolean) {
+        _uiState.update { it.copy(advancedAnalysis = enabled) }
+    }
+
     fun send() {
         val question = _uiState.value.input.trim()
         if (question.isBlank()) return
+        val tier = if (_uiState.value.advancedAnalysis) "advanced" else "standard"
 
         _uiState.update {
             it.copy(
@@ -64,7 +73,7 @@ class ChatMindViewModel @Inject constructor(
                 is Result.Loading -> return@launch
             }
 
-            when (val result = repository.ask(details, question)) {
+            when (val result = repository.ask(details, question, analysisTier = tier)) {
                 is Result.Success -> {
                     val response = result.data
                     _uiState.update {
@@ -72,7 +81,8 @@ class ChatMindViewModel @Inject constructor(
                             isSending = false,
                             messages = it.messages + ChatMessage(
                                 ChatRole.ASSISTANT,
-                                response.answer ?: response.error ?: "No answer returned"
+                                response.answer ?: response.error ?: "No answer returned",
+                                tier = tier
                             )
                         )
                     }

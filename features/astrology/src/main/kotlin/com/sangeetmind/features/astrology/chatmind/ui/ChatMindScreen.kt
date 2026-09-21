@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.chatmind.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -51,24 +52,47 @@ fun ChatMindScreen(
         },
         bottomBar = {
             Surface(tonalElevation = 3.dp) {
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    OutlinedTextField(
-                        value = uiState.input,
-                        onValueChange = viewModel::onInputChange,
-                        modifier = Modifier.weight(1f),
-                        placeholder = { Text("Ask about your kundli…") },
-                        singleLine = true,
-                        enabled = !uiState.isSending
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    IconButton(onClick = viewModel::send, enabled = !uiState.isSending) {
-                        if (uiState.isSending) {
-                            CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
-                        } else {
-                            Icon(Icons.Default.Send, contentDescription = "Send")
+                Column {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text("Advanced analysis", style = MaterialTheme.typography.labelLarge)
+                            Text(
+                                "Stronger model, deeper reasoning — costs more from your wallet.",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        Switch(
+                            checked = uiState.advancedAnalysis,
+                            onCheckedChange = viewModel::setAdvancedAnalysis,
+                            enabled = !uiState.isSending
+                        )
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        OutlinedTextField(
+                            value = uiState.input,
+                            onValueChange = viewModel::onInputChange,
+                            modifier = Modifier.weight(1f),
+                            placeholder = { Text("Ask about your kundli…") },
+                            singleLine = true,
+                            enabled = !uiState.isSending
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        IconButton(onClick = viewModel::send, enabled = !uiState.isSending) {
+                            if (uiState.isSending) {
+                                CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+                            } else {
+                                Icon(Icons.Default.Send, contentDescription = "Send")
+                            }
                         }
                     }
                 }
@@ -116,7 +140,17 @@ private fun ChatBubble(message: ChatMessage) {
             ),
             modifier = Modifier.fillMaxWidth(0.85f)
         ) {
-            Text(message.text, modifier = Modifier.padding(12.dp))
+            Column(modifier = Modifier.padding(12.dp)) {
+                if (message.tier == "advanced") {
+                    Text(
+                        "ADVANCED",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.rahu,
+                        modifier = Modifier.padding(bottom = 4.dp)
+                    )
+                }
+                Text(message.text)
+            }
         }
     }
 }

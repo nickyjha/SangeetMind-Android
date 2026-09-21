@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sangeetmind.features.astrology.kundli.KundliListViewModel
+import com.sangeetmind.libs.models.toTitleCase
 import com.sangeetmind.libs.models.Kundli
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -103,7 +104,7 @@ private fun KundliCard(
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = kundli.fullName?.takeIf { it.isNotBlank() } ?: "Untitled kundli",
+                    text = kundli.fullName?.takeIf { it.isNotBlank() }?.toTitleCase() ?: "Untitled kundli",
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(

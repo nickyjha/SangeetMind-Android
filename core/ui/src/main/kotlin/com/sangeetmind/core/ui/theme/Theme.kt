@@ -6,10 +6,55 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+
+/**
+ * The Navagraha System's per-feature accent colors, resolved for the *current* theme.
+ * Each graha has a bright dark-theme tone and a darkened light-theme tone (see the
+ * "...Deep" constants in Color.kt) — read [surya], [chandra], etc. from
+ * [LocalGrahaColors] rather than the raw Color.kt constants, so a screen never has to
+ * know which theme is active to stay legible in both.
+ */
+data class GrahaColors(
+    val surya: Color,
+    val chandra: Color,
+    val mangala: Color,
+    val budha: Color,
+    val guru: Color,
+    val shukra: Color,
+    val shani: Color,
+    val rahu: Color
+)
+
+private val DarkGrahaColors = GrahaColors(
+    surya = GrahaSurya,
+    chandra = GrahaChandra,
+    mangala = GrahaMangala,
+    budha = GrahaBudha,
+    guru = GrahaGuru,
+    shukra = GrahaShukra,
+    shani = GrahaShani,
+    rahu = GrahaRahu
+)
+
+private val LightGrahaColors = GrahaColors(
+    surya = GrahaSuryaDeep,
+    chandra = GrahaChandraDeep,
+    mangala = GrahaMangalaDeep,
+    budha = GrahaBudhaDeep,
+    guru = GrahaGuruDeep,
+    shukra = GrahaShukraDeep,
+    shani = GrahaShaniDeep,
+    rahu = GrahaRahuDeep
+)
+
+val LocalGrahaColors = staticCompositionLocalOf { DarkGrahaColors }
 
 private val LightColorScheme = lightColorScheme(
     primary = Primary,
@@ -79,10 +124,14 @@ fun SangeetMindTheme(
         }
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    CompositionLocalProvider(
+        LocalGrahaColors provides if (darkTheme) DarkGrahaColors else LightGrahaColors
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content
+        )
+    }
 }
 

@@ -39,7 +39,12 @@ fun PanchangScreen(
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.chandra.copy(alpha = 0.14f),
+                    titleContentColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.chandra,
+                    navigationIconContentColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.chandra
+                )
             )
         }
     ) { padding ->

@@ -16,6 +16,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sangeetmind.features.astrology.match.MatchViewModel
 import com.sangeetmind.libs.models.Kundli
 import com.sangeetmind.libs.models.KundliMatchResult
+import com.sangeetmind.libs.models.toTitleCase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,7 +34,12 @@ fun MatchScreen(
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.mangala.copy(alpha = 0.14f),
+                    titleContentColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.mangala,
+                    navigationIconContentColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.mangala
+                )
             )
         }
     ) { padding ->
@@ -121,7 +127,7 @@ private fun KundliDropdown(
 
     ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
         OutlinedTextField(
-            value = selected?.let { it.fullName?.takeIf { n -> n.isNotBlank() } ?: it.birthPlace } ?: "",
+            value = selected?.let { it.fullName?.takeIf { n -> n.isNotBlank() }?.toTitleCase() ?: it.birthPlace } ?: "",
             onValueChange = {},
             readOnly = true,
             label = { Text(label) },
@@ -132,7 +138,7 @@ private fun KundliDropdown(
             options.forEach { kundli ->
                 DropdownMenuItem(
                     text = {
-                        Text(kundli.fullName?.takeIf { it.isNotBlank() } ?: "${kundli.birthDate} · ${kundli.birthPlace}")
+                        Text(kundli.fullName?.takeIf { it.isNotBlank() }?.toTitleCase() ?: "${kundli.birthDate} · ${kundli.birthPlace}")
                     },
                     onClick = {
                         onSelect(kundli)

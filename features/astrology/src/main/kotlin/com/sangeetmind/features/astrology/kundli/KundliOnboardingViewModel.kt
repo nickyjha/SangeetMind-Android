@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.network.NominatimApi
 import com.sangeetmind.core.network.NominatimPlace
+import com.sangeetmind.libs.models.toTitleCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -104,6 +105,11 @@ class KundliOnboardingViewModel @Inject constructor(
             _uiState.update { it.copy(error = "Please enter your time of birth") }
             return
         }
+        val normalizedTime = normalizeBirthTime(state.birthTime)
+        if (normalizedTime == null) {
+            _uiState.update { it.copy(error = "Enter time of birth as HH:MM in 24h format, e.g. 06:35") }
+            return
+        }
         if (place == null) {
             _uiState.update { it.copy(error = "Please pick your birth place from the suggestions") }
             return
@@ -112,9 +118,9 @@ class KundliOnboardingViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true, error = null) }
             val result = kundliRepository.createKundli(
-                fullName = state.fullName.ifBlank { null },
+                fullName = state.fullName.ifBlank { null }?.toTitleCase(),
                 birthDate = state.birthDate,
-                birthTime = state.birthTime,
+                birthTime = normalizedTime,
                 birthPlace = place.label,
                 latitude = place.latitude,
                 longitude = place.longitude,
@@ -129,6 +135,15 @@ class KundliOnboardingViewModel @Inject constructor(
             }
         }
     }
+}
+
+private val birthTimeRegex = Regex("""^([01]?\d|2[0-3]):([0-5]\d)$""")
+
+/** Backend requires a zero-padded HH:MM (Pydantic time parsing rejects e.g. "6:35"). */
+private fun normalizeBirthTime(raw: String): String? {
+    val match = birthTimeRegex.matchEntire(raw.trim()) ?: return null
+    val (hour, minute) = match.destructured
+    return "%02d:%s".format(hour.toInt(), minute)
 }
 
 private fun NominatimPlace.toSuggestion() = BirthPlaceSuggestion(

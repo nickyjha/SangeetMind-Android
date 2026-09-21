@@ -3,6 +3,13 @@ package com.sangeetmind.libs.models
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
+/** "nicky jha" -> "Nicky Jha" — names are free-typed on the onboarding form with no
+ * enforced capitalization, so every screen that displays one runs it through here. */
+fun String.toTitleCase(): String = trim()
+    .split(Regex("\\s+"))
+    .filter { it.isNotEmpty() }
+    .joinToString(" ") { word -> word.replaceFirstChar { it.uppercaseChar() } }
+
 @JsonClass(generateAdapter = true)
 data class Kundli(
     val id: String,

@@ -13,11 +13,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
+import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.libs.models.LagnaInfo
 import com.sangeetmind.libs.models.PlanetInfo
 
@@ -56,11 +59,6 @@ private val HOUSE_CENTROIDS: Map<Int, Offset> = mapOf(
     5 to Offset(33f, 300f), 6 to Offset(100f, 367f), 7 to Offset(200f, 300f), 8 to Offset(300f, 367f),
     9 to Offset(367f, 300f), 10 to Offset(300f, 200f), 11 to Offset(367f, 100f), 12 to Offset(300f, 33f)
 )
-
-private val STROKE_COLOR = Color(0xFFCA8A04)
-private val RASHI_COLOR = Color(0xFF92400E)
-private val PLANET_COLOR = Color(0xFF374151)
-private val FILL_COLOR = Color(0xFFFEFCE8)
 
 internal fun signToHouseNumber(lagnaSign: String, planetSign: String): Int {
     val lagnaIdx = ZODIAC_SIGNS.indexOfFirst { it.equals(lagnaSign, ignoreCase = true) }
@@ -116,6 +114,13 @@ fun NorthIndianHouseChart(
         .coerceAtLeast(0)
     val houseToRashi = (1..12).associateWith { h -> ((lagnaIdx + h - 1 + 12) % 12) + 1 }
 
+    val fillColor = MaterialTheme.colorScheme.surfaceVariant
+    val glowColor = MaterialTheme.colorScheme.primary
+    val strokeColor = MaterialTheme.colorScheme.primary
+    val innerLineColor = LocalGrahaColors.current.rahu
+    val rashiArgb = MaterialTheme.colorScheme.primary.toArgb()
+    val planetArgb = MaterialTheme.colorScheme.onSurface.toArgb()
+
     Column(modifier = modifier.fillMaxWidth()) {
         Text(title, style = MaterialTheme.typography.titleMedium)
         if (!subtitle.isNullOrBlank()) {
@@ -134,20 +139,34 @@ fun NorthIndianHouseChart(
             val scale = size.minDimension / 400f
             fun Offset.scaled() = Offset(x * scale, y * scale)
 
-            HOUSE_POLYGONS.forEach { (_, points) ->
+            // Soft radial glow behind the lagna house, echoing the sun at the chart's center.
+            drawCircle(
+                brush = Brush.radialGradient(
+                    colors = listOf(glowColor.copy(alpha = 0.14f), Color.Transparent),
+                    center = Offset(200f, 200f).scaled(),
+                    radius = 170f * scale
+                ),
+                radius = 170f * scale,
+                center = Offset(200f, 200f).scaled()
+            )
+
+            HOUSE_POLYGONS.forEach { (houseNum, points) ->
                 val path = Path().apply {
                     val first = points.first().scaled()
                     moveTo(first.x, first.y)
                     points.drop(1).forEach { lineTo(it.scaled().x, it.scaled().y) }
                     close()
                 }
-                drawPath(path, color = FILL_COLOR)
-                drawPath(path, color = STROKE_COLOR, style = Stroke(width = 1.5f * scale))
+                drawPath(path, color = fillColor)
+                // Inner diagonals (houses 1,4,7,10) in the violet accent; outer boundary in gold.
+                val lineColor = if (houseNum in setOf(1, 4, 7, 10)) innerLineColor.copy(alpha = 0.55f)
+                else strokeColor.copy(alpha = 0.5f)
+                drawPath(path, color = lineColor, style = Stroke(width = 1.4f * scale))
             }
 
             val rashiPaint = android.graphics.Paint().apply {
                 isAntiAlias = true
-                color = android.graphics.Color.rgb(0x92, 0x40, 0x0E)
+                color = rashiArgb
                 textAlign = android.graphics.Paint.Align.CENTER
                 textSize = 11f * scale
                 isFakeBoldText = true
@@ -155,7 +174,7 @@ fun NorthIndianHouseChart(
 
             val planetPaint = android.graphics.Paint().apply {
                 isAntiAlias = true
-                color = android.graphics.Color.rgb(0x37, 0x41, 0x51)
+                color = planetArgb
                 textAlign = android.graphics.Paint.Align.CENTER
                 textSize = 9f * scale
             }

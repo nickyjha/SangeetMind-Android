@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.chart.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,10 +15,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -31,15 +34,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.features.astrology.chart.ChartViewModel
+import com.sangeetmind.libs.models.BhuktiPeriod
 import com.sangeetmind.libs.models.ChartSummaryResponse
 import com.sangeetmind.libs.models.DashaPeriod
+import com.sangeetmind.libs.models.LagnaInfo
 import com.sangeetmind.libs.models.MahadashaPeriod
 import com.sangeetmind.libs.models.PlanetInfo
 import com.sangeetmind.libs.models.displayName
+import com.sangeetmind.libs.models.toTitleCase
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,7 +75,13 @@ fun ChartScreen(
                     IconButton(onClick = viewModel::refresh) {
                         Icon(Icons.Default.Refresh, contentDescription = "Refresh")
                     }
-                }
+                },
+                colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
+                    containerColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.shani.copy(alpha = 0.14f),
+                    titleContentColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.shani,
+                    navigationIconContentColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.shani,
+                    actionIconContentColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.shani
+                )
             )
         }
     ) { padding ->
@@ -94,7 +113,7 @@ fun ChartScreen(
                 }
                 uiState.chart != null -> {
                     ChartContent(
-                        personName = uiState.kundli?.fullName,
+                        personName = uiState.kundli?.fullName?.toTitleCase(),
                         chart = uiState.chart!!,
                         showFullTimeline = uiState.showFullTimeline,
                         onToggleTimeline = viewModel::toggleFullTimeline
@@ -136,7 +155,11 @@ private fun ChartContent(
             )
         }
         item {
-            Card(modifier = Modifier.fillMaxWidth()) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            ) {
                 NorthIndianHouseChart(
                     lagna = chart.lagna,
                     planets = chart.planets,
@@ -147,7 +170,7 @@ private fun ChartContent(
             }
         }
         item {
-            PlanetListCard(chart.planets)
+            PlanetListCard(chart.lagna, chart.planets)
         }
         item {
             CurrentDashaCard(chart)
@@ -196,7 +219,7 @@ private fun SummaryStrip(
             if (moonSign.isNotBlank()) {
                 SummaryChip("Moon", "$moonSign $moonDegree".trim())
             }
-            SummaryChip("Nakshatra", "$nakshatra · $nakshatraDetail")
+            SummaryChip("Nakshatra", "$nakshatra · $nakshatraDetail", highlight = true)
             if (currentDasha.isNotBlank()) {
                 SummaryChip("Current dasha", currentDasha)
             }
@@ -205,43 +228,99 @@ private fun SummaryStrip(
 }
 
 @Composable
-private fun SummaryChip(label: String, value: String) {
+private fun SummaryChip(label: String, value: String, highlight: Boolean = false) {
     Column {
         Text(
             text = label,
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Text(text = value, style = MaterialTheme.typography.bodyMedium)
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyMedium,
+            color = if (highlight) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+        )
     }
 }
 
+/** A small colored pill — used for dignity flags (Retrograde/Combust/…) and dasha status tags. */
 @Composable
-private fun PlanetListCard(planets: Map<String, PlanetInfo>) {
+private fun Chip(text: String, color: Color) {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(6.dp))
+            .background(color.copy(alpha = 0.16f))
+            .padding(horizontal = 8.dp, vertical = 3.dp)
+    ) {
+        Text(text, style = MaterialTheme.typography.labelSmall, color = color)
+    }
+}
+
+/** Dignity flags as (label, color) pairs — colors reuse the graha accents so a planet's
+ * strength/weakness reads at a glance instead of via the old `*^↑↓□` symbol suffix. */
+@Composable
+private fun dignityChips(planet: PlanetInfo): List<Pair<String, Color>> {
+    val graha = LocalGrahaColors.current
+    val neutral = MaterialTheme.colorScheme.onSurfaceVariant
+    return buildList {
+        if (planet.retrograde) add("Retrograde" to neutral)
+        if (planet.combust) add("Combust" to graha.mangala)
+        if (planet.exalted) add("Exalted" to graha.budha)
+        if (planet.debilitated) add("Debilitated" to graha.guru)
+        if (planet.vargottama) add("Vargottama" to graha.shani)
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun PlanetListCard(lagna: LagnaInfo, planets: Map<String, PlanetInfo>) {
     val order = listOf(
         "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu"
     )
+    // Sorted by house (H1 first) rather than the fixed Sun→Ketu order, so the list reads
+    // the same way the North Indian chart above it does. No section headers — the house
+    // number rides along inline instead, to keep this a single clean list.
+    val sorted = order.mapNotNull { name -> planets[name]?.let { name to it } }
+        .sortedBy { (_, info) -> info.house ?: signToHouseNumber(lagna.sign, info.sign) }
+
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text("Planetary positions", style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(8.dp))
-            order.forEach { name ->
-                val planet = planets[name] ?: return@forEach
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(name, style = MaterialTheme.typography.bodyMedium)
-                    Text(
-                        text = buildString {
-                            append(planet.sign)
-                            degreeDisplay(planet)?.let { append(" $it") }
-                            append(dignitySuffix(planet))
-                            planet.house?.let { append(" · H$it") }
-                        },
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+            sorted.forEach { (name, planet) ->
+                val house = planet.house ?: signToHouseNumber(lagna.sign, planet.sign)
+                Column(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Text(
+                                "H$house",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(name, style = MaterialTheme.typography.bodyMedium)
+                        }
+                        Text(
+                            text = buildString {
+                                append(planet.sign)
+                                degreeDisplay(planet)?.let { append(" $it") }
+                            },
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    val chips = dignityChips(planet)
+                    if (chips.isNotEmpty()) {
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            modifier = Modifier.padding(top = 4.dp, start = 28.dp)
+                        ) {
+                            chips.forEach { (label, color) -> Chip(label, color) }
+                        }
+                    }
                 }
             }
         }
@@ -268,29 +347,121 @@ private fun DashaRow(label: String, period: DashaPeriod?) {
     Column(modifier = Modifier.padding(vertical = 4.dp)) {
         Text("$label · ${period.lord}", style = MaterialTheme.typography.bodyLarge)
         Text(
-            text = "${period.start} → ${period.end}",
+            text = "${fmtIso(period.start)} → ${fmtIso(period.end)}",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
 
+private fun parseIso(value: String): Instant? = runCatching { Instant.parse(value) }.getOrNull()
+
+private val DASHA_DATE_FORMAT = DateTimeFormatter.ofPattern("d MMM yyyy").withZone(ZoneId.systemDefault())
+
+private fun fmtIso(value: String): String = parseIso(value)?.let { DASHA_DATE_FORMAT.format(it) } ?: value
+
+private fun yearsBetween(start: String, end: String): Long? {
+    val s = parseIso(start) ?: return null
+    val e = parseIso(end) ?: return null
+    return Math.round(ChronoUnit.DAYS.between(s, e) / 365.25)
+}
+
+/** Mahadasha card, colored by where "now" falls: the current one (Guru amber), a past
+ * one (neutral), or an upcoming one (Shani indigo) — mirrors the amber/grey/blue
+ * treatment on the website's timeline instead of a flat, undifferentiated list. */
 @Composable
 private fun MahadashaCard(md: MahadashaPeriod) {
-    Card(modifier = Modifier.fillMaxWidth()) {
+    val now = Instant.now()
+    val start = parseIso(md.start)
+    val end = parseIso(md.end)
+    val isCurrent = start != null && end != null && !now.isBefore(start) && !now.isAfter(end)
+    val isPast = end != null && now.isAfter(end)
+    val graha = LocalGrahaColors.current
+
+    val accent = when {
+        isCurrent -> graha.guru
+        isPast -> MaterialTheme.colorScheme.onSurfaceVariant
+        else -> graha.shani
+    }
+    val containerColor = when {
+        isCurrent -> graha.guru.copy(alpha = 0.12f)
+        isPast -> MaterialTheme.colorScheme.surfaceVariant
+        else -> graha.shani.copy(alpha = 0.1f)
+    }
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = containerColor)
+    ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("${md.lord} Mahadasha", style = MaterialTheme.typography.titleMedium)
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "${md.lord} Mahadasha",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = if (isPast) MaterialTheme.colorScheme.onSurface else accent
+                )
+                if (isCurrent) Chip("Current", accent)
+                if (md.partial) Chip("Partial", MaterialTheme.colorScheme.onSurfaceVariant)
+            }
             Text(
-                text = "${md.start} → ${md.end}",
+                text = buildString {
+                    append(fmtIso(md.start)); append(" → "); append(fmtIso(md.end))
+                    yearsBetween(md.start, md.end)?.let { append(" · $it yrs") }
+                },
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             if (md.bhuktis.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(8.dp))
-                md.bhuktis.forEach { bhukti ->
+                Spacer(modifier = Modifier.height(10.dp))
+                md.bhuktis.forEach { bhukti -> BhuktiRow(bhukti, isMahadashaCurrent = isCurrent, accent = accent) }
+            }
+        }
+    }
+}
+
+@Composable
+private fun BhuktiRow(bhukti: BhuktiPeriod, isMahadashaCurrent: Boolean, accent: Color) {
+    val now = Instant.now()
+    val start = parseIso(bhukti.start)
+    val end = parseIso(bhukti.end)
+    val isCurrent = isMahadashaCurrent && start != null && end != null && !now.isBefore(start) && !now.isAfter(end)
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .background(if (isCurrent) accent.copy(alpha = 0.14f) else Color.Transparent)
+            .padding(vertical = 6.dp, horizontal = if (isCurrent) 8.dp else 0.dp)
+    ) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(
+                text = if (isCurrent) "${bhukti.lord} Antardasha  ●" else "${bhukti.lord} Antardasha",
+                style = MaterialTheme.typography.bodyMedium,
+                color = if (isCurrent) accent else MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = "${fmtIso(bhukti.start)} → ${fmtIso(bhukti.end)}",
+                style = MaterialTheme.typography.bodySmall,
+                color = if (isCurrent) accent else MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        if (bhukti.pratyantars.isNotEmpty()) {
+            Column(modifier = Modifier.padding(start = 12.dp, top = 4.dp)) {
+                bhukti.pratyantars.forEach { pr ->
+                    val prStart = parseIso(pr.start)
+                    val prEnd = parseIso(pr.end)
+                    val prCurrent = isCurrent && prStart != null && prEnd != null &&
+                        !now.isBefore(prStart) && !now.isAfter(prEnd)
                     Text(
-                        text = "  ${bhukti.lord}: ${bhukti.start} → ${bhukti.end}",
-                        style = MaterialTheme.typography.bodySmall
+                        text = buildString {
+                            append(pr.lord); append(": "); append(fmtIso(pr.start)); append(" → "); append(fmtIso(pr.end))
+                            if (prCurrent) append("  ●")
+                        },
+                        style = MaterialTheme.typography.bodySmall,
+                        color = if (prCurrent) accent else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }

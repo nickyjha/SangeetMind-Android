@@ -290,6 +290,52 @@ data class ChartJaimini(
     val swamsa: JaiminiSubChart = JaiminiSubChart()
 )
 
+/** Lal Kitab — the backend's own scope note: whole-sign D1 houses from birth lagna, not
+ * full classical Lal Kitab (blind houses, divisional-chart rules). Placements + karmic
+ * debt (rin) yoga flags + short remedies (app/services/lal_kitab.py). Note the backend
+ * mixes snake_case and camelCase across this one response — modeled as-is. */
+@JsonClass(generateAdapter = true)
+data class LalKitabPlacement(
+    val planet: String,
+    val sign: String = "",
+    val house: Int,
+    @Json(name = "house_theme") val houseTheme: String = "",
+    val retrograde: Boolean = false
+)
+
+@JsonClass(generateAdapter = true)
+data class LalKitabRinYoga(
+    val planet: String,
+    val house: String = "",
+    val rinType: String = "",
+    val note: String = ""
+)
+
+@JsonClass(generateAdapter = true)
+data class LalKitabRemedy(
+    val planet: String,
+    val remedy: String = ""
+)
+
+@JsonClass(generateAdapter = true)
+data class LalKitabPrediction(
+    val planet: String,
+    val house: String = "",
+    val text: String = ""
+)
+
+@JsonClass(generateAdapter = true)
+data class ChartLalKitab(
+    val scope: String = "",
+    val rinYogas: List<LalKitabRinYoga> = emptyList(),
+    val remedies: List<LalKitabRemedy> = emptyList(),
+    @Json(name = "system_note") val systemNote: String = "",
+    @Json(name = "lagna_sign") val lagnaSign: String = "",
+    val placements: List<LalKitabPlacement> = emptyList(),
+    val predictions: List<LalKitabPrediction> = emptyList(),
+    @Json(name = "epic_status") val epicStatus: String = ""
+)
+
 /** Yogini Dasha — 8-yogini, 36-year cycle from Moon nakshatra (app/services/dasha_yogini.py). */
 @JsonClass(generateAdapter = true)
 data class YoginiAntardasha(
@@ -357,6 +403,7 @@ data class ChartSummaryResponse(
     val bhavabala: ChartBhavabala = ChartBhavabala(),
     val kp: ChartKp = ChartKp(),
     val jaimini: ChartJaimini = ChartJaimini(),
+    @Json(name = "lal_kitab") val lalKitab: ChartLalKitab = ChartLalKitab(),
     val yogini: YoginiInfo = YoginiInfo(),
     @Json(name = "chara_dasha") val charaDasha: CharaDashaInfo = CharaDashaInfo(),
     val d2: DivisionalChart? = null,

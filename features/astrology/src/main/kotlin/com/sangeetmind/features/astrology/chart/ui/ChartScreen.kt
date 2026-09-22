@@ -61,6 +61,7 @@ import com.sangeetmind.libs.models.ChartDoshas
 import com.sangeetmind.libs.models.ChartFriendship
 import com.sangeetmind.libs.models.ChartJaimini
 import com.sangeetmind.libs.models.ChartKp
+import com.sangeetmind.libs.models.ChartLalKitab
 import com.sangeetmind.libs.models.ChartShadbala
 import com.sangeetmind.libs.models.ChartSummaryResponse
 import com.sangeetmind.libs.models.ShadbalaRanking
@@ -244,6 +245,9 @@ private fun ChartContent(
             }
             item {
                 JaiminiCard(chart.jaimini)
+            }
+            item {
+                LalKitabCard(chart.lalKitab)
             }
             item {
                 DashaSystemSelector(dashaSystem, onSelect = { dashaSystem = it })
@@ -885,6 +889,85 @@ private fun JaiminiCard(jaimini: ChartJaimini) {
                         grahaColorFor(karaka.planet, graha)
                     )
                 }
+            }
+        }
+    }
+}
+
+/** Lal Kitab — the backend flags this as its own scoped preview (`system_note`, shown
+ * verbatim rather than presented as full classical Lal Kitab): karmic-debt (rin) yoga
+ * flags and short remedies from the whole-sign D1 placements
+ * (app/services/lal_kitab.py). */
+@Composable
+private fun LalKitabCard(lalKitab: ChartLalKitab) {
+    if (lalKitab.placements.isEmpty()) return
+    val graha = LocalGrahaColors.current
+
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text("Lal Kitab", style = MaterialTheme.typography.titleMedium)
+            if (lalKitab.systemNote.isNotBlank()) {
+                Text(
+                    lalKitab.systemNote,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            if (lalKitab.rinYogas.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Text("Karmic debts (Rin)", style = MaterialTheme.typography.titleSmall)
+                lalKitab.rinYogas.forEach { yoga ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Chip(yoga.planet, grahaColorFor(yoga.planet, graha))
+                        Text(
+                            "${yoga.rinType} · H${yoga.house}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+            if (lalKitab.remedies.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Text("Remedies", style = MaterialTheme.typography.titleSmall)
+                lalKitab.remedies.forEach { remedy ->
+                    Row(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
+                        Text(
+                            remedy.planet,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = grahaColorFor(remedy.planet, graha),
+                            modifier = Modifier.width(72.dp)
+                        )
+                        Text(remedy.remedy, style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
+            }
+            if (lalKitab.predictions.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Text("Placement notes", style = MaterialTheme.typography.titleSmall)
+                lalKitab.predictions.forEach { prediction ->
+                    Row(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
+                        Text(
+                            "${prediction.planet} H${prediction.house}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = grahaColorFor(prediction.planet, graha),
+                            modifier = Modifier.width(96.dp)
+                        )
+                        Text(prediction.text, style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
+            }
+            if (lalKitab.rinYogas.isEmpty() && lalKitab.remedies.isEmpty() && lalKitab.predictions.isEmpty()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    "No debt yogas or remedies flagged for this chart.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }

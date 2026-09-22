@@ -47,6 +47,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.features.astrology.chart.ChartViewModel
 import com.sangeetmind.libs.models.BhuktiPeriod
+import com.sangeetmind.libs.models.ChartDoshas
 import com.sangeetmind.libs.models.ChartSummaryResponse
 import com.sangeetmind.libs.models.DIVISIONAL_CHART_META
 import com.sangeetmind.libs.models.DashaPeriod
@@ -54,9 +55,11 @@ import com.sangeetmind.libs.models.DivisionalChart
 import com.sangeetmind.libs.models.LagnaInfo
 import com.sangeetmind.libs.models.MahadashaPeriod
 import com.sangeetmind.libs.models.PlanetInfo
+import com.sangeetmind.libs.models.SadesatiPeriod
 import com.sangeetmind.libs.models.displayName
 import com.sangeetmind.libs.models.toTitleCase
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -202,6 +205,9 @@ private fun ChartContent(
             PlanetListCard(selected.second.lagna, selected.second.planets)
         }
         if (selected.first == "D1") {
+            item {
+                DoshaCard(chart.doshas)
+            }
             item {
                 CurrentDashaCard(chart)
             }
@@ -363,6 +369,100 @@ private fun PlanetListCard(lagna: LagnaInfo, planets: Map<String, PlanetInfo>) {
         }
     }
 }
+
+/** Manglik/Kalsarpa/Sade Sati — already computed by the backend on every /v1/chart
+ * response, just never surfaced on Android before. Reuses the same [Chip] pill used for
+ * planet dignity flags, and the same graha semantic colors (Mangala/vermilion = flagged,
+ * Budha/jade = clear) already used there for Combust/Exalted. */
+@Composable
+private fun DoshaCard(doshas: ChartDoshas) {
+    val graha = LocalGrahaColors.current
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text("Doshas", style = MaterialTheme.typography.titleMedium)
+
+            val manglik = doshas.manglik
+            DoshaRow(
+                label = "Manglik",
+                isFlagged = manglik.effectivePresent,
+                statusText = when {
+                    manglik.effectivePresent -> "Present"
+                    manglik.cancelled -> "Cancelled"
+                    else -> "Not present"
+                },
+                detail = manglik.summary.ifBlank { null },
+                flaggedColor = graha.mangala,
+                clearColor = graha.budha
+            )
+
+            val kalsarpa = doshas.kalsarpa
+            DoshaRow(
+                label = "Kalsarpa",
+                isFlagged = kalsarpa.present,
+                statusText = if (kalsarpa.present) "Present" else "Not present",
+                detail = if (kalsarpa.present) {
+                    kalsarpa.yogaFullName
+                } else {
+                    "No Kalsarpa Yoga in this chart."
+                },
+                flaggedColor = graha.mangala,
+                clearColor = graha.budha
+            )
+
+            val sadesati = doshas.sadesati
+            val active = sadesati.activeOnToday
+            val next = if (active == null) {
+                sadesati.periods.firstOrNull { it.startDate > todayIsoDate() }
+            } else null
+            DoshaRow(
+                label = "Sade Sati",
+                isFlagged = active != null,
+                statusText = if (active != null) "Active" else "Not active",
+                detail = when {
+                    active != null -> "${active.phase ?: active.kind} · until ${fmtLocalDate(active.endDate)}"
+                    next != null -> "Next: ${next.kind} starts ${fmtLocalDate(next.startDate)}"
+                    else -> "No upcoming Sade Sati or Small Panoti period found."
+                },
+                flaggedColor = graha.mangala,
+                clearColor = graha.budha
+            )
+        }
+    }
+}
+
+@Composable
+private fun DoshaRow(
+    label: String,
+    isFlagged: Boolean,
+    statusText: String,
+    detail: String?,
+    flaggedColor: Color,
+    clearColor: Color
+) {
+    Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(label, style = MaterialTheme.typography.bodyMedium)
+            Chip(statusText, if (isFlagged) flaggedColor else clearColor)
+        }
+        if (!detail.isNullOrBlank()) {
+            Text(
+                text = detail,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+    }
+}
+
+private fun todayIsoDate(): String = LocalDate.now().toString()
+
+private fun fmtLocalDate(value: String): String =
+    runCatching { DASHA_DATE_FORMAT.format(LocalDate.parse(value)) }.getOrDefault(value)
 
 @Composable
 private fun CurrentDashaCard(chart: ChartSummaryResponse) {

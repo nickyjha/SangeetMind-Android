@@ -100,11 +100,49 @@ data class DivisionalChart(
 )
 
 @JsonClass(generateAdapter = true)
+data class ManglikDosha(
+    val present: Boolean = false,
+    @Json(name = "effective_present") val effectivePresent: Boolean = false,
+    val cancelled: Boolean = false,
+    val summary: String = ""
+)
+
+@JsonClass(generateAdapter = true)
+data class KalsarpaDosha(
+    val present: Boolean = false,
+    val yoga: String? = null,
+    @Json(name = "yoga_full_name") val yogaFullName: String? = null
+)
+
+@JsonClass(generateAdapter = true)
+data class SadesatiPeriod(
+    val kind: String = "",
+    val phase: String? = null,
+    @Json(name = "saturn_sign") val saturnSign: String = "",
+    @Json(name = "start_date") val startDate: String = "",
+    @Json(name = "end_date") val endDate: String = ""
+)
+
+@JsonClass(generateAdapter = true)
+data class SadesatiDosha(
+    @Json(name = "active_on_today") val activeOnToday: SadesatiPeriod? = null,
+    val periods: List<SadesatiPeriod> = emptyList()
+)
+
+@JsonClass(generateAdapter = true)
+data class ChartDoshas(
+    val manglik: ManglikDosha = ManglikDosha(),
+    val kalsarpa: KalsarpaDosha = KalsarpaDosha(),
+    val sadesati: SadesatiDosha = SadesatiDosha()
+)
+
+@JsonClass(generateAdapter = true)
 data class ChartSummaryResponse(
     val lagna: LagnaInfo,
     val planets: Map<String, PlanetInfo> = emptyMap(),
     @Json(name = "moon_nakshatra") val moonNakshatra: MoonNakshatraInfo = MoonNakshatraInfo(),
     val vimshottari: VimshottariInfo = VimshottariInfo(),
+    val doshas: ChartDoshas = ChartDoshas(),
     val d2: DivisionalChart? = null,
     val d3: DivisionalChart? = null,
     val d4: DivisionalChart? = null,

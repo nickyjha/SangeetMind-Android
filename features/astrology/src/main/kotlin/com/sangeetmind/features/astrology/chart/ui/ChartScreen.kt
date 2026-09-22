@@ -467,7 +467,7 @@ private fun dignityChips(planet: PlanetInfo): List<Pair<String, Color>> {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun PlanetListCard(lagna: LagnaInfo, planets: Map<String, PlanetInfo>) {
+internal fun PlanetListCard(lagna: LagnaInfo, planets: Map<String, PlanetInfo>) {
     val order = listOf(
         "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu"
     )

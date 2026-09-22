@@ -569,6 +569,57 @@ val DIVISIONAL_CHART_META: Map<String, Pair<String, String>> = mapOf(
     "D60" to ("D60 Sashtiamsa" to "Past karma")
 )
 
+// ---- POST /v1/varshaphal (Tajika annual/solar-return chart) ----
+
+@JsonClass(generateAdapter = true)
+data class VarshaphalRequest(
+    val date: String,
+    val time: String,
+    val timezone: String? = null,
+    val place: String = "",
+    val lat: Double,
+    val lon: Double,
+    val year: Int? = null
+)
+
+/** Muntha: whole-sign house of (natal lagna + completed years) from the Varshaphal
+ * lagna — the year's "seat," a core Tajika concept with no D1 equivalent
+ * (app/services/tajika_varshaphal.py). */
+@JsonClass(generateAdapter = true)
+data class VarshaphalMuntha(
+    val sign: String = "",
+    @Json(name = "house_from_varshaphal_lagna") val houseFromVarshaphalLagna: Int? = null,
+    val label: String = ""
+)
+
+@JsonClass(generateAdapter = true)
+data class VarshaphalLagnaMeta(
+    val sign: String = "",
+    val lord: String? = null
+)
+
+@JsonClass(generateAdapter = true)
+data class VarshaphalTajika(
+    @Json(name = "age_completed") val ageCompleted: Int = 0,
+    val muntha: VarshaphalMuntha = VarshaphalMuntha(),
+    @Json(name = "varshaphal_lagna") val varshaphalLagna: VarshaphalLagnaMeta = VarshaphalLagnaMeta(),
+    @Json(name = "varshaphal_moon") val varshaphalMoon: VarshaphalLagnaMeta = VarshaphalLagnaMeta(),
+    @Json(name = "year_lord") val yearLord: String? = null
+)
+
+/** `chart` is the same shape POST /v1/chart returns (just computed for the solar-return
+ * instant instead of birth), so it reuses [ChartSummaryResponse] rather than a parallel
+ * model (app/services/varshaphal.py: compute_varshaphal calls the same compute_chart). */
+@JsonClass(generateAdapter = true)
+data class VarshaphalResponse(
+    val year: Int,
+    @Json(name = "solar_return_utc") val solarReturnUtc: String = "",
+    @Json(name = "solar_return_local") val solarReturnLocal: String = "",
+    @Json(name = "solar_return_sun_error_deg") val solarReturnSunErrorDeg: Double = 0.0,
+    val tajika: VarshaphalTajika = VarshaphalTajika(),
+    val chart: ChartSummaryResponse
+)
+
 // ---- POST /rules-engine/analyze-chart ----
 
 @JsonClass(generateAdapter = true)

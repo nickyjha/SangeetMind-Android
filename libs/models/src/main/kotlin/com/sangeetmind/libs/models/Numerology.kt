@@ -78,3 +78,108 @@ data class NumerologyResponse(
     val interpretations: Map<String, NumberInterpretation> = emptyMap(),
     @Json(name = "sangeetmind_personalization") val sangeetmindPersonalization: SangeetMindPersonalization
 )
+
+// ---- Chaldean (app/numerology/models.py's CHALDEAN SYSTEM MODELS section) ----
+
+@JsonClass(generateAdapter = true)
+data class CompoundNumberMeaning(
+    val number: Int,
+    val name: String = "",
+    val nature: String = "",
+    val meaning: String = ""
+)
+
+@JsonClass(generateAdapter = true)
+data class ChaldeanNumberDetail(
+    val number: Int,
+    @Json(name = "compound_number") val compoundNumber: Int? = null,
+    @Json(name = "compound_meaning") val compoundMeaning: CompoundNumberMeaning? = null
+)
+
+@JsonClass(generateAdapter = true)
+data class ChaldeanNumbers(
+    @Json(name = "name_number") val nameNumber: ChaldeanNumberDetail,
+    @Json(name = "birth_number") val birthNumber: ChaldeanNumberDetail,
+    @Json(name = "destiny_number") val destinyNumber: ChaldeanNumberDetail,
+    @Json(name = "soul_number") val soulNumber: ChaldeanNumberDetail,
+    @Json(name = "personality_number") val personalityNumber: ChaldeanNumberDetail
+)
+
+/** Response of POST /numerology/calculate/chaldean (app/numerology/models.py::ChaldeanResponse). */
+@JsonClass(generateAdapter = true)
+data class ChaldeanResponse(
+    @Json(name = "name_used") val nameUsed: String = "",
+    @Json(name = "is_current_name") val isCurrentName: Boolean = false,
+    val numbers: ChaldeanNumbers,
+    @Json(name = "sangeetmind_personalization") val sangeetmindPersonalization: SangeetMindPersonalization? = null
+)
+
+// ---- Vedic (app/numerology/models.py's VEDIC SYSTEM MODELS section) ----
+
+@JsonClass(generateAdapter = true)
+data class KarmicDebtDetail(
+    val code: Int,
+    val meaning: String = "",
+    val name: String = "",
+    val remedy: String = "",
+    val mantra: String = ""
+)
+
+@JsonClass(generateAdapter = true)
+data class LoShuPlane(
+    val numbers: List<Int> = emptyList(),
+    val present: Int = 0,
+    val meaning: String = "",
+    val strong: Boolean = false
+)
+
+@JsonClass(generateAdapter = true)
+data class LoShuGrid(
+    @Json(name = "grid_display") val gridDisplay: List<List<String>> = emptyList(),
+    @Json(name = "missing_numbers") val missingNumbers: List<Int> = emptyList(),
+    @Json(name = "repeated_numbers") val repeatedNumbers: List<Int> = emptyList(),
+    @Json(name = "interpretation_summary") val interpretationSummary: String = "",
+    val planes: Map<String, LoShuPlane> = emptyMap()
+)
+
+@JsonClass(generateAdapter = true)
+data class MoolankBhagyankCompatibility(
+    val moolank: Int = 0,
+    val bhagyank: Int = 0,
+    val relationship: String = "",
+    val description: String = "",
+    @Json(name = "compatibility_score") val compatibilityScore: Int = 0,
+    @Json(name = "moolank_planet") val moolankPlanet: String? = null,
+    @Json(name = "bhagyank_planet") val bhagyankPlanet: String? = null
+)
+
+@JsonClass(generateAdapter = true)
+data class VedicNumberDetail(
+    val number: Int,
+    val name: String = "",
+    @Json(name = "ruling_planet") val rulingPlanet: String? = null,
+    @Json(name = "sanskrit_name") val sanskritName: String? = null,
+    val deity: String? = null,
+    val description: String = ""
+)
+
+@JsonClass(generateAdapter = true)
+data class VedicNumbers(
+    val moolank: VedicNumberDetail,
+    val bhagyank: VedicNumberDetail,
+    val namank: VedicNumberDetail,
+    @Json(name = "soul_number") val soulNumber: VedicNumberDetail,
+    @Json(name = "personality_number") val personalityNumber: VedicNumberDetail,
+    @Json(name = "kua_number") val kuaNumber: VedicNumberDetail
+)
+
+/** Response of POST /numerology/calculate/vedic (app/numerology/models.py::VedicResponse). */
+@JsonClass(generateAdapter = true)
+data class VedicResponse(
+    val numbers: VedicNumbers,
+    @Json(name = "lo_shu_grid") val loShuGrid: LoShuGrid,
+    @Json(name = "karmic_debts") val karmicDebts: List<Int> = emptyList(),
+    @Json(name = "karmic_debt_details") val karmicDebtDetails: List<KarmicDebtDetail> = emptyList(),
+    @Json(name = "moolank_bhagyank_compatibility") val moolankBhagyankCompatibility: MoolankBhagyankCompatibility,
+    @Json(name = "sangeetmind_personalization") val sangeetmindPersonalization: SangeetMindPersonalization? = null
+)

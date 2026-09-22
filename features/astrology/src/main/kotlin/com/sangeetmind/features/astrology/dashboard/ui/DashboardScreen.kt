@@ -2,9 +2,8 @@ package com.sangeetmind.features.astrology.dashboard.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -119,66 +118,72 @@ fun DashboardScreen(
             )
         }
     ) { padding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
                 .padding(16.dp)
         ) {
-            when {
-                uiState.isLoading -> {
-                    Box(modifier = Modifier.fillMaxWidth().height(160.dp), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
+            item {
+                when {
+                    uiState.isLoading -> {
+                        Box(modifier = Modifier.fillMaxWidth().height(160.dp), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator()
+                        }
                     }
-                }
-                uiState.profile != null && uiState.primaryKundli != null -> {
-                    ProfileSummaryCard(
-                        name = uiState.primaryKundli!!.fullName?.toTitleCase(),
-                        moonSign = uiState.profile!!.moonSign,
-                        lagna = uiState.profile!!.lagna,
-                        nakshatra = uiState.profile!!.nakshatra,
-                        currentMahadasha = uiState.profile!!.currentMahadasha,
-                        astroMood = uiState.profile!!.astroMood
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    TodayCard(
-                        horoscope = uiState.todayHoroscope,
-                        panchang = uiState.todayPanchang,
-                        onOpenHoroscope = onOpenHoroscope
-                    )
-                }
-                uiState.hasNoKundlis -> {
-                    Card(modifier = Modifier.fillMaxWidth()) {
-                        Column(modifier = Modifier.padding(20.dp)) {
-                            Text("Create your kundli", style = MaterialTheme.typography.titleLarge)
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = "Add your birth details to unlock your horoscope, panchang, and full reading.",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                    uiState.profile != null && uiState.primaryKundli != null -> {
+                        Column {
+                            ProfileSummaryCard(
+                                name = uiState.primaryKundli!!.fullName?.toTitleCase(),
+                                moonSign = uiState.profile!!.moonSign,
+                                lagna = uiState.profile!!.lagna,
+                                nakshatra = uiState.profile!!.nakshatra,
+                                currentMahadasha = uiState.profile!!.currentMahadasha,
+                                astroMood = uiState.profile!!.astroMood
                             )
                             Spacer(modifier = Modifier.height(16.dp))
-                            Button(onClick = onOpenKundliOnboarding) {
-                                Text("Get started")
+                            TodayCard(
+                                horoscope = uiState.todayHoroscope,
+                                panchang = uiState.todayPanchang,
+                                onOpenHoroscope = onOpenHoroscope
+                            )
+                        }
+                    }
+                    uiState.hasNoKundlis -> {
+                        Card(modifier = Modifier.fillMaxWidth()) {
+                            Column(modifier = Modifier.padding(20.dp)) {
+                                Text("Create your kundli", style = MaterialTheme.typography.titleLarge)
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "Add your birth details to unlock your horoscope, panchang, and full reading.",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Button(onClick = onOpenKundliOnboarding) {
+                                    Text("Get started")
+                                }
                             }
                         }
                     }
-                }
-                uiState.error != null -> {
-                    Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)) {
-                        Text(
-                            text = uiState.error!!,
-                            modifier = Modifier.padding(16.dp),
-                            color = MaterialTheme.colorScheme.onErrorContainer
-                        )
+                    uiState.error != null -> {
+                        Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)) {
+                            Text(
+                                text = uiState.error!!,
+                                modifier = Modifier.padding(16.dp),
+                                color = MaterialTheme.colorScheme.onErrorContainer
+                            )
+                        }
                     }
                 }
             }
 
             if (!uiState.hasNoKundlis) {
-                Spacer(modifier = Modifier.height(24.dp))
-                Text("Explore", style = MaterialTheme.typography.titleMedium)
-                Spacer(modifier = Modifier.height(12.dp))
+                item {
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Text("Explore", style = MaterialTheme.typography.titleMedium)
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
 
                 val destinations = listOf(
                     DashboardDestination("Birth Chart", Icons.Default.DonutLarge, Graha.SHANI, featured = true, onClick = onOpenChart),
@@ -197,14 +202,21 @@ fun DashboardScreen(
                     DashboardDestination("Sangeet", Icons.Default.MusicNote, onClick = onOpenSangeet)
                 )
 
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(destinations) { destination ->
-                        DestinationCard(destination)
+                items(destinations.chunked(2)) { row ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        row.forEach { destination ->
+                            Box(modifier = Modifier.weight(1f)) {
+                                DestinationCard(destination)
+                            }
+                        }
+                        if (row.size == 1) {
+                            Spacer(modifier = Modifier.weight(1f))
+                        }
                     }
+                    Spacer(modifier = Modifier.height(12.dp))
                 }
             }
         }

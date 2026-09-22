@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,6 +25,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -47,7 +50,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.features.astrology.chart.ChartViewModel
 import com.sangeetmind.libs.models.BhuktiPeriod
+import com.sangeetmind.libs.models.ChartAshtakvarga
 import com.sangeetmind.libs.models.ChartDoshas
+import com.sangeetmind.libs.models.ChartFriendship
 import com.sangeetmind.libs.models.ChartSummaryResponse
 import com.sangeetmind.libs.models.DIVISIONAL_CHART_META
 import com.sangeetmind.libs.models.DashaPeriod
@@ -207,6 +212,12 @@ private fun ChartContent(
         if (selected.first == "D1") {
             item {
                 DoshaCard(chart.doshas)
+            }
+            item {
+                AshtakvargaCard(chart.ashtakvarga)
+            }
+            item {
+                FriendshipCard(chart.friendship)
             }
             item {
                 CurrentDashaCard(chart)
@@ -463,6 +474,124 @@ private fun todayIsoDate(): String = LocalDate.now().toString()
 
 private fun fmtLocalDate(value: String): String =
     runCatching { DASHA_DATE_FORMAT.format(LocalDate.parse(value)) }.getOrDefault(value)
+
+private val ZODIAC_ORDER = listOf(
+    "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
+    "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"
+)
+
+/** Sarva Ashtakvarga — per-sign bindu strength, as a set of bars scaled to this chart's
+ * own max (not a fixed theoretical max), so the strongest/weakest signs stand out
+ * regardless of scale. >=30 reads as strong, <=24 as weak — a simplified 3-tier read,
+ * not a strict classical grading. */
+@Composable
+private fun AshtakvargaCard(ashtakvarga: ChartAshtakvarga) {
+    val sav = ashtakvarga.sav
+    if (sav.bindusBySign.isEmpty()) return
+    val graha = LocalGrahaColors.current
+    val maxBindu = (sav.bindusBySign.values.maxOrNull() ?: 1).coerceAtLeast(1)
+
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text("Ashtakvarga", style = MaterialTheme.typography.titleMedium)
+            Text(
+                "Sarva bindu strength by sign · total ${sav.totalBindus}",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            ZODIAC_ORDER.forEach { sign ->
+                val bindus = sav.bindusBySign[sign] ?: return@forEach
+                val barColor = when {
+                    bindus >= 30 -> graha.budha
+                    bindus <= 24 -> graha.mangala
+                    else -> MaterialTheme.colorScheme.onSurfaceVariant
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        sign,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.width(88.dp)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(8.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .fillMaxWidth(fraction = (bindus.toFloat() / maxBindu).coerceIn(0.05f, 1f))
+                                .clip(RoundedCornerShape(4.dp))
+                                .background(barColor)
+                        )
+                    }
+                    Text(
+                        "$bindus",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.width(28.dp).padding(start = 8.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+/** Panchadha (five-fold) planetary friendship — pick a graha, see how the other six treat
+ * it. Intimate/Friend read as favorable (Budha/jade), Enemy/Bitter Enemy as unfavorable
+ * (Mangala/vermilion) — the same pass/fail color language used for doshas and dignity. */
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
+@Composable
+private fun FriendshipCard(friendship: ChartFriendship) {
+    if (friendship.relations.isEmpty() || friendship.planets.isEmpty()) return
+    var selected by remember(friendship) { mutableStateOf(friendship.planets.first()) }
+    val row = friendship.relations[selected].orEmpty()
+    val graha = LocalGrahaColors.current
+
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text("Planetary Friendship", style = MaterialTheme.typography.titleMedium)
+            Text(
+                "How the other grahas treat $selected",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                friendship.planets.forEach { planet ->
+                    FilterChip(
+                        selected = planet == selected,
+                        onClick = { selected = planet },
+                        label = { Text(planet) }
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            row.forEach { (other, relation) ->
+                if (other == selected) return@forEach
+                val color = when (relation) {
+                    "Intimate", "Friend" -> graha.budha
+                    "Enemy", "Bitter Enemy" -> graha.mangala
+                    else -> MaterialTheme.colorScheme.onSurfaceVariant
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(other, style = MaterialTheme.typography.bodyMedium)
+                    Chip(relation, color)
+                }
+            }
+        }
+    }
+}
 
 @Composable
 private fun CurrentDashaCard(chart: ChartSummaryResponse) {

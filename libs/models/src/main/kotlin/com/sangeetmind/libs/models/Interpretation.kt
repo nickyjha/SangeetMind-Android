@@ -136,6 +136,26 @@ data class ChartDoshas(
     val sadesati: SadesatiDosha = SadesatiDosha()
 )
 
+/** Sarva Ashtakvarga — bindu (strength) score per sign, summing to 337 across the chart. */
+@JsonClass(generateAdapter = true)
+data class AshtakvargaSav(
+    @Json(name = "bindus_by_sign") val bindusBySign: Map<String, Int> = emptyMap(),
+    @Json(name = "total_bindus") val totalBindus: Int = 0
+)
+
+@JsonClass(generateAdapter = true)
+data class ChartAshtakvarga(
+    val sav: AshtakvargaSav = AshtakvargaSav()
+)
+
+/** Panchadha (five-fold) planetary friendship — the combined permanent+temporal result
+ * the backend already returns as its top-level `relations`/`planets`. */
+@JsonClass(generateAdapter = true)
+data class ChartFriendship(
+    val planets: List<String> = emptyList(),
+    val relations: Map<String, Map<String, String>> = emptyMap()
+)
+
 @JsonClass(generateAdapter = true)
 data class ChartSummaryResponse(
     val lagna: LagnaInfo,
@@ -143,6 +163,8 @@ data class ChartSummaryResponse(
     @Json(name = "moon_nakshatra") val moonNakshatra: MoonNakshatraInfo = MoonNakshatraInfo(),
     val vimshottari: VimshottariInfo = VimshottariInfo(),
     val doshas: ChartDoshas = ChartDoshas(),
+    val ashtakvarga: ChartAshtakvarga = ChartAshtakvarga(),
+    val friendship: ChartFriendship = ChartFriendship(),
     val d2: DivisionalChart? = null,
     val d3: DivisionalChart? = null,
     val d4: DivisionalChart? = null,

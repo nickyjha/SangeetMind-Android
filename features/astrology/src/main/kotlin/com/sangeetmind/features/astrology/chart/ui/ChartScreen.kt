@@ -57,8 +57,10 @@ import com.sangeetmind.libs.models.CharaDashaInfo
 import com.sangeetmind.libs.models.CharaMahadasha
 import com.sangeetmind.libs.models.ChartAshtakvarga
 import com.sangeetmind.libs.models.ChartBhavabala
+import com.sangeetmind.libs.models.ChartChalit
 import com.sangeetmind.libs.models.ChartDoshas
 import com.sangeetmind.libs.models.ChartFriendship
+import com.sangeetmind.libs.models.ChartHouses
 import com.sangeetmind.libs.models.ChartJaimini
 import com.sangeetmind.libs.models.ChartKp
 import com.sangeetmind.libs.models.ChartLalKitab
@@ -279,6 +281,32 @@ private fun ChartContent(
                         LalKitabCard(chart.lalKitab)
                     }
                 }
+                ChartSection.HOUSES -> {
+                    val chalitPlanets = chart.chalit.toPlanetInfoMap()
+                    if (chalitPlanets.isNotEmpty()) {
+                        item {
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                            ) {
+                                NorthIndianHouseChart(
+                                    lagna = chart.chalit.lagna,
+                                    planets = chalitPlanets,
+                                    title = "Chalit Chart",
+                                    subtitle = "Bhava chart · Placidus house cusps",
+                                    modifier = Modifier.padding(16.dp)
+                                )
+                            }
+                        }
+                        item {
+                            PlanetListCard(chart.chalit.lagna, chalitPlanets)
+                        }
+                    }
+                    item {
+                        HouseCuspsCard(chart.houses)
+                    }
+                }
             }
         }
         if (selected.first == "D1" && chartSection == ChartSection.DASHA && showFullTimeline) {
@@ -321,7 +349,8 @@ private fun chartTabLabel(key: String): String =
  * deepest competitor per the roadmap research) organizes this same feature set as
  * tabs/icons the user taps into rather than an infinite scroll — this mirrors that. */
 private enum class ChartSection(val label: String) {
-    OVERVIEW("Overview"), STRENGTH("Strength"), DASHA("Dasha"), KP_JAIMINI("KP · Jaimini"), LAL_KITAB("Lal Kitab")
+    OVERVIEW("Overview"), STRENGTH("Strength"), DASHA("Dasha"), KP_JAIMINI("KP · Jaimini"),
+    LAL_KITAB("Lal Kitab"), HOUSES("Houses")
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -1081,6 +1110,50 @@ private fun NarrativesCard(narratives: ChartNarratives) {
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+            }
+        }
+    }
+}
+
+/** Reuses [NorthIndianHouseChart]/[PlanetListCard] — built for D1..D60 [PlanetInfo]
+ * maps — for the Chalit chart too, rather than a parallel chart-drawing implementation.
+ * Chalit doesn't compute dignity flags (retrograde/combust/exalted/debilitated/
+ * vargottama), so those default false here — correctly, since they weren't actually
+ * evaluated for this house system, not a bug. */
+private fun ChartChalit.toPlanetInfoMap(): Map<String, PlanetInfo> =
+    planets.mapValues { (_, p) ->
+        PlanetInfo(sign = p.sign, degree = p.degree, absolute = "", absoluteDms = p.absoluteDms, house = p.house)
+    }
+
+/** The 12 Placidus house cusps behind `houses.planet_houses` — same computation KP's
+ * Cusps view uses, minus sub-lords, at the chart's default (Lahiri) ayanamsa rather than
+ * KP's Krishnamurti one (app/services/houses.py: build_houses_block). */
+@Composable
+private fun HouseCuspsCard(houses: ChartHouses) {
+    if (houses.cusps.isEmpty()) return
+
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text("House Cusps", style = MaterialTheme.typography.titleMedium)
+            Text(
+                "Placidus cusps · active house system: ${houses.system}",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            houses.cusps.sortedBy { it.house }.forEach { cusp ->
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("H${cusp.house}", style = MaterialTheme.typography.bodyMedium)
+                    Text(
+                        "${cusp.sign} ${cusp.absoluteDms ?: "${cusp.degree.toInt()}°"}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         }
     }

@@ -373,6 +373,47 @@ data class ChartNarratives(
     val disclaimer: String = ""
 )
 
+/** Placidus house cusps for the active `system` (whole_sign or placidus)
+ * (app/services/houses.py: build_houses_block). */
+@JsonClass(generateAdapter = true)
+data class HouseCusp(
+    val house: Int,
+    val longitude: Double = 0.0,
+    val sign: String = "",
+    val degree: Double = 0.0,
+    @Json(name = "absolute_dms") val absoluteDms: String? = null
+)
+
+@JsonClass(generateAdapter = true)
+data class ChartHouses(
+    val system: String = "",
+    val cusps: List<HouseCusp> = emptyList(),
+    @Json(name = "cusps_longitude") val cuspsLongitude: List<Double> = emptyList(),
+    @Json(name = "placidus_note") val placidusNote: String = "",
+    @Json(name = "planet_houses") val planetHouses: Map<String, Int> = emptyMap()
+)
+
+/** Chalit (Bhava) chart — the same birth moment redrawn with Placidus house cusps instead
+ * of whole-sign, so its lagna and per-planet houses can differ from the D1 Rasi chart.
+ * Note `planets[].absolute` is a Double here (unlike the top-level `planets[].absolute`,
+ * which is a formatted String) — modeled as its own type rather than reusing PlanetInfo
+ * (app/services/houses.py: build_chalit_block). */
+@JsonClass(generateAdapter = true)
+data class ChalitPlanet(
+    val sign: String = "",
+    val house: Int? = null,
+    val degree: Double = 0.0,
+    val absolute: Double = 0.0,
+    @Json(name = "absolute_dms") val absoluteDms: String? = null
+)
+
+@JsonClass(generateAdapter = true)
+data class ChartChalit(
+    val lagna: LagnaInfo = LagnaInfo(sign = ""),
+    @Json(name = "cusps_longitude") val cuspsLongitude: List<Double> = emptyList(),
+    val planets: Map<String, ChalitPlanet> = emptyMap()
+)
+
 /** Yogini Dasha — 8-yogini, 36-year cycle from Moon nakshatra (app/services/dasha_yogini.py). */
 @JsonClass(generateAdapter = true)
 data class YoginiAntardasha(
@@ -442,6 +483,8 @@ data class ChartSummaryResponse(
     val jaimini: ChartJaimini = ChartJaimini(),
     @Json(name = "lal_kitab") val lalKitab: ChartLalKitab = ChartLalKitab(),
     val narratives: ChartNarratives = ChartNarratives(),
+    val houses: ChartHouses = ChartHouses(),
+    val chalit: ChartChalit = ChartChalit(),
     val yogini: YoginiInfo = YoginiInfo(),
     @Json(name = "chara_dasha") val charaDasha: CharaDashaInfo = CharaDashaInfo(),
     val d2: DivisionalChart? = null,

@@ -3,16 +3,24 @@ package com.sangeetmind.features.astrology.dashboard
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.features.astrology.horoscope.HoroscopeRepository
 import com.sangeetmind.features.astrology.kundli.KundliRepository
+import com.sangeetmind.features.astrology.panchang.PanchangRepository
 import com.sangeetmind.features.astrology.profile.AstroProfileRepository
 import com.sangeetmind.libs.models.AstroProfileSummary
+import com.sangeetmind.libs.models.DailyHoroscope
 import com.sangeetmind.libs.models.Kundli
+import com.sangeetmind.libs.models.PanchangResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 data class DashboardUiState(
@@ -20,13 +28,19 @@ data class DashboardUiState(
     val primaryKundli: Kundli? = null,
     val hasNoKundlis: Boolean = false,
     val profile: AstroProfileSummary? = null,
+    val todayHoroscope: DailyHoroscope? = null,
+    val todayPanchang: PanchangResponse? = null,
     val error: String? = null
 )
+
+private fun todayIso(): String = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     private val kundliRepository: KundliRepository,
-    private val astroProfileRepository: AstroProfileRepository
+    private val astroProfileRepository: AstroProfileRepository,
+    private val horoscopeRepository: HoroscopeRepository,
+    private val panchangRepository: PanchangRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DashboardUiState())
@@ -51,8 +65,11 @@ class DashboardViewModel @Inject constructor(
                     }
                     _uiState.update { it.copy(primaryKundli = primary, hasNoKundlis = false) }
                     when (val profileResult = astroProfileRepository.getProfile(primary)) {
-                        is Result.Success -> _uiState.update {
-                            it.copy(isLoading = false, profile = profileResult.data)
+                        is Result.Success -> {
+                            _uiState.update {
+                                it.copy(isLoading = false, profile = profileResult.data)
+                            }
+                            loadTodayHub(profileResult.data.moonSign, primary.latitude, primary.longitude)
                         }
                         is Result.Error -> _uiState.update {
                             it.copy(isLoading = false, error = profileResult.message)
@@ -65,6 +82,20 @@ class DashboardViewModel @Inject constructor(
                 }
                 is Result.Loading -> Unit
             }
+        }
+    }
+
+    /** Today's mood + lucky color/mantra/guidance + panchang snapshot — fetched
+     * alongside the profile so the dashboard's "Today" card needs no extra tap. */
+    private fun loadTodayHub(moonSign: String, latitude: Double, longitude: Double) {
+        viewModelScope.launch {
+            val horoscopeDeferred = async { horoscopeRepository.getDaily(moonSign) }
+            val panchangDeferred = async { panchangRepository.getPanchang(todayIso(), latitude, longitude) }
+
+            val horoscope = (horoscopeDeferred.await() as? Result.Success)?.data
+            val panchang = (panchangDeferred.await() as? Result.Success)?.data
+
+            _uiState.update { it.copy(todayHoroscope = horoscope, todayPanchang = panchang) }
         }
     }
 }

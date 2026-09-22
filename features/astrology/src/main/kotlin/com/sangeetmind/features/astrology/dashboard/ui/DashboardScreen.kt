@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -38,6 +39,8 @@ import com.sangeetmind.core.ui.theme.GrahaSurya
 import com.sangeetmind.core.ui.theme.GrahaSuryaDeep
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.features.astrology.dashboard.DashboardViewModel
+import com.sangeetmind.libs.models.DailyHoroscope
+import com.sangeetmind.libs.models.PanchangResponse
 import com.sangeetmind.libs.models.toTitleCase
 
 /** Which graha (if any) a destination is tinted with — see [Graha.tones]. */
@@ -136,6 +139,12 @@ fun DashboardScreen(
                         nakshatra = uiState.profile!!.nakshatra,
                         currentMahadasha = uiState.profile!!.currentMahadasha,
                         astroMood = uiState.profile!!.astroMood
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    TodayCard(
+                        horoscope = uiState.todayHoroscope,
+                        panchang = uiState.todayPanchang,
+                        onOpenHoroscope = onOpenHoroscope
                     )
                 }
                 uiState.hasNoKundlis -> {
@@ -238,6 +247,102 @@ private fun ProfileSummaryCard(
             if (nakshatra.isNotBlank()) SummaryRow("Nakshatra", nakshatra, highlight = true)
             if (currentMahadasha.isNotBlank()) SummaryRow("Current dasha", currentMahadasha)
             if (astroMood.isNotBlank()) SummaryRow("Today's mood", astroMood)
+        }
+    }
+}
+
+/** Best-effort English color name → swatch, for the LLM's free-text `lucky_color`
+ * (see HoroscopeScreen.kt's identical map — kept local here to avoid a cross-package
+ * export for 15 color constants). */
+private val TODAY_COLOR_MAP: Map<String, Color> = mapOf(
+    "red" to Color(0xFFD64545),
+    "yellow" to Color(0xFFE0B23C),
+    "green" to Color(0xFF3FBF8F),
+    "white" to Color(0xFFE8E6F5),
+    "orange" to Color(0xFFE08A3C),
+    "blue" to Color(0xFF5B7FE0),
+    "pink" to Color(0xFFE07FA8),
+    "purple" to Color(0xFF9B6FE0),
+    "violet" to Color(0xFF9B6FE0),
+    "gold" to Color(0xFFD4AF37),
+    "silver" to Color(0xFFB8B8C4),
+    "brown" to Color(0xFF9E6B4A),
+    "black" to Color(0xFF3A3550),
+    "maroon" to Color(0xFF8B3A4A),
+    "cream" to Color(0xFFE8DCC0)
+)
+
+/** The dashboard's daily-engagement hub: mood (from ProfileSummaryCard above), lucky
+ * color/auspicious window (from the daily horoscope's LLM enhancement), and a Panchang
+ * snapshot — all auto-loaded with the profile, no extra tap needed. Tapping through opens
+ * the full Horoscope screen for the mantra/daan/what-to-avoid detail. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TodayCard(
+    horoscope: DailyHoroscope?,
+    panchang: PanchangResponse?,
+    onOpenHoroscope: () -> Unit
+) {
+    val surya = LocalGrahaColors.current.surya
+    val enhanced = horoscope?.enhanced
+    val luckyColor = enhanced?.luckyColor?.takeIf { it.isNotBlank() }
+    val interpretation = enhanced?.interpretation?.takeIf { it.isNotBlank() }
+        ?: horoscope?.theme?.longText?.takeIf { it.isNotBlank() }
+
+    if (horoscope == null && panchang == null) return
+
+    Card(modifier = Modifier.fillMaxWidth(), onClick = onOpenHoroscope) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Default.WbSunny, contentDescription = null, tint = surya, modifier = Modifier.size(18.dp))
+                Spacer(modifier = Modifier.width(6.dp))
+                Text("Today", style = MaterialTheme.typography.titleMedium)
+            }
+
+            if (interpretation != null) {
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    interpretation,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+            if (luckyColor != null || panchang != null) {
+                Spacer(modifier = Modifier.height(14.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
+                    if (luckyColor != null) {
+                        val swatch = TODAY_COLOR_MAP[luckyColor.trim().lowercase()] ?: surya
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .size(12.dp)
+                                    .clip(CircleShape)
+                                    .background(swatch)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Column {
+                                Text("Lucky color", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(luckyColor, style = MaterialTheme.typography.bodyMedium)
+                            }
+                        }
+                    }
+                    panchang?.let { p ->
+                        Column {
+                            Text("Panchang", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text("${p.tithi.name} · ${p.nakshatra.name}", style = MaterialTheme.typography.bodyMedium)
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+            Text(
+                "View today's full guidance →",
+                style = MaterialTheme.typography.labelLarge,
+                color = surya
+            )
         }
     }
 }

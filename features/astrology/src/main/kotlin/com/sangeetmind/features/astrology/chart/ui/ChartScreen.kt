@@ -164,6 +164,7 @@ private fun ChartContent(
     val availableCharts = chart.availableCharts
     var selectedKey by remember(chart) { mutableStateOf("D1") }
     var dashaSystem by remember(chart) { mutableStateOf(DashaSystem.VIMSHOTTARI) }
+    var chartSection by remember(chart) { mutableStateOf(ChartSection.OVERVIEW) }
     val selected = availableCharts.firstOrNull { it.first == selectedKey }
         ?: availableCharts.first()
     val meta = DIVISIONAL_CHART_META[selected.first]
@@ -226,42 +227,57 @@ private fun ChartContent(
         }
         if (selected.first == "D1") {
             item {
-                DoshaCard(chart.doshas)
+                ChartSectionSelector(chartSection, onSelect = { chartSection = it })
             }
-            item {
-                AshtakvargaCard(chart.ashtakvarga)
-            }
-            item {
-                FriendshipCard(chart.friendship)
-            }
-            item {
-                ShadbalaCard(chart.shadbala)
-            }
-            item {
-                BhavabalaCard(chart.bhavabala)
-            }
-            item {
-                KpCard(chart.kp)
-            }
-            item {
-                JaiminiCard(chart.jaimini)
-            }
-            item {
-                LalKitabCard(chart.lalKitab)
-            }
-            item {
-                DashaSystemSelector(dashaSystem, onSelect = { dashaSystem = it })
-            }
-            item {
-                CurrentDashaCard(chart, dashaSystem)
-            }
-            item {
-                TextButton(onClick = onToggleTimeline) {
-                    Text(if (showFullTimeline) "Hide full ${dashaSystem.label} timeline" else "View full ${dashaSystem.label} timeline")
+            when (chartSection) {
+                ChartSection.OVERVIEW -> {
+                    item {
+                        DoshaCard(chart.doshas)
+                    }
+                }
+                ChartSection.STRENGTH -> {
+                    item {
+                        AshtakvargaCard(chart.ashtakvarga)
+                    }
+                    item {
+                        FriendshipCard(chart.friendship)
+                    }
+                    item {
+                        ShadbalaCard(chart.shadbala)
+                    }
+                    item {
+                        BhavabalaCard(chart.bhavabala)
+                    }
+                }
+                ChartSection.DASHA -> {
+                    item {
+                        DashaSystemSelector(dashaSystem, onSelect = { dashaSystem = it })
+                    }
+                    item {
+                        CurrentDashaCard(chart, dashaSystem)
+                    }
+                    item {
+                        TextButton(onClick = onToggleTimeline) {
+                            Text(if (showFullTimeline) "Hide full ${dashaSystem.label} timeline" else "View full ${dashaSystem.label} timeline")
+                        }
+                    }
+                }
+                ChartSection.KP_JAIMINI -> {
+                    item {
+                        KpCard(chart.kp)
+                    }
+                    item {
+                        JaiminiCard(chart.jaimini)
+                    }
+                }
+                ChartSection.LAL_KITAB -> {
+                    item {
+                        LalKitabCard(chart.lalKitab)
+                    }
                 }
             }
         }
-        if (selected.first == "D1" && showFullTimeline) {
+        if (selected.first == "D1" && chartSection == ChartSection.DASHA && showFullTimeline) {
             val isEmpty = when (dashaSystem) {
                 DashaSystem.VIMSHOTTARI -> chart.vimshottari.mahadashas.isEmpty()
                 DashaSystem.YOGINI -> chart.yogini.mahadashas.isEmpty()
@@ -295,6 +311,31 @@ private fun ChartContent(
  * on the tab, as the card title/subtitle below). */
 private fun chartTabLabel(key: String): String =
     DIVISIONAL_CHART_META[key]?.second?.substringBefore(',')?.trim() ?: key
+
+/** D1-only content used to stack as one long scroll — Doshas, Ashtakvarga, Friendship,
+ * Shadbala, Bhavabala, KP, Jaimini, Lal Kitab, and Dasha all in a row. AstroSage (the
+ * deepest competitor per the roadmap research) organizes this same feature set as
+ * tabs/icons the user taps into rather than an infinite scroll — this mirrors that. */
+private enum class ChartSection(val label: String) {
+    OVERVIEW("Overview"), STRENGTH("Strength"), DASHA("Dasha"), KP_JAIMINI("KP · Jaimini"), LAL_KITAB("Lal Kitab")
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ChartSectionSelector(selected: ChartSection, onSelect: (ChartSection) -> Unit) {
+    ScrollableTabRow(
+        selectedTabIndex = ChartSection.entries.indexOf(selected),
+        edgePadding = 0.dp
+    ) {
+        ChartSection.entries.forEach { section ->
+            Tab(
+                selected = section == selected,
+                onClick = { onSelect(section) },
+                text = { Text(section.label) }
+            )
+        }
+    }
+}
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

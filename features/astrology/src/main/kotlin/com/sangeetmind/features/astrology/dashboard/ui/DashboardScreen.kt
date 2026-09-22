@@ -103,6 +103,7 @@ fun DashboardScreen(
     onOpenReferrals: () -> Unit,
     onOpenSangeet: () -> Unit,
     onOpenVarshaphal: () -> Unit,
+    onOpenHolistic: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -196,6 +197,7 @@ fun DashboardScreen(
                     DashboardDestination("Full Reading", Icons.Default.AutoStories, Graha.SHUKRA, onClick = onOpenInterpretation),
                     DashboardDestination("ChatMind", Icons.Default.Chat, Graha.RAHU, onClick = onOpenChatMind),
                     DashboardDestination("Varshaphal", Icons.Default.Autorenew, onClick = onOpenVarshaphal),
+                    DashboardDestination("Holistic", Icons.Default.AutoAwesome, onClick = onOpenHolistic),
                     DashboardDestination("Payments", Icons.Default.AccountBalanceWallet, onClick = onOpenPayments),
                     DashboardDestination("Reports", Icons.Default.PictureAsPdf, onClick = onOpenReports),
                     DashboardDestination("Readings", Icons.Default.Psychology, onClick = onOpenReadings),

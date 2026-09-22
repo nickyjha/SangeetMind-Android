@@ -210,6 +210,10 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideHolisticApi(retrofit: Retrofit): HolisticApi = retrofit.create(HolisticApi::class.java)
+
+    @Provides
+    @Singleton
     fun providePricingApi(retrofit: Retrofit): PricingApi = retrofit.create(PricingApi::class.java)
 
     @Provides

@@ -27,6 +27,7 @@ import com.sangeetmind.features.astrology.readings.ui.ReadingsScreen
 import com.sangeetmind.features.astrology.referrals.ui.ReferralScreen
 import com.sangeetmind.features.astrology.reports.ui.ReportsScreen
 import com.sangeetmind.features.astrology.sangeet.ui.SangeetScreen
+import com.sangeetmind.features.astrology.holistic.ui.HolisticScreen
 import com.sangeetmind.features.astrology.varshaphal.ui.VarshaphalScreen
 import com.sangeetmind.features.auth.ui.AuthScreen
 import com.sangeetmind.features.meditation.ui.MeditationScreen
@@ -113,7 +114,8 @@ fun SangeetMindNavHost(
                 onOpenMarketplace = { navController.navigate("marketplace") },
                 onOpenReferrals = { navController.navigate("referrals") },
                 onOpenSangeet = { navController.navigate("sangeet") },
-                onOpenVarshaphal = { navController.navigate("varshaphal") }
+                onOpenVarshaphal = { navController.navigate("varshaphal") },
+                onOpenHolistic = { navController.navigate("holistic") }
             )
         }
 
@@ -217,6 +219,10 @@ fun SangeetMindNavHost(
 
         composable("varshaphal") {
             VarshaphalScreen(onNavigateBack = { navController.popBackStack() })
+        }
+
+        composable("holistic") {
+            HolisticScreen(onNavigateBack = { navController.popBackStack() })
         }
 
         // Sangeet (raag/meditation) — kept for a later phase, reachable but not

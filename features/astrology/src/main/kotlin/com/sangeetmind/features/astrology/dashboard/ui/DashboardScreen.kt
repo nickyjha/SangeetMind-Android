@@ -197,7 +197,6 @@ fun DashboardScreen(
                     DashboardDestination("Payments", Icons.Default.AccountBalanceWallet, onClick = onOpenPayments),
                     DashboardDestination("Reports", Icons.Default.PictureAsPdf, onClick = onOpenReports),
                     DashboardDestination("Readings", Icons.Default.Psychology, onClick = onOpenReadings),
-                    DashboardDestination("Astrologers", Icons.Default.SupportAgent, onClick = onOpenMarketplace),
                     DashboardDestination("Referrals", Icons.Default.CardGiftcard, onClick = onOpenReferrals),
                     DashboardDestination("Sangeet", Icons.Default.MusicNote, onClick = onOpenSangeet)
                 )

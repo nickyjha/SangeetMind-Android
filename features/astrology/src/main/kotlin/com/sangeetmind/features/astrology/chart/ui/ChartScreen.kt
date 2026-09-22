@@ -62,6 +62,7 @@ import com.sangeetmind.libs.models.ChartFriendship
 import com.sangeetmind.libs.models.ChartJaimini
 import com.sangeetmind.libs.models.ChartKp
 import com.sangeetmind.libs.models.ChartLalKitab
+import com.sangeetmind.libs.models.ChartNarratives
 import com.sangeetmind.libs.models.ChartShadbala
 import com.sangeetmind.libs.models.ChartSummaryResponse
 import com.sangeetmind.libs.models.ShadbalaRanking
@@ -233,6 +234,9 @@ private fun ChartContent(
                 ChartSection.OVERVIEW -> {
                     item {
                         DoshaCard(chart.doshas)
+                    }
+                    item {
+                        NarrativesCard(chart.narratives)
                     }
                 }
                 ChartSection.STRENGTH -> {
@@ -1007,6 +1011,74 @@ private fun LalKitabCard(lalKitab: ChartLalKitab) {
                 Text(
                     "No debt yogas or remedies flagged for this chart.",
                     style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
+}
+
+/** Static, non-LLM narrative text — nakshatra/lagna/dasha phal summaries and a
+ * per-planet consideration list. Lighter than ChatMind/interpretation; the backend's own
+ * `disclaimer` is shown verbatim (app/services/kundli_narratives.py). */
+@Composable
+private fun NarrativesCard(narratives: ChartNarratives) {
+    if (narratives.nakshatraPhal.text.isBlank() && narratives.ascendantSummary.text.isBlank()) return
+    val graha = LocalGrahaColors.current
+    val dashaPhal = narratives.vimshottariMahadashaPhal
+
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text("Reading", style = MaterialTheme.typography.titleMedium)
+            if (narratives.nakshatraPhal.text.isNotBlank()) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    "${narratives.nakshatraPhal.nakshatra} · Pada ${narratives.nakshatraPhal.pada ?: "-"} · " +
+                        narratives.nakshatraPhal.lord,
+                    style = MaterialTheme.typography.titleSmall
+                )
+                Text(narratives.nakshatraPhal.text, style = MaterialTheme.typography.bodyMedium)
+            }
+            if (narratives.ascendantSummary.text.isNotBlank()) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Text("${narratives.ascendantSummary.sign} Ascendant", style = MaterialTheme.typography.titleSmall)
+                Text(narratives.ascendantSummary.text, style = MaterialTheme.typography.bodyMedium)
+            }
+            val mahadashaText = dashaPhal.mahadashaText
+            if (!mahadashaText.isNullOrBlank()) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    "${dashaPhal.currentMahadasha} Mahadasha",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = dashaPhal.currentMahadasha?.let { grahaColorFor(it, graha) }
+                        ?: MaterialTheme.colorScheme.onSurface
+                )
+                Text(mahadashaText, style = MaterialTheme.typography.bodyMedium)
+                dashaPhal.antardashaNote?.takeIf { it.isNotBlank() }?.let { note ->
+                    Text(
+                        note,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+            if (narratives.planetConsiderations.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Text("Planet placements", style = MaterialTheme.typography.titleSmall)
+                narratives.planetConsiderations.forEach { line ->
+                    Text(
+                        "· $line",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
+            }
+            if (narratives.disclaimer.isNotBlank()) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    narratives.disclaimer,
+                    style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }

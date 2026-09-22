@@ -336,6 +336,43 @@ data class ChartLalKitab(
     @Json(name = "epic_status") val epicStatus: String = ""
 )
 
+/** Static, non-LLM narrative text — nakshatra/lagna/dasha phal summaries and a per-planet
+ * consideration list. Lighter than the LLM-driven interpretation/ChatMind readings (the
+ * backend's own `disclaimer` says as much) (app/services/kundli_narratives.py). */
+@JsonClass(generateAdapter = true)
+data class NakshatraPhal(
+    val nakshatra: String = "",
+    val pada: Int? = null,
+    val lord: String = "",
+    val text: String = ""
+)
+
+@JsonClass(generateAdapter = true)
+data class AscendantSummary(
+    val sign: String = "",
+    val text: String = ""
+)
+
+@JsonClass(generateAdapter = true)
+data class VimshottariMahadashaPhal(
+    @Json(name = "current_mahadasha") val currentMahadasha: String? = null,
+    @Json(name = "current_antardasha") val currentAntardasha: String? = null,
+    @Json(name = "current_pratyantardasha") val currentPratyantardasha: String? = null,
+    @Json(name = "mahadasha_text") val mahadashaText: String? = null,
+    @Json(name = "antardasha_note") val antardashaNote: String? = null
+)
+
+@JsonClass(generateAdapter = true)
+data class ChartNarratives(
+    @Json(name = "nakshatra_phal") val nakshatraPhal: NakshatraPhal = NakshatraPhal(),
+    @Json(name = "ascendant_summary") val ascendantSummary: AscendantSummary = AscendantSummary(),
+    @Json(name = "life_predictions_intro") val lifePredictionsIntro: String = "",
+    @Json(name = "vimshottari_mahadasha_phal")
+    val vimshottariMahadashaPhal: VimshottariMahadashaPhal = VimshottariMahadashaPhal(),
+    @Json(name = "planet_considerations") val planetConsiderations: List<String> = emptyList(),
+    val disclaimer: String = ""
+)
+
 /** Yogini Dasha — 8-yogini, 36-year cycle from Moon nakshatra (app/services/dasha_yogini.py). */
 @JsonClass(generateAdapter = true)
 data class YoginiAntardasha(
@@ -404,6 +441,7 @@ data class ChartSummaryResponse(
     val kp: ChartKp = ChartKp(),
     val jaimini: ChartJaimini = ChartJaimini(),
     @Json(name = "lal_kitab") val lalKitab: ChartLalKitab = ChartLalKitab(),
+    val narratives: ChartNarratives = ChartNarratives(),
     val yogini: YoginiInfo = YoginiInfo(),
     @Json(name = "chara_dasha") val charaDasha: CharaDashaInfo = CharaDashaInfo(),
     val d2: DivisionalChart? = null,

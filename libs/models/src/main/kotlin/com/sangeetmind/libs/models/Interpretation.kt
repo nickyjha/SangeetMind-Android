@@ -156,6 +156,60 @@ data class ChartFriendship(
     val relations: Map<String, Map<String, String>> = emptyMap()
 )
 
+/** Yogini Dasha — 8-yogini, 36-year cycle from Moon nakshatra (app/services/dasha_yogini.py). */
+@JsonClass(generateAdapter = true)
+data class YoginiAntardasha(
+    val yogini: String,
+    val lord: String,
+    val start: String,
+    val end: String,
+    val years: Double = 0.0
+)
+
+@JsonClass(generateAdapter = true)
+data class YoginiMahadasha(
+    val yogini: String,
+    val lord: String,
+    val start: String,
+    val end: String,
+    val partial: Boolean = false,
+    val years: Double = 0.0,
+    val cycle: Int = 1,
+    val antardashas: List<YoginiAntardasha> = emptyList()
+)
+
+@JsonClass(generateAdapter = true)
+data class YoginiInfo(
+    val mahadashas: List<YoginiMahadasha> = emptyList(),
+    @Json(name = "starting_yogini") val startingYogini: String = ""
+)
+
+/** Jaimini Chara Dasha — sign-based periods from the lagna sign (app/services/dasha_char.py). */
+@JsonClass(generateAdapter = true)
+data class CharaAntardasha(
+    val sign: String,
+    val start: String,
+    val end: String,
+    val years: Double = 0.0
+)
+
+@JsonClass(generateAdapter = true)
+data class CharaMahadasha(
+    val sign: String,
+    val start: String,
+    val end: String,
+    val years: Double = 0.0,
+    val partial: Boolean = false,
+    val antardashas: List<CharaAntardasha> = emptyList()
+)
+
+@JsonClass(generateAdapter = true)
+data class CharaDashaInfo(
+    val mahadashas: List<CharaMahadasha> = emptyList(),
+    val direction: String = "",
+    @Json(name = "lagna_sign") val lagnaSign: String = ""
+)
+
 @JsonClass(generateAdapter = true)
 data class ChartSummaryResponse(
     val lagna: LagnaInfo,
@@ -165,6 +219,8 @@ data class ChartSummaryResponse(
     val doshas: ChartDoshas = ChartDoshas(),
     val ashtakvarga: ChartAshtakvarga = ChartAshtakvarga(),
     val friendship: ChartFriendship = ChartFriendship(),
+    val yogini: YoginiInfo = YoginiInfo(),
+    @Json(name = "chara_dasha") val charaDasha: CharaDashaInfo = CharaDashaInfo(),
     val d2: DivisionalChart? = null,
     val d3: DivisionalChart? = null,
     val d4: DivisionalChart? = null,

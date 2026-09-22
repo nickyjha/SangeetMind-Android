@@ -50,6 +50,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.features.astrology.chart.ChartViewModel
 import com.sangeetmind.libs.models.BhuktiPeriod
+import com.sangeetmind.libs.models.CharaAntardasha
+import com.sangeetmind.libs.models.CharaDashaInfo
+import com.sangeetmind.libs.models.CharaMahadasha
 import com.sangeetmind.libs.models.ChartAshtakvarga
 import com.sangeetmind.libs.models.ChartDoshas
 import com.sangeetmind.libs.models.ChartFriendship
@@ -61,6 +64,9 @@ import com.sangeetmind.libs.models.LagnaInfo
 import com.sangeetmind.libs.models.MahadashaPeriod
 import com.sangeetmind.libs.models.PlanetInfo
 import com.sangeetmind.libs.models.SadesatiPeriod
+import com.sangeetmind.libs.models.YoginiAntardasha
+import com.sangeetmind.libs.models.YoginiInfo
+import com.sangeetmind.libs.models.YoginiMahadasha
 import com.sangeetmind.libs.models.displayName
 import com.sangeetmind.libs.models.toTitleCase
 import java.time.Instant
@@ -149,6 +155,7 @@ private fun ChartContent(
     val moon = chart.planets["Moon"]
     val availableCharts = chart.availableCharts
     var selectedKey by remember(chart) { mutableStateOf("D1") }
+    var dashaSystem by remember(chart) { mutableStateOf(DashaSystem.VIMSHOTTARI) }
     val selected = availableCharts.firstOrNull { it.first == selectedKey }
         ?: availableCharts.first()
     val meta = DIVISIONAL_CHART_META[selected.first]
@@ -220,16 +227,24 @@ private fun ChartContent(
                 FriendshipCard(chart.friendship)
             }
             item {
-                CurrentDashaCard(chart)
+                DashaSystemSelector(dashaSystem, onSelect = { dashaSystem = it })
+            }
+            item {
+                CurrentDashaCard(chart, dashaSystem)
             }
             item {
                 TextButton(onClick = onToggleTimeline) {
-                    Text(if (showFullTimeline) "Hide full timeline" else "View full Vimshottari timeline")
+                    Text(if (showFullTimeline) "Hide full ${dashaSystem.label} timeline" else "View full ${dashaSystem.label} timeline")
                 }
             }
         }
         if (selected.first == "D1" && showFullTimeline) {
-            if (chart.vimshottari.mahadashas.isEmpty()) {
+            val isEmpty = when (dashaSystem) {
+                DashaSystem.VIMSHOTTARI -> chart.vimshottari.mahadashas.isEmpty()
+                DashaSystem.YOGINI -> chart.yogini.mahadashas.isEmpty()
+                DashaSystem.CHARA -> chart.charaDasha.mahadashas.isEmpty()
+            }
+            if (isEmpty) {
                 item {
                     Text(
                         text = "Timeline details are not available for this chart response.",
@@ -237,9 +252,15 @@ private fun ChartContent(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-            } else {
-                items(chart.vimshottari.mahadashas, key = { "${it.lord}-${it.start}" }) { md ->
+            } else when (dashaSystem) {
+                DashaSystem.VIMSHOTTARI -> items(chart.vimshottari.mahadashas, key = { "vim-${it.lord}-${it.start}" }) { md ->
                     MahadashaCard(md)
+                }
+                DashaSystem.YOGINI -> items(chart.yogini.mahadashas, key = { "yog-${it.yogini}-${it.start}" }) { md ->
+                    YoginiMahadashaCard(md)
+                }
+                DashaSystem.CHARA -> items(chart.charaDasha.mahadashas, key = { "chr-${it.sign}-${it.start}" }) { md ->
+                    CharaMahadashaCard(md)
                 }
             }
         }
@@ -593,17 +614,129 @@ private fun FriendshipCard(friendship: ChartFriendship) {
     }
 }
 
+/** A second/third dasha system alongside Vimshottari — same underlying birth chart, a
+ * different lens on "when." Matches AstroSage AI's dasha-system toggle. */
+private enum class DashaSystem(val label: String) {
+    VIMSHOTTARI("Vimshottari"), YOGINI("Yogini"), CHARA("Chara")
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CurrentDashaCard(chart: ChartSummaryResponse) {
-    val current = chart.vimshottari.current ?: return
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text("Current Vimshottari", style = MaterialTheme.typography.titleMedium)
-            Spacer(modifier = Modifier.height(8.dp))
-            DashaRow("Mahadasha", current.mahadasha)
-            DashaRow("Antardasha", current.antardasha)
-            DashaRow("Pratyantar", current.resolvedPratyantar)
+private fun DashaSystemSelector(selected: DashaSystem, onSelect: (DashaSystem) -> Unit) {
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        DashaSystem.entries.forEach { system ->
+            FilterChip(
+                selected = selected == system,
+                onClick = { onSelect(system) },
+                label = { Text(system.label) }
+            )
         }
+    }
+}
+
+@Composable
+private fun CurrentDashaCard(chart: ChartSummaryResponse, system: DashaSystem) {
+    when (system) {
+        DashaSystem.VIMSHOTTARI -> {
+            val current = chart.vimshottari.current ?: return
+            Card(modifier = Modifier.fillMaxWidth()) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text("Current Vimshottari", style = MaterialTheme.typography.titleMedium)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    DashaRow("Mahadasha", current.mahadasha)
+                    DashaRow("Antardasha", current.antardasha)
+                    DashaRow("Pratyantar", current.resolvedPratyantar)
+                }
+            }
+        }
+        DashaSystem.YOGINI -> {
+            val md = currentYoginiMahadasha(chart.yogini) ?: return
+            val ad = currentYoginiAntardasha(md)
+            Card(modifier = Modifier.fillMaxWidth()) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text("Current Yogini", style = MaterialTheme.typography.titleMedium)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Column(modifier = Modifier.padding(vertical = 4.dp)) {
+                        Text("Mahadasha · ${md.yogini} (${md.lord})", style = MaterialTheme.typography.bodyLarge)
+                        Text(
+                            "${fmtIso(md.start)} → ${fmtIso(md.end)}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    if (ad != null) {
+                        Column(modifier = Modifier.padding(vertical = 4.dp)) {
+                            Text("Antardasha · ${ad.yogini} (${ad.lord})", style = MaterialTheme.typography.bodyLarge)
+                            Text(
+                                "${fmtIso(ad.start)} → ${fmtIso(ad.end)}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+            }
+        }
+        DashaSystem.CHARA -> {
+            val md = currentCharaMahadasha(chart.charaDasha) ?: return
+            val ad = currentCharaAntardasha(md)
+            Card(modifier = Modifier.fillMaxWidth()) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text("Current Chara", style = MaterialTheme.typography.titleMedium)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Column(modifier = Modifier.padding(vertical = 4.dp)) {
+                        Text("Mahadasha · ${md.sign}", style = MaterialTheme.typography.bodyLarge)
+                        Text(
+                            "${fmtIso(md.start)} → ${fmtIso(md.end)}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    if (ad != null) {
+                        Column(modifier = Modifier.padding(vertical = 4.dp)) {
+                            Text("Antardasha · ${ad.sign}", style = MaterialTheme.typography.bodyLarge)
+                            Text(
+                                "${fmtIso(ad.start)} → ${fmtIso(ad.end)}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+private fun currentYoginiMahadasha(info: YoginiInfo): YoginiMahadasha? {
+    val now = Instant.now()
+    return info.mahadashas.firstOrNull { md ->
+        val s = parseIso(md.start); val e = parseIso(md.end)
+        s != null && e != null && !now.isBefore(s) && !now.isAfter(e)
+    }
+}
+
+private fun currentYoginiAntardasha(md: YoginiMahadasha): YoginiAntardasha? {
+    val now = Instant.now()
+    return md.antardashas.firstOrNull { ad ->
+        val s = parseIso(ad.start); val e = parseIso(ad.end)
+        s != null && e != null && !now.isBefore(s) && !now.isAfter(e)
+    }
+}
+
+private fun currentCharaMahadasha(info: CharaDashaInfo): CharaMahadasha? {
+    val now = Instant.now()
+    return info.mahadashas.firstOrNull { md ->
+        val s = parseIso(md.start); val e = parseIso(md.end)
+        s != null && e != null && !now.isBefore(s) && !now.isAfter(e)
+    }
+}
+
+private fun currentCharaAntardasha(md: CharaMahadasha): CharaAntardasha? {
+    val now = Instant.now()
+    return md.antardashas.firstOrNull { ad ->
+        val s = parseIso(ad.start); val e = parseIso(ad.end)
+        s != null && e != null && !now.isBefore(s) && !now.isAfter(e)
     }
 }
 
@@ -729,6 +862,164 @@ private fun BhuktiRow(bhukti: BhuktiPeriod, isMahadashaCurrent: Boolean, accent:
                         style = MaterialTheme.typography.bodySmall,
                         color = if (prCurrent) accent else MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                }
+            }
+        }
+    }
+}
+
+/** Yogini mahadasha card — same current/past/upcoming color language as
+ * [MahadashaCard], with its 8 antardashas listed inline like bhuktis. */
+@Composable
+private fun YoginiMahadashaCard(md: YoginiMahadasha) {
+    val now = Instant.now()
+    val start = parseIso(md.start)
+    val end = parseIso(md.end)
+    val isCurrent = start != null && end != null && !now.isBefore(start) && !now.isAfter(end)
+    val isPast = end != null && now.isAfter(end)
+    val graha = LocalGrahaColors.current
+
+    val accent = when {
+        isCurrent -> graha.guru
+        isPast -> MaterialTheme.colorScheme.onSurfaceVariant
+        else -> graha.shani
+    }
+    val containerColor = when {
+        isCurrent -> graha.guru.copy(alpha = 0.12f)
+        isPast -> MaterialTheme.colorScheme.surfaceVariant
+        else -> graha.shani.copy(alpha = 0.1f)
+    }
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = containerColor)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "${md.yogini} (${md.lord})",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = if (isPast) MaterialTheme.colorScheme.onSurface else accent
+                )
+                if (isCurrent) Chip("Current", accent)
+                if (md.partial) Chip("Partial", MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            Text(
+                text = buildString {
+                    append(fmtIso(md.start)); append(" → "); append(fmtIso(md.end))
+                    append(" · ${"%.1f".format(md.years)} yrs")
+                },
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            if (md.antardashas.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(10.dp))
+                md.antardashas.forEach { ad ->
+                    val adStart = parseIso(ad.start)
+                    val adEnd = parseIso(ad.end)
+                    val adCurrent = isCurrent && adStart != null && adEnd != null &&
+                        !now.isBefore(adStart) && !now.isAfter(adEnd)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(if (adCurrent) accent.copy(alpha = 0.14f) else Color.Transparent)
+                            .padding(vertical = 6.dp, horizontal = if (adCurrent) 8.dp else 0.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = if (adCurrent) "${ad.yogini} (${ad.lord})  ●" else "${ad.yogini} (${ad.lord})",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = if (adCurrent) accent else MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = "${fmtIso(ad.start)} → ${fmtIso(ad.end)}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = if (adCurrent) accent else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** Chara mahadasha card — sign-based periods (Jaimini), same visual language as
+ * [MahadashaCard]/[YoginiMahadashaCard]. */
+@Composable
+private fun CharaMahadashaCard(md: CharaMahadasha) {
+    val now = Instant.now()
+    val start = parseIso(md.start)
+    val end = parseIso(md.end)
+    val isCurrent = start != null && end != null && !now.isBefore(start) && !now.isAfter(end)
+    val isPast = end != null && now.isAfter(end)
+    val graha = LocalGrahaColors.current
+
+    val accent = when {
+        isCurrent -> graha.guru
+        isPast -> MaterialTheme.colorScheme.onSurfaceVariant
+        else -> graha.shani
+    }
+    val containerColor = when {
+        isCurrent -> graha.guru.copy(alpha = 0.12f)
+        isPast -> MaterialTheme.colorScheme.surfaceVariant
+        else -> graha.shani.copy(alpha = 0.1f)
+    }
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = containerColor)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    md.sign,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = if (isPast) MaterialTheme.colorScheme.onSurface else accent
+                )
+                if (isCurrent) Chip("Current", accent)
+                if (md.partial) Chip("Partial", MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            Text(
+                text = buildString {
+                    append(fmtIso(md.start)); append(" → "); append(fmtIso(md.end))
+                    append(" · ${"%.1f".format(md.years)} yrs")
+                },
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            if (md.antardashas.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(10.dp))
+                md.antardashas.forEach { ad ->
+                    val adStart = parseIso(ad.start)
+                    val adEnd = parseIso(ad.end)
+                    val adCurrent = isCurrent && adStart != null && adEnd != null &&
+                        !now.isBefore(adStart) && !now.isAfter(adEnd)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(if (adCurrent) accent.copy(alpha = 0.14f) else Color.Transparent)
+                            .padding(vertical = 6.dp, horizontal = if (adCurrent) 8.dp else 0.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = if (adCurrent) "${ad.sign}  ●" else ad.sign,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = if (adCurrent) accent else MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = "${fmtIso(ad.start)} → ${fmtIso(ad.end)}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = if (adCurrent) accent else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
             }
         }

@@ -414,6 +414,28 @@ data class ChartChalit(
     val planets: Map<String, ChalitPlanet> = emptyMap()
 )
 
+/** Chandra Kundli (Moon chart) — whole-sign houses from the Moon sign as lagna, used for
+ * classical Moon-rashi analysis. The response's `manglik` field duplicates the richer
+ * [ManglikDosha] already shown on Overview via [ChartDoshas], so it's intentionally left
+ * unparsed here — Moshi skips unknown JSON keys by default
+ * (app/services/moon_chart.py: build_moon_chart). */
+@JsonClass(generateAdapter = true)
+data class MoonChartPlanet(
+    val sign: String = "",
+    val house: Int? = null,
+    val degree: Double = 0.0,
+    val absolute: Double = 0.0,
+    @Json(name = "absolute_dms") val absoluteDms: String? = null,
+    val retrograde: Boolean = false,
+    val combust: Boolean = false
+)
+
+@JsonClass(generateAdapter = true)
+data class ChartMoonChart(
+    val lagna: LagnaInfo = LagnaInfo(sign = ""),
+    val planets: Map<String, MoonChartPlanet> = emptyMap()
+)
+
 /** Yogini Dasha — 8-yogini, 36-year cycle from Moon nakshatra (app/services/dasha_yogini.py). */
 @JsonClass(generateAdapter = true)
 data class YoginiAntardasha(
@@ -485,6 +507,7 @@ data class ChartSummaryResponse(
     val narratives: ChartNarratives = ChartNarratives(),
     val houses: ChartHouses = ChartHouses(),
     val chalit: ChartChalit = ChartChalit(),
+    @Json(name = "moon_chart") val moonChart: ChartMoonChart = ChartMoonChart(),
     val yogini: YoginiInfo = YoginiInfo(),
     @Json(name = "chara_dasha") val charaDasha: CharaDashaInfo = CharaDashaInfo(),
     val d2: DivisionalChart? = null,

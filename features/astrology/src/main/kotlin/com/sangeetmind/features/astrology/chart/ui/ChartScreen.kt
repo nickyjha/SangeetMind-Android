@@ -64,6 +64,7 @@ import com.sangeetmind.libs.models.ChartHouses
 import com.sangeetmind.libs.models.ChartJaimini
 import com.sangeetmind.libs.models.ChartKp
 import com.sangeetmind.libs.models.ChartLalKitab
+import com.sangeetmind.libs.models.ChartMoonChart
 import com.sangeetmind.libs.models.ChartNarratives
 import com.sangeetmind.libs.models.ChartShadbala
 import com.sangeetmind.libs.models.ChartSummaryResponse
@@ -301,6 +302,27 @@ private fun ChartContent(
                         }
                         item {
                             PlanetListCard(chart.chalit.lagna, chalitPlanets)
+                        }
+                    }
+                    val moonChartPlanets = chart.moonChart.toPlanetInfoMap()
+                    if (moonChartPlanets.isNotEmpty()) {
+                        item {
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                            ) {
+                                NorthIndianHouseChart(
+                                    lagna = chart.moonChart.lagna,
+                                    planets = moonChartPlanets,
+                                    title = "Chandra Kundli",
+                                    subtitle = "Moon chart · whole-sign houses from Moon lagna",
+                                    modifier = Modifier.padding(16.dp)
+                                )
+                            }
+                        }
+                        item {
+                            PlanetListCard(chart.moonChart.lagna, moonChartPlanets)
                         }
                     }
                     item {
@@ -1123,6 +1145,21 @@ private fun NarrativesCard(narratives: ChartNarratives) {
 private fun ChartChalit.toPlanetInfoMap(): Map<String, PlanetInfo> =
     planets.mapValues { (_, p) ->
         PlanetInfo(sign = p.sign, degree = p.degree, absolute = "", absoluteDms = p.absoluteDms, house = p.house)
+    }
+
+/** Same [PlanetInfo] reuse as [ChartChalit.toPlanetInfoMap], but the Moon chart does
+ * compute retrograde/combust (unlike Chalit), so those carry through. */
+private fun ChartMoonChart.toPlanetInfoMap(): Map<String, PlanetInfo> =
+    planets.mapValues { (_, p) ->
+        PlanetInfo(
+            sign = p.sign,
+            degree = p.degree,
+            absolute = "",
+            absoluteDms = p.absoluteDms,
+            house = p.house,
+            retrograde = p.retrograde,
+            combust = p.combust
+        )
     }
 
 /** The 12 Placidus house cusps behind `houses.planet_houses` — same computation KP's

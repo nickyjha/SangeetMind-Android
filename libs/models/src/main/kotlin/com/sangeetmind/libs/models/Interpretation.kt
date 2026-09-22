@@ -212,6 +212,84 @@ data class ChartBhavabala(
     val method: String = ""
 )
 
+/** KP (Krishnamurti Paddhati) house cusp — sign, sub-lord, sub-sub-lord at the cusp
+ * longitude, Krishnamurti ayanamsa (app/services/kp_system.py). */
+@JsonClass(generateAdapter = true)
+data class KpCusp(
+    val house: Int,
+    val longitude: Double = 0.0,
+    val sign: String = "",
+    val degree: Double = 0.0,
+    @Json(name = "sub_lord") val subLord: String = "",
+    @Json(name = "sub_sub_lord") val subSubLord: String = ""
+)
+
+@JsonClass(generateAdapter = true)
+data class KpPlanet(
+    val longitude: Double = 0.0,
+    val sign: String = "",
+    val degree: Double = 0.0,
+    @Json(name = "absolute_dms") val absoluteDms: String? = null,
+    val house: Int? = null,
+    val nakshatra: MoonNakshatraInfo = MoonNakshatraInfo(),
+    @Json(name = "sub_lord") val subLord: String = "",
+    @Json(name = "sub_sub_lord") val subSubLord: String = ""
+)
+
+@JsonClass(generateAdapter = true)
+data class ChartKp(
+    @Json(name = "ayanamsa_name") val ayanamsaName: String = "",
+    @Json(name = "ayanamsa_deg") val ayanamsaDeg: Double = 0.0,
+    val cusps: List<KpCusp> = emptyList(),
+    val planets: Map<String, KpPlanet> = emptyMap(),
+    /** House numbers each planet signifies, via cusp ownership + occupation. */
+    val significators: Map<String, List<Int>> = emptyMap()
+)
+
+/** Jaimini chara karaka — the 7 classical planets ranked by degree-in-sign, Atmakaraka
+ * (highest degree) first (app/services/jaimini_charts.py). */
+@JsonClass(generateAdapter = true)
+data class CharaKaraka(
+    val karaka: String,
+    val abbrev: String,
+    val planet: String,
+    @Json(name = "degree_in_sign") val degreeInSign: Double = 0.0
+)
+
+@JsonClass(generateAdapter = true)
+data class JaiminiLagna(
+    val sign: String = "",
+    val house: Int = 1,
+    val degree: Double? = null
+)
+
+@JsonClass(generateAdapter = true)
+data class JaiminiChartPlanet(
+    val sign: String = "",
+    val house: Int? = null,
+    @Json(name = "d1_sign") val d1Sign: String? = null
+)
+
+/** Karakamsa (D9 sign of Atmakaraka) or Swamsa (D9 sign of Amatyakaraka) lagna, treated
+ * as its own chart. */
+@JsonClass(generateAdapter = true)
+data class JaiminiSubChart(
+    val label: String = "",
+    @Json(name = "lagna_sign") val lagnaSign: String = "",
+    val lagna: JaiminiLagna = JaiminiLagna(),
+    val planets: Map<String, JaiminiChartPlanet> = emptyMap(),
+    val source: String = ""
+)
+
+@JsonClass(generateAdapter = true)
+data class ChartJaimini(
+    @Json(name = "chara_karakas") val charaKarakas: List<CharaKaraka> = emptyList(),
+    val atmakaraka: String = "",
+    val amatyakaraka: String = "",
+    val karakamsa: JaiminiSubChart = JaiminiSubChart(),
+    val swamsa: JaiminiSubChart = JaiminiSubChart()
+)
+
 /** Yogini Dasha — 8-yogini, 36-year cycle from Moon nakshatra (app/services/dasha_yogini.py). */
 @JsonClass(generateAdapter = true)
 data class YoginiAntardasha(
@@ -277,6 +355,8 @@ data class ChartSummaryResponse(
     val friendship: ChartFriendship = ChartFriendship(),
     val shadbala: ChartShadbala = ChartShadbala(),
     val bhavabala: ChartBhavabala = ChartBhavabala(),
+    val kp: ChartKp = ChartKp(),
+    val jaimini: ChartJaimini = ChartJaimini(),
     val yogini: YoginiInfo = YoginiInfo(),
     @Json(name = "chara_dasha") val charaDasha: CharaDashaInfo = CharaDashaInfo(),
     val d2: DivisionalChart? = null,

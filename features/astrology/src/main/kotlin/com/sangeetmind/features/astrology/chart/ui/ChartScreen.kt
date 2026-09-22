@@ -59,6 +59,8 @@ import com.sangeetmind.libs.models.ChartAshtakvarga
 import com.sangeetmind.libs.models.ChartBhavabala
 import com.sangeetmind.libs.models.ChartDoshas
 import com.sangeetmind.libs.models.ChartFriendship
+import com.sangeetmind.libs.models.ChartJaimini
+import com.sangeetmind.libs.models.ChartKp
 import com.sangeetmind.libs.models.ChartShadbala
 import com.sangeetmind.libs.models.ChartSummaryResponse
 import com.sangeetmind.libs.models.ShadbalaRanking
@@ -236,6 +238,12 @@ private fun ChartContent(
             }
             item {
                 BhavabalaCard(chart.bhavabala)
+            }
+            item {
+                KpCard(chart.kp)
+            }
+            item {
+                JaiminiCard(chart.jaimini)
             }
             item {
                 DashaSystemSelector(dashaSystem, onSelect = { dashaSystem = it })
@@ -761,6 +769,125 @@ private fun grahaColorFor(planet: String, graha: GrahaColors): Color = when (pla
     "Venus" -> graha.shukra
     "Saturn" -> graha.shani
     else -> graha.rahu
+}
+
+/** KP (Krishnamurti Paddhati) — a toggle between cusp sub-lords and per-planet
+ * significator houses, matching AstroSage AI's dedicated KP System tab
+ * (app/services/kp_system.py). */
+private enum class KpView(val label: String) { CUSPS("Cusps"), SIGNIFICATORS("Significators") }
+
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
+@Composable
+private fun KpCard(kp: ChartKp) {
+    if (kp.cusps.isEmpty()) return
+    var view by remember(kp) { mutableStateOf(KpView.CUSPS) }
+    val planetOrder = listOf("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu")
+        .filter { it in kp.significators }
+    var selectedPlanet by remember(kp) { mutableStateOf(planetOrder.firstOrNull().orEmpty()) }
+    val graha = LocalGrahaColors.current
+
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text("KP System", style = MaterialTheme.typography.titleMedium)
+            Text(
+                "${kp.ayanamsaName} ayanamsa · ${"%.2f".format(kp.ayanamsaDeg)}°",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                KpView.entries.forEach { v ->
+                    FilterChip(selected = v == view, onClick = { view = v }, label = { Text(v.label) })
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            when (view) {
+                KpView.CUSPS -> kp.cusps.sortedBy { it.house }.forEach { cusp ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("H${cusp.house} ${cusp.sign}", style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            "${cusp.subLord} / ${cusp.subSubLord}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+                KpView.SIGNIFICATORS -> {
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        planetOrder.forEach { planet ->
+                            FilterChip(
+                                selected = planet == selectedPlanet,
+                                onClick = { selectedPlanet = planet },
+                                label = { Text(planet) }
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    val houses = kp.significators[selectedPlanet].orEmpty()
+                    if (houses.isEmpty()) {
+                        Text(
+                            "No significator houses for $selectedPlanet.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    } else {
+                        FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            houses.forEach { house -> Chip("H$house", grahaColorFor(selectedPlanet, graha)) }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** Chara karakas (7 planets ranked by degree-in-sign, Atmakaraka first) plus the
+ * Karakamsa/Swamsa lagna summary — matches AstroSage AI's Karakamsa tab
+ * (app/services/jaimini_charts.py). */
+@Composable
+private fun JaiminiCard(jaimini: ChartJaimini) {
+    if (jaimini.charaKarakas.isEmpty()) return
+    val graha = LocalGrahaColors.current
+
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text("Jaimini", style = MaterialTheme.typography.titleMedium)
+            Text(
+                "Karakamsa ${jaimini.karakamsa.lagnaSign} · Swamsa ${jaimini.swamsa.lagnaSign}",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            jaimini.charaKarakas.forEach { karaka ->
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            karaka.abbrev,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.width(32.dp)
+                        )
+                        Text(karaka.karaka, style = MaterialTheme.typography.bodyMedium)
+                    }
+                    Chip(
+                        "${karaka.planet} ${"%.1f".format(karaka.degreeInSign)}°",
+                        grahaColorFor(karaka.planet, graha)
+                    )
+                }
+            }
+        }
+    }
 }
 
 /** A second/third dasha system alongside Vimshottari — same underlying birth chart, a

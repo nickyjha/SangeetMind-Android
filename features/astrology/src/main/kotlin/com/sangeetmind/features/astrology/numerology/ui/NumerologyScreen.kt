@@ -8,6 +8,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -38,6 +39,7 @@ import com.sangeetmind.libs.models.VedicNumbers
 @Composable
 fun NumerologyScreen(
     onNavigateBack: () -> Unit,
+    onOpenGlossary: () -> Unit,
     viewModel: NumerologyViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -52,10 +54,16 @@ fun NumerologyScreen(
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 },
+                actions = {
+                    IconButton(onClick = onOpenGlossary) {
+                        Icon(Icons.Default.MenuBook, contentDescription = "Number meanings")
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = budha.copy(alpha = 0.14f),
                     titleContentColor = budha,
-                    navigationIconContentColor = budha
+                    navigationIconContentColor = budha,
+                    actionIconContentColor = budha
                 )
             )
         }

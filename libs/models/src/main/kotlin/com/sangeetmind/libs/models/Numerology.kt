@@ -183,3 +183,73 @@ data class VedicResponse(
     @Json(name = "moolank_bhagyank_compatibility") val moolankBhagyankCompatibility: MoolankBhagyankCompatibility,
     @Json(name = "sangeetmind_personalization") val sangeetmindPersonalization: SangeetMindPersonalization? = null
 )
+
+// ---- GET /numerology/systems, /numbers, /number/{n} — reference/glossary, previously
+// fully built on the backend but 100% unused by Android (app/numerology/api.py) ----
+
+@JsonClass(generateAdapter = true)
+data class NumerologySystemInfo(
+    val id: String,
+    val name: String = "",
+    val origin: String = "",
+    val description: String = "",
+    @Json(name = "uses_name") val usesName: String = "",
+    @Json(name = "letter_chart") val letterChart: String = "",
+    @Json(name = "master_numbers") val masterNumbers: List<Int> = emptyList(),
+    @Json(name = "compound_numbers") val compoundNumbers: String? = null,
+    val features: List<String> = emptyList(),
+    @Json(name = "key_numbers") val keyNumbers: List<String> = emptyList(),
+    @Json(name = "best_for") val bestFor: String = ""
+)
+
+@JsonClass(generateAdapter = true)
+data class NumerologySystemsResponse(
+    val success: Boolean = true,
+    val systems: List<NumerologySystemInfo> = emptyList(),
+    val default: String = "",
+    @Json(name = "recommendation_for_sangeetmind") val recommendationForSangeetmind: String = ""
+)
+
+@JsonClass(generateAdapter = true)
+data class NumerologyNumberSummary(
+    val number: Int,
+    val name: String = "",
+    val archetype: String = "",
+    val element: String = "",
+    val brief: String = "",
+    @Json(name = "is_master_number") val isMasterNumber: Boolean = false
+)
+
+@JsonClass(generateAdapter = true)
+data class NumerologyNumbersListResponse(
+    val success: Boolean = true,
+    val numbers: List<NumerologyNumberSummary> = emptyList(),
+    @Json(name = "total_count") val totalCount: Int = 0
+)
+
+/** Full interpretation for one number — `context_notes` is always present in practice
+ * (GET /number/{n} calls get_interpretation without a number_type override, which
+ * defaults to "life_path" and always adds a note), but modeled nullable since the
+ * backend function signature allows it to be absent
+ * (app/numerology/interpretations/interpreter.py: get_interpretation). */
+@JsonClass(generateAdapter = true)
+data class NumerologyNumberInterpretation(
+    val number: Int,
+    val name: String = "",
+    val archetype: String = "",
+    val element: String = "",
+    val vibration: String = "",
+    @Json(name = "is_master_number") val isMasterNumber: Boolean = false,
+    @Json(name = "core_traits") val coreTraits: List<String> = emptyList(),
+    val strengths: List<String> = emptyList(),
+    val challenges: List<String> = emptyList(),
+    @Json(name = "spiritual_theme") val spiritualTheme: String = "",
+    @Json(name = "growth_advice") val growthAdvice: List<String> = emptyList(),
+    @Json(name = "context_notes") val contextNotes: String? = null
+)
+
+@JsonClass(generateAdapter = true)
+data class NumerologyNumberInterpretationResponse(
+    val success: Boolean = true,
+    val interpretation: NumerologyNumberInterpretation
+)

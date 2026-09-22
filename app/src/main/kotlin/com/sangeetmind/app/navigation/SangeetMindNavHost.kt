@@ -19,6 +19,7 @@ import com.sangeetmind.features.astrology.marketplace.ui.MarketplaceDetailScreen
 import com.sangeetmind.features.astrology.marketplace.ui.MarketplaceListScreen
 import com.sangeetmind.features.astrology.match.ui.MatchScreen
 import com.sangeetmind.features.astrology.muhurat.ui.MuhuratScreen
+import com.sangeetmind.features.astrology.numerology.ui.NumerologyGlossaryScreen
 import com.sangeetmind.features.astrology.numerology.ui.NumerologyScreen
 import com.sangeetmind.features.astrology.panchang.ui.PanchangScreen
 import com.sangeetmind.features.astrology.payments.ui.PaymentsScreen
@@ -148,7 +149,14 @@ fun SangeetMindNavHost(
         }
 
         composable("numerology") {
-            NumerologyScreen(onNavigateBack = { navController.popBackStack() })
+            NumerologyScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onOpenGlossary = { navController.navigate("numerology_glossary") }
+            )
+        }
+
+        composable("numerology_glossary") {
+            NumerologyGlossaryScreen(onNavigateBack = { navController.popBackStack() })
         }
 
         composable("interpretation") {

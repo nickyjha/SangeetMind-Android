@@ -156,6 +156,62 @@ data class ChartFriendship(
     val relations: Map<String, Map<String, String>> = emptyMap()
 )
 
+/** Six-fold planetary strength (Shadbala) — virupas per component, comparable within a
+ * chart; not full BPHS arc-minute tables (app/services/shadbala.py). */
+@JsonClass(generateAdapter = true)
+data class ShadbalaComponents(
+    val sthana: Double = 0.0,
+    val dig: Double = 0.0,
+    val kala: Double = 0.0,
+    val cheshta: Double = 0.0,
+    val naisargika: Double = 0.0,
+    val drik: Double = 0.0
+)
+
+@JsonClass(generateAdapter = true)
+data class ShadbalaPlanet(
+    val sign: String = "",
+    val house: Int? = null,
+    val components: ShadbalaComponents = ShadbalaComponents(),
+    @Json(name = "total_virupas") val totalVirupas: Double = 0.0,
+    @Json(name = "total_rupas") val totalRupas: Double = 0.0
+)
+
+@JsonClass(generateAdapter = true)
+data class ShadbalaRanking(
+    val planet: String,
+    @Json(name = "total_virupas") val totalVirupas: Double = 0.0
+)
+
+@JsonClass(generateAdapter = true)
+data class ChartShadbala(
+    val planets: Map<String, ShadbalaPlanet> = emptyMap(),
+    val ranking: List<ShadbalaRanking> = emptyList(),
+    val method: String = "",
+    val note: String = ""
+)
+
+/** House strength (Bhavabala), derived from Ashtakvarga SAV + the house lord's Shadbala
+ * (app/services/bhavabala.py). */
+@JsonClass(generateAdapter = true)
+data class BhavabalaHouse(
+    val house: Int,
+    val sign: String = "",
+    val lord: String = "",
+    @Json(name = "lord_house") val lordHouse: Int? = null,
+    @Json(name = "sav_bindus") val savBindus: Double = 0.0,
+    @Json(name = "lord_shadbala_virupas") val lordShadbalaVirupas: Double = 0.0,
+    @Json(name = "total_virupas") val totalVirupas: Double = 0.0,
+    val rank: Int = 0
+)
+
+@JsonClass(generateAdapter = true)
+data class ChartBhavabala(
+    val houses: List<BhavabalaHouse> = emptyList(),
+    @Json(name = "strongest_house") val strongestHouse: Int? = null,
+    val method: String = ""
+)
+
 /** Yogini Dasha — 8-yogini, 36-year cycle from Moon nakshatra (app/services/dasha_yogini.py). */
 @JsonClass(generateAdapter = true)
 data class YoginiAntardasha(
@@ -219,6 +275,8 @@ data class ChartSummaryResponse(
     val doshas: ChartDoshas = ChartDoshas(),
     val ashtakvarga: ChartAshtakvarga = ChartAshtakvarga(),
     val friendship: ChartFriendship = ChartFriendship(),
+    val shadbala: ChartShadbala = ChartShadbala(),
+    val bhavabala: ChartBhavabala = ChartBhavabala(),
     val yogini: YoginiInfo = YoginiInfo(),
     @Json(name = "chara_dasha") val charaDasha: CharaDashaInfo = CharaDashaInfo(),
     val d2: DivisionalChart? = null,

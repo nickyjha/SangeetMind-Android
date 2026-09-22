@@ -47,16 +47,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.theme.GrahaColors
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.features.astrology.chart.ChartViewModel
+import com.sangeetmind.libs.models.BhavabalaHouse
 import com.sangeetmind.libs.models.BhuktiPeriod
 import com.sangeetmind.libs.models.CharaAntardasha
 import com.sangeetmind.libs.models.CharaDashaInfo
 import com.sangeetmind.libs.models.CharaMahadasha
 import com.sangeetmind.libs.models.ChartAshtakvarga
+import com.sangeetmind.libs.models.ChartBhavabala
 import com.sangeetmind.libs.models.ChartDoshas
 import com.sangeetmind.libs.models.ChartFriendship
+import com.sangeetmind.libs.models.ChartShadbala
 import com.sangeetmind.libs.models.ChartSummaryResponse
+import com.sangeetmind.libs.models.ShadbalaRanking
 import com.sangeetmind.libs.models.DIVISIONAL_CHART_META
 import com.sangeetmind.libs.models.DashaPeriod
 import com.sangeetmind.libs.models.DivisionalChart
@@ -225,6 +230,12 @@ private fun ChartContent(
             }
             item {
                 FriendshipCard(chart.friendship)
+            }
+            item {
+                ShadbalaCard(chart.shadbala)
+            }
+            item {
+                BhavabalaCard(chart.bhavabala)
             }
             item {
                 DashaSystemSelector(dashaSystem, onSelect = { dashaSystem = it })
@@ -612,6 +623,144 @@ private fun FriendshipCard(friendship: ChartFriendship) {
             }
         }
     }
+}
+
+/** Six-fold planetary strength, strongest graha first. Rupas (virupas/60) is the human
+ * unit shown; the bar is driven by virupas so components with very different totals still
+ * compare cleanly (app/services/shadbala.py — "simplified_parashari", not full BPHS
+ * arc-minute tables). */
+@Composable
+private fun ShadbalaCard(shadbala: ChartShadbala) {
+    if (shadbala.planets.isEmpty()) return
+    val graha = LocalGrahaColors.current
+    val ranked = shadbala.ranking.ifEmpty {
+        shadbala.planets.entries
+            .map { (planet, data) -> ShadbalaRanking(planet, data.totalVirupas) }
+            .sortedByDescending { it.totalVirupas }
+    }
+    val maxVirupas = (ranked.maxOfOrNull { it.totalVirupas } ?: 1.0).coerceAtLeast(1.0)
+
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text("Shadbala", style = MaterialTheme.typography.titleMedium)
+            Text(
+                "Six-fold planetary strength, strongest first",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            ranked.forEach { entry ->
+                val planet = shadbala.planets[entry.planet] ?: return@forEach
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        entry.planet,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.width(72.dp)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(8.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .fillMaxWidth(
+                                    fraction = (entry.totalVirupas / maxVirupas).toFloat().coerceIn(0.05f, 1f)
+                                )
+                                .clip(RoundedCornerShape(4.dp))
+                                .background(grahaColorFor(entry.planet, graha))
+                        )
+                    }
+                    Text(
+                        "${planet.totalRupas} rupas",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.width(72.dp).padding(start = 8.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+/** House-by-house strength in house order (1..12), so it reads the same way the North
+ * Indian chart and planet list above it do — the strongest house is graha.budha-tinted
+ * (app/services/bhavabala.py: SAV-in-house-sign + house lord's Shadbala). */
+@Composable
+private fun BhavabalaCard(bhavabala: ChartBhavabala) {
+    if (bhavabala.houses.isEmpty()) return
+    val houses = bhavabala.houses.sortedBy { it.house }
+    val maxVirupas = (houses.maxOfOrNull { it.totalVirupas } ?: 1.0).coerceAtLeast(1.0)
+    val graha = LocalGrahaColors.current
+
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text("Bhavabala", style = MaterialTheme.typography.titleMedium)
+            Text(
+                "House strength · strongest is House ${bhavabala.strongestHouse ?: "-"}",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            houses.forEach { house ->
+                val barColor = if (house.house == bhavabala.strongestHouse) {
+                    graha.budha
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        "H${house.house} ${house.lord}",
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.width(88.dp)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(8.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .fillMaxWidth(
+                                    fraction = (house.totalVirupas / maxVirupas).toFloat().coerceIn(0.05f, 1f)
+                                )
+                                .clip(RoundedCornerShape(4.dp))
+                                .background(barColor)
+                        )
+                    }
+                    Text(
+                        house.totalVirupas.toInt().toString(),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.width(36.dp).padding(start = 8.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+private fun grahaColorFor(planet: String, graha: GrahaColors): Color = when (planet) {
+    "Sun" -> graha.surya
+    "Moon" -> graha.chandra
+    "Mars" -> graha.mangala
+    "Mercury" -> graha.budha
+    "Jupiter" -> graha.guru
+    "Venus" -> graha.shukra
+    "Saturn" -> graha.shani
+    else -> graha.rahu
 }
 
 /** A second/third dasha system alongside Vimshottari — same underlying birth chart, a

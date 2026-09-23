@@ -64,7 +64,14 @@
 
     <!-- Planet list -->
     <string name="chart_planet_positions">ग्रह स्थिति</string>
-    <string name="chart_aspects_fmt">प्रभाव: %1$s</string>
+
+    <string name="chart_house_details_title">भाव विवरण</string>
+    <string name="chart_house_lord_fmt">स्वामी: %1$s</string>
+    <string name="chart_house_occupants_fmt">इस भाव में: %1$s</string>
+    <string name="chart_house_occupants_none">इस भाव में कोई ग्रह नहीं</string>
+    <string name="chart_house_influencers_fmt">इन ग्रहों का प्रभाव: %1$s</string>
+    <string name="chart_house_influencers_none">किसी और ग्रह का प्रभाव नहीं</string>
+
     <string name="chart_dig_vargottama">वर्गोत्तम</string>
     <string name="chart_legend_retrograde">* वक्री</string>
     <string name="chart_legend_combust">^ अस्त</string>

@@ -64,7 +64,14 @@
 
     <!-- Planet list -->
     <string name="chart_planet_positions">Planetary positions</string>
-    <string name="chart_aspects_fmt">Aspects: %1$s</string>
+
+    <!-- House-by-house table: sign, lord, occupants, aspecting (influencing) planets. -->
+    <string name="chart_house_details_title">House details</string>
+    <string name="chart_house_lord_fmt">Lord: %1$s</string>
+    <string name="chart_house_occupants_fmt">Occupied by: %1$s</string>
+    <string name="chart_house_occupants_none">No planets here</string>
+    <string name="chart_house_influencers_fmt">Influenced by: %1$s</string>
+    <string name="chart_house_influencers_none">Not influenced by any other planet</string>
     <string name="chart_dig_vargottama">Vargottama</string>
     <string name="chart_legend_retrograde">* Retrograde</string>
     <string name="chart_legend_combust">^ Combust</string>

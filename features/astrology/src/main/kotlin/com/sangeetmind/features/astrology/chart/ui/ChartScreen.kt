@@ -230,18 +230,18 @@ private fun ChartContent(
                     planets = selected.second.planets,
                     title = meta?.first ?: selected.first,
                     subtitle = meta?.second ?: stringResource(R.string.chart_subtitle_north_indian),
-                    // bhavabala (and the house lords it carries) is only computed for D1.
-                    houseLords = if (selected.first == "D1") {
-                        chart.bhavabala.houses.associate { it.house to it.lord }
-                    } else {
-                        emptyMap()
-                    },
                     modifier = Modifier.padding(16.dp)
                 )
             }
         }
         item {
             PlanetListCard(selected.second.lagna, selected.second.planets)
+        }
+        // bhavabala (house sign + lord) is only computed for D1.
+        if (selected.first == "D1" && chart.bhavabala.houses.isNotEmpty()) {
+            item {
+                HouseDetailsCard(chart.planets, chart.bhavabala)
+            }
         }
         if (selected.first == "D1") {
             item {
@@ -515,6 +515,73 @@ private fun dignityChips(planet: PlanetInfo): List<Pair<String, Color>> {
     }
 }
 
+/**
+ * House-by-house table (D1 only): for each house, its sign, lord (bhavabala.houses —
+ * already computed by the backend from this chart's own lagna), which planets occupy it,
+ * and which planets aspect (drishti) it — the inverse of each planet's aspectsHouses.
+ */
+@Composable
+internal fun HouseDetailsCard(planets: Map<String, PlanetInfo>, bhavabala: ChartBhavabala) {
+    // Classical navagraha only — Uranus/Neptune/Pluto are in the planets map (chart_service.py
+    // computes them for reference) but excluded from Vedic house/aspect UI everywhere else
+    // (the wheel, PlanetListCard), so exclude them here too for consistency.
+    val vedicPlanets = planets.filterKeys {
+        it in setOf("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu")
+    }
+    val occupantsByHouse = (1..12).associateWith { house ->
+        vedicPlanets.filterValues { it.house == house }.keys.toList()
+    }
+    val influencersByHouse = (1..12).associateWith { house ->
+        vedicPlanets.filterValues { house in it.aspectsHouses }.keys.toList()
+    }
+
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(stringResource(R.string.chart_house_details_title), style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.height(8.dp))
+            bhavabala.houses.sortedBy { it.house }.forEach { house ->
+                val occupantNames = occupantsByHouse[house.house].orEmpty().map { astroTerm(it) }
+                val influencerNames = influencersByHouse[house.house].orEmpty().map { astroTerm(it) }
+                Column(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(
+                            stringResource(CoreR.string.common_house_short, house.house),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(astroTerm(house.sign), style = MaterialTheme.typography.bodyMedium)
+                    }
+                    Text(
+                        stringResource(R.string.chart_house_lord_fmt, astroTerm(house.lord)),
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(top = 2.dp, start = 28.dp)
+                    )
+                    Text(
+                        if (occupantNames.isNotEmpty()) {
+                            stringResource(R.string.chart_house_occupants_fmt, occupantNames.joinToString(", "))
+                        } else {
+                            stringResource(R.string.chart_house_occupants_none)
+                        },
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 2.dp, start = 28.dp)
+                    )
+                    Text(
+                        if (influencerNames.isNotEmpty()) {
+                            stringResource(R.string.chart_house_influencers_fmt, influencerNames.joinToString(", "))
+                        } else {
+                            stringResource(R.string.chart_house_influencers_none)
+                        },
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 2.dp, start = 28.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun PlanetListCard(lagna: LagnaInfo, planets: Map<String, PlanetInfo>) {
@@ -565,15 +632,6 @@ internal fun PlanetListCard(lagna: LagnaInfo, planets: Map<String, PlanetInfo>) 
                         ) {
                             chips.forEach { (label, color) -> Chip(label, color) }
                         }
-                    }
-                    if (planet.aspectsHouses.isNotEmpty()) {
-                        val aspectHouseTags = planet.aspectsHouses.map { stringResource(CoreR.string.common_house_short, it) }
-                        Text(
-                            stringResource(R.string.chart_aspects_fmt, aspectHouseTags.joinToString(", ")),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(top = 4.dp, start = 28.dp)
-                        )
                     }
                 }
             }

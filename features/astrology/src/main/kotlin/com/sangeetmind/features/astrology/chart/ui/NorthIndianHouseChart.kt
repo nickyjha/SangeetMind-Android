@@ -102,6 +102,9 @@ fun NorthIndianHouseChart(
     planets: Map<String, PlanetInfo>,
     title: String,
     subtitle: String? = null,
+    /** House number (1-12) -> lord's English planet name (ChartBhavabala.houses[].lord).
+     * Empty for divisional charts, which don't carry bhavabala data. */
+    houseLords: Map<Int, String> = emptyMap(),
     modifier: Modifier = Modifier
 ) {
     val lagnaSign = lagna.sign.ifBlank { "Aries" }
@@ -133,6 +136,7 @@ fun NorthIndianHouseChart(
     val innerLineColor = LocalGrahaColors.current.rahu
     val rashiArgb = MaterialTheme.colorScheme.primary.toArgb()
     val planetArgb = MaterialTheme.colorScheme.onSurface.toArgb()
+    val lordArgb = MaterialTheme.colorScheme.tertiary.toArgb()
 
     Column(modifier = modifier.fillMaxWidth()) {
         Text(title, style = MaterialTheme.typography.titleMedium)
@@ -192,9 +196,17 @@ fun NorthIndianHouseChart(
                 textSize = 9f * scale
             }
 
+            val lordPaint = android.graphics.Paint().apply {
+                isAntiAlias = true
+                color = lordArgb
+                textAlign = android.graphics.Paint.Align.CENTER
+                textSize = 8f * scale
+            }
+
             for (houseNum in 1..12) {
                 val centroid = HOUSE_CENTROIDS.getValue(houseNum).scaled()
                 val items = houseToPlanets.getValue(houseNum)
+                val lordAbbrev = houseLords[houseNum]?.let { planetAbbrev[it] ?: it.take(2) }
                 val rashiY = centroid.y - if (items.isNotEmpty()) 18f * scale else 0f
                 drawContext.canvas.nativeCanvas.drawText(
                     houseToRashi.getValue(houseNum).toString(),
@@ -202,6 +214,14 @@ fun NorthIndianHouseChart(
                     rashiY,
                     rashiPaint
                 )
+                if (lordAbbrev != null) {
+                    drawContext.canvas.nativeCanvas.drawText(
+                        "($lordAbbrev)",
+                        centroid.x,
+                        rashiY + 10f * scale,
+                        lordPaint
+                    )
+                }
                 items.forEachIndexed { i, (name, data) ->
                     val abbrev = planetAbbrev[name] ?: name.take(2)
                     val dign = dignitySuffix(data)
@@ -210,7 +230,7 @@ fun NorthIndianHouseChart(
                     drawContext.canvas.nativeCanvas.drawText(
                         line,
                         centroid.x,
-                        centroid.y + 4f * scale + i * 12f * scale,
+                        centroid.y + 4f * scale + (if (lordAbbrev != null) 10f * scale else 0f) + i * 12f * scale,
                         planetPaint
                     )
                 }

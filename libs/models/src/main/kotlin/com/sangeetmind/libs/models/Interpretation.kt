@@ -35,7 +35,9 @@ data class PlanetInfo(
     val combust: Boolean = false,
     val exalted: Boolean = false,
     val debilitated: Boolean = false,
-    val vargottama: Boolean = false
+    val vargottama: Boolean = false,
+    /** Whole-sign houses (1-12) this planet's drishti falls on (app/services/chart_aspects.py). */
+    @Json(name = "aspects_houses") val aspectsHouses: List<Int> = emptyList()
 )
 
 @JsonClass(generateAdapter = true)

@@ -64,6 +64,7 @@
 
     <!-- Planet list -->
     <string name="chart_planet_positions">Planetary positions</string>
+    <string name="chart_aspects_fmt">Aspects: %1$s</string>
     <string name="chart_dig_vargottama">Vargottama</string>
     <string name="chart_legend_retrograde">* Retrograde</string>
     <string name="chart_legend_combust">^ Combust</string>

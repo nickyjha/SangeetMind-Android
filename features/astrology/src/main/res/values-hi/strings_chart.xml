@@ -64,6 +64,7 @@
 
     <!-- Planet list -->
     <string name="chart_planet_positions">ग्रह स्थिति</string>
+    <string name="chart_aspects_fmt">प्रभाव: %1$s</string>
     <string name="chart_dig_vargottama">वर्गोत्तम</string>
     <string name="chart_legend_retrograde">* वक्री</string>
     <string name="chart_legend_combust">^ अस्त</string>

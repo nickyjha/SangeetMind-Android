@@ -230,6 +230,12 @@ private fun ChartContent(
                     planets = selected.second.planets,
                     title = meta?.first ?: selected.first,
                     subtitle = meta?.second ?: stringResource(R.string.chart_subtitle_north_indian),
+                    // bhavabala (and the house lords it carries) is only computed for D1.
+                    houseLords = if (selected.first == "D1") {
+                        chart.bhavabala.houses.associate { it.house to it.lord }
+                    } else {
+                        emptyMap()
+                    },
                     modifier = Modifier.padding(16.dp)
                 )
             }
@@ -559,6 +565,15 @@ internal fun PlanetListCard(lagna: LagnaInfo, planets: Map<String, PlanetInfo>) 
                         ) {
                             chips.forEach { (label, color) -> Chip(label, color) }
                         }
+                    }
+                    if (planet.aspectsHouses.isNotEmpty()) {
+                        val aspectHouseTags = planet.aspectsHouses.map { stringResource(CoreR.string.common_house_short, it) }
+                        Text(
+                            stringResource(R.string.chart_aspects_fmt, aspectHouseTags.joinToString(", ")),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = 4.dp, start = 28.dp)
+                        )
                     }
                 }
             }

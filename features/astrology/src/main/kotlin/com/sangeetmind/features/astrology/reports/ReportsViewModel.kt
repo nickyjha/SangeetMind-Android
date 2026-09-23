@@ -2,9 +2,12 @@ package com.sangeetmind.features.astrology.reports
 
 import android.content.Context
 import android.net.Uri
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.core.common.language.withAppLanguage
 import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.features.astrology.kundli.KundliRepository
 import com.sangeetmind.features.astrology.payments.PaymentsRepository
@@ -37,11 +40,15 @@ class ReportsViewModel @Inject constructor(
     private val reportsRepository: ReportsRepository,
     private val kundliRepository: KundliRepository,
     private val paymentsRepository: PaymentsRepository,
+    private val languageManager: LanguageManager,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReportsUiState())
     val uiState: StateFlow<ReportsUiState> = _uiState.asStateFlow()
+
+    private fun str(@StringRes id: Int): String =
+        context.withAppLanguage(languageManager.current).getString(id)
 
     init {
         loadSkus()
@@ -83,7 +90,7 @@ class ReportsViewModel @Inject constructor(
             val primary = kundlis?.firstOrNull { it.isPrimary } ?: kundlis?.firstOrNull()
             if (primary == null) {
                 _uiState.update {
-                    it.copy(isLoading = false, error = context.getString(CoreR.string.common_add_kundli_first))
+                    it.copy(isLoading = false, error = str(CoreR.string.common_add_kundli_first))
                 }
                 return@launch
             }

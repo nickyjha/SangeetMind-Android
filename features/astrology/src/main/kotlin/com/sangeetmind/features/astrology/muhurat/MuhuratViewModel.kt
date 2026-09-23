@@ -1,9 +1,12 @@
 package com.sangeetmind.features.astrology.muhurat
 
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.core.common.language.withAppLanguage
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.MuhuratSlot
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,11 +32,15 @@ data class MuhuratUiState(
 @HiltViewModel
 class MuhuratViewModel @Inject constructor(
     @ApplicationContext private val appContext: Context,
+    private val languageManager: LanguageManager,
     private val muhuratRepository: MuhuratRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MuhuratUiState())
     val uiState: StateFlow<MuhuratUiState> = _uiState.asStateFlow()
+
+    private fun str(@StringRes id: Int): String =
+        appContext.withAppLanguage(languageManager.current).getString(id)
 
     fun onIntentChange(intent: String) {
         _uiState.update { it.copy(intent = intent, error = null) }
@@ -50,7 +57,7 @@ class MuhuratViewModel @Inject constructor(
     fun findMuhurat() {
         val state = _uiState.value
         if (state.windowStart.isBlank() || state.windowEnd.isBlank()) {
-            _uiState.update { it.copy(error = appContext.getString(R.string.muhurat_error_enter_dates)) }
+            _uiState.update { it.copy(error = str(R.string.muhurat_error_enter_dates)) }
             return
         }
 
@@ -61,7 +68,7 @@ class MuhuratViewModel @Inject constructor(
                     it.copy(isSearching = false, results = result.data.results)
                 }
                 is Result.Error -> _uiState.update {
-                    it.copy(isSearching = false, error = result.message ?: appContext.getString(R.string.muhurat_error_find_failed))
+                    it.copy(isSearching = false, error = result.message ?: str(R.string.muhurat_error_find_failed))
                 }
                 is Result.Loading -> Unit
             }

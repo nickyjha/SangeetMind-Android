@@ -1,9 +1,12 @@
 package com.sangeetmind.features.astrology.marketplace
 
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.core.common.language.withAppLanguage
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.Astrologer
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,11 +28,15 @@ data class MarketplaceListUiState(
 @HiltViewModel
 class MarketplaceListViewModel @Inject constructor(
     private val repository: MarketplaceRepository,
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val languageManager: LanguageManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MarketplaceListUiState())
     val uiState: StateFlow<MarketplaceListUiState> = _uiState.asStateFlow()
+
+    private fun str(@StringRes id: Int): String =
+        context.withAppLanguage(languageManager.current).getString(id)
 
     init {
         refresh()
@@ -48,7 +55,7 @@ class MarketplaceListViewModel @Inject constructor(
                 is Result.Error -> _uiState.update {
                     it.copy(
                         isLoading = false,
-                        error = result.message ?: context.getString(R.string.marketplace_error_load_astrologers)
+                        error = result.message ?: str(R.string.marketplace_error_load_astrologers)
                     )
                 }
                 is Result.Loading -> Unit

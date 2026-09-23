@@ -163,7 +163,7 @@ private fun MatchResultCard(result: KundliMatchResult) {
                 style = MaterialTheme.typography.headlineSmall
             )
             Text(
-                text = result.verdict.replaceFirstChar { it.uppercase() },
+                text = astroTerm(result.verdict).replaceFirstChar { it.uppercase() },
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary
             )

@@ -71,6 +71,17 @@
     <string name="chart_legend_debilitated">↓ नीच</string>
     <string name="chart_legend_vargottama">□ वर्गोत्तम</string>
 
+    <string name="chart_wheel_abbrev_sun">सू</string>
+    <string name="chart_wheel_abbrev_moon">चं</string>
+    <string name="chart_wheel_abbrev_mercury">बु</string>
+    <string name="chart_wheel_abbrev_venus">शु</string>
+    <string name="chart_wheel_abbrev_mars">मं</string>
+    <string name="chart_wheel_abbrev_jupiter">गु</string>
+    <string name="chart_wheel_abbrev_saturn">श</string>
+    <string name="chart_wheel_abbrev_rahu">रा</string>
+    <string name="chart_wheel_abbrev_ketu">के</string>
+    <string name="chart_wheel_abbrev_lagna">ल</string>
+
     <!-- Doshas -->
     <string name="chart_doshas">दोष</string>
     <string name="chart_status_present">है</string>

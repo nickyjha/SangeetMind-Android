@@ -1,10 +1,13 @@
 package com.sangeetmind.features.astrology.referrals
 
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.core.common.language.withAppLanguage
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.ReferralStats
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,6 +32,7 @@ data class ReferralUiState(
 class ReferralViewModel @Inject constructor(
     private val repository: ReferralRepository,
     @ApplicationContext private val context: Context,
+    private val languageManager: LanguageManager,
     firebaseAuth: FirebaseAuth
 ) : ViewModel() {
 
@@ -36,6 +40,9 @@ class ReferralViewModel @Inject constructor(
         ReferralUiState(myCode = firebaseAuth.currentUser?.uid.orEmpty())
     )
     val uiState: StateFlow<ReferralUiState> = _uiState.asStateFlow()
+
+    private fun str(@StringRes id: Int): String =
+        context.withAppLanguage(languageManager.current).getString(id)
 
     init {
         refreshStats()
@@ -53,7 +60,7 @@ class ReferralViewModel @Inject constructor(
                 is Result.Error -> _uiState.update {
                     it.copy(
                         isLoading = false,
-                        error = result.message ?: context.getString(R.string.referrals_error_load_stats)
+                        error = result.message ?: str(R.string.referrals_error_load_stats)
                     )
                 }
                 is Result.Loading -> Unit
@@ -64,7 +71,7 @@ class ReferralViewModel @Inject constructor(
     fun applyCode() {
         val code = _uiState.value.codeInput.trim()
         if (code.isBlank()) {
-            _uiState.update { it.copy(error = context.getString(R.string.referrals_error_enter_code)) }
+            _uiState.update { it.copy(error = str(R.string.referrals_error_enter_code)) }
             return
         }
         viewModelScope.launch {
@@ -75,7 +82,7 @@ class ReferralViewModel @Inject constructor(
                         it.copy(
                             isLoading = false,
                             codeInput = "",
-                            message = context.getString(
+                            message = str(
                                 if (result.data.created) R.string.referrals_msg_applied
                                 else R.string.referrals_msg_already_applied
                             )
@@ -86,7 +93,7 @@ class ReferralViewModel @Inject constructor(
                 is Result.Error -> _uiState.update {
                     it.copy(
                         isLoading = false,
-                        error = result.message ?: context.getString(R.string.referrals_error_apply_code)
+                        error = result.message ?: str(R.string.referrals_error_apply_code)
                     )
                 }
                 is Result.Loading -> Unit

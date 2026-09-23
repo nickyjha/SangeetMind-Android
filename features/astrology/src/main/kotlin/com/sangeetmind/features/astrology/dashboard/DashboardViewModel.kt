@@ -1,10 +1,12 @@
 package com.sangeetmind.features.astrology.dashboard
 
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.core.common.language.withAppLanguage
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.horoscope.HoroscopeRepository
 import com.sangeetmind.features.astrology.kundli.KundliRepository
@@ -53,6 +55,9 @@ class DashboardViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(DashboardUiState())
     val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
 
+    private fun str(@StringRes id: Int): String =
+        context.withAppLanguage(languageManager.current).getString(id)
+
     init {
         refresh()
         // The daily horoscope's Gemini-written fields come back in the requested language,
@@ -90,7 +95,7 @@ class DashboardViewModel @Inject constructor(
                     }
                 }
                 is Result.Error -> _uiState.update {
-                    it.copy(isLoading = false, error = kundliResult.message ?: context.getString(R.string.dashboard_error_load))
+                    it.copy(isLoading = false, error = kundliResult.message ?: str(R.string.dashboard_error_load))
                 }
                 is Result.Loading -> Unit
             }

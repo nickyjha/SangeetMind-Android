@@ -1,10 +1,12 @@
 package com.sangeetmind.features.astrology.horoscope
 
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.core.common.language.withAppLanguage
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.kundli.KundliRepository
 import com.sangeetmind.features.astrology.profile.AstroProfileRepository
@@ -50,6 +52,9 @@ class HoroscopeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(HoroscopeUiState())
     val uiState: StateFlow<HoroscopeUiState> = _uiState.asStateFlow()
 
+    private fun str(@StringRes id: Int): String =
+        context.withAppLanguage(languageManager.current).getString(id)
+
     init {
         load()
         // The daily endpoint returns its Gemini-written fields in the requested language,
@@ -71,13 +76,13 @@ class HoroscopeViewModel @Inject constructor(
             val kundlis = (kundliResult as? Result.Success)?.data
             if (kundlis == null) {
                 _uiState.update {
-                    it.copy(isLoading = false, error = (kundliResult as? Result.Error)?.message ?: context.getString(R.string.horoscope_error_load_kundlis))
+                    it.copy(isLoading = false, error = (kundliResult as? Result.Error)?.message ?: str(R.string.horoscope_error_load_kundlis))
                 }
                 return@launch
             }
             val primary = kundlis.firstOrNull { it.isPrimary } ?: kundlis.firstOrNull()
             if (primary == null) {
-                _uiState.update { it.copy(isLoading = false, error = context.getString(R.string.horoscope_error_add_kundli_first)) }
+                _uiState.update { it.copy(isLoading = false, error = str(R.string.horoscope_error_add_kundli_first)) }
                 return@launch
             }
 
@@ -85,7 +90,7 @@ class HoroscopeViewModel @Inject constructor(
             val moonSign = (profileResult as? Result.Success)?.data?.moonSign
             if (moonSign.isNullOrBlank()) {
                 _uiState.update {
-                    it.copy(isLoading = false, error = (profileResult as? Result.Error)?.message ?: context.getString(R.string.horoscope_error_moon_sign))
+                    it.copy(isLoading = false, error = (profileResult as? Result.Error)?.message ?: str(R.string.horoscope_error_moon_sign))
                 }
                 return@launch
             }

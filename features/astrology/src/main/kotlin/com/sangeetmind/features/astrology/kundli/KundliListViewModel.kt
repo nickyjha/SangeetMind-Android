@@ -1,9 +1,12 @@
 package com.sangeetmind.features.astrology.kundli
 
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.core.common.language.withAppLanguage
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.Kundli
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,11 +27,15 @@ data class KundliListUiState(
 @HiltViewModel
 class KundliListViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val languageManager: LanguageManager,
     private val kundliRepository: KundliRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(KundliListUiState())
     val uiState: StateFlow<KundliListUiState> = _uiState.asStateFlow()
+
+    private fun str(@StringRes id: Int): String =
+        context.withAppLanguage(languageManager.current).getString(id)
 
     init {
         refresh()
@@ -42,7 +49,7 @@ class KundliListViewModel @Inject constructor(
                     it.copy(isLoading = false, kundlis = result.data)
                 }
                 is Result.Error -> _uiState.update {
-                    it.copy(isLoading = false, error = result.message ?: context.getString(R.string.kundli_error_load_failed))
+                    it.copy(isLoading = false, error = result.message ?: str(R.string.kundli_error_load_failed))
                 }
                 is Result.Loading -> Unit
             }
@@ -54,7 +61,7 @@ class KundliListViewModel @Inject constructor(
             when (val result = kundliRepository.setPrimary(id)) {
                 is Result.Success -> refresh()
                 is Result.Error -> _uiState.update {
-                    it.copy(error = result.message ?: context.getString(R.string.kundli_error_switch_failed))
+                    it.copy(error = result.message ?: str(R.string.kundli_error_switch_failed))
                 }
                 is Result.Loading -> Unit
             }
@@ -66,7 +73,7 @@ class KundliListViewModel @Inject constructor(
             when (val result = kundliRepository.delete(id)) {
                 is Result.Success -> refresh()
                 is Result.Error -> _uiState.update {
-                    it.copy(error = result.message ?: context.getString(R.string.kundli_error_delete_failed))
+                    it.copy(error = result.message ?: str(R.string.kundli_error_delete_failed))
                 }
                 is Result.Loading -> Unit
             }

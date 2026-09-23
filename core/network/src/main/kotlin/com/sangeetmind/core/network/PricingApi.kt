@@ -6,5 +6,8 @@ import retrofit2.http.Query
 
 interface PricingApi {
     @GET("v1/pricing/skus")
-    suspend fun getSkus(@Query("kind") kind: String? = null): SkuListResponse
+    suspend fun getSkus(
+        @Query("kind") kind: String? = null,
+        @Query("lang") lang: String = "en"
+    ): SkuListResponse
 }

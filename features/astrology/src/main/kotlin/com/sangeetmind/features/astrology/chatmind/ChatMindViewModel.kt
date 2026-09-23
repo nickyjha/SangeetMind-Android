@@ -1,9 +1,12 @@
 package com.sangeetmind.features.astrology.chatmind
 
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.core.common.language.withAppLanguage
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.payments.PaymentsRepository
 import com.sangeetmind.libs.models.LlmBirthDetails
@@ -37,6 +40,7 @@ data class ChatMindUiState(
 class ChatMindViewModel @Inject constructor(
     private val repository: ChatMindRepository,
     private val paymentsRepository: PaymentsRepository,
+    private val languageManager: LanguageManager,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -44,6 +48,9 @@ class ChatMindViewModel @Inject constructor(
     val uiState: StateFlow<ChatMindUiState> = _uiState.asStateFlow()
 
     private var birthDetails: LlmBirthDetails? = null
+
+    private fun str(@StringRes id: Int): String =
+        context.withAppLanguage(languageManager.current).getString(id)
 
     fun onInputChange(value: String) {
         _uiState.update { it.copy(input = value, error = null) }
@@ -85,7 +92,7 @@ class ChatMindViewModel @Inject constructor(
                             isSending = false,
                             messages = it.messages + ChatMessage(
                                 ChatRole.ASSISTANT,
-                                response.answer ?: response.error ?: context.getString(R.string.chatmind_no_answer),
+                                response.answer ?: response.error ?: str(R.string.chatmind_no_answer),
                                 tier = tier
                             )
                         )

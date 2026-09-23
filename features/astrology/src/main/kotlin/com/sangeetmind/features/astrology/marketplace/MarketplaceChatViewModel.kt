@@ -1,10 +1,13 @@
 package com.sangeetmind.features.astrology.marketplace
 
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.core.common.language.withAppLanguage
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.Astrologer
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,6 +44,7 @@ data class MarketplaceChatUiState(
 class MarketplaceChatViewModel @Inject constructor(
     private val repository: MarketplaceRepository,
     @ApplicationContext private val context: Context,
+    private val languageManager: LanguageManager,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -50,6 +54,9 @@ class MarketplaceChatViewModel @Inject constructor(
     val uiState: StateFlow<MarketplaceChatUiState> = _uiState.asStateFlow()
 
     private var billingJob: Job? = null
+
+    private fun str(@StringRes id: Int): String =
+        context.withAppLanguage(languageManager.current).getString(id)
 
     init {
         viewModelScope.launch {
@@ -68,7 +75,7 @@ class MarketplaceChatViewModel @Inject constructor(
                 sessionActive = true,
                 messages = it.messages + ChatMessage(
                     fromMe = false,
-                    text = context.getString(R.string.marketplace_session_started_msg)
+                    text = str(R.string.marketplace_session_started_msg)
                 )
             )
         }
@@ -88,7 +95,7 @@ class MarketplaceChatViewModel @Inject constructor(
                 sessionActive = false,
                 messages = it.messages + ChatMessage(
                     fromMe = false,
-                    text = context.getString(R.string.marketplace_session_ended_msg)
+                    text = str(R.string.marketplace_session_ended_msg)
                 )
             )
         }
@@ -101,7 +108,7 @@ class MarketplaceChatViewModel @Inject constructor(
                     // Insufficient balance / premium check failed server-side — stop the meter.
                     endSession()
                     _uiState.update {
-                        it.copy(error = context.getString(R.string.marketplace_error_insufficient_balance))
+                        it.copy(error = str(R.string.marketplace_error_insufficient_balance))
                     }
                 } else {
                     _uiState.update {
@@ -117,7 +124,7 @@ class MarketplaceChatViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         error = result.message
-                            ?: context.getString(R.string.marketplace_error_billing_failed)
+                            ?: str(R.string.marketplace_error_billing_failed)
                     )
                 }
             }

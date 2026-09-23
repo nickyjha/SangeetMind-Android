@@ -11,6 +11,7 @@
     <string name="sangeet_raag_meta_fmt">%1$s • %2$s • दशा: %3$s</string>
     <string name="sangeet_raag_dasha_pair_fmt">%1$s / %2$s</string>
     <string name="sangeet_raag_preview_only">सिर्फ़ झलक — पूरी प्लेलिस्ट के लिए प्रीमियम लें।</string>
+    <string name="sangeet_raag_track_purpose_fmt">%1$s दशा को संतुलित करने के लिए</string>
 
     <string name="sangeet_japa_stats_fmt">स्ट्रीक: %1$d दिन • कुल जप: %2$d</string>
     <string name="sangeet_japa_tap">टैप करें</string>

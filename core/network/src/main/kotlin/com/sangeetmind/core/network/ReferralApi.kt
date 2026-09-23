@@ -6,11 +6,12 @@ import com.sangeetmind.libs.models.ReferralStats
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface ReferralApi {
     @POST("v1/referrals/apply")
     suspend fun applyReferral(@Body body: ApplyReferralRequest): ApplyReferralResponse
 
     @GET("v1/referrals/stats")
-    suspend fun getStats(): ReferralStats
+    suspend fun getStats(@Query("lang") lang: String = "en"): ReferralStats
 }

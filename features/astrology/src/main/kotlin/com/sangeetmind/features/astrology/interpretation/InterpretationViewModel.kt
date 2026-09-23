@@ -1,10 +1,12 @@
 package com.sangeetmind.features.astrology.interpretation
 
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.core.common.language.withAppLanguage
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.kundli.KundliRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,12 +30,15 @@ data class InterpretationUiState(
 class InterpretationViewModel @Inject constructor(
     private val kundliRepository: KundliRepository,
     private val interpretationRepository: InterpretationRepository,
-    languageManager: LanguageManager,
+    private val languageManager: LanguageManager,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(InterpretationUiState())
     val uiState: StateFlow<InterpretationUiState> = _uiState.asStateFlow()
+
+    private fun str(@StringRes id: Int): String =
+        context.withAppLanguage(languageManager.current).getString(id)
 
     init {
         refresh()
@@ -68,7 +73,7 @@ class InterpretationViewModel @Inject constructor(
                 is Result.Error -> _uiState.update {
                     it.copy(
                         isLoading = false,
-                        error = kundliResult.message ?: context.getString(R.string.interpretation_err_load)
+                        error = kundliResult.message ?: str(R.string.interpretation_err_load)
                     )
                 }
                 is Result.Loading -> Unit

@@ -8,11 +8,6 @@ data class PanchangIndexName(
     val name: String
 )
 
-@JsonClass(generateAdapter = true)
-data class PanchangIndex(
-    val index: Int
-)
-
 /** GET /v1/panchang response (app/services/panchang_service.py::compute_panchang). */
 @JsonClass(generateAdapter = true)
 data class PanchangResponse(
@@ -22,7 +17,7 @@ data class PanchangResponse(
     val tithi: PanchangIndexName,
     val nakshatra: PanchangIndexName,
     val yoga: PanchangIndexName,
-    val karana: PanchangIndex,
+    val karana: PanchangIndexName,
     val vara: PanchangIndexName,
     val moonSign: String,
     val sunSign: String

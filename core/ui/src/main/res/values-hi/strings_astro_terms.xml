@@ -161,6 +161,10 @@
     <string name="astro_misc_absent">अनुपस्थित</string>
     <string name="astro_misc_male">पुरुष</string>
     <string name="astro_misc_female">महिला</string>
+    <string name="astro_misc_small_panoti">छोटी पनोती</string>
+    <string name="astro_sadesati_phase_rising">आरंभ</string>
+    <string name="astro_sadesati_phase_peak">चरम</string>
+    <string name="astro_sadesati_phase_setting">अंत</string>
 
     <string name="astro_mood_centered">स्थिर</string>
     <string name="astro_mood_optimistic">आशावादी</string>
@@ -178,4 +182,78 @@
     <string name="astro_mood_empowered">सशक्त</string>
     <string name="astro_mood_curious">जिज्ञासु</string>
     <string name="astro_mood_detached">निर्लिप्त</string>
+
+    <string name="astro_raag_mood_calm">शांत</string>
+    <string name="astro_raag_mood_devotional">भक्तिमय</string>
+    <string name="astro_raag_mood_grounding">स्थिरता भरा</string>
+    <string name="astro_raag_mood_energizing">ऊर्जा देने वाला</string>
+    <string name="astro_raag_mood_introspective">अंतर्मुखी</string>
+    <string name="astro_raag_mood_romantic">रोमांटिक</string>
+    <string name="astro_raag_mood_melancholic">उदास</string>
+    <string name="astro_raag_mood_serene">शांतिपूर्ण</string>
+    <string name="astro_raag_mood_heroic">वीरतापूर्ण</string>
+    <string name="astro_raag_mood_expressive">भावपूर्ण</string>
+    <string name="astro_raag_mood_nurturing">देखभाल भरा</string>
+    <string name="astro_raag_mood_healing">उपचारक</string>
+    <string name="astro_raag_mood_illuminating">रोशनी भरा</string>
+    <string name="astro_raag_mood_compassionate">दयालु</string>
+    <string name="astro_raag_mood_aggressive">आक्रामक</string>
+    <string name="astro_raag_mood_chaotic">अस्त-व्यस्त</string>
+    <string name="astro_raag_mood_selfish">स्वार्थी</string>
+    <string name="astro_raag_mood_static">अपरिवर्तित</string>
+
+    <string name="astro_archetype_pioneer">अग्रणी</string>
+    <string name="astro_archetype_harmonizer">तालमेल बनाने वाला</string>
+    <string name="astro_archetype_expressor">अभिव्यक्त करने वाला</string>
+    <string name="astro_archetype_builder">निर्माता</string>
+    <string name="astro_archetype_freedom_seeker">आज़ादी पसंद</string>
+    <string name="astro_archetype_nurturer">पालनकर्ता</string>
+    <string name="astro_archetype_seeker">खोजी</string>
+    <string name="astro_archetype_achiever">उपलब्धि हासिल करने वाला</string>
+    <string name="astro_archetype_humanitarian">परोपकारी</string>
+    <string name="astro_archetype_illuminator">प्रकाश फैलाने वाला</string>
+    <string name="astro_archetype_master_builder">महान निर्माता</string>
+    <string name="astro_archetype_master_teacher">महान गुरु</string>
+
+    <string name="astro_match_verdict_excellent">बहुत अच्छा</string>
+    <string name="astro_match_verdict_good">अच्छा</string>
+    <string name="astro_match_verdict_average">सामान्य</string>
+    <string name="astro_match_verdict_challenging">चुनौतीपूर्ण</string>
+
+    <string name="astro_tradition_hindustani">हिंदुस्तानी</string>
+    <string name="astro_tradition_carnatic">कर्नाटक</string>
+
+    <string name="astro_time_morning">सुबह</string>
+    <string name="astro_time_afternoon">दोपहर</string>
+    <string name="astro_time_evening">शाम</string>
+    <string name="astro_time_night">रात</string>
+    <string name="astro_time_flexible">लचीला</string>
+
+    <string name="astro_raga_bhairavi">भैरवी</string>
+    <string name="astro_raga_ramkali">रामकली</string>
+    <string name="astro_raga_yaman">यमन</string>
+    <string name="astro_raga_darbari">दरबारी</string>
+    <string name="astro_raga_bhairav">भैरव</string>
+    <string name="astro_raga_hindol">हिंडोल</string>
+    <string name="astro_raga_desh">देश</string>
+    <string name="astro_raga_bageshri">बागेश्री</string>
+    <string name="astro_raga_hansadhwani">हंसध्वनि</string>
+    <string name="astro_raga_bihag">बिहाग</string>
+    <string name="astro_raga_miyan_ki_malhar">मियां की मल्हार</string>
+    <string name="astro_raga_charukeshi">चारुकेशी</string>
+    <string name="astro_raga_malkauns">मालकौंस</string>
+    <string name="astro_raga_darbari_kanada">दरबारी कनाडा</string>
+    <string name="astro_raga_todi">तोड़ी</string>
+    <string name="astro_raga_marwa">मारवा</string>
+    <string name="astro_raga_multani">मुलतानी</string>
+    <string name="astro_raga_puriya_dhanashri">पूरिया धनाश्री</string>
+    <string name="astro_raga_shanmukhapriya">षण्मुखप्रिया</string>
+    <string name="astro_raga_natabhairavi">नटभैरवी</string>
+    <string name="astro_raga_kalyani">कल्याणी</string>
+    <string name="astro_raga_mohanam">मोहनम</string>
+    <string name="astro_raga_abheri">आभेरी</string>
+    <string name="astro_raga_hindolam">हिंडोलम</string>
+    <string name="astro_raga_suddha_saveri">शुद्ध सावेरी</string>
+    <string name="astro_raga_shankarabharanam">शंकराभरणम</string>
+    <string name="astro_raga_kambhoji">कांबोजी</string>
 </resources>

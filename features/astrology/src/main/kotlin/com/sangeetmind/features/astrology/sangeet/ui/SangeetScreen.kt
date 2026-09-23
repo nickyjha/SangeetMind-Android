@@ -160,7 +160,7 @@ private fun DailyRaagTab(playlist: com.sangeetmind.libs.models.RaagPlaylist?) {
         ?.let { stringResource(R.string.sangeet_raag_dasha_pair_fmt, mahadasha, astroTerm(it)) }
         ?: mahadasha
     Text(
-        stringResource(R.string.sangeet_raag_meta_fmt, playlist.tradition, playlist.timeOfDay, dashaLabel),
+        stringResource(R.string.sangeet_raag_meta_fmt, astroTerm(playlist.tradition), astroTerm(playlist.timeOfDay), dashaLabel),
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )
@@ -185,8 +185,12 @@ private fun DailyRaagTab(playlist: com.sangeetmind.libs.models.RaagPlaylist?) {
                 }
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
-                    Text(track.raag, style = MaterialTheme.typography.titleMedium)
-                    Text(track.purpose, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(astroTerm(track.raag), style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        stringResource(R.string.sangeet_raag_track_purpose_fmt, mahadasha),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
         }

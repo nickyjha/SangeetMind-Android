@@ -163,6 +163,10 @@
     <string name="astro_misc_absent">Absent</string>
     <string name="astro_misc_male">Male</string>
     <string name="astro_misc_female">Female</string>
+    <string name="astro_misc_small_panoti">Small Panoti</string>
+    <string name="astro_sadesati_phase_rising">Rising</string>
+    <string name="astro_sadesati_phase_peak">Peak</string>
+    <string name="astro_sadesati_phase_setting">Setting</string>
 
     <string name="astro_mood_centered">Centered</string>
     <string name="astro_mood_optimistic">Optimistic</string>
@@ -180,4 +184,84 @@
     <string name="astro_mood_empowered">Empowered</string>
     <string name="astro_mood_curious">Curious</string>
     <string name="astro_mood_detached">Detached</string>
+
+    <!-- Raag rasa/mood words (app/numerology/mappings/sangeetmind.py RAAG_MOODS + primary/secondary/avoid_moods) -->
+    <string name="astro_raag_mood_calm">Calm</string>
+    <string name="astro_raag_mood_devotional">Devotional</string>
+    <string name="astro_raag_mood_grounding">Grounding</string>
+    <string name="astro_raag_mood_energizing">Energizing</string>
+    <string name="astro_raag_mood_introspective">Introspective</string>
+    <string name="astro_raag_mood_romantic">Romantic</string>
+    <string name="astro_raag_mood_melancholic">Melancholic</string>
+    <string name="astro_raag_mood_serene">Serene</string>
+    <string name="astro_raag_mood_heroic">Heroic</string>
+    <string name="astro_raag_mood_expressive">Expressive</string>
+    <string name="astro_raag_mood_nurturing">Nurturing</string>
+    <string name="astro_raag_mood_healing">Healing</string>
+    <string name="astro_raag_mood_illuminating">Illuminating</string>
+    <string name="astro_raag_mood_compassionate">Compassionate</string>
+    <string name="astro_raag_mood_aggressive">Aggressive</string>
+    <string name="astro_raag_mood_chaotic">Chaotic</string>
+    <string name="astro_raag_mood_selfish">Selfish</string>
+    <string name="astro_raag_mood_static">Static</string>
+
+    <!-- Numerology archetype names (app/numerology/interpretations/data.py) -->
+    <string name="astro_archetype_pioneer">The Pioneer</string>
+    <string name="astro_archetype_harmonizer">The Harmonizer</string>
+    <string name="astro_archetype_expressor">The Expressor</string>
+    <string name="astro_archetype_builder">The Builder</string>
+    <string name="astro_archetype_freedom_seeker">The Freedom Seeker</string>
+    <string name="astro_archetype_nurturer">The Nurturer</string>
+    <string name="astro_archetype_seeker">The Seeker</string>
+    <string name="astro_archetype_achiever">The Achiever</string>
+    <string name="astro_archetype_humanitarian">The Humanitarian</string>
+    <string name="astro_archetype_illuminator">The Illuminator</string>
+    <string name="astro_archetype_master_builder">The Master Builder</string>
+    <string name="astro_archetype_master_teacher">The Master Teacher</string>
+
+    <!-- Kundli match verdict tokens (app/services/kundli_match_service.py) -->
+    <string name="astro_match_verdict_excellent">Excellent</string>
+    <string name="astro_match_verdict_good">Good</string>
+    <string name="astro_match_verdict_average">Average</string>
+    <string name="astro_match_verdict_challenging">Challenging</string>
+
+    <!-- Musical tradition tokens (daily raag playlist) -->
+    <string name="astro_tradition_hindustani">Hindustani</string>
+    <string name="astro_tradition_carnatic">Carnatic</string>
+
+    <!-- Practice-time tokens (numerology/astrology preferred practice time, daily raag timeOfDay) -->
+    <string name="astro_time_morning">Morning</string>
+    <string name="astro_time_afternoon">Afternoon</string>
+    <string name="astro_time_evening">Evening</string>
+    <string name="astro_time_night">Night</string>
+    <string name="astro_time_flexible">Flexible</string>
+
+    <!-- Raga names (app/services/raag_personalization.py _DASHA_RAAGS + _CARNATIC_BY_DASHA) -->
+    <string name="astro_raga_bhairavi">Bhairavi</string>
+    <string name="astro_raga_ramkali">Ramkali</string>
+    <string name="astro_raga_yaman">Yaman</string>
+    <string name="astro_raga_darbari">Darbari</string>
+    <string name="astro_raga_bhairav">Bhairav</string>
+    <string name="astro_raga_hindol">Hindol</string>
+    <string name="astro_raga_desh">Desh</string>
+    <string name="astro_raga_bageshri">Bageshri</string>
+    <string name="astro_raga_hansadhwani">Hansadhwani</string>
+    <string name="astro_raga_bihag">Bihag</string>
+    <string name="astro_raga_miyan_ki_malhar">Miyan ki Malhar</string>
+    <string name="astro_raga_charukeshi">Charukeshi</string>
+    <string name="astro_raga_malkauns">Malkauns</string>
+    <string name="astro_raga_darbari_kanada">Darbari Kanada</string>
+    <string name="astro_raga_todi">Todi</string>
+    <string name="astro_raga_marwa">Marwa</string>
+    <string name="astro_raga_multani">Multani</string>
+    <string name="astro_raga_puriya_dhanashri">Puriya Dhanashri</string>
+    <string name="astro_raga_shanmukhapriya">Shanmukhapriya</string>
+    <string name="astro_raga_natabhairavi">Natabhairavi</string>
+    <string name="astro_raga_kalyani">Kalyani</string>
+    <string name="astro_raga_mohanam">Mohanam</string>
+    <string name="astro_raga_abheri">Abheri</string>
+    <string name="astro_raga_hindolam">Hindolam</string>
+    <string name="astro_raga_suddha_saveri">Suddha Saveri</string>
+    <string name="astro_raga_shankarabharanam">Shankarabharanam</string>
+    <string name="astro_raga_kambhoji">Kambhoji</string>
 </resources>

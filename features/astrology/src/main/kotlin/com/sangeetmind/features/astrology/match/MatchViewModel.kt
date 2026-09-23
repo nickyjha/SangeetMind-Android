@@ -1,9 +1,12 @@
 package com.sangeetmind.features.astrology.match
 
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.core.common.language.withAppLanguage
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.kundli.KundliRepository
 import com.sangeetmind.libs.models.Kundli
@@ -30,12 +33,16 @@ data class MatchUiState(
 @HiltViewModel
 class MatchViewModel @Inject constructor(
     @ApplicationContext private val appContext: Context,
+    private val languageManager: LanguageManager,
     private val kundliRepository: KundliRepository,
     private val matchRepository: MatchRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MatchUiState())
     val uiState: StateFlow<MatchUiState> = _uiState.asStateFlow()
+
+    private fun str(@StringRes id: Int): String =
+        appContext.withAppLanguage(languageManager.current).getString(id)
 
     init {
         loadKundlis()
@@ -49,7 +56,7 @@ class MatchViewModel @Inject constructor(
                     it.copy(isLoadingKundlis = false, kundlis = result.data)
                 }
                 is Result.Error -> _uiState.update {
-                    it.copy(isLoadingKundlis = false, error = result.message ?: appContext.getString(R.string.match_error_load_kundlis))
+                    it.copy(isLoadingKundlis = false, error = result.message ?: str(R.string.match_error_load_kundlis))
                 }
                 is Result.Loading -> Unit
             }
@@ -69,7 +76,7 @@ class MatchViewModel @Inject constructor(
         val a = state.personA
         val b = state.personB
         if (a == null || b == null) {
-            _uiState.update { it.copy(error = appContext.getString(R.string.match_error_pick_both)) }
+            _uiState.update { it.copy(error = str(R.string.match_error_pick_both)) }
             return
         }
 
@@ -80,7 +87,7 @@ class MatchViewModel @Inject constructor(
                     it.copy(isMatching = false, result = result.data)
                 }
                 is Result.Error -> _uiState.update {
-                    it.copy(isMatching = false, error = result.message ?: appContext.getString(R.string.match_error_compute))
+                    it.copy(isMatching = false, error = result.message ?: str(R.string.match_error_compute))
                 }
                 is Result.Loading -> Unit
             }

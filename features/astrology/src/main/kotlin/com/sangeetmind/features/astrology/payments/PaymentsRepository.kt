@@ -3,6 +3,7 @@ package com.sangeetmind.features.astrology.payments
 import android.content.Context
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.di.IoDispatcher
+import com.sangeetmind.core.common.language.LanguageManager
 import com.sangeetmind.core.network.PricingApi
 import com.sangeetmind.core.network.RazorpayApi
 import com.sangeetmind.core.network.WalletApi
@@ -27,12 +28,13 @@ class PaymentsRepository @Inject constructor(
     private val pricingApi: PricingApi,
     private val razorpayApi: RazorpayApi,
     private val walletApi: WalletApi,
+    private val languageManager: LanguageManager,
     @ApplicationContext private val context: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
     suspend fun getSkus(kind: String? = null): Result<List<Sku>> = withContext(ioDispatcher) {
         try {
-            Result.Success(pricingApi.getSkus(kind).skus)
+            Result.Success(pricingApi.getSkus(kind, lang = languageManager.current.code).skus)
         } catch (e: Exception) {
             Result.Error(e, e.message ?: context.getString(R.string.payments_error_load_plans))
         }

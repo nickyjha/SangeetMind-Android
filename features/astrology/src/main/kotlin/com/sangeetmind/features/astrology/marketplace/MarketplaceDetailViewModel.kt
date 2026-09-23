@@ -1,10 +1,13 @@
 package com.sangeetmind.features.astrology.marketplace
 
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.core.common.language.withAppLanguage
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.Astrologer
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,6 +30,7 @@ data class MarketplaceDetailUiState(
 class MarketplaceDetailViewModel @Inject constructor(
     private val repository: MarketplaceRepository,
     @ApplicationContext private val context: Context,
+    private val languageManager: LanguageManager,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -34,6 +38,9 @@ class MarketplaceDetailViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(MarketplaceDetailUiState())
     val uiState: StateFlow<MarketplaceDetailUiState> = _uiState.asStateFlow()
+
+    private fun str(@StringRes id: Int): String =
+        context.withAppLanguage(languageManager.current).getString(id)
 
     init {
         refresh()
@@ -47,7 +54,7 @@ class MarketplaceDetailViewModel @Inject constructor(
                 is Result.Error -> _uiState.update {
                     it.copy(
                         isLoading = false,
-                        error = result.message ?: context.getString(R.string.marketplace_error_load_astrologer)
+                        error = result.message ?: str(R.string.marketplace_error_load_astrologer)
                     )
                 }
                 is Result.Loading -> Unit
@@ -60,7 +67,7 @@ class MarketplaceDetailViewModel @Inject constructor(
             when (val result = repository.submitReview(astrologerId, rating, comment)) {
                 is Result.Success -> _uiState.update { it.copy(reviewSubmitted = true) }
                 is Result.Error -> _uiState.update {
-                    it.copy(error = result.message ?: context.getString(R.string.marketplace_error_submit_review))
+                    it.copy(error = result.message ?: str(R.string.marketplace_error_submit_review))
                 }
                 is Result.Loading -> Unit
             }

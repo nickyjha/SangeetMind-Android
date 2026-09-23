@@ -31,9 +31,19 @@ private val ZODIAC_SIGNS = listOf(
     "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"
 )
 
-private val PLANET_ABBREV = mapOf(
-    "Sun" to "Su", "Moon" to "Mo", "Mercury" to "Me", "Venus" to "Ve", "Mars" to "Ma",
-    "Jupiter" to "Ju", "Saturn" to "Sa", "Rahu" to "Ra", "Ketu" to "Ke", "Lagna" to "La"
+/** Resolves the wheel's short planet labels in the current display language (see strings_chart.xml chart_wheel_abbrev_*). */
+@Composable
+private fun planetAbbreviations(): Map<String, String> = mapOf(
+    "Sun" to stringResource(R.string.chart_wheel_abbrev_sun),
+    "Moon" to stringResource(R.string.chart_wheel_abbrev_moon),
+    "Mercury" to stringResource(R.string.chart_wheel_abbrev_mercury),
+    "Venus" to stringResource(R.string.chart_wheel_abbrev_venus),
+    "Mars" to stringResource(R.string.chart_wheel_abbrev_mars),
+    "Jupiter" to stringResource(R.string.chart_wheel_abbrev_jupiter),
+    "Saturn" to stringResource(R.string.chart_wheel_abbrev_saturn),
+    "Rahu" to stringResource(R.string.chart_wheel_abbrev_rahu),
+    "Ketu" to stringResource(R.string.chart_wheel_abbrev_ketu),
+    "Lagna" to stringResource(R.string.chart_wheel_abbrev_lagna)
 )
 
 private val DEFAULT_WHEEL_PLANET_ORDER = listOf(
@@ -116,6 +126,7 @@ fun NorthIndianHouseChart(
         .coerceAtLeast(0)
     val houseToRashi = (1..12).associateWith { h -> ((lagnaIdx + h - 1 + 12) % 12) + 1 }
 
+    val planetAbbrev = planetAbbreviations()
     val fillColor = MaterialTheme.colorScheme.surfaceVariant
     val glowColor = MaterialTheme.colorScheme.primary
     val strokeColor = MaterialTheme.colorScheme.primary
@@ -192,7 +203,7 @@ fun NorthIndianHouseChart(
                     rashiPaint
                 )
                 items.forEachIndexed { i, (name, data) ->
-                    val abbrev = PLANET_ABBREV[name] ?: name.take(2)
+                    val abbrev = planetAbbrev[name] ?: name.take(2)
                     val dign = dignitySuffix(data)
                     val deg = degreeDisplay(data)
                     val line = if (deg != null) "$abbrev$dign $deg" else "$abbrev$dign"

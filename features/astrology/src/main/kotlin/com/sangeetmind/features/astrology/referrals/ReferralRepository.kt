@@ -3,6 +3,7 @@ package com.sangeetmind.features.astrology.referrals
 import android.content.Context
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.di.IoDispatcher
+import com.sangeetmind.core.common.language.LanguageManager
 import com.sangeetmind.core.network.ReferralApi
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.ApplyReferralRequest
@@ -17,6 +18,7 @@ import javax.inject.Singleton
 @Singleton
 class ReferralRepository @Inject constructor(
     private val referralApi: ReferralApi,
+    private val languageManager: LanguageManager,
     @ApplicationContext private val context: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
@@ -31,7 +33,7 @@ class ReferralRepository @Inject constructor(
 
     suspend fun getStats(): Result<ReferralStats> = withContext(ioDispatcher) {
         try {
-            Result.Success(referralApi.getStats())
+            Result.Success(referralApi.getStats(lang = languageManager.current.code))
         } catch (e: Exception) {
             Result.Error(e, e.message ?: context.getString(R.string.referrals_error_load_stats))
         }

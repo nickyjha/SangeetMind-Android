@@ -1,9 +1,12 @@
 package com.sangeetmind.features.meditation
 
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.core.common.language.withAppLanguage
 import com.sangeetmind.libs.models.MeditationSession
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -27,6 +30,7 @@ data class MeditationUiState(
 @HiltViewModel
 class MeditationViewModel @Inject constructor(
     @ApplicationContext private val appContext: Context,
+    private val languageManager: LanguageManager,
     private val repository: MeditationRepository
 ) : ViewModel() {
 
@@ -34,6 +38,9 @@ class MeditationViewModel @Inject constructor(
     val uiState: StateFlow<MeditationUiState> = _uiState.asStateFlow()
 
     private var timerJob: Job? = null
+
+    private fun str(@StringRes id: Int): String =
+        appContext.withAppLanguage(languageManager.current).getString(id)
 
     init {
         loadSessions()
@@ -59,7 +66,7 @@ class MeditationViewModel @Inject constructor(
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
-                                error = result.message ?: appContext.getString(R.string.meditation_error_unknown)
+                                error = result.message ?: str(R.string.meditation_error_unknown)
                             )
                         }
                     }

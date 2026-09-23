@@ -1,9 +1,12 @@
 package com.sangeetmind.features.astrology.kundli
 
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.core.common.language.withAppLanguage
 import com.sangeetmind.core.network.NominatimApi
 import com.sangeetmind.core.network.NominatimPlace
 import com.sangeetmind.features.astrology.R
@@ -46,6 +49,7 @@ data class KundliOnboardingUiState(
 @HiltViewModel
 class KundliOnboardingViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val languageManager: LanguageManager,
     private val kundliRepository: KundliRepository,
     private val nominatimApi: NominatimApi
 ) : ViewModel() {
@@ -54,6 +58,9 @@ class KundliOnboardingViewModel @Inject constructor(
     val uiState: StateFlow<KundliOnboardingUiState> = _uiState.asStateFlow()
 
     private var searchJob: Job? = null
+
+    private fun str(@StringRes id: Int): String =
+        context.withAppLanguage(languageManager.current).getString(id)
 
     fun onFullNameChange(value: String) {
         _uiState.update { it.copy(fullName = value, error = null) }
@@ -102,20 +109,20 @@ class KundliOnboardingViewModel @Inject constructor(
         val place = state.selectedPlace
 
         if (state.birthDate.isBlank()) {
-            _uiState.update { it.copy(error = context.getString(R.string.kundli_error_dob_required)) }
+            _uiState.update { it.copy(error = str(R.string.kundli_error_dob_required)) }
             return
         }
         if (state.birthTime.isBlank()) {
-            _uiState.update { it.copy(error = context.getString(R.string.kundli_error_tob_required)) }
+            _uiState.update { it.copy(error = str(R.string.kundli_error_tob_required)) }
             return
         }
         val normalizedTime = normalizeBirthTime(state.birthTime)
         if (normalizedTime == null) {
-            _uiState.update { it.copy(error = context.getString(R.string.kundli_error_tob_format)) }
+            _uiState.update { it.copy(error = str(R.string.kundli_error_tob_format)) }
             return
         }
         if (place == null) {
-            _uiState.update { it.copy(error = context.getString(R.string.kundli_error_place_required)) }
+            _uiState.update { it.copy(error = str(R.string.kundli_error_place_required)) }
             return
         }
 
@@ -133,7 +140,7 @@ class KundliOnboardingViewModel @Inject constructor(
             when (result) {
                 is Result.Success -> _uiState.update { it.copy(isSaving = false, saved = true) }
                 is Result.Error -> _uiState.update {
-                    it.copy(isSaving = false, error = result.message ?: context.getString(R.string.kundli_error_save_failed))
+                    it.copy(isSaving = false, error = result.message ?: str(R.string.kundli_error_save_failed))
                 }
                 is Result.Loading -> Unit
             }

@@ -71,6 +71,18 @@
     <string name="chart_legend_debilitated">↓ Debilitated</string>
     <string name="chart_legend_vargottama">□ Vargottama</string>
 
+    <!-- Short planet abbreviations drawn inside the chart wheel's house boxes (Canvas text, not stringResource-able in place — resolved once above the Canvas and captured into the draw scope). -->
+    <string name="chart_wheel_abbrev_sun">Su</string>
+    <string name="chart_wheel_abbrev_moon">Mo</string>
+    <string name="chart_wheel_abbrev_mercury">Me</string>
+    <string name="chart_wheel_abbrev_venus">Ve</string>
+    <string name="chart_wheel_abbrev_mars">Ma</string>
+    <string name="chart_wheel_abbrev_jupiter">Ju</string>
+    <string name="chart_wheel_abbrev_saturn">Sa</string>
+    <string name="chart_wheel_abbrev_rahu">Ra</string>
+    <string name="chart_wheel_abbrev_ketu">Ke</string>
+    <string name="chart_wheel_abbrev_lagna">La</string>
+
     <!-- Doshas -->
     <string name="chart_doshas">Doshas</string>
     <string name="chart_status_present">Present</string>

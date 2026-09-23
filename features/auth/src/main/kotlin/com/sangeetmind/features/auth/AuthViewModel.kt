@@ -1,9 +1,12 @@
 package com.sangeetmind.features.auth
 
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.core.common.language.withAppLanguage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,6 +32,7 @@ data class AuthUiState(
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     @ApplicationContext private val appContext: Context,
+    private val languageManager: LanguageManager,
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
@@ -36,6 +40,9 @@ class AuthViewModel @Inject constructor(
         AuthUiState(isAuthenticated = authRepository.currentUser != null)
     )
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
+
+    private fun str(@StringRes id: Int): String =
+        appContext.withAppLanguage(languageManager.current).getString(id)
 
     fun onEmailChange(email: String) {
         _uiState.update { it.copy(email = email, error = null) }
@@ -57,11 +64,11 @@ class AuthViewModel @Inject constructor(
         val state = _uiState.value
 
         if (!validateEmail(state.email)) {
-            _uiState.update { it.copy(error = appContext.getString(R.string.auth_error_invalid_email)) }
+            _uiState.update { it.copy(error = str(R.string.auth_error_invalid_email)) }
             return
         }
         if (state.password.length < 6) {
-            _uiState.update { it.copy(error = appContext.getString(R.string.auth_error_password_short)) }
+            _uiState.update { it.copy(error = str(R.string.auth_error_password_short)) }
             return
         }
 
@@ -72,7 +79,7 @@ class AuthViewModel @Inject constructor(
                     it.copy(isLoading = false, isAuthenticated = true, error = null)
                 }
                 is Result.Error -> _uiState.update {
-                    it.copy(isLoading = false, error = result.message ?: appContext.getString(R.string.auth_error_sign_in_failed))
+                    it.copy(isLoading = false, error = result.message ?: str(R.string.auth_error_sign_in_failed))
                 }
                 is Result.Loading -> Unit
             }
@@ -83,15 +90,15 @@ class AuthViewModel @Inject constructor(
         val state = _uiState.value
 
         if (state.name.isBlank()) {
-            _uiState.update { it.copy(error = appContext.getString(R.string.auth_error_name_required)) }
+            _uiState.update { it.copy(error = str(R.string.auth_error_name_required)) }
             return
         }
         if (!validateEmail(state.email)) {
-            _uiState.update { it.copy(error = appContext.getString(R.string.auth_error_invalid_email)) }
+            _uiState.update { it.copy(error = str(R.string.auth_error_invalid_email)) }
             return
         }
         if (state.password.length < 6) {
-            _uiState.update { it.copy(error = appContext.getString(R.string.auth_error_password_short)) }
+            _uiState.update { it.copy(error = str(R.string.auth_error_password_short)) }
             return
         }
 
@@ -102,7 +109,7 @@ class AuthViewModel @Inject constructor(
                     it.copy(isLoading = false, isAuthenticated = true, error = null)
                 }
                 is Result.Error -> _uiState.update {
-                    it.copy(isLoading = false, error = result.message ?: appContext.getString(R.string.auth_error_sign_up_failed))
+                    it.copy(isLoading = false, error = result.message ?: str(R.string.auth_error_sign_up_failed))
                 }
                 is Result.Loading -> Unit
             }
@@ -112,7 +119,7 @@ class AuthViewModel @Inject constructor(
     fun sendPasswordReset() {
         val state = _uiState.value
         if (!validateEmail(state.email)) {
-            _uiState.update { it.copy(error = appContext.getString(R.string.auth_error_invalid_email)) }
+            _uiState.update { it.copy(error = str(R.string.auth_error_invalid_email)) }
             return
         }
 
@@ -123,7 +130,7 @@ class AuthViewModel @Inject constructor(
                     it.copy(isLoading = false, resetEmailSent = true, error = null)
                 }
                 is Result.Error -> _uiState.update {
-                    it.copy(isLoading = false, error = result.message ?: appContext.getString(R.string.auth_error_reset_failed))
+                    it.copy(isLoading = false, error = result.message ?: str(R.string.auth_error_reset_failed))
                 }
                 is Result.Loading -> Unit
             }

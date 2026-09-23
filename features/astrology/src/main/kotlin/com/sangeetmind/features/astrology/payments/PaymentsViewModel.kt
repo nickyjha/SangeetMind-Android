@@ -1,9 +1,12 @@
 package com.sangeetmind.features.astrology.payments
 
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.core.common.language.withAppLanguage
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.PremiumStatus
 import com.sangeetmind.libs.models.RazorpayOrder
@@ -40,11 +43,15 @@ data class PaymentsUiState(
 class PaymentsViewModel @Inject constructor(
     private val repository: PaymentsRepository,
     private val resultBus: RazorpayResultBus,
+    private val languageManager: LanguageManager,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PaymentsUiState())
     val uiState: StateFlow<PaymentsUiState> = _uiState.asStateFlow()
+
+    private fun str(@StringRes id: Int): String =
+        context.withAppLanguage(languageManager.current).getString(id)
 
     init {
         refresh()
@@ -56,7 +63,7 @@ class PaymentsViewModel @Inject constructor(
                         it.copy(
                             pendingOrder = null,
                             error = result.description
-                                ?: context.getString(R.string.payments_error_payment_failed)
+                                ?: str(R.string.payments_error_payment_failed)
                         )
                     }
                 }
@@ -138,7 +145,7 @@ class PaymentsViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        message = context.getString(R.string.payments_msg_payment_received)
+                        message = str(R.string.payments_msg_payment_received)
                     )
                 }
             } else {
@@ -150,7 +157,7 @@ class PaymentsViewModel @Inject constructor(
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
-                                message = context.getString(R.string.payments_msg_now_premium)
+                                message = str(R.string.payments_msg_now_premium)
                             )
                         }
                     }

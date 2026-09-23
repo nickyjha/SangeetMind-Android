@@ -273,7 +273,7 @@ private fun LazyListScope.readingTab(
                     Triple("attitude", R.string.holistic_num_attitude, core.attitude.number)
                 )
                 rows.forEach { (key, labelRes, number) ->
-                    val name = numerology.interpretations[key]?.name
+                    val name = numerology.interpretations[key]?.name?.let { astroTerm(it) }
                     LabelValueRow(stringResource(labelRes), if (name != null) "$number · $name" else "$number")
                 }
             }
@@ -297,8 +297,8 @@ private fun LazyListScope.readingTab(
                         color = grahaColorFor(it.currentMahadasha, graha)
                     )
                 }
-                if (it.astroMood.isNotBlank()) LabelValueRow(stringResource(R.string.holistic_label_todays_mood), it.astroMood)
-                if (it.suggestedRaag.isNotBlank()) LabelValueRow(stringResource(R.string.holistic_label_suggested_raag), it.suggestedRaag)
+                if (it.astroMood.isNotBlank()) LabelValueRow(stringResource(R.string.holistic_label_todays_mood), astroTerm(it.astroMood))
+                if (it.suggestedRaag.isNotBlank()) LabelValueRow(stringResource(R.string.holistic_label_suggested_raag), astroTerm(it.suggestedRaag))
             }
         }
     }
@@ -461,16 +461,16 @@ private fun LazyListScope.sangeetTab(recs: SangeetMindRecommendations, graha: Gr
                 combined.practiceTime?.let { pt ->
                     LabelValueRow(
                         stringResource(R.string.holistic_label_practice_time),
-                        pt.recommended.replaceFirstChar { it.uppercase() } +
-                            (pt.alternative?.let { stringResource(R.string.holistic_practice_alternative, it) } ?: "") +
+                        astroTerm(pt.recommended).replaceFirstChar { it.uppercase() } +
+                            (pt.alternative?.let { stringResource(R.string.holistic_practice_alternative, astroTerm(it)) } ?: "") +
                             (pt.confidence.takeIf { it.isNotBlank() }?.let { stringResource(R.string.holistic_practice_confidence, it) } ?: "")
                     )
                 }
-                combined.specificRaag?.let { LabelValueRow(stringResource(R.string.holistic_label_raag), it, color = graha.chandra) }
+                combined.specificRaag?.let { LabelValueRow(stringResource(R.string.holistic_label_raag), astroTerm(it), color = graha.chandra) }
                 if (combined.raagMoods.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(stringResource(R.string.holistic_label_raag_moods), style = MaterialTheme.typography.labelLarge)
-                    ChipRow(combined.raagMoods.map { it.replaceFirstChar { c -> c.uppercase() } }, graha.chandra)
+                    ChipRow(combined.raagMoods.map { astroTerm(it).replaceFirstChar { c -> c.uppercase() } }, graha.chandra)
                 }
             }
         }
@@ -484,13 +484,13 @@ private fun LazyListScope.sangeetTab(recs: SangeetMindRecommendations, graha: Gr
                         SourceTag(r.source, graha)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            r.raag ?: r.mood?.replaceFirstChar { it.uppercase() } ?: "",
+                            r.raag?.let { astroTerm(it) } ?: r.mood?.let { astroTerm(it).replaceFirstChar { c -> c.uppercase() } } ?: "",
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.weight(1f)
                         )
                         val mood = r.mood
                         if (r.raag != null && !mood.isNullOrBlank()) {
-                            Text(mood, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(astroTerm(mood), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                     r.reason?.let {
@@ -505,12 +505,12 @@ private fun LazyListScope.sangeetTab(recs: SangeetMindRecommendations, graha: Gr
             item {
                 SectionCard(stringResource(R.string.holistic_section_practice_time_by_system)) {
                     pt.numerology?.let {
-                        LabelValueRow(stringResource(R.string.holistic_label_numerology), it.preferred.replaceFirstChar { c -> c.uppercase() })
+                        LabelValueRow(stringResource(R.string.holistic_label_numerology), astroTerm(it.preferred).replaceFirstChar { c -> c.uppercase() })
                         if (it.reasoning.isNotBlank()) NoteText(it.reasoning)
                     }
                     pt.astrology?.let {
                         Spacer(modifier = Modifier.height(4.dp))
-                        LabelValueRow(stringResource(R.string.holistic_label_astrology), it.preferred.replaceFirstChar { c -> c.uppercase() })
+                        LabelValueRow(stringResource(R.string.holistic_label_astrology), astroTerm(it.preferred).replaceFirstChar { c -> c.uppercase() })
                         if (it.basedOn.isNotBlank()) NoteText(it.basedOn)
                     }
                 }

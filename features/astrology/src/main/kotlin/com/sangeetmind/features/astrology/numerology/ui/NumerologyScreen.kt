@@ -483,15 +483,19 @@ private fun PersonalizationCard(personalization: SangeetMindPersonalization) {
             Text(personalization.personalizationSummary, style = MaterialTheme.typography.bodyMedium)
             if (personalization.raagMoods.recommended.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(8.dp))
+                val translatedMoods = personalization.raagMoods.recommended.map { astroTerm(it) }
                 Text(
-                    stringResource(R.string.numerology_recommended_raag_moods_fmt, personalization.raagMoods.recommended.joinToString(", ")),
+                    stringResource(
+                        R.string.numerology_recommended_raag_moods_fmt,
+                        translatedMoods.joinToString(", ")
+                    ),
                     style = MaterialTheme.typography.bodySmall
                 )
             }
             if (personalization.practiceTime.preferred.isNotBlank()) {
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    stringResource(R.string.numerology_best_practice_time_fmt, personalization.practiceTime.preferred),
+                    stringResource(R.string.numerology_best_practice_time_fmt, astroTerm(personalization.practiceTime.preferred)),
                     style = MaterialTheme.typography.bodySmall
                 )
             }

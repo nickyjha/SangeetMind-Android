@@ -144,7 +144,7 @@ private fun PanchangResultCard(result: PanchangResponse) {
             PanchangRow(stringResource(R.string.panchang_tithi), astroTerm(result.tithi.name))
             PanchangRow(stringResource(R.string.panchang_nakshatra), astroTerm(result.nakshatra.name))
             PanchangRow(stringResource(R.string.panchang_yoga), astroTerm(result.yoga.name))
-            PanchangRow(stringResource(R.string.panchang_karana), "#${result.karana.index}")
+            PanchangRow(stringResource(R.string.panchang_karana), astroTerm(result.karana.name))
             PanchangRow(stringResource(R.string.panchang_vara), astroTerm(result.vara.name))
             PanchangRow(stringResource(R.string.panchang_moon_sign), astroTerm(result.moonSign))
             PanchangRow(stringResource(R.string.panchang_sun_sign), astroTerm(result.sunSign))

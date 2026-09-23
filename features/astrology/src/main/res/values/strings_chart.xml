@@ -65,15 +65,14 @@
     <!-- Planet list -->
     <string name="chart_planet_positions">Planetary positions</string>
 
-    <!-- House-by-house table: sign, lord, occupants, aspecting (influencing) planets. -->
+    <!-- House-by-house table: sign, lord chip, then chip rows for occupants and aspecting planets.
+         Empty rows are omitted; a partial aspect's chip carries its drishti-bala strength (e.g. "Mars 75%"). -->
     <string name="chart_house_details_title">House details</string>
-    <string name="chart_house_lord_fmt">Lord: %1$s</string>
-    <string name="chart_house_occupants_fmt">Occupied by: %1$s</string>
-    <string name="chart_house_occupants_none">No planets here</string>
-    <string name="chart_house_influencers_fmt">Influenced by: %1$s</string>
-    <string name="chart_house_influencers_none">Not influenced by any other planet</string>
-    <!-- Drishti bala: a partial aspect shows its strength, e.g. "Mars (75%)"; full 7th aspects show no %. -->
-    <string name="chart_house_influencer_strength_fmt">%1$s (%2$d%%)</string>
+    <string name="chart_house_details_legend">% = strength of a partial aspect</string>
+    <string name="chart_house_lord_chip_fmt">Lord · %1$s</string>
+    <string name="chart_house_occupants_label">In house</string>
+    <string name="chart_house_influencers_label">Aspects</string>
+    <string name="chart_house_strength_chip_fmt">%1$s %2$d%%</string>
     <string name="chart_planet_aspected_by_fmt">Aspected by: %1$s</string>
     <string name="chart_mutual_aspects_title">Mutual aspects</string>
     <string name="chart_mutual_aspects_subtitle">Planets that aspect each other\'s house</string>

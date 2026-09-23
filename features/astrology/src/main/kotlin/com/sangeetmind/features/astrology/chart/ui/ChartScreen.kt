@@ -557,8 +557,10 @@ internal fun MutualAspectsCard(pairs: List<MutualAspect>) {
  * and which planets aspect (drishti) it — the inverse of each planet's aspects — with the
  * drishti-bala strength shown for partial (non-7th) aspects.
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun HouseDetailsCard(planets: Map<String, PlanetInfo>, bhavabala: ChartBhavabala) {
+    val graha = LocalGrahaColors.current
     val vedicPlanets = planets.filterKeys { it in VEDIC_PLANETS }
     val occupantsByHouse = (1..12).associateWith { house ->
         vedicPlanets.filterValues { it.house == house }.keys.toList()
@@ -578,52 +580,91 @@ internal fun HouseDetailsCard(planets: Map<String, PlanetInfo>, bhavabala: Chart
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(stringResource(R.string.chart_house_details_title), style = MaterialTheme.typography.titleMedium)
-            Spacer(modifier = Modifier.height(8.dp))
-            bhavabala.houses.sortedBy { it.house }.forEach { house ->
-                val occupantNames = occupantsByHouse[house.house].orEmpty().map { astroTerm(it) }
-                val influencerNames = influencersByHouse[house.house].orEmpty().map { (name, strength) ->
-                    if (strength < 100) {
-                        stringResource(R.string.chart_house_influencer_strength_fmt, astroTerm(name), strength)
-                    } else {
-                        astroTerm(name)
-                    }
+            Text(
+                stringResource(R.string.chart_house_details_legend),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            bhavabala.houses.sortedBy { it.house }.forEachIndexed { index, house ->
+                val occupants = occupantsByHouse[house.house].orEmpty()
+                val influencers = influencersByHouse[house.house].orEmpty()
+                val isQuiet = occupants.isEmpty() && influencers.isEmpty()
+                if (index > 0) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    )
                 }
-                Column(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Text(
-                            stringResource(CoreR.string.common_house_short, house.house),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+                    // Header: house tag + sign on the left, lord as a chip on the right.
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Text(
+                                stringResource(CoreR.string.common_house_short, house.house),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                astroTerm(house.sign),
+                                style = MaterialTheme.typography.bodyMedium,
+                                // Empty houses read dimmer so the populated ones stand out at a glance.
+                                color = if (isQuiet) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                        Chip(
+                            stringResource(R.string.chart_house_lord_chip_fmt, astroTerm(house.lord)),
+                            grahaColorFor(house.lord, graha)
                         )
-                        Text(astroTerm(house.sign), style = MaterialTheme.typography.bodyMedium)
                     }
-                    Text(
-                        stringResource(R.string.chart_house_lord_fmt, astroTerm(house.lord)),
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(top = 2.dp, start = 28.dp)
-                    )
-                    Text(
-                        if (occupantNames.isNotEmpty()) {
-                            stringResource(R.string.chart_house_occupants_fmt, occupantNames.joinToString(", "))
-                        } else {
-                            stringResource(R.string.chart_house_occupants_none)
-                        },
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 2.dp, start = 28.dp)
-                    )
-                    Text(
-                        if (influencerNames.isNotEmpty()) {
-                            stringResource(R.string.chart_house_influencers_fmt, influencerNames.joinToString(", "))
-                        } else {
-                            stringResource(R.string.chart_house_influencers_none)
-                        },
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 2.dp, start = 28.dp)
-                    )
+                    if (occupants.isNotEmpty()) {
+                        HouseChipRow(stringResource(R.string.chart_house_occupants_label)) {
+                            occupants.forEach { Chip(astroTerm(it), grahaColorFor(it, graha)) }
+                        }
+                    }
+                    if (influencers.isNotEmpty()) {
+                        HouseChipRow(stringResource(R.string.chart_house_influencers_label)) {
+                            influencers.forEach { (name, strength) ->
+                                val label = if (strength < 100) {
+                                    stringResource(R.string.chart_house_strength_chip_fmt, astroTerm(name), strength)
+                                } else {
+                                    astroTerm(name)
+                                }
+                                Chip(label, grahaColorFor(name, graha))
+                            }
+                        }
+                    }
                 }
             }
+        }
+    }
+}
+
+/** A tiny muted label followed by a wrapping row of chips; used for a house's occupants and aspects. */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun HouseChipRow(label: String, chips: @Composable () -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(top = 6.dp, start = 28.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            label,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.width(44.dp)
+        )
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            chips()
         }
     }
 }

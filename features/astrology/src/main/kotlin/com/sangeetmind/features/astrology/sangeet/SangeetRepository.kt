@@ -1,13 +1,17 @@
 package com.sangeetmind.features.astrology.sangeet
 
+import android.content.Context
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.di.IoDispatcher
+import com.sangeetmind.core.common.language.LanguageManager
 import com.sangeetmind.core.network.SangeetApi
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.JapaLogRequest
 import com.sangeetmind.libs.models.JapaStats
 import com.sangeetmind.libs.models.RaagPlaylist
 import com.sangeetmind.libs.models.SoundHealingResponse
 import com.sangeetmind.libs.models.VoiceHoroscopeResponse
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -16,13 +20,16 @@ import javax.inject.Singleton
 @Singleton
 class SangeetRepository @Inject constructor(
     private val sangeetApi: SangeetApi,
+    private val languageManager: LanguageManager,
+    @ApplicationContext private val context: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
-    suspend fun getDailyRaag(locale: String = "hi"): Result<RaagPlaylist> = withContext(ioDispatcher) {
+    /** The playlist's descriptive text follows the app language (`locale` on the backend). */
+    suspend fun getDailyRaag(): Result<RaagPlaylist> = withContext(ioDispatcher) {
         try {
-            Result.Success(sangeetApi.getDailyRaag(locale).playlist)
+            Result.Success(sangeetApi.getDailyRaag(languageManager.current.code).playlist)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: "Could not load today's raag")
+            Result.Error(e, e.message ?: context.getString(R.string.sangeet_err_raag))
         }
     }
 
@@ -31,7 +38,7 @@ class SangeetRepository @Inject constructor(
             sangeetApi.logJapa(JapaLogRequest(mantraId, japaCount))
             Result.Success(Unit)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: "Could not log japa")
+            Result.Error(e, e.message ?: context.getString(R.string.sangeet_err_japa_log))
         }
     }
 
@@ -39,16 +46,17 @@ class SangeetRepository @Inject constructor(
         try {
             Result.Success(sangeetApi.getJapaStats().stats)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: "Could not load japa stats")
+            Result.Error(e, e.message ?: context.getString(R.string.sangeet_err_japa_stats))
         }
     }
 
-    suspend fun getVoiceHoroscope(sign: String, lang: String = "hi"): Result<VoiceHoroscopeResponse> =
+    /** The script comes back in the app's current display language. */
+    suspend fun getVoiceHoroscope(sign: String): Result<VoiceHoroscopeResponse> =
         withContext(ioDispatcher) {
             try {
-                Result.Success(sangeetApi.getVoiceHoroscope(sign, lang))
+                Result.Success(sangeetApi.getVoiceHoroscope(sign, lang = languageManager.current.code))
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: "Voice horoscope needs Premium")
+                Result.Error(e, e.message ?: context.getString(R.string.sangeet_err_voice))
             }
         }
 
@@ -56,7 +64,7 @@ class SangeetRepository @Inject constructor(
         try {
             Result.Success(sangeetApi.getSoundHealingSessions())
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: "Could not load sound healing library")
+            Result.Error(e, e.message ?: context.getString(R.string.sangeet_err_sound))
         }
     }
 }

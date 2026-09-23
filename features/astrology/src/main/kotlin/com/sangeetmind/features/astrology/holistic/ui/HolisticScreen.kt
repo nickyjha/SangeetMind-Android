@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.holistic.ui
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,7 +29,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -47,12 +47,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.core.ui.language.astroTerm
 import com.sangeetmind.core.ui.theme.GrahaColors
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.holistic.HolisticViewModel
 import com.sangeetmind.libs.models.AstroProfileSummary
 import com.sangeetmind.libs.models.CombinedInsights
@@ -65,11 +69,11 @@ import com.sangeetmind.libs.models.NumerologyEnhancedAnalysis
 import com.sangeetmind.libs.models.SangeetMindRecommendations
 import com.sangeetmind.libs.models.toTitleCase
 
-private enum class HolisticTab(val label: String) {
-    READING("Reading"),
-    INSIGHTS("Insights"),
-    SANGEET("Sangeet"),
-    NUMEROLOGY("Numerology+")
+private enum class HolisticTab(@StringRes val labelRes: Int) {
+    READING(R.string.holistic_tab_reading),
+    INSIGHTS(R.string.holistic_tab_insights),
+    SANGEET(R.string.holistic_tab_sangeet),
+    NUMEROLOGY(R.string.holistic_tab_numerology)
 }
 
 /** Astro × Numerology synthesis (POST /holistic/combined). Its own screen, not a Birth Chart
@@ -88,15 +92,15 @@ fun HolisticScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Holistic Reading") },
+                title = { Text(stringResource(R.string.holistic_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
                     }
                 },
                 actions = {
                     IconButton(onClick = viewModel::refresh) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                        Icon(Icons.Default.Refresh, contentDescription = stringResource(CoreR.string.common_refresh))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -119,7 +123,7 @@ fun HolisticScreen(
                         Spacer(modifier = Modifier.height(12.dp))
                         // The Gemini call is the slow part; say so rather than spin silently.
                         Text(
-                            "Weaving your chart and numbers together…",
+                            stringResource(R.string.holistic_loading),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -127,14 +131,14 @@ fun HolisticScreen(
                 }
                 uiState.hasNoKundli -> {
                     Text(
-                        text = "Add a kundli first to get your holistic reading.",
+                        text = stringResource(R.string.holistic_no_kundli),
                         modifier = Modifier.align(Alignment.Center).padding(24.dp),
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
                 uiState.needsName -> {
                     Text(
-                        text = "Your kundli has no name. Numerology needs your birth name — add one to the kundli to unlock this reading.",
+                        text = stringResource(R.string.holistic_needs_name),
                         modifier = Modifier.align(Alignment.Center).padding(24.dp),
                         style = MaterialTheme.typography.bodyLarge
                     )
@@ -150,15 +154,13 @@ fun HolisticScreen(
                             style = MaterialTheme.typography.bodyLarge
                         )
                         Spacer(modifier = Modifier.height(12.dp))
-                        TextButton(onClick = viewModel::refresh) { Text("Retry") }
+                        TextButton(onClick = viewModel::refresh) { Text(stringResource(CoreR.string.common_retry)) }
                     }
                 }
                 uiState.analysis != null -> {
                     HolisticContent(
                         personName = uiState.kundli?.fullName?.toTitleCase(),
                         analysis = uiState.analysis!!,
-                        language = uiState.language,
-                        onLanguageChange = viewModel::selectLanguage,
                         onRegenerate = viewModel::refresh
                     )
                 }
@@ -171,8 +173,6 @@ fun HolisticScreen(
 private fun HolisticContent(
     personName: String?,
     analysis: HolisticCombinedResponse,
-    language: String,
-    onLanguageChange: (String) -> Unit,
     onRegenerate: () -> Unit
 ) {
     val graha = LocalGrahaColors.current
@@ -187,11 +187,11 @@ private fun HolisticContent(
     ) {
         item {
             Text(
-                text = personName?.takeIf { it.isNotBlank() } ?: "Your Holistic Reading",
+                text = personName?.takeIf { it.isNotBlank() } ?: stringResource(R.string.holistic_your_reading_default),
                 style = MaterialTheme.typography.headlineSmall
             )
             Text(
-                "Vedic astrology × numerology, read together",
+                stringResource(R.string.holistic_subtitle),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -203,13 +203,13 @@ private fun HolisticContent(
                     Tab(
                         selected = tab == selectedTab,
                         onClick = { selectedTab = tab },
-                        text = { Text(tab.label) }
+                        text = { Text(stringResource(tab.labelRes)) }
                     )
                 }
             }
         }
         when (selectedTab) {
-            HolisticTab.READING -> readingTab(analysis, numerology, astro, language, onLanguageChange, onRegenerate, graha)
+            HolisticTab.READING -> readingTab(analysis, numerology, astro, onRegenerate, graha)
             HolisticTab.INSIGHTS -> insightsTab(analysis.combinedInsights, graha)
             HolisticTab.SANGEET -> sangeetTab(analysis.sangeetmindRecommendations, graha)
             HolisticTab.NUMEROLOGY -> numerologyTab(numerology?.enhancedAnalysis, graha)
@@ -222,12 +222,12 @@ private fun HolisticContent(
 @Composable
 private fun AtAGlanceChips(numerology: HolisticNumerology?, astro: AstroProfileSummary?, graha: GrahaColors) {
     val chips = buildList {
-        numerology?.coreNumbers?.lifePath?.let { add("Life Path ${it.number}" to graha.budha) }
+        numerology?.coreNumbers?.lifePath?.let { add(stringResource(R.string.holistic_chip_life_path, it.number) to graha.budha) }
         astro?.let {
-            add("Moon in ${it.moonSign}" to graha.chandra)
-            add("${it.lagna} Lagna" to graha.shani)
+            add(stringResource(R.string.holistic_chip_moon_in, astroTerm(it.moonSign)) to graha.chandra)
+            add(stringResource(R.string.holistic_chip_lagna, astroTerm(it.lagna)) to graha.shani)
             if (it.currentMahadasha.isNotBlank()) {
-                add("${it.currentMahadasha} Mahadasha" to grahaColorFor(it.currentMahadasha, graha))
+                add(stringResource(R.string.holistic_chip_mahadasha, astroTerm(it.currentMahadasha)) to grahaColorFor(it.currentMahadasha, graha))
             }
         }
     }
@@ -253,51 +253,52 @@ private fun LazyListScope.readingTab(
     analysis: HolisticCombinedResponse,
     numerology: HolisticNumerology?,
     astro: AstroProfileSummary?,
-    language: String,
-    onLanguageChange: (String) -> Unit,
     onRegenerate: () -> Unit,
     graha: GrahaColors
 ) {
     item {
-        NarrativeCard(analysis.llmEnhancedNarrative, language, onLanguageChange, onRegenerate, graha)
+        NarrativeCard(analysis.llmEnhancedNarrative, onRegenerate, graha)
     }
     numerology?.coreNumbers?.let { core ->
         item {
-            SectionCard("Your Numbers") {
+            SectionCard(stringResource(R.string.holistic_section_numbers)) {
+                // (interpretations map key, label, number) — the key is the backend's snake_case id.
                 val rows = listOf(
-                    "Life Path" to core.lifePath.number,
-                    "Destiny" to core.destiny.number,
-                    "Soul Urge" to core.soulUrge.number,
-                    "Personality" to core.personality.number,
-                    "Maturity" to core.maturity.number,
-                    "Birth Day" to core.birthDay.number,
-                    "Attitude" to core.attitude.number
+                    Triple("life_path", R.string.holistic_num_life_path, core.lifePath.number),
+                    Triple("destiny", R.string.holistic_num_destiny, core.destiny.number),
+                    Triple("soul_urge", R.string.holistic_num_soul_urge, core.soulUrge.number),
+                    Triple("personality", R.string.holistic_num_personality, core.personality.number),
+                    Triple("maturity", R.string.holistic_num_maturity, core.maturity.number),
+                    Triple("birth_day", R.string.holistic_num_birth_day, core.birthDay.number),
+                    Triple("attitude", R.string.holistic_num_attitude, core.attitude.number)
                 )
-                rows.forEach { (label, number) ->
-                    val key = label.lowercase().replace(' ', '_')
+                rows.forEach { (key, labelRes, number) ->
                     val name = numerology.interpretations[key]?.name
-                    LabelValueRow(label, if (name != null) "$number · $name" else "$number")
+                    LabelValueRow(stringResource(labelRes), if (name != null) "$number · $name" else "$number")
                 }
             }
         }
     }
     astro?.let {
         item {
-            SectionCard("Your Chart") {
-                LabelValueRow("Moon sign", it.moonSign)
-                LabelValueRow("Lagna", it.lagna)
+            SectionCard(stringResource(R.string.holistic_section_chart)) {
+                LabelValueRow(stringResource(R.string.holistic_label_moon_sign), astroTerm(it.moonSign))
+                LabelValueRow(stringResource(R.string.holistic_label_lagna), astroTerm(it.lagna))
                 if (it.nakshatra.isNotBlank()) {
-                    LabelValueRow("Nakshatra", it.nakshatra + (it.nakshatraRuler.takeIf { r -> r.isNotBlank() }?.let { r -> " · $r" } ?: ""))
+                    LabelValueRow(
+                        stringResource(R.string.holistic_label_nakshatra),
+                        astroTerm(it.nakshatra) + (it.nakshatraRuler.takeIf { r -> r.isNotBlank() }?.let { r -> " · ${astroTerm(r)}" } ?: "")
+                    )
                 }
                 if (it.currentMahadasha.isNotBlank()) {
                     LabelValueRow(
-                        "Dasha",
-                        it.currentMahadasha + (it.currentAntardasha.takeIf { a -> a.isNotBlank() }?.let { a -> " / $a" } ?: ""),
+                        stringResource(R.string.holistic_label_dasha),
+                        astroTerm(it.currentMahadasha) + (it.currentAntardasha.takeIf { a -> a.isNotBlank() }?.let { a -> " / ${astroTerm(a)}" } ?: ""),
                         color = grahaColorFor(it.currentMahadasha, graha)
                     )
                 }
-                if (it.astroMood.isNotBlank()) LabelValueRow("Today's mood", it.astroMood)
-                if (it.suggestedRaag.isNotBlank()) LabelValueRow("Suggested raag", it.suggestedRaag)
+                if (it.astroMood.isNotBlank()) LabelValueRow(stringResource(R.string.holistic_label_todays_mood), it.astroMood)
+                if (it.suggestedRaag.isNotBlank()) LabelValueRow(stringResource(R.string.holistic_label_suggested_raag), it.suggestedRaag)
             }
         }
     }
@@ -312,8 +313,6 @@ private fun LazyListScope.readingTab(
 @Composable
 private fun NarrativeCard(
     narrative: LlmNarrative?,
-    language: String,
-    onLanguageChange: (String) -> Unit,
     onRegenerate: () -> Unit,
     graha: GrahaColors
 ) {
@@ -325,11 +324,11 @@ private fun NarrativeCard(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = graha.guru)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Your Reading", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+                Text(stringResource(R.string.holistic_narrative_title), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
                 val badge = when {
                     narrative == null -> null
-                    narrative.isLlm -> "AI-crafted"
-                    else -> "Template"
+                    narrative.isLlm -> stringResource(R.string.holistic_badge_ai)
+                    else -> stringResource(R.string.holistic_badge_template)
                 }
                 badge?.let {
                     Text(
@@ -340,17 +339,16 @@ private fun NarrativeCard(
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                FilterChip(selected = language == "en", onClick = { onLanguageChange("en") }, label = { Text("English") })
-                FilterChip(selected = language == "hi", onClick = { onLanguageChange("hi") }, label = { Text("हिंदी") })
-                Spacer(modifier = Modifier.weight(1f))
-                TextButton(onClick = onRegenerate) { Text("Regenerate") }
+            // The narrative follows the app-wide language (Settings / globe action), so there is
+            // no per-card language toggle here; Regenerate re-asks Gemini in that language.
+            Row(horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                TextButton(onClick = onRegenerate) { Text(stringResource(R.string.holistic_regenerate)) }
             }
             Spacer(modifier = Modifier.height(8.dp))
             val text = narrative?.text.orEmpty()
             if (text.isBlank()) {
                 Text(
-                    "No narrative was returned.",
+                    stringResource(R.string.holistic_no_narrative),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -360,7 +358,7 @@ private fun NarrativeCard(
             if (narrative != null && !narrative.isLlm) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    "This reading was assembled from your numbers and chart without AI. Tap Regenerate to try the AI-crafted version.",
+                    stringResource(R.string.holistic_template_note),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -373,22 +371,22 @@ private fun NarrativeCard(
 
 private fun LazyListScope.insightsTab(insights: CombinedInsights, graha: GrahaColors) {
     if (insights.personalitySynthesis.isNotEmpty()) {
-        item { InsightListCard("Personality Synthesis", insights.personalitySynthesis, graha) }
+        item { InsightListCard(stringResource(R.string.holistic_section_personality_synthesis), insights.personalitySynthesis, graha) }
     }
     if (insights.timingInsights.isNotEmpty()) {
-        item { InsightListCard("Timing", insights.timingInsights, graha) }
+        item { InsightListCard(stringResource(R.string.holistic_section_timing), insights.timingInsights, graha) }
     }
     if (insights.lifePathAlignment.isNotEmpty()) {
-        item { InsightListCard("Life Path Alignment", insights.lifePathAlignment, graha) }
+        item { InsightListCard(stringResource(R.string.holistic_section_life_path_alignment), insights.lifePathAlignment, graha) }
     }
     if (insights.spiritualGuidance.isNotEmpty()) {
-        item { InsightListCard("Spiritual Guidance", insights.spiritualGuidance, graha) }
+        item { InsightListCard(stringResource(R.string.holistic_section_spiritual_guidance), insights.spiritualGuidance, graha) }
     }
     // Harmonies are the genuinely cross-system part, so an empty list is itself a finding
     // worth stating, unlike the sections above.
-    item { HarmonyCard("Harmonies Between Systems", insights.harmonies, emptyText = "No direct harmony between your Life Path and current Mahadasha lord right now — the two systems are speaking with separate voices in this period.", graha) }
+    item { HarmonyCard(stringResource(R.string.holistic_section_harmonies), insights.harmonies, emptyText = stringResource(R.string.holistic_harmonies_empty), graha) }
     if (insights.potentialConflicts.isNotEmpty()) {
-        item { HarmonyCard("Potential Conflicts", insights.potentialConflicts, emptyText = "", graha) }
+        item { HarmonyCard(stringResource(R.string.holistic_section_conflicts), insights.potentialConflicts, emptyText = "", graha) }
     }
 }
 
@@ -423,7 +421,12 @@ private fun HarmonyCard(title: String, items: List<HolisticHarmony>, emptyText: 
                 )
                 h.significance?.let {
                     Text(
-                        it.replaceFirstChar { c -> c.uppercase() },
+                        when (it.lowercase()) {
+                            "high" -> stringResource(R.string.holistic_significance_high)
+                            "medium" -> stringResource(R.string.holistic_significance_medium)
+                            "low" -> stringResource(R.string.holistic_significance_low)
+                            else -> it.replaceFirstChar { c -> c.uppercase() }
+                        },
                         style = MaterialTheme.typography.labelSmall,
                         color = if (it == "high") graha.guru else MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -437,8 +440,8 @@ private fun HarmonyCard(title: String, items: List<HolisticHarmony>, emptyText: 
 @Composable
 private fun SourceTag(source: String, graha: GrahaColors) {
     val (label, color) = when (source) {
-        "astrology" -> "Astro" to graha.shani
-        "numerology" -> "Numero" to graha.budha
+        "astrology" -> stringResource(R.string.holistic_source_astro) to graha.shani
+        "numerology" -> stringResource(R.string.holistic_source_numero) to graha.budha
         else -> source to MaterialTheme.colorScheme.onSurfaceVariant
     }
     Text(
@@ -454,19 +457,19 @@ private fun SourceTag(source: String, graha: GrahaColors) {
 private fun LazyListScope.sangeetTab(recs: SangeetMindRecommendations, graha: GrahaColors) {
     recs.combinedRecommendation?.let { combined ->
         item {
-            SectionCard("Combined Recommendation") {
+            SectionCard(stringResource(R.string.holistic_section_combined_recommendation)) {
                 combined.practiceTime?.let { pt ->
                     LabelValueRow(
-                        "Practice time",
+                        stringResource(R.string.holistic_label_practice_time),
                         pt.recommended.replaceFirstChar { it.uppercase() } +
-                            (pt.alternative?.let { " (or $it)" } ?: "") +
-                            (pt.confidence.takeIf { it.isNotBlank() }?.let { " · $it confidence" } ?: "")
+                            (pt.alternative?.let { stringResource(R.string.holistic_practice_alternative, it) } ?: "") +
+                            (pt.confidence.takeIf { it.isNotBlank() }?.let { stringResource(R.string.holistic_practice_confidence, it) } ?: "")
                     )
                 }
-                combined.specificRaag?.let { LabelValueRow("Raag", it, color = graha.chandra) }
+                combined.specificRaag?.let { LabelValueRow(stringResource(R.string.holistic_label_raag), it, color = graha.chandra) }
                 if (combined.raagMoods.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("Raag moods", style = MaterialTheme.typography.labelLarge)
+                    Text(stringResource(R.string.holistic_label_raag_moods), style = MaterialTheme.typography.labelLarge)
                     ChipRow(combined.raagMoods.map { it.replaceFirstChar { c -> c.uppercase() } }, graha.chandra)
                 }
             }
@@ -474,7 +477,7 @@ private fun LazyListScope.sangeetTab(recs: SangeetMindRecommendations, graha: Gr
     }
     if (recs.raagRecommendations.isNotEmpty()) {
         item {
-            SectionCard("Where each recommendation comes from") {
+            SectionCard(stringResource(R.string.holistic_section_recommendation_sources)) {
                 recs.raagRecommendations.forEachIndexed { i, r ->
                     if (i > 0) Spacer(modifier = Modifier.height(8.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -500,14 +503,14 @@ private fun LazyListScope.sangeetTab(recs: SangeetMindRecommendations, graha: Gr
     recs.practiceTime?.let { pt ->
         if (pt.numerology != null || pt.astrology != null) {
             item {
-                SectionCard("Practice Time, by system") {
+                SectionCard(stringResource(R.string.holistic_section_practice_time_by_system)) {
                     pt.numerology?.let {
-                        LabelValueRow("Numerology", it.preferred.replaceFirstChar { c -> c.uppercase() })
+                        LabelValueRow(stringResource(R.string.holistic_label_numerology), it.preferred.replaceFirstChar { c -> c.uppercase() })
                         if (it.reasoning.isNotBlank()) NoteText(it.reasoning)
                     }
                     pt.astrology?.let {
                         Spacer(modifier = Modifier.height(4.dp))
-                        LabelValueRow("Astrology", it.preferred.replaceFirstChar { c -> c.uppercase() })
+                        LabelValueRow(stringResource(R.string.holistic_label_astrology), it.preferred.replaceFirstChar { c -> c.uppercase() })
                         if (it.basedOn.isNotBlank()) NoteText(it.basedOn)
                     }
                 }
@@ -516,29 +519,29 @@ private fun LazyListScope.sangeetTab(recs: SangeetMindRecommendations, graha: Gr
     }
     recs.emotionalGuidance?.numerology?.let { e ->
         item {
-            SectionCard("Emotional Guidance") {
-                LabelValueRow("Nature", listOf(e.primary, e.secondary).filter { it.isNotBlank() }.joinToString(" · ") { it.replaceFirstChar { c -> c.uppercase() } })
+            SectionCard(stringResource(R.string.holistic_section_emotional_guidance)) {
+                LabelValueRow(stringResource(R.string.holistic_label_nature), listOf(e.primary, e.secondary).filter { it.isNotBlank() }.joinToString(" · ") { it.replaceFirstChar { c -> c.uppercase() } })
                 if (e.description.isNotBlank()) Text(e.description, style = MaterialTheme.typography.bodyMedium)
-                BulletList("Strengths", e.emotionalStrengths)
-                BulletList("Challenges", e.emotionalChallenges)
+                BulletList(stringResource(R.string.holistic_label_strengths), e.emotionalStrengths)
+                BulletList(stringResource(R.string.holistic_label_challenges), e.emotionalChallenges)
                 if (e.balancePractice.isNotBlank()) {
                     Spacer(modifier = Modifier.height(6.dp))
-                    LabelValueRow("Balance practice", e.balancePractice)
+                    LabelValueRow(stringResource(R.string.holistic_label_balance_practice), e.balancePractice)
                 }
             }
         }
     }
     recs.habitStyle?.numerology?.let { h ->
         item {
-            SectionCard("Habit Style") {
-                LabelValueRow("Style", h.primaryStyle.replace('_', ' ').replaceFirstChar { it.uppercase() })
+            SectionCard(stringResource(R.string.holistic_section_habit_style)) {
+                LabelValueRow(stringResource(R.string.holistic_label_style), h.primaryStyle.replace('_', ' ').replaceFirstChar { it.uppercase() })
                 if (h.approach.isNotBlank()) Text(h.approach, style = MaterialTheme.typography.bodyMedium)
-                BulletList("Practice tips", h.practiceTips)
+                BulletList(stringResource(R.string.holistic_label_practice_tips), h.practiceTips)
             }
         }
     }
     if (recs.dailyPractices.isNotEmpty()) {
-        item { SectionCard("Daily Practices") { BulletList(null, recs.dailyPractices) } }
+        item { SectionCard(stringResource(R.string.holistic_section_daily_practices)) { BulletList(null, recs.dailyPractices) } }
     }
 }
 
@@ -546,35 +549,35 @@ private fun LazyListScope.sangeetTab(recs: SangeetMindRecommendations, graha: Gr
 
 private fun LazyListScope.numerologyTab(enhanced: NumerologyEnhancedAnalysis?, graha: GrahaColors) {
     if (enhanced == null) {
-        item { NoteText("Extended numerology was not returned for this kundli.") }
+        item { NoteText(stringResource(R.string.holistic_numerology_missing)) }
         return
     }
     enhanced.planetaryRuler?.let { r ->
         item {
             val color = grahaColorFor(r.planet, graha)
-            SectionCard("Ruling Planet", titleColor = color) {
+            SectionCard(stringResource(R.string.holistic_section_ruling_planet), titleColor = color) {
                 Text(
-                    "${r.symbol} ${r.planet}" + (r.planetSanskrit.takeIf { it.isNotBlank() }?.let { " · $it" } ?: ""),
+                    "${r.symbol} ${astroTerm(r.planet)}" + (r.planetSanskrit.takeIf { it.isNotBlank() }?.let { " · $it" } ?: ""),
                     style = MaterialTheme.typography.titleLarge,
                     color = color
                 )
                 if (r.nature.isNotBlank()) Text(r.nature, style = MaterialTheme.typography.bodyMedium)
                 Spacer(modifier = Modifier.height(8.dp))
-                if (r.day.isNotBlank()) LabelValueRow("Day", r.day)
-                if (r.color.isNotBlank()) LabelValueRow("Colours", r.color)
-                if (r.gemstone.isNotBlank()) LabelValueRow("Gemstone", r.gemstone)
-                if (r.metal.isNotBlank()) LabelValueRow("Metal", r.metal)
-                if (r.deity.isNotBlank()) LabelValueRow("Deity", r.deity)
-                if (r.mantra.isNotBlank()) LabelValueRow("Mantra", r.mantra, color = color)
-                BulletList("Positive influence", r.positiveInfluence)
-                BulletList("Watch for", r.negativeInfluence)
+                if (r.day.isNotBlank()) LabelValueRow(stringResource(R.string.holistic_label_day), astroTerm(r.day))
+                if (r.color.isNotBlank()) LabelValueRow(stringResource(R.string.holistic_label_colours), r.color)
+                if (r.gemstone.isNotBlank()) LabelValueRow(stringResource(R.string.holistic_label_gemstone), r.gemstone)
+                if (r.metal.isNotBlank()) LabelValueRow(stringResource(R.string.holistic_label_metal), r.metal)
+                if (r.deity.isNotBlank()) LabelValueRow(stringResource(R.string.holistic_label_deity), r.deity)
+                if (r.mantra.isNotBlank()) LabelValueRow(stringResource(R.string.holistic_label_mantra), r.mantra, color = color)
+                BulletList(stringResource(R.string.holistic_label_positive_influence), r.positiveInfluence)
+                BulletList(stringResource(R.string.holistic_label_watch_for), r.negativeInfluence)
             }
         }
     }
     enhanced.yogas?.let { y ->
         if (y.detected.isNotEmpty()) {
             item {
-                SectionCard("Numerology Yogas") {
+                SectionCard(stringResource(R.string.holistic_section_numerology_yogas)) {
                     if (y.summary.isNotBlank()) NoteText(y.summary)
                     y.detected.forEach { yoga ->
                         Spacer(modifier = Modifier.height(10.dp))
@@ -588,8 +591,8 @@ private fun LazyListScope.numerologyTab(enhanced: NumerologyEnhancedAnalysis?, g
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         if (yoga.meaning.isNotBlank()) Text(yoga.meaning, style = MaterialTheme.typography.bodyMedium)
-                        if (yoga.effect.isNotBlank()) LabelValueRow("Effect", yoga.effect)
-                        if (yoga.advice.isNotBlank()) LabelValueRow("Advice", yoga.advice)
+                        if (yoga.effect.isNotBlank()) LabelValueRow(stringResource(R.string.holistic_label_effect), yoga.effect)
+                        if (yoga.advice.isNotBlank()) LabelValueRow(stringResource(R.string.holistic_label_advice), yoga.advice)
                     }
                 }
             }
@@ -597,40 +600,40 @@ private fun LazyListScope.numerologyTab(enhanced: NumerologyEnhancedAnalysis?, g
     }
     enhanced.lifePredictions?.let { lp ->
         item {
-            SectionCard("Life Predictions") {
+            SectionCard(stringResource(R.string.holistic_section_life_predictions)) {
                 lp.health?.let { h ->
-                    ExpandableSection("Health", h.general) {
-                        BulletList("Strengths", h.strengths)
-                        BulletList("Vulnerabilities", h.vulnerabilities)
-                        BulletList("Best practices", h.bestPractices)
-                        if (h.advice.isNotBlank()) LabelValueRow("Advice", h.advice)
+                    ExpandableSection("health", stringResource(R.string.holistic_label_health), h.general) {
+                        BulletList(stringResource(R.string.holistic_label_strengths), h.strengths)
+                        BulletList(stringResource(R.string.holistic_label_vulnerabilities), h.vulnerabilities)
+                        BulletList(stringResource(R.string.holistic_label_best_practices), h.bestPractices)
+                        if (h.advice.isNotBlank()) LabelValueRow(stringResource(R.string.holistic_label_advice), h.advice)
                     }
                 }
                 lp.wealth?.let { w ->
-                    ExpandableSection("Wealth", w.general) {
-                        if (w.pattern.isNotBlank()) LabelValueRow("Pattern", w.pattern)
-                        if (w.peakYears.isNotBlank()) LabelValueRow("Peak years", w.peakYears)
-                        BulletList("Strengths", w.strengths)
-                        BulletList("Challenges", w.challenges)
-                        if (w.advice.isNotBlank()) LabelValueRow("Advice", w.advice)
+                    ExpandableSection("wealth", stringResource(R.string.holistic_label_wealth), w.general) {
+                        if (w.pattern.isNotBlank()) LabelValueRow(stringResource(R.string.holistic_label_pattern), w.pattern)
+                        if (w.peakYears.isNotBlank()) LabelValueRow(stringResource(R.string.holistic_label_peak_years), w.peakYears)
+                        BulletList(stringResource(R.string.holistic_label_strengths), w.strengths)
+                        BulletList(stringResource(R.string.holistic_label_challenges), w.challenges)
+                        if (w.advice.isNotBlank()) LabelValueRow(stringResource(R.string.holistic_label_advice), w.advice)
                     }
                 }
                 lp.relationships?.let { r ->
-                    ExpandableSection("Relationships", r.general) {
-                        if (r.lovePattern.isNotBlank()) LabelValueRow("Love pattern", r.lovePattern)
-                        if (r.compatibleNumbers.isNotEmpty()) LabelValueRow("Compatible numbers", r.compatibleNumbers.joinToString(", "))
-                        if (r.challengingNumbers.isNotEmpty()) LabelValueRow("Challenging numbers", r.challengingNumbers.joinToString(", "))
-                        BulletList("Strengths", r.strengths)
-                        BulletList("Challenges", r.challenges)
-                        if (r.advice.isNotBlank()) LabelValueRow("Advice", r.advice)
+                    ExpandableSection("relationships", stringResource(R.string.holistic_label_relationships), r.general) {
+                        if (r.lovePattern.isNotBlank()) LabelValueRow(stringResource(R.string.holistic_label_love_pattern), r.lovePattern)
+                        if (r.compatibleNumbers.isNotEmpty()) LabelValueRow(stringResource(R.string.holistic_label_compatible_numbers), r.compatibleNumbers.joinToString(", "))
+                        if (r.challengingNumbers.isNotEmpty()) LabelValueRow(stringResource(R.string.holistic_label_challenging_numbers), r.challengingNumbers.joinToString(", "))
+                        BulletList(stringResource(R.string.holistic_label_strengths), r.strengths)
+                        BulletList(stringResource(R.string.holistic_label_challenges), r.challenges)
+                        if (r.advice.isNotBlank()) LabelValueRow(stringResource(R.string.holistic_label_advice), r.advice)
                     }
                 }
                 lp.success?.let { s ->
-                    ExpandableSection("Success", s.general) {
-                        BulletList("Career paths", s.careerPaths)
-                        if (s.successPattern.isNotBlank()) LabelValueRow("Pattern", s.successPattern)
-                        if (s.peakSuccessAge.isNotBlank()) LabelValueRow("Peak age", s.peakSuccessAge)
-                        if (s.advice.isNotBlank()) LabelValueRow("Advice", s.advice)
+                    ExpandableSection("success", stringResource(R.string.holistic_label_success), s.general) {
+                        BulletList(stringResource(R.string.holistic_label_career_paths), s.careerPaths)
+                        if (s.successPattern.isNotBlank()) LabelValueRow(stringResource(R.string.holistic_label_pattern), s.successPattern)
+                        if (s.peakSuccessAge.isNotBlank()) LabelValueRow(stringResource(R.string.holistic_label_peak_age), s.peakSuccessAge)
+                        if (s.advice.isNotBlank()) LabelValueRow(stringResource(R.string.holistic_label_advice), s.advice)
                     }
                 }
             }
@@ -639,27 +642,27 @@ private fun LazyListScope.numerologyTab(enhanced: NumerologyEnhancedAnalysis?, g
     enhanced.cautionsAndExcellence?.let { ce ->
         ce.cautions?.let { c ->
             item {
-                SectionCard("Cautions", titleColor = graha.mangala) {
+                SectionCard(stringResource(R.string.holistic_section_cautions), titleColor = graha.mangala) {
                     if (c.primaryWarning.isNotBlank()) Text(c.primaryWarning, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
-                    BulletList("Watch out for", c.watchOutFor)
+                    BulletList(stringResource(R.string.holistic_label_watch_out_for), c.watchOutFor)
                     Spacer(modifier = Modifier.height(6.dp))
-                    if (c.karmicLesson.isNotBlank()) LabelValueRow("Karmic lesson", c.karmicLesson)
-                    if (c.healthCaution.isNotBlank()) LabelValueRow("Health", c.healthCaution)
-                    if (c.relationshipCaution.isNotBlank()) LabelValueRow("Relationships", c.relationshipCaution)
-                    if (c.financialCaution.isNotBlank()) LabelValueRow("Finances", c.financialCaution)
+                    if (c.karmicLesson.isNotBlank()) LabelValueRow(stringResource(R.string.holistic_label_karmic_lesson), c.karmicLesson)
+                    if (c.healthCaution.isNotBlank()) LabelValueRow(stringResource(R.string.holistic_label_health), c.healthCaution)
+                    if (c.relationshipCaution.isNotBlank()) LabelValueRow(stringResource(R.string.holistic_label_relationships), c.relationshipCaution)
+                    if (c.financialCaution.isNotBlank()) LabelValueRow(stringResource(R.string.holistic_label_finances), c.financialCaution)
                 }
             }
         }
         ce.excellence?.let { e ->
             item {
-                SectionCard("How to Excel", titleColor = graha.surya) {
+                SectionCard(stringResource(R.string.holistic_section_how_to_excel), titleColor = graha.surya) {
                     if (e.successFormula.isNotBlank()) Text(e.successFormula, style = MaterialTheme.typography.titleSmall, color = graha.surya)
-                    BulletList("How to excel", e.howToExcel)
-                    BulletList("Leverage", e.leverageStrengths)
-                    BulletList("Daily practice", e.dailyPractice)
+                    BulletList(stringResource(R.string.holistic_label_how_to_excel), e.howToExcel)
+                    BulletList(stringResource(R.string.holistic_label_leverage), e.leverageStrengths)
+                    BulletList(stringResource(R.string.holistic_label_daily_practice), e.dailyPractice)
                     if (e.affirmation.isNotBlank()) {
                         Spacer(modifier = Modifier.height(6.dp))
-                        LabelValueRow("Affirmation", "“${e.affirmation}”")
+                        LabelValueRow(stringResource(R.string.holistic_label_affirmation), "“${e.affirmation}”")
                     }
                 }
             }
@@ -668,7 +671,7 @@ private fun LazyListScope.numerologyTab(enhanced: NumerologyEnhancedAnalysis?, g
     enhanced.famousPersonalities?.let { f ->
         if (f.indian.isNotEmpty() || f.global.isNotEmpty()) {
             item {
-                SectionCard("Shares Your Life Path") {
+                SectionCard(stringResource(R.string.holistic_section_shares_life_path)) {
                     if (f.commonTraits.isNotBlank()) NoteText(f.commonTraits)
                     (f.indian + f.global).forEach { p ->
                         Spacer(modifier = Modifier.height(6.dp))
@@ -742,8 +745,9 @@ private fun ChipRow(labels: List<String>, color: Color) {
 /** Collapsed by default: four life-prediction domains × ~5 bullets each would otherwise
  * dominate the tab. The one-line `summary` stays visible so the collapsed state is useful. */
 @Composable
-private fun ExpandableSection(title: String, summary: String, content: @Composable () -> Unit) {
-    var expanded by rememberSaveable(title) { mutableStateOf(false) }
+private fun ExpandableSection(key: String, title: String, summary: String, content: @Composable () -> Unit) {
+    // Keyed on a stable id, not the (localized) title, so a language switch keeps the state.
+    var expanded by rememberSaveable(key) { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -755,7 +759,7 @@ private fun ExpandableSection(title: String, summary: String, content: @Composab
             Text(title, style = MaterialTheme.typography.titleSmall, modifier = Modifier.weight(1f))
             Icon(
                 if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                contentDescription = if (expanded) "Collapse" else "Expand"
+                contentDescription = stringResource(if (expanded) R.string.holistic_cd_collapse else R.string.holistic_cd_expand)
             )
         }
         if (summary.isNotBlank()) Text(summary, style = MaterialTheme.typography.bodyMedium)

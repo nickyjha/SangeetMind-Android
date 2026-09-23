@@ -15,10 +15,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.core.ui.language.astroTerm
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.sangeet.SangeetTab
 import com.sangeetmind.features.astrology.sangeet.SangeetViewModel
 import com.sangeetmind.libs.models.MantraTally
@@ -62,10 +66,10 @@ fun SangeetScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Sangeet") },
+                title = { Text(stringResource(R.string.sangeet_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -81,22 +85,22 @@ fun SangeetScreen(
                 Tab(
                     selected = uiState.tab == SangeetTab.RAAG,
                     onClick = { viewModel.setTab(SangeetTab.RAAG) },
-                    text = { Text("Daily Raag") }
+                    text = { Text(stringResource(R.string.sangeet_tab_daily_raag)) }
                 )
                 Tab(
                     selected = uiState.tab == SangeetTab.JAPA,
                     onClick = { viewModel.setTab(SangeetTab.JAPA) },
-                    text = { Text("Japa") }
+                    text = { Text(stringResource(R.string.sangeet_tab_japa)) }
                 )
                 Tab(
                     selected = uiState.tab == SangeetTab.VOICE_HOROSCOPE,
                     onClick = { viewModel.setTab(SangeetTab.VOICE_HOROSCOPE) },
-                    text = { Text("Voice Horoscope") }
+                    text = { Text(stringResource(R.string.sangeet_tab_voice_horoscope)) }
                 )
                 Tab(
                     selected = uiState.tab == SangeetTab.SOUND_HEALING,
                     onClick = { viewModel.setTab(SangeetTab.SOUND_HEALING) },
-                    text = { Text("Sound Healing") }
+                    text = { Text(stringResource(R.string.sangeet_tab_sound_healing)) }
                 )
             }
 
@@ -149,18 +153,21 @@ fun SangeetScreen(
 private fun DailyRaagTab(playlist: com.sangeetmind.libs.models.RaagPlaylist?) {
     if (playlist == null) return
     val tone = grahaToneFor(playlist.mahadashaLord)
-    Text("Personalized for today", style = MaterialTheme.typography.titleMedium)
+    Text(stringResource(R.string.sangeet_raag_personalized), style = MaterialTheme.typography.titleMedium)
     Spacer(modifier = Modifier.height(4.dp))
+    val mahadasha = astroTerm(playlist.mahadashaLord)
+    val dashaLabel = playlist.antardashaLord
+        ?.let { stringResource(R.string.sangeet_raag_dasha_pair_fmt, mahadasha, astroTerm(it)) }
+        ?: mahadasha
     Text(
-        "${playlist.tradition} • ${playlist.timeOfDay} • dasha: ${playlist.mahadashaLord}" +
-            (playlist.antardashaLord?.let { " / $it" } ?: ""),
+        stringResource(R.string.sangeet_raag_meta_fmt, playlist.tradition, playlist.timeOfDay, dashaLabel),
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )
     Spacer(modifier = Modifier.height(16.dp))
     if (playlist.previewOnly) {
         Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)) {
-            Text("Preview only — unlock the full playlist with Premium.", modifier = Modifier.padding(12.dp))
+            Text(stringResource(R.string.sangeet_raag_preview_only), modifier = Modifier.padding(12.dp))
         }
         Spacer(modifier = Modifier.height(16.dp))
     }
@@ -198,28 +205,28 @@ private fun JapaTab(
     onLog: () -> Unit
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-        Text("Streak: $streakDays days • Lifetime japa: $totalJapa", style = MaterialTheme.typography.bodyMedium)
+        Text(stringResource(R.string.sangeet_japa_stats_fmt, streakDays, totalJapa), style = MaterialTheme.typography.bodyMedium)
         Spacer(modifier = Modifier.height(24.dp))
         Text("$count", style = MaterialTheme.typography.displayLarge)
         Spacer(modifier = Modifier.height(24.dp))
         Button(onClick = onTap, modifier = Modifier.size(140.dp), shape = MaterialTheme.shapes.extraLarge) {
-            Text("Tap")
+            Text(stringResource(R.string.sangeet_japa_tap))
         }
         Spacer(modifier = Modifier.height(24.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            OutlinedButton(onClick = onReset, enabled = count > 0) { Text("Reset") }
-            Button(onClick = onLog, enabled = count > 0) { Text("Log session") }
+            OutlinedButton(onClick = onReset, enabled = count > 0) { Text(stringResource(R.string.sangeet_japa_reset)) }
+            Button(onClick = onLog, enabled = count > 0) { Text(stringResource(R.string.sangeet_japa_log_session)) }
         }
         if (logged) {
             Spacer(modifier = Modifier.height(12.dp))
-            Text("Session logged", color = MaterialTheme.colorScheme.primary)
+            Text(stringResource(R.string.sangeet_japa_session_logged), color = MaterialTheme.colorScheme.primary)
         }
 
         if (byMantra.isNotEmpty()) {
             Spacer(modifier = Modifier.height(28.dp))
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text("By mantra", style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(R.string.sangeet_japa_by_mantra), style = MaterialTheme.typography.titleMedium)
                     Spacer(modifier = Modifier.height(8.dp))
                     byMantra.forEach { tally ->
                         Row(
@@ -229,7 +236,8 @@ private fun JapaTab(
                             Column {
                                 Text(tally.mantraId, style = MaterialTheme.typography.bodyMedium)
                                 Text(
-                                    "${tally.sessions} session${if (tally.sessions == 1) "" else "s"}",
+                                    if (tally.sessions == 1) stringResource(R.string.sangeet_japa_session_one)
+                                    else stringResource(R.string.sangeet_japa_sessions_fmt, tally.sessions),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -250,22 +258,22 @@ private fun VoiceHoroscopeTab(script: String?, onGenerate: (String) -> Unit) {
     var selectedSign by remember { mutableStateOf(ZODIAC_SIGNS.first()) }
 
     Text(
-        "Premium — a spoken daily horoscope script for your sign.",
+        stringResource(R.string.sangeet_voice_premium_desc),
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )
     Spacer(modifier = Modifier.height(16.dp))
     ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
         OutlinedTextField(
-            value = selectedSign,
+            value = astroTerm(selectedSign),
             onValueChange = {},
             readOnly = true,
-            label = { Text("Sign") },
+            label = { Text(stringResource(R.string.sangeet_voice_sign_label)) },
             modifier = Modifier.menuAnchor().fillMaxWidth()
         )
         ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             ZODIAC_SIGNS.forEach { sign ->
-                DropdownMenuItem(text = { Text(sign) }, onClick = {
+                DropdownMenuItem(text = { Text(astroTerm(sign)) }, onClick = {
                     selectedSign = sign
                     expanded = false
                 })
@@ -274,7 +282,7 @@ private fun VoiceHoroscopeTab(script: String?, onGenerate: (String) -> Unit) {
     }
     Spacer(modifier = Modifier.height(16.dp))
     Button(onClick = { onGenerate(selectedSign) }, modifier = Modifier.fillMaxWidth()) {
-        Text("Generate voice horoscope")
+        Text(stringResource(R.string.sangeet_voice_generate))
     }
     if (script != null) {
         Spacer(modifier = Modifier.height(16.dp))
@@ -289,7 +297,7 @@ private fun SoundHealingTab(sessions: List<SoundHealingSession>, premiumRequired
     if (premiumRequired) {
         Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)) {
             Text(
-                "Showing a preview session. Unlock the full sound healing library with Premium.",
+                stringResource(R.string.sangeet_sound_preview),
                 modifier = Modifier.padding(12.dp)
             )
         }
@@ -312,7 +320,7 @@ private fun SoundHealingTab(sessions: List<SoundHealingSession>, premiumRequired
                 Column {
                     Text(session.title, style = MaterialTheme.typography.titleMedium)
                     Text(
-                        "${session.durationMin} min • ${session.theme}",
+                        stringResource(R.string.sangeet_sound_session_meta_fmt, session.durationMin, astroTerm(session.theme)),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

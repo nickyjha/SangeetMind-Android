@@ -1,8 +1,12 @@
 package com.sangeetmind.features.astrology.readings
 
+import android.content.Context
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.di.IoDispatcher
+import com.sangeetmind.core.common.language.LanguageManager
 import com.sangeetmind.core.network.LlmApi
+import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.kundli.KundliRepository
 import com.sangeetmind.features.astrology.payments.PaymentsRepository
 import com.sangeetmind.libs.models.CareerBirthDetails
@@ -12,6 +16,7 @@ import com.sangeetmind.libs.models.Kundli
 import com.sangeetmind.libs.models.StrengthsBirthDetails
 import com.sangeetmind.libs.models.StrengthsReadingRequest
 import com.sangeetmind.libs.models.StrengthsReadingResponse
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import java.util.UUID
@@ -28,12 +33,17 @@ class ReadingsRepository @Inject constructor(
     private val llmApi: LlmApi,
     private val kundliRepository: KundliRepository,
     private val paymentsRepository: PaymentsRepository,
+    private val languageManager: LanguageManager,
+    @ApplicationContext private val context: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
     private suspend fun primaryKundli(): Result<Kundli> = when (val result = kundliRepository.listKundlis()) {
         is Result.Success -> {
             val primary = result.data.firstOrNull { it.isPrimary } ?: result.data.firstOrNull()
-            if (primary == null) Result.Error(IllegalStateException("No kundli"), "Create a kundli first")
+            if (primary == null) Result.Error(
+                IllegalStateException("No kundli"),
+                context.getString(CoreR.string.common_add_kundli_first)
+            )
             else Result.Success(primary)
         }
         is Result.Error -> Result.Error(result.exception, result.message)
@@ -48,7 +58,10 @@ class ReadingsRepository @Inject constructor(
             val debit = paymentsRepository.debitWallet(skuId, UUID.randomUUID().toString(), amountPaise)
         ) {
             is Result.Success -> if (debit.data.success) Result.Success(Unit) else
-                Result.Error(IllegalStateException("Debit failed"), "Insufficient wallet balance")
+                Result.Error(
+                    IllegalStateException("Debit failed"),
+                    context.getString(R.string.readings_err_insufficient_balance)
+                )
             is Result.Error -> Result.Error(debit.exception, debit.message)
             is Result.Loading -> Result.Loading
         }
@@ -73,11 +86,12 @@ class ReadingsRepository @Inject constructor(
                     place = kundli.birthPlace,
                     lat = kundli.latitude,
                     lon = kundli.longitude
-                )
+                ),
+                lang = languageManager.current.code
             )
             Result.Success(llmApi.getCareerReading(request))
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: "Could not generate career reading")
+            Result.Error(e, e.message ?: context.getString(R.string.readings_err_career))
         }
     }
 
@@ -98,11 +112,12 @@ class ReadingsRepository @Inject constructor(
                     time = kundli.birthTime,
                     place = kundli.birthPlace,
                     timezone = kundli.timezone
-                )
+                ),
+                lang = languageManager.current.code
             )
             Result.Success(llmApi.getStrengthsReading(request))
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: "Could not generate strengths reading")
+            Result.Error(e, e.message ?: context.getString(R.string.readings_err_strengths))
         }
     }
 }

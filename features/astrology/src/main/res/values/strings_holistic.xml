@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Holistic Reading screen (Astro × Numerology synthesis). Keys are prefixed holistic_. -->
+<resources>
+    <string name="holistic_title">Holistic Reading</string>
+    <string name="holistic_error_load">Failed to load holistic reading</string>
+    <string name="holistic_loading">Weaving your chart and numbers together…</string>
+    <string name="holistic_no_kundli">Add a kundli first to get your holistic reading.</string>
+    <string name="holistic_needs_name">Your kundli has no name. Numerology needs your birth name — add one to the kundli to unlock this reading.</string>
+    <string name="holistic_your_reading_default">Your Holistic Reading</string>
+    <string name="holistic_subtitle">Vedic astrology × numerology, read together</string>
+
+    <!-- Sub-tabs -->
+    <string name="holistic_tab_reading">Reading</string>
+    <string name="holistic_tab_insights">Insights</string>
+    <string name="holistic_tab_sangeet">Sangeet</string>
+    <string name="holistic_tab_numerology">Numerology+</string>
+
+    <!-- At-a-glance chips -->
+    <string name="holistic_chip_life_path">Life Path %1$d</string>
+    <string name="holistic_chip_moon_in">Moon in %1$s</string>
+    <string name="holistic_chip_lagna">%1$s Lagna</string>
+    <string name="holistic_chip_mahadasha">%1$s Mahadasha</string>
+
+    <!-- Reading tab -->
+    <string name="holistic_section_numbers">Your Numbers</string>
+    <string name="holistic_num_life_path">Life Path</string>
+    <string name="holistic_num_destiny">Destiny</string>
+    <string name="holistic_num_soul_urge">Soul Urge</string>
+    <string name="holistic_num_personality">Personality</string>
+    <string name="holistic_num_maturity">Maturity</string>
+    <string name="holistic_num_birth_day">Birth Day</string>
+    <string name="holistic_num_attitude">Attitude</string>
+    <string name="holistic_section_chart">Your Chart</string>
+    <string name="holistic_label_moon_sign">Moon sign</string>
+    <string name="holistic_label_lagna">Lagna</string>
+    <string name="holistic_label_nakshatra">Nakshatra</string>
+    <string name="holistic_label_dasha">Dasha</string>
+    <string name="holistic_label_todays_mood">Today\'s mood</string>
+    <string name="holistic_label_suggested_raag">Suggested raag</string>
+    <string name="holistic_narrative_title">Your Reading</string>
+    <string name="holistic_badge_ai">AI-crafted</string>
+    <string name="holistic_badge_template">Template</string>
+    <string name="holistic_regenerate">Regenerate</string>
+    <string name="holistic_no_narrative">No narrative was returned.</string>
+    <string name="holistic_template_note">This reading was assembled from your numbers and chart without AI. Tap Regenerate to try the AI-crafted version.</string>
+
+    <!-- Insights tab -->
+    <string name="holistic_section_personality_synthesis">Personality Synthesis</string>
+    <string name="holistic_section_timing">Timing</string>
+    <string name="holistic_section_life_path_alignment">Life Path Alignment</string>
+    <string name="holistic_section_spiritual_guidance">Spiritual Guidance</string>
+    <string name="holistic_section_harmonies">Harmonies Between Systems</string>
+    <string name="holistic_harmonies_empty">No direct harmony between your Life Path and current Mahadasha lord right now — the two systems are speaking with separate voices in this period.</string>
+    <string name="holistic_section_conflicts">Potential Conflicts</string>
+    <string name="holistic_significance_high">High</string>
+    <string name="holistic_significance_medium">Medium</string>
+    <string name="holistic_significance_low">Low</string>
+    <string name="holistic_source_astro">Astro</string>
+    <string name="holistic_source_numero">Numero</string>
+
+    <!-- Sangeet tab -->
+    <string name="holistic_section_combined_recommendation">Combined Recommendation</string>
+    <string name="holistic_label_practice_time">Practice time</string>
+    <string name="holistic_practice_alternative">" (or %1$s)"</string>
+    <string name="holistic_practice_confidence">" · %1$s confidence"</string>
+    <string name="holistic_label_raag">Raag</string>
+    <string name="holistic_label_raag_moods">Raag moods</string>
+    <string name="holistic_section_recommendation_sources">Where each recommendation comes from</string>
+    <string name="holistic_section_practice_time_by_system">Practice Time, by system</string>
+    <string name="holistic_label_numerology">Numerology</string>
+    <string name="holistic_label_astrology">Astrology</string>
+    <string name="holistic_section_emotional_guidance">Emotional Guidance</string>
+    <string name="holistic_label_nature">Nature</string>
+    <string name="holistic_label_strengths">Strengths</string>
+    <string name="holistic_label_challenges">Challenges</string>
+    <string name="holistic_label_balance_practice">Balance practice</string>
+    <string name="holistic_section_habit_style">Habit Style</string>
+    <string name="holistic_label_style">Style</string>
+    <string name="holistic_label_practice_tips">Practice tips</string>
+    <string name="holistic_section_daily_practices">Daily Practices</string>
+
+    <!-- Numerology+ tab -->
+    <string name="holistic_numerology_missing">Extended numerology was not returned for this kundli.</string>
+    <string name="holistic_section_ruling_planet">Ruling Planet</string>
+    <string name="holistic_label_day">Day</string>
+    <string name="holistic_label_colours">Colours</string>
+    <string name="holistic_label_gemstone">Gemstone</string>
+    <string name="holistic_label_metal">Metal</string>
+    <string name="holistic_label_deity">Deity</string>
+    <string name="holistic_label_mantra">Mantra</string>
+    <string name="holistic_label_positive_influence">Positive influence</string>
+    <string name="holistic_label_watch_for">Watch for</string>
+    <string name="holistic_section_numerology_yogas">Numerology Yogas</string>
+    <string name="holistic_label_effect">Effect</string>
+    <string name="holistic_label_advice">Advice</string>
+    <string name="holistic_section_life_predictions">Life Predictions</string>
+    <string name="holistic_label_health">Health</string>
+    <string name="holistic_label_vulnerabilities">Vulnerabilities</string>
+    <string name="holistic_label_best_practices">Best practices</string>
+    <string name="holistic_label_wealth">Wealth</string>
+    <string name="holistic_label_pattern">Pattern</string>
+    <string name="holistic_label_peak_years">Peak years</string>
+    <string name="holistic_label_relationships">Relationships</string>
+    <string name="holistic_label_love_pattern">Love pattern</string>
+    <string name="holistic_label_compatible_numbers">Compatible numbers</string>
+    <string name="holistic_label_challenging_numbers">Challenging numbers</string>
+    <string name="holistic_label_success">Success</string>
+    <string name="holistic_label_career_paths">Career paths</string>
+    <string name="holistic_label_peak_age">Peak age</string>
+    <string name="holistic_section_cautions">Cautions</string>
+    <string name="holistic_label_watch_out_for">Watch out for</string>
+    <string name="holistic_label_karmic_lesson">Karmic lesson</string>
+    <string name="holistic_label_finances">Finances</string>
+    <string name="holistic_section_how_to_excel">How to Excel</string>
+    <string name="holistic_label_how_to_excel">How to excel</string>
+    <string name="holistic_label_leverage">Leverage</string>
+    <string name="holistic_label_daily_practice">Daily practice</string>
+    <string name="holistic_label_affirmation">Affirmation</string>
+    <string name="holistic_section_shares_life_path">Shares Your Life Path</string>
+
+    <!-- Shared building blocks -->
+    <string name="holistic_cd_expand">Expand</string>
+    <string name="holistic_cd_collapse">Collapse</string>
+</resources>

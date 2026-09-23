@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth_subtitle_signup">Create your account</string>
+    <string name="auth_subtitle_forgot">Reset your password</string>
+    <string name="auth_subtitle_login">Welcome back</string>
+    <string name="auth_name">Name</string>
+    <string name="auth_email">Email</string>
+    <string name="auth_password">Password</string>
+    <string name="auth_hide_password">Hide password</string>
+    <string name="auth_show_password">Show password</string>
+    <string name="auth_forgot_password">Forgot password?</string>
+    <string name="auth_sign_up">Sign Up</string>
+    <string name="auth_log_in">Log In</string>
+    <string name="auth_have_account">Already have an account? Log in</string>
+    <string name="auth_no_account">Don\'t have an account? Sign up</string>
+    <string name="auth_reset_sent">Check your email for a link to reset your password.</string>
+    <string name="auth_back_to_login">Back to log in</string>
+    <string name="auth_send_reset">Send reset link</string>
+    <string name="auth_error_invalid_email">Invalid email address</string>
+    <string name="auth_error_password_short">Password must be at least 6 characters</string>
+    <string name="auth_error_name_required">Name is required</string>
+    <string name="auth_error_sign_in_failed">Sign in failed</string>
+    <string name="auth_error_sign_up_failed">Sign up failed</string>
+    <string name="auth_error_reset_failed">Could not send reset email</string>
+</resources>

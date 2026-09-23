@@ -12,9 +12,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.chatmind.ChatMessage
 import com.sangeetmind.features.astrology.chatmind.ChatMindViewModel
 import com.sangeetmind.features.astrology.chatmind.ChatRole
@@ -37,10 +40,10 @@ fun ChatMindScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("ChatMind") },
+                title = { Text(stringResource(R.string.chatmind_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -61,9 +64,9 @@ fun ChatMindScreen(
                         verticalAlignment = Alignment.Top
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
-                            Text("Advanced analysis", style = MaterialTheme.typography.labelLarge)
+                            Text(stringResource(R.string.chatmind_advanced_title), style = MaterialTheme.typography.labelLarge)
                             Text(
-                                "Stronger model, deeper reasoning — costs more from your wallet.",
+                                stringResource(R.string.chatmind_advanced_desc),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -82,7 +85,7 @@ fun ChatMindScreen(
                             value = uiState.input,
                             onValueChange = viewModel::onInputChange,
                             modifier = Modifier.weight(1f),
-                            placeholder = { Text("Ask about your kundli…") },
+                            placeholder = { Text(stringResource(R.string.chatmind_input_placeholder)) },
                             singleLine = true,
                             enabled = !uiState.isSending
                         )
@@ -91,7 +94,7 @@ fun ChatMindScreen(
                             if (uiState.isSending) {
                                 CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
                             } else {
-                                Icon(Icons.Default.Send, contentDescription = "Send")
+                                Icon(Icons.Default.Send, contentDescription = stringResource(R.string.chatmind_send))
                             }
                         }
                     }
@@ -111,7 +114,7 @@ fun ChatMindScreen(
             if (uiState.messages.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {
                     Text(
-                        "Ask anything about your kundli — career, timing, relationships.",
+                        stringResource(R.string.chatmind_empty),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -143,7 +146,7 @@ private fun ChatBubble(message: ChatMessage) {
             Column(modifier = Modifier.padding(12.dp)) {
                 if (message.tier == "advanced") {
                     Text(
-                        "ADVANCED",
+                        stringResource(R.string.chatmind_tier_badge_advanced),
                         style = MaterialTheme.typography.labelSmall,
                         color = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.rahu,
                         modifier = Modifier.padding(bottom = 4.dp)

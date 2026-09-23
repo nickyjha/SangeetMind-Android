@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Readings: career / strengths AI readings. -->
+    <string name="readings_title">Readings</string>
+    <string name="readings_tab_career">Career</string>
+    <string name="readings_tab_strengths">Strengths</string>
+    <string name="readings_career_desc">₹99, or free with Premium — a Gemini-generated career outlook from your kundli\'s D1/D10 charts and current dasha.</string>
+    <string name="readings_career_generate">Generate career reading</string>
+    <string name="readings_strengths_desc">₹99, or free with Premium — key strengths, growth areas, and raag-based mantra remedies.</string>
+    <string name="readings_strengths_generate">Generate strengths reading</string>
+    <string name="readings_section_strengths">Strengths</string>
+    <string name="readings_section_growth_areas">Growth areas</string>
+    <string name="readings_raag_fmt">Raag: %1$s</string>
+    <string name="readings_err_insufficient_balance">Insufficient wallet balance</string>
+    <string name="readings_err_career">Could not generate career reading</string>
+    <string name="readings_err_strengths">Could not generate strengths reading</string>
+</resources>

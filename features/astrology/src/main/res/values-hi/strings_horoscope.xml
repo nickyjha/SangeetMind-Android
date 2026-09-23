@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="horoscope_title">राशिफल</string>
+    <string name="horoscope_tab_daily">दैनिक</string>
+    <string name="horoscope_tab_weekly">साप्ताहिक</string>
+    <string name="horoscope_tab_monthly">मासिक</string>
+    <string name="horoscope_tab_yearly">वार्षिक</string>
+
+    <string name="horoscope_todays_insight">आज की अंतर्दृष्टि</string>
+    <string name="horoscope_what_to_do">आज क्या करें</string>
+    <string name="horoscope_what_to_avoid">किससे बचें</string>
+    <string name="horoscope_lucky_color">शुभ रंग</string>
+    <string name="horoscope_auspicious_time">शुभ समय</string>
+    <string name="horoscope_recommended_mantra">अनुशंसित मंत्र</string>
+    <string name="horoscope_recommended_mantra_fmt">अनुशंसित मंत्र: %1$s</string>
+    <string name="horoscope_todays_daan">आज का दान</string>
+    <string name="horoscope_daan_to_fmt">किसे: %1$s</string>
+
+    <string name="horoscope_error_load_kundlis">कुंडलियाँ लोड नहीं हो सकीं</string>
+    <string name="horoscope_error_add_kundli_first">राशिफल देखने के लिए पहले कुंडली जोड़ें</string>
+    <string name="horoscope_error_moon_sign">आपकी चंद्र राशि निर्धारित नहीं हो सकी</string>
+    <string name="horoscope_error_daily">दैनिक राशिफल लोड नहीं हो सका</string>
+    <string name="horoscope_error_weekly">साप्ताहिक राशिफल लोड नहीं हो सका</string>
+    <string name="horoscope_error_monthly">मासिक राशिफल लोड नहीं हो सका</string>
+    <string name="horoscope_error_yearly">वार्षिक राशिफल लोड नहीं हो सका</string>
+</resources>

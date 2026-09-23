@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings shared by many screens. Feature modules reference these as
+     com.sangeetmind.core.ui.R.string.common_* instead of redefining them. -->
+<resources>
+    <string name="common_app_name">SangeetMind</string>
+    <string name="common_back">Back</string>
+    <string name="common_retry">Retry</string>
+    <string name="common_refresh">Refresh</string>
+    <string name="common_loading">Loading…</string>
+    <string name="common_error_generic">Something went wrong. Please try again.</string>
+    <string name="common_ok">OK</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_close">Close</string>
+    <string name="common_save">Save</string>
+    <string name="common_delete">Delete</string>
+    <string name="common_edit">Edit</string>
+    <string name="common_done">Done</string>
+    <string name="common_next">Next</string>
+    <string name="common_previous">Previous</string>
+    <string name="common_skip">Skip</string>
+    <string name="common_continue">Continue</string>
+    <string name="common_search">Search</string>
+    <string name="common_yes">Yes</string>
+    <string name="common_no">No</string>
+    <string name="common_none">None</string>
+    <string name="common_unknown">Unknown</string>
+    <string name="common_language">Language</string>
+    <string name="common_select_language">Select language</string>
+    <string name="common_add_kundli_first">Add a kundli first.</string>
+    <string name="common_premium_required">Premium required</string>
+    <string name="common_today">Today</string>
+    <string name="common_house_n">House %1$d</string>
+    <string name="common_house_short">H%1$d</string>
+</resources>

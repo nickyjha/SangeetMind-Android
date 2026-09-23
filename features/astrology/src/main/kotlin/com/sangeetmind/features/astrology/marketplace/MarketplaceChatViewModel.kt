@@ -1,11 +1,14 @@
 package com.sangeetmind.features.astrology.marketplace
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.Astrologer
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,6 +40,7 @@ data class MarketplaceChatUiState(
 @HiltViewModel
 class MarketplaceChatViewModel @Inject constructor(
     private val repository: MarketplaceRepository,
+    @ApplicationContext private val context: Context,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -64,7 +68,7 @@ class MarketplaceChatViewModel @Inject constructor(
                 sessionActive = true,
                 messages = it.messages + ChatMessage(
                     fromMe = false,
-                    text = "Session started — you're now being billed per minute."
+                    text = context.getString(R.string.marketplace_session_started_msg)
                 )
             )
         }
@@ -82,7 +86,10 @@ class MarketplaceChatViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 sessionActive = false,
-                messages = it.messages + ChatMessage(fromMe = false, text = "Session ended.")
+                messages = it.messages + ChatMessage(
+                    fromMe = false,
+                    text = context.getString(R.string.marketplace_session_ended_msg)
+                )
             )
         }
     }
@@ -93,7 +100,9 @@ class MarketplaceChatViewModel @Inject constructor(
                 if (!result.data.applied) {
                     // Insufficient balance / premium check failed server-side — stop the meter.
                     endSession()
-                    _uiState.update { it.copy(error = "Session ended: insufficient balance") }
+                    _uiState.update {
+                        it.copy(error = context.getString(R.string.marketplace_error_insufficient_balance))
+                    }
                 } else {
                     _uiState.update {
                         it.copy(
@@ -105,7 +114,12 @@ class MarketplaceChatViewModel @Inject constructor(
             }
             is Result.Error -> {
                 endSession()
-                _uiState.update { it.copy(error = result.message ?: "Billing failed, session ended") }
+                _uiState.update {
+                    it.copy(
+                        error = result.message
+                            ?: context.getString(R.string.marketplace_error_billing_failed)
+                    )
+                }
             }
             is Result.Loading -> Unit
         }

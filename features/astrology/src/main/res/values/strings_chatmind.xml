@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ChatMind: AI chat screen. -->
+    <string name="chatmind_title">ChatMind</string>
+    <string name="chatmind_advanced_title">Advanced analysis</string>
+    <string name="chatmind_advanced_desc">Stronger model, deeper reasoning — costs more from your wallet.</string>
+    <string name="chatmind_input_placeholder">Ask about your kundli…</string>
+    <string name="chatmind_send">Send</string>
+    <string name="chatmind_empty">Ask anything about your kundli — career, timing, relationships.</string>
+    <string name="chatmind_tier_badge_advanced">ADVANCED</string>
+    <string name="chatmind_no_answer">No answer returned</string>
+    <string name="chatmind_err_could_not_answer">ChatMind could not answer that</string>
+</resources>

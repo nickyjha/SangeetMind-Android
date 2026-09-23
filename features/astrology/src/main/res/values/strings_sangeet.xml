@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Sangeet: Daily Raag, Japa counter, Voice Horoscope, Sound Healing. -->
+    <string name="sangeet_title">Sangeet</string>
+    <string name="sangeet_tab_daily_raag">Daily Raag</string>
+    <string name="sangeet_tab_japa">Japa</string>
+    <string name="sangeet_tab_voice_horoscope">Voice Horoscope</string>
+    <string name="sangeet_tab_sound_healing">Sound Healing</string>
+
+    <string name="sangeet_raag_personalized">Personalized for today</string>
+    <string name="sangeet_raag_meta_fmt">%1$s • %2$s • dasha: %3$s</string>
+    <string name="sangeet_raag_dasha_pair_fmt">%1$s / %2$s</string>
+    <string name="sangeet_raag_preview_only">Preview only — unlock the full playlist with Premium.</string>
+
+    <string name="sangeet_japa_stats_fmt">Streak: %1$d days • Lifetime japa: %2$d</string>
+    <string name="sangeet_japa_tap">Tap</string>
+    <string name="sangeet_japa_reset">Reset</string>
+    <string name="sangeet_japa_log_session">Log session</string>
+    <string name="sangeet_japa_session_logged">Session logged</string>
+    <string name="sangeet_japa_by_mantra">By mantra</string>
+    <string name="sangeet_japa_session_one">1 session</string>
+    <string name="sangeet_japa_sessions_fmt">%1$d sessions</string>
+
+    <string name="sangeet_voice_premium_desc">Premium — a spoken daily horoscope script for your sign.</string>
+    <string name="sangeet_voice_sign_label">Sign</string>
+    <string name="sangeet_voice_generate">Generate voice horoscope</string>
+
+    <string name="sangeet_sound_preview">Showing a preview session. Unlock the full sound healing library with Premium.</string>
+    <string name="sangeet_sound_session_meta_fmt">%1$d min • %2$s</string>
+
+    <string name="sangeet_err_raag">Could not load today\'s raag</string>
+    <string name="sangeet_err_japa_log">Could not log japa</string>
+    <string name="sangeet_err_japa_stats">Could not load japa stats</string>
+    <string name="sangeet_err_voice">Voice horoscope needs Premium</string>
+    <string name="sangeet_err_sound">Could not load sound healing library</string>
+</resources>

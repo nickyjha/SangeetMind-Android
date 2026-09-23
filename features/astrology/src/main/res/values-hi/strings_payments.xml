@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Payments: screen -->
+    <string name="payments_title">प्रीमियम और वॉलेट</string>
+    <string name="payments_tab_premium">प्रीमियम</string>
+    <string name="payments_tab_wallet">वॉलेट</string>
+    <string name="payments_premium_member">आप प्रीमियम सदस्य हैं</string>
+    <string name="payments_subscribe">सब्सक्राइब करें</string>
+    <string name="payments_balance">बैलेंस</string>
+    <string name="payments_top_up">टॉप अप</string>
+    <string name="payments_add">जोड़ें</string>
+    <string name="payments_recent_recharges">हाल के रिचार्ज</string>
+
+    <!-- Payments: messages -->
+    <string name="payments_msg_payment_received">भुगतान प्राप्त हुआ — बैलेंस अपडेट हो रहा है</string>
+    <string name="payments_msg_now_premium">अब आप प्रीमियम हैं!</string>
+
+    <!-- Payments: errors -->
+    <string name="payments_error_payment_failed">भुगतान विफल रहा</string>
+    <string name="payments_error_load_plans">प्लान लोड नहीं हो सके</string>
+    <string name="payments_error_start_checkout">चेकआउट शुरू नहीं हो सका</string>
+    <string name="payments_error_verify_payment">भुगतान सत्यापित नहीं हो सका</string>
+    <string name="payments_error_load_premium_status">प्रीमियम स्थिति लोड नहीं हो सकी</string>
+    <string name="payments_error_load_wallet_balance">वॉलेट बैलेंस लोड नहीं हो सका</string>
+    <string name="payments_error_load_transactions">लेन-देन लोड नहीं हो सके</string>
+    <string name="payments_error_spend_wallet">वॉलेट बैलेंस खर्च नहीं हो सका</string>
+</resources>

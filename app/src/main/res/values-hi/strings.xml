@@ -71,5 +71,16 @@
     <string name="save">सहेजें</string>
     <string name="search">खोजें</string>
     <string name="filter">फ़िल्टर</string>
+
+    <!-- Content Descriptions (Accessibility) -->
+    <string name="cd_play_button">चलाएं बटन</string>
+    <string name="cd_pause_button">रोकें बटन</string>
+    <string name="cd_next_button">अगला ट्रैक बटन</string>
+    <string name="cd_previous_button">पिछला ट्रैक बटन</string>
+    <string name="cd_favorite_button">पसंदीदा में जोड़ें बटन</string>
+    <string name="cd_download_button">डाउनलोड बटन</string>
+    <string name="cd_search_button">खोज बटन</string>
+    <string name="cd_voice_search_button">वॉइस खोज बटन</string>
+    <string name="cd_raag_artwork">राग कलाकृति</string>
 </resources>
 

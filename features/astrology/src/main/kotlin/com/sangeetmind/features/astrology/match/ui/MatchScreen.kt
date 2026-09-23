@@ -10,9 +10,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.core.ui.language.astroTerm
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.match.MatchViewModel
 import com.sangeetmind.libs.models.Kundli
 import com.sangeetmind.libs.models.KundliMatchResult
@@ -29,10 +33,10 @@ fun MatchScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Kundli Match") },
+                title = { Text(stringResource(R.string.match_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -51,7 +55,7 @@ fun MatchScreen(
                 .padding(16.dp)
         ) {
             Text(
-                text = "Pick two saved kundlis to check Ashtakoot compatibility (guna milan).",
+                text = stringResource(R.string.match_intro),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -63,19 +67,19 @@ fun MatchScreen(
                 }
             } else if (uiState.kundlis.size < 2) {
                 Text(
-                    text = "You need at least two saved kundlis to run a match.",
+                    text = stringResource(R.string.match_need_two),
                     style = MaterialTheme.typography.bodyMedium
                 )
             } else {
                 KundliDropdown(
-                    label = "Person A",
+                    label = stringResource(R.string.match_person_a),
                     selected = uiState.personA,
                     options = uiState.kundlis,
                     onSelect = viewModel::selectPersonA
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 KundliDropdown(
-                    label = "Person B",
+                    label = stringResource(R.string.match_person_b),
                     selected = uiState.personB,
                     options = uiState.kundlis,
                     onSelect = viewModel::selectPersonB
@@ -91,7 +95,7 @@ fun MatchScreen(
                     if (uiState.isMatching) {
                         CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary)
                     } else {
-                        Text("Check Compatibility")
+                        Text(stringResource(R.string.match_check))
                     }
                 }
             }
@@ -155,7 +159,7 @@ private fun MatchResultCard(result: KundliMatchResult) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "${result.totalGunas.toInt()} / ${result.maxGunas.toInt()} Gunas",
+                text = stringResource(R.string.match_gunas_fmt, result.totalGunas.toInt(), result.maxGunas.toInt()),
                 style = MaterialTheme.typography.headlineSmall
             )
             Text(
@@ -165,19 +169,19 @@ private fun MatchResultCard(result: KundliMatchResult) {
             )
             Spacer(modifier = Modifier.height(12.dp))
 
-            KootaRow("Varna", result.ashtakoot.varna)
-            KootaRow("Vashya", result.ashtakoot.vashya)
-            KootaRow("Tara", result.ashtakoot.tara)
-            KootaRow("Yoni", result.ashtakoot.yoni)
-            KootaRow("Graha Maitri", result.ashtakoot.grahaMaitri)
-            KootaRow("Gana", result.ashtakoot.gana)
-            KootaRow("Bhakoot", result.ashtakoot.bhakoot)
-            KootaRow("Nadi", result.ashtakoot.nadi)
+            KootaRow(stringResource(R.string.match_koota_varna), result.ashtakoot.varna)
+            KootaRow(stringResource(R.string.match_koota_vashya), result.ashtakoot.vashya)
+            KootaRow(stringResource(R.string.match_koota_tara), result.ashtakoot.tara)
+            KootaRow(stringResource(R.string.match_koota_yoni), result.ashtakoot.yoni)
+            KootaRow(stringResource(R.string.match_koota_graha_maitri), result.ashtakoot.grahaMaitri)
+            KootaRow(stringResource(R.string.match_koota_gana), result.ashtakoot.gana)
+            KootaRow(stringResource(R.string.match_koota_bhakoot), result.ashtakoot.bhakoot)
+            KootaRow(stringResource(R.string.match_koota_nadi), result.ashtakoot.nadi)
 
             Spacer(modifier = Modifier.height(12.dp))
-            Text("Manglik status", style = MaterialTheme.typography.titleSmall)
-            Text("Person A: ${result.manglik.personA.summary}", style = MaterialTheme.typography.bodySmall)
-            Text("Person B: ${result.manglik.personB.summary}", style = MaterialTheme.typography.bodySmall)
+            Text(stringResource(R.string.match_status_fmt, astroTerm("Manglik")), style = MaterialTheme.typography.titleSmall)
+            Text(stringResource(R.string.match_person_a_fmt, result.manglik.personA.summary), style = MaterialTheme.typography.bodySmall)
+            Text(stringResource(R.string.match_person_b_fmt, result.manglik.personB.summary), style = MaterialTheme.typography.bodySmall)
 
             result.remedyHint?.let {
                 Spacer(modifier = Modifier.height(12.dp))

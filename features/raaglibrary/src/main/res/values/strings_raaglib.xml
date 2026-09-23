@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="raaglib_title">Raag Library</string>
+    <string name="raaglib_search_hint">Search raags…</string>
+    <string name="raaglib_clear_search">Clear search</string>
+    <string name="raaglib_no_results_fmt">No raags found for \"%1$s\"</string>
+    <string name="raaglib_no_raags">No raags available</string>
+    <string name="raaglib_remove_favorite">Remove from favorites</string>
+    <string name="raaglib_add_favorite">Add to favorites</string>
+    <string name="raaglib_play">Play raag</string>
+    <string name="raaglib_time_morning">Morning</string>
+    <string name="raaglib_time_afternoon">Afternoon</string>
+    <string name="raaglib_time_evening">Evening</string>
+    <string name="raaglib_time_night">Night</string>
+    <string name="raaglib_time_anytime">Anytime</string>
+    <string name="raaglib_mood_peaceful">Peaceful</string>
+    <string name="raaglib_mood_energetic">Energetic</string>
+    <string name="raaglib_mood_devotional">Devotional</string>
+    <string name="raaglib_mood_romantic">Romantic</string>
+    <string name="raaglib_mood_melancholic">Melancholic</string>
+    <string name="raaglib_mood_joyful">Joyful</string>
+</resources>

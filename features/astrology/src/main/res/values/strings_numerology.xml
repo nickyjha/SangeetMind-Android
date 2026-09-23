@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Numerology screen -->
+    <string name="numerology_title">Numerology</string>
+    <string name="numerology_number_meanings">Number Meanings</string>
+    <string name="numerology_system_label">System</string>
+    <string name="numerology_system_pythagorean">Pythagorean</string>
+    <string name="numerology_system_chaldean">Chaldean</string>
+    <string name="numerology_system_vedic">Vedic</string>
+    <string name="numerology_field_full_name">Full name (as given at birth)</string>
+    <string name="numerology_field_dob">Date of birth (YYYY-MM-DD)</string>
+    <string name="numerology_field_current_name">Current/known name (optional, if different)</string>
+    <string name="numerology_gender_label">Gender (for Kua number)</string>
+    <string name="numerology_gender_male">Male</string>
+    <string name="numerology_gender_female">Female</string>
+    <string name="numerology_analyze">Analyze</string>
+    <string name="numerology_core_numbers_title">Your Core Numbers</string>
+    <string name="numerology_personalization_title">SangeetMind Personalization</string>
+    <string name="numerology_calculated_from_current_name_fmt">Calculated from current name: %1$s</string>
+    <string name="numerology_calculated_from_birth_name">Calculated from birth name</string>
+    <string name="numerology_vedic_numbers_title">Your Vedic Numbers</string>
+
+    <!-- Pythagorean core numbers -->
+    <string name="numerology_life_path">Life Path</string>
+    <string name="numerology_destiny">Destiny</string>
+    <string name="numerology_soul_urge">Soul Urge</string>
+    <string name="numerology_personality">Personality</string>
+    <string name="numerology_maturity">Maturity</string>
+    <string name="numerology_birth_day">Birth Day</string>
+    <string name="numerology_attitude">Attitude</string>
+
+    <!-- Chaldean numbers -->
+    <string name="numerology_chaldean_numbers">Chaldean Numbers</string>
+    <string name="numerology_name_number">Name Number</string>
+    <string name="numerology_birth_number">Birth Number</string>
+    <string name="numerology_destiny_number">Destiny Number</string>
+    <string name="numerology_soul_number">Soul Number</string>
+    <string name="numerology_personality_number">Personality Number</string>
+
+    <!-- Vedic numbers -->
+    <string name="numerology_vedic_numbers">Vedic Numbers</string>
+    <string name="numerology_moolank">Moolank (Driver)</string>
+    <string name="numerology_bhagyank">Bhagyank (Conductor)</string>
+    <string name="numerology_namank">Namank</string>
+    <string name="numerology_kua_number">Kua Number</string>
+
+    <!-- Lo Shu grid -->
+    <string name="numerology_lo_shu_grid">Lo Shu Grid</string>
+    <string name="numerology_missing_fmt">Missing: %1$s</string>
+    <string name="numerology_repeated_fmt">Repeated: %1$s</string>
+
+    <!-- Karmic debts -->
+    <string name="numerology_karmic_debts">Karmic Debts</string>
+    <string name="numerology_debt_fmt">Debt %1$d</string>
+    <string name="numerology_debt_named_fmt">Debt %1$d · %2$s</string>
+    <string name="numerology_karmic_chip">Karmic</string>
+    <string name="numerology_remedy_fmt">Remedy: %1$s</string>
+    <string name="numerology_mantra_fmt">Mantra: %1$s</string>
+
+    <!-- Driver / conductor compatibility -->
+    <string name="numerology_driver_conductor_title">Driver–Conductor Compatibility</string>
+    <string name="numerology_moolank_bhagyank_fmt">Moolank %1$d × Bhagyank %2$d</string>
+
+    <!-- Personalization -->
+    <string name="numerology_recommended_raag_moods_fmt">Recommended raag moods: %1$s</string>
+    <string name="numerology_best_practice_time_fmt">Best practice time: %1$s</string>
+
+    <!-- Glossary screen -->
+    <string name="numerology_glossary_systems">Systems</string>
+    <string name="numerology_glossary_numbers">Numbers</string>
+    <string name="numerology_glossary_tap_hint">Tap a number for its full meaning</string>
+    <string name="numerology_glossary_best_for_fmt">Best for: %1$s</string>
+    <string name="numerology_glossary_core_traits">Core traits</string>
+    <string name="numerology_glossary_strengths">Strengths</string>
+    <string name="numerology_glossary_challenges">Challenges</string>
+    <string name="numerology_glossary_growth_advice">Growth advice</string>
+
+    <!-- Validation / fallback errors -->
+    <string name="numerology_error_enter_name">Please enter your name</string>
+    <string name="numerology_error_enter_dob">Please enter your date of birth</string>
+    <string name="numerology_error_calc_failed">Failed to calculate numerology</string>
+    <string name="numerology_error_load_systems">Failed to load numerology systems</string>
+    <string name="numerology_error_load_numbers">Failed to load numerology numbers</string>
+    <string name="numerology_error_load_interpretation_fmt">Failed to load interpretation for %1$d</string>
+    <string name="numerology_profile_load_failed">Failed to load astrology profile</string>
+</resources>

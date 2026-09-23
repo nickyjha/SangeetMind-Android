@@ -19,8 +19,10 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.LagnaInfo
 import com.sangeetmind.libs.models.PlanetInfo
 
@@ -209,11 +211,11 @@ fun NorthIndianHouseChart(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             modifier = Modifier.padding(bottom = 4.dp)
         ) {
-            Text("* Retrograde", style = MaterialTheme.typography.labelSmall)
-            Text("^ Combust", style = MaterialTheme.typography.labelSmall)
-            Text("↑ Exalted", style = MaterialTheme.typography.labelSmall)
-            Text("↓ Debilitated", style = MaterialTheme.typography.labelSmall)
-            Text("□ Vargottama", style = MaterialTheme.typography.labelSmall)
+            Text(stringResource(R.string.chart_legend_retrograde), style = MaterialTheme.typography.labelSmall)
+            Text(stringResource(R.string.chart_legend_combust), style = MaterialTheme.typography.labelSmall)
+            Text(stringResource(R.string.chart_legend_exalted), style = MaterialTheme.typography.labelSmall)
+            Text(stringResource(R.string.chart_legend_debilitated), style = MaterialTheme.typography.labelSmall)
+            Text(stringResource(R.string.chart_legend_vargottama), style = MaterialTheme.typography.labelSmall)
         }
     }
 }

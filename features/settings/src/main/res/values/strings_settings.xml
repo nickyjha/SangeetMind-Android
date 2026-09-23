@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Settings</string>
+    <string name="settings_section_general">General</string>
+    <string name="settings_section_playback">Playback</string>
+    <string name="settings_section_downloads">Downloads</string>
+    <string name="settings_section_notifications">Notifications</string>
+    <string name="settings_section_storage">Storage</string>
+    <string name="settings_section_about">About</string>
+    <string name="settings_dark_mode">Dark mode</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_theme_system">System default</string>
+    <string name="settings_playback_quality">Playback quality</string>
+    <string name="settings_quality_low">Low (Save data)</string>
+    <string name="settings_quality_medium">Medium</string>
+    <string name="settings_quality_high">High (Best quality)</string>
+    <string name="settings_autoplay_title">Auto-play next</string>
+    <string name="settings_autoplay_desc">Automatically play next track in queue</string>
+    <string name="settings_lyrics_title">Show lyrics</string>
+    <string name="settings_lyrics_desc">Display lyrics when available</string>
+    <string name="settings_wifi_only_title">Download on Wi-Fi only</string>
+    <string name="settings_wifi_only_desc">Only download content when connected to Wi-Fi</string>
+    <string name="settings_clear_downloads_title">Clear downloads</string>
+    <string name="settings_clear_downloads_desc">Remove all downloaded content</string>
+    <string name="settings_notifications_title">Enable notifications</string>
+    <string name="settings_notifications_desc">Receive updates and reminders</string>
+    <string name="settings_clear_cache_title">Clear cache</string>
+    <string name="settings_clear_cache_desc">Free up storage space</string>
+    <string name="settings_version_title">Version</string>
+    <string name="settings_privacy_title">Privacy Policy</string>
+    <string name="settings_privacy_desc">View our privacy policy</string>
+    <string name="settings_terms_title">Terms of Service</string>
+    <string name="settings_terms_desc">View terms and conditions</string>
+    <string name="settings_licenses_title">Open Source Licenses</string>
+    <string name="settings_licenses_desc">View third-party licenses</string>
+</resources>

@@ -1,10 +1,12 @@
 package com.sangeetmind.features.meditation
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.libs.models.MeditationSession
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -24,6 +26,7 @@ data class MeditationUiState(
 
 @HiltViewModel
 class MeditationViewModel @Inject constructor(
+    @ApplicationContext private val appContext: Context,
     private val repository: MeditationRepository
 ) : ViewModel() {
 
@@ -56,7 +59,7 @@ class MeditationViewModel @Inject constructor(
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
-                                error = result.message ?: "Unknown error"
+                                error = result.message ?: appContext.getString(R.string.meditation_error_unknown)
                             )
                         }
                     }

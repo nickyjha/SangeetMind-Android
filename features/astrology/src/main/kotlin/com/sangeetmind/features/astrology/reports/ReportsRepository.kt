@@ -5,7 +5,9 @@ import android.net.Uri
 import androidx.core.content.FileProvider
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.di.IoDispatcher
+import com.sangeetmind.core.common.language.LanguageManager
 import com.sangeetmind.core.network.ReportsApi
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.BirthDetailsPayload
 import com.sangeetmind.libs.models.MyReportItem
 import com.sangeetmind.libs.models.PurchaseReportRequest
@@ -23,12 +25,14 @@ import javax.inject.Singleton
 class ReportsRepository @Inject constructor(
     private val reportsApi: ReportsApi,
     @ApplicationContext private val appContext: Context,
+    private val languageManager: LanguageManager,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
+    /** [lang] defaults to the app's current display language so the PDF is generated in it. */
     suspend fun purchase(
         skuId: String,
         birthDetails: BirthDetailsPayload,
-        lang: String = "en"
+        lang: String = languageManager.current.code
     ): Result<ReportJob> = withContext(ioDispatcher) {
         try {
             val request = PurchaseReportRequest(
@@ -39,7 +43,7 @@ class ReportsRepository @Inject constructor(
             )
             Result.Success(reportsApi.purchaseReport(request))
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: "Could not purchase report")
+            Result.Error(e, e.message ?: appContext.getString(R.string.reports_error_purchase))
         }
     }
 
@@ -47,7 +51,7 @@ class ReportsRepository @Inject constructor(
         try {
             Result.Success(reportsApi.getReportStatus(jobId))
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: "Could not check report status")
+            Result.Error(e, e.message ?: appContext.getString(R.string.reports_error_check_status))
         }
     }
 
@@ -55,7 +59,7 @@ class ReportsRepository @Inject constructor(
         try {
             Result.Success(reportsApi.listMyReports().reports)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: "Could not load your reports")
+            Result.Error(e, e.message ?: appContext.getString(R.string.reports_error_load_mine))
         }
     }
 
@@ -65,7 +69,8 @@ class ReportsRepository @Inject constructor(
             try {
                 val response = reportsApi.downloadReport(jobId)
                 val body = response.body() ?: return@withContext Result.Error(
-                    IllegalStateException("Empty response"), "Report not ready"
+                    IllegalStateException("Empty response"),
+                    appContext.getString(R.string.reports_error_not_ready)
                 )
                 val dir = File(appContext.filesDir, "reports").apply { mkdirs() }
                 val file = File(dir, "$skuId-$jobId.pdf")
@@ -77,7 +82,7 @@ class ReportsRepository @Inject constructor(
                 )
                 Result.Success(uri)
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: "Could not download report")
+                Result.Error(e, e.message ?: appContext.getString(R.string.reports_error_download))
             }
         }
 }

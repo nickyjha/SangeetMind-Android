@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Readings: career / strengths AI readings. -->
+    <string name="readings_title">रीडिंग्स</string>
+    <string name="readings_tab_career">करियर</string>
+    <string name="readings_tab_strengths">शक्तियाँ</string>
+    <string name="readings_career_desc">₹99, या प्रीमियम के साथ निःशुल्क — आपकी कुंडली के D1/D10 चक्र और वर्तमान दशा से Gemini द्वारा तैयार करियर रीडिंग।</string>
+    <string name="readings_career_generate">करियर रीडिंग बनाएँ</string>
+    <string name="readings_strengths_desc">₹99, या प्रीमियम के साथ निःशुल्क — मुख्य शक्तियाँ, सुधार के क्षेत्र और राग-आधारित मंत्र उपाय।</string>
+    <string name="readings_strengths_generate">शक्तियों की रीडिंग बनाएँ</string>
+    <string name="readings_section_strengths">शक्तियाँ</string>
+    <string name="readings_section_growth_areas">सुधार के क्षेत्र</string>
+    <string name="readings_raag_fmt">राग: %1$s</string>
+    <string name="readings_err_insufficient_balance">वॉलेट में पर्याप्त शेष राशि नहीं है</string>
+    <string name="readings_err_career">करियर रीडिंग तैयार नहीं हो सकी</string>
+    <string name="readings_err_strengths">शक्तियों की रीडिंग तैयार नहीं हो सकी</string>
+</resources>

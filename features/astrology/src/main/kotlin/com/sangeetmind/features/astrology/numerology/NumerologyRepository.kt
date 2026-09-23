@@ -1,8 +1,13 @@
 package com.sangeetmind.features.astrology.numerology
 
+import android.content.Context
+import androidx.annotation.StringRes
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.di.IoDispatcher
+import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.core.common.language.withAppLanguage
 import com.sangeetmind.core.network.NumerologyApi
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.ChaldeanResponse
 import com.sangeetmind.libs.models.NumerologyNumberInterpretationResponse
 import com.sangeetmind.libs.models.NumerologyNumbersListResponse
@@ -10,6 +15,7 @@ import com.sangeetmind.libs.models.NumerologyRequest
 import com.sangeetmind.libs.models.NumerologyResponse
 import com.sangeetmind.libs.models.NumerologySystemsResponse
 import com.sangeetmind.libs.models.VedicResponse
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -18,17 +24,26 @@ import javax.inject.Singleton
 @Singleton
 class NumerologyRepository @Inject constructor(
     private val numerologyApi: NumerologyApi,
+    private val languageManager: LanguageManager,
+    @ApplicationContext private val appContext: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
+    private fun str(@StringRes id: Int, vararg args: Any): String =
+        appContext.withAppLanguage(languageManager.current).getString(id, *args)
+
     suspend fun analyzePythagorean(fullName: String, dateOfBirth: String): Result<NumerologyResponse> =
         withContext(ioDispatcher) {
             try {
                 val response = numerologyApi.calculatePythagorean(
-                    NumerologyRequest(fullName = fullName, dateOfBirth = dateOfBirth)
+                    NumerologyRequest(
+                        fullName = fullName,
+                        dateOfBirth = dateOfBirth,
+                        preferredLanguage = languageManager.current.code
+                    )
                 )
                 Result.Success(response)
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: "Failed to calculate numerology")
+                Result.Error(e, e.message ?: str(R.string.numerology_error_calc_failed))
             }
         }
 
@@ -43,12 +58,13 @@ class NumerologyRepository @Inject constructor(
                     NumerologyRequest(
                         fullName = fullName,
                         dateOfBirth = dateOfBirth,
-                        currentName = currentName?.takeIf { it.isNotBlank() }
+                        currentName = currentName?.takeIf { it.isNotBlank() },
+                        preferredLanguage = languageManager.current.code
                     )
                 )
                 Result.Success(response)
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: "Failed to calculate numerology")
+                Result.Error(e, e.message ?: str(R.string.numerology_error_calc_failed))
             }
         }
 
@@ -60,11 +76,16 @@ class NumerologyRepository @Inject constructor(
         withContext(ioDispatcher) {
             try {
                 val response = numerologyApi.calculateVedic(
-                    NumerologyRequest(fullName = fullName, dateOfBirth = dateOfBirth, gender = gender)
+                    NumerologyRequest(
+                        fullName = fullName,
+                        dateOfBirth = dateOfBirth,
+                        gender = gender,
+                        preferredLanguage = languageManager.current.code
+                    )
                 )
                 Result.Success(response)
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: "Failed to calculate numerology")
+                Result.Error(e, e.message ?: str(R.string.numerology_error_calc_failed))
             }
         }
 
@@ -73,7 +94,7 @@ class NumerologyRepository @Inject constructor(
             try {
                 Result.Success(numerologyApi.getSystems())
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: "Failed to load numerology systems")
+                Result.Error(e, e.message ?: str(R.string.numerology_error_load_systems))
             }
         }
 
@@ -82,7 +103,7 @@ class NumerologyRepository @Inject constructor(
             try {
                 Result.Success(numerologyApi.getNumbers())
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: "Failed to load numerology numbers")
+                Result.Error(e, e.message ?: str(R.string.numerology_error_load_numbers))
             }
         }
 
@@ -91,7 +112,7 @@ class NumerologyRepository @Inject constructor(
             try {
                 Result.Success(numerologyApi.getNumberInterpretation(number))
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: "Failed to load interpretation for $number")
+                Result.Error(e, e.message ?: str(R.string.numerology_error_load_interpretation_fmt, number))
             }
         }
 }

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="varshaphal_title">वर्षफल</string>
+    <string name="varshaphal_error_load">वर्षफल की गणना नहीं हो सकी</string>
+    <string name="varshaphal_no_kundli">अपना वर्षफल निकालने के लिए पहले एक कुंडली जोड़ें।</string>
+    <string name="varshaphal_your_default">आपका वर्षफल</string>
+    <string name="varshaphal_cd_previous_year">पिछला वर्ष</string>
+    <string name="varshaphal_cd_next_year">अगला वर्ष</string>
+    <string name="varshaphal_chart_title">वर्षफल चक्र %1$d</string>
+    <string name="varshaphal_chart_subtitle">वार्षिक सौर-आवर्तन चक्र</string>
+    <string name="varshaphal_tajika_summary">ताजिक सारांश</string>
+    <string name="varshaphal_solar_return_fmt">सौर आवर्तन: %1$s · आयु %2$d</string>
+    <string name="varshaphal_muntha">मुंथा</string>
+    <string name="varshaphal_lagna">वर्षफल लग्न</string>
+    <string name="varshaphal_moon">वर्षफल चंद्र</string>
+    <string name="varshaphal_year_lord">वर्षेश</string>
+    <string name="varshaphal_lord_suffix_fmt">" · स्वामी %1$s"</string>
+</resources>

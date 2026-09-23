@@ -1,15 +1,18 @@
 package com.sangeetmind.features.astrology.reports
 
+import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.features.astrology.kundli.KundliRepository
 import com.sangeetmind.features.astrology.payments.PaymentsRepository
 import com.sangeetmind.libs.models.BirthDetailsPayload
 import com.sangeetmind.libs.models.MyReportItem
 import com.sangeetmind.libs.models.Sku
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,7 +36,8 @@ data class ReportsUiState(
 class ReportsViewModel @Inject constructor(
     private val reportsRepository: ReportsRepository,
     private val kundliRepository: KundliRepository,
-    private val paymentsRepository: PaymentsRepository
+    private val paymentsRepository: PaymentsRepository,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReportsUiState())
@@ -78,7 +82,9 @@ class ReportsViewModel @Inject constructor(
             val kundlis = (kundliResult as? Result.Success)?.data
             val primary = kundlis?.firstOrNull { it.isPrimary } ?: kundlis?.firstOrNull()
             if (primary == null) {
-                _uiState.update { it.copy(isLoading = false, error = "Add a kundli first") }
+                _uiState.update {
+                    it.copy(isLoading = false, error = context.getString(CoreR.string.common_add_kundli_first))
+                }
                 return@launch
             }
             val birthDetails = BirthDetailsPayload(

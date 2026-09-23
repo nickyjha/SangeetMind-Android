@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_page1_title">Discover Raag-Based Meditation</string>
+    <string name="onboarding_page1_desc">Experience the healing power of classical Indian raags combined with meditation</string>
+    <string name="onboarding_page2_title">Personalized Recommendations</string>
+    <string name="onboarding_page2_desc">Get raag and meditation suggestions based on your astrological profile</string>
+    <string name="onboarding_page3_title">Listen Anytime, Anywhere</string>
+    <string name="onboarding_page3_desc">Download raags for offline listening and enjoy background playback</string>
+    <string name="onboarding_get_started">Get Started</string>
+    <string name="onboarding_before_continue">Before you continue</string>
+    <string name="onboarding_agree_terms">I agree to the Terms of Service</string>
+    <string name="onboarding_agree_privacy">I agree to the Privacy Policy</string>
+</resources>

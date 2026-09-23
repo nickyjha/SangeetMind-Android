@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Reports: screen -->
+    <string name="reports_title">रिपोर्ट</string>
+    <string name="reports_my_reports">मेरी रिपोर्ट</string>
+    <string name="reports_buy_a_report">रिपोर्ट खरीदें</string>
+    <string name="reports_status_fmt">स्थिति: %1$s</string>
+    <string name="reports_status_starting">शुरू हो रही है</string>
+    <string name="reports_view_pdf">PDF देखें</string>
+    <string name="reports_pdf">PDF</string>
+    <string name="reports_buy">खरीदें</string>
+    <string name="reports_price_fmt">₹%1$s</string>
+
+    <!-- Reports: errors -->
+    <string name="reports_error_purchase">रिपोर्ट खरीदी नहीं जा सकी</string>
+    <string name="reports_error_check_status">रिपोर्ट की स्थिति जाँची नहीं जा सकी</string>
+    <string name="reports_error_load_mine">आपकी रिपोर्ट लोड नहीं हो सकीं</string>
+    <string name="reports_error_not_ready">रिपोर्ट अभी तैयार नहीं है</string>
+    <string name="reports_error_download">रिपोर्ट डाउनलोड नहीं हो सकी</string>
+</resources>

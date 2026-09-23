@@ -1,13 +1,18 @@
 package com.sangeetmind.features.astrology.interpretation
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.kundli.KundliRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,7 +27,9 @@ data class InterpretationUiState(
 @HiltViewModel
 class InterpretationViewModel @Inject constructor(
     private val kundliRepository: KundliRepository,
-    private val interpretationRepository: InterpretationRepository
+    private val interpretationRepository: InterpretationRepository,
+    languageManager: LanguageManager,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(InterpretationUiState())
@@ -30,6 +37,11 @@ class InterpretationViewModel @Inject constructor(
 
     init {
         refresh()
+        viewModelScope.launch {
+            // The analysis text is fetched in a language; reload it when the app language
+            // changes (skip the initial emission — refresh() above already covers it).
+            languageManager.language.drop(1).collect { refresh() }
+        }
     }
 
     fun refresh() {
@@ -54,7 +66,10 @@ class InterpretationViewModel @Inject constructor(
                     }
                 }
                 is Result.Error -> _uiState.update {
-                    it.copy(isLoading = false, error = kundliResult.message ?: "Failed to load")
+                    it.copy(
+                        isLoading = false,
+                        error = kundliResult.message ?: context.getString(R.string.interpretation_err_load)
+                    )
                 }
                 is Result.Loading -> Unit
             }

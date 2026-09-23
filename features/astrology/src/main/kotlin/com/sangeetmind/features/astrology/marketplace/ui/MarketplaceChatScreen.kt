@@ -10,9 +10,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.marketplace.ChatMessage
 import com.sangeetmind.features.astrology.marketplace.MarketplaceChatViewModel
 
@@ -32,13 +35,13 @@ fun MarketplaceChatScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(uiState.astrologer?.displayName ?: "Chat") },
+                title = { Text(uiState.astrologer?.displayName ?: stringResource(R.string.marketplace_chat)) },
                 navigationIcon = {
                     IconButton(onClick = {
                         if (uiState.sessionActive) viewModel.endSession()
                         onNavigateBack()
                     }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
                     }
                 }
             )
@@ -53,10 +56,10 @@ fun MarketplaceChatScreen(
                         value = uiState.draft,
                         onValueChange = viewModel::onDraftChange,
                         modifier = Modifier.weight(1f),
-                        placeholder = { Text("Message (not sent to astrologer — demo only)") }
+                        placeholder = { Text(stringResource(R.string.marketplace_message_placeholder)) }
                     )
                     IconButton(onClick = viewModel::sendDraft) {
-                        Icon(Icons.Default.Send, contentDescription = "Send")
+                        Icon(Icons.Default.Send, contentDescription = stringResource(R.string.marketplace_send_cd))
                     }
                 }
             }
@@ -71,18 +74,25 @@ fun MarketplaceChatScreen(
                 ) {
                     Column {
                         Text(
-                            if (uiState.sessionActive) "Session active" else "Session not started",
+                            stringResource(
+                                if (uiState.sessionActive) R.string.marketplace_session_active
+                                else R.string.marketplace_session_not_started
+                            ),
                             style = MaterialTheme.typography.titleSmall
                         )
                         Text(
-                            "${uiState.minutesBilled} min · ₹%.2f billed".format(uiState.totalPaise / 100.0),
+                            stringResource(
+                                R.string.marketplace_billed_fmt,
+                                uiState.minutesBilled,
+                                "%.2f".format(uiState.totalPaise / 100.0)
+                            ),
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
                     if (uiState.sessionActive) {
-                        Button(onClick = viewModel::endSession) { Text("End") }
+                        Button(onClick = viewModel::endSession) { Text(stringResource(R.string.marketplace_end)) }
                     } else {
-                        Button(onClick = viewModel::startSession) { Text("Start") }
+                        Button(onClick = viewModel::startSession) { Text(stringResource(R.string.marketplace_start)) }
                     }
                 }
             }

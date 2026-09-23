@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ChatMind: AI chat screen. -->
+    <string name="chatmind_title">ChatMind</string>
+    <string name="chatmind_advanced_title">एडवांस्ड विश्लेषण</string>
+    <string name="chatmind_advanced_desc">बेहतर मॉडल, गहरा विश्लेषण — आपके वॉलेट से अधिक शुल्क लगता है।</string>
+    <string name="chatmind_input_placeholder">अपनी कुंडली के बारे में पूछें…</string>
+    <string name="chatmind_send">भेजें</string>
+    <string name="chatmind_empty">अपनी कुंडली के बारे में कुछ भी पूछें — करियर, समय, रिश्ते।</string>
+    <string name="chatmind_tier_badge_advanced">एडवांस्ड</string>
+    <string name="chatmind_no_answer">कोई उत्तर नहीं मिला</string>
+    <string name="chatmind_err_could_not_answer">ChatMind इसका उत्तर नहीं दे सका</string>
+</resources>

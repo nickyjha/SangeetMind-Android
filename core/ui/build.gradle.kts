@@ -31,7 +31,9 @@ android {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
-    
+    // AppLanguage lives in core:common so non-UI modules (network) can read it too.
+    api(project(":core:common"))
+
     // Compose
     api(platform(libs.androidx.compose.bom))
     api(libs.bundles.compose)

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Interpretation: "Full Reading" rules-engine analysis screen. -->
+    <string name="interpretation_title">Full Reading</string>
+    <string name="interpretation_no_kundli">Add a kundli first to see your full reading.</string>
+    <string name="interpretation_section_strengths">Strengths</string>
+    <string name="interpretation_section_challenges">Challenges</string>
+    <string name="interpretation_section_remedies">Remedies</string>
+    <string name="interpretation_lagna_fmt">Lagna: %1$s</string>
+    <string name="interpretation_moon_nakshatra_fmt">Moon nakshatra pada %1$d · ruled by %2$s</string>
+    <string name="interpretation_planetary_positions">Planetary positions</string>
+    <string name="interpretation_sign_retrograde_fmt">%1$s (R)</string>
+    <string name="interpretation_current_dasha">Current dasha</string>
+    <string name="interpretation_mahadasha_fmt">Mahadasha: %1$s</string>
+    <string name="interpretation_antardasha_fmt">Antardasha: %1$s</string>
+    <string name="interpretation_err_load_reading">Failed to load your reading</string>
+    <string name="interpretation_err_load">Failed to load</string>
+</resources>

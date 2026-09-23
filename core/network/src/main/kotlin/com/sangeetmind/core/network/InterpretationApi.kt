@@ -20,6 +20,7 @@ interface InterpretationApi {
     @POST("rules-engine/analyze-chart")
     suspend fun analyzeChart(
         @Body body: ChartAnalysisRequest,
-        @Query("with_llm") withLlm: Boolean = true
+        @Query("with_llm") withLlm: Boolean = true,
+        @Query("lang") lang: String = "en" // en | hi | sn (app/routes/rules_engine.py)
     ): ChartAnalysisResponse
 }

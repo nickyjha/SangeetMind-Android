@@ -15,11 +15,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.core.ui.language.LanguagePickerAction
+import com.sangeetmind.core.ui.language.astroTerm
 import com.sangeetmind.core.ui.theme.GrahaBudha
 import com.sangeetmind.core.ui.theme.GrahaBudhaDeep
 import com.sangeetmind.core.ui.theme.GrahaChandra
@@ -37,6 +41,7 @@ import com.sangeetmind.core.ui.theme.GrahaShukraDeep
 import com.sangeetmind.core.ui.theme.GrahaSurya
 import com.sangeetmind.core.ui.theme.GrahaSuryaDeep
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.dashboard.DashboardViewModel
 import com.sangeetmind.libs.models.DailyHoroscope
 import com.sangeetmind.libs.models.PanchangResponse
@@ -108,13 +113,34 @@ fun DashboardScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    // Resolved here (composable scope) rather than inside the LazyColumn builder, which
+    // is a LazyListScope lambda where stringResource() can't be called.
+    val destinations = listOf(
+        DashboardDestination(stringResource(R.string.dashboard_dest_birth_chart), Icons.Default.DonutLarge, Graha.SHANI, featured = true, onClick = onOpenChart),
+        DashboardDestination(stringResource(R.string.dashboard_dest_horoscope), Icons.Default.Insights, Graha.SURYA, featured = true, onClick = onOpenHoroscope),
+        DashboardDestination(stringResource(R.string.dashboard_dest_panchang), Icons.Default.CalendarMonth, Graha.CHANDRA, onClick = onOpenPanchang),
+        DashboardDestination(stringResource(R.string.dashboard_dest_muhurat), Icons.Default.Schedule, Graha.GURU, onClick = onOpenMuhurat),
+        DashboardDestination(stringResource(R.string.dashboard_dest_match), Icons.Default.Favorite, Graha.MANGALA, onClick = onOpenMatch),
+        DashboardDestination(stringResource(R.string.dashboard_dest_numerology), Icons.Default.Tag, Graha.BUDHA, onClick = onOpenNumerology),
+        DashboardDestination(stringResource(R.string.dashboard_dest_full_reading), Icons.Default.AutoStories, Graha.SHUKRA, onClick = onOpenInterpretation),
+        DashboardDestination(stringResource(R.string.dashboard_dest_chatmind), Icons.Default.Chat, Graha.RAHU, onClick = onOpenChatMind),
+        DashboardDestination(stringResource(R.string.dashboard_dest_varshaphal), Icons.Default.Autorenew, onClick = onOpenVarshaphal),
+        DashboardDestination(stringResource(R.string.dashboard_dest_holistic), Icons.Default.AutoAwesome, onClick = onOpenHolistic),
+        DashboardDestination(stringResource(R.string.dashboard_dest_payments), Icons.Default.AccountBalanceWallet, onClick = onOpenPayments),
+        DashboardDestination(stringResource(R.string.dashboard_dest_reports), Icons.Default.PictureAsPdf, onClick = onOpenReports),
+        DashboardDestination(stringResource(R.string.dashboard_dest_readings), Icons.Default.Psychology, onClick = onOpenReadings),
+        DashboardDestination(stringResource(R.string.dashboard_dest_referrals), Icons.Default.CardGiftcard, onClick = onOpenReferrals),
+        DashboardDestination(stringResource(R.string.dashboard_dest_sangeet), Icons.Default.MusicNote, onClick = onOpenSangeet)
+    )
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("SangeetMind") },
+                title = { Text(stringResource(CoreR.string.common_app_name)) },
                 actions = {
+                    LanguagePickerAction()
                     IconButton(onClick = onOpenKundliList) {
-                        Icon(Icons.Default.People, contentDescription = "My kundlis")
+                        Icon(Icons.Default.People, contentDescription = stringResource(R.string.dashboard_my_kundlis))
                     }
                 }
             )
@@ -154,16 +180,16 @@ fun DashboardScreen(
                     uiState.hasNoKundlis -> {
                         Card(modifier = Modifier.fillMaxWidth()) {
                             Column(modifier = Modifier.padding(20.dp)) {
-                                Text("Create your kundli", style = MaterialTheme.typography.titleLarge)
+                                Text(stringResource(R.string.dashboard_create_kundli_title), style = MaterialTheme.typography.titleLarge)
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(
-                                    text = "Add your birth details to unlock your horoscope, panchang, and full reading.",
+                                    text = stringResource(R.string.dashboard_create_kundli_body),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Button(onClick = onOpenKundliOnboarding) {
-                                    Text("Get started")
+                                    Text(stringResource(R.string.dashboard_get_started))
                                 }
                             }
                         }
@@ -183,27 +209,9 @@ fun DashboardScreen(
             if (!uiState.hasNoKundlis) {
                 item {
                     Spacer(modifier = Modifier.height(24.dp))
-                    Text("Explore", style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(R.string.dashboard_explore), style = MaterialTheme.typography.titleMedium)
                     Spacer(modifier = Modifier.height(12.dp))
                 }
-
-                val destinations = listOf(
-                    DashboardDestination("Birth Chart", Icons.Default.DonutLarge, Graha.SHANI, featured = true, onClick = onOpenChart),
-                    DashboardDestination("Horoscope", Icons.Default.Insights, Graha.SURYA, featured = true, onClick = onOpenHoroscope),
-                    DashboardDestination("Panchang", Icons.Default.CalendarMonth, Graha.CHANDRA, onClick = onOpenPanchang),
-                    DashboardDestination("Muhurat", Icons.Default.Schedule, Graha.GURU, onClick = onOpenMuhurat),
-                    DashboardDestination("Match", Icons.Default.Favorite, Graha.MANGALA, onClick = onOpenMatch),
-                    DashboardDestination("Numerology", Icons.Default.Tag, Graha.BUDHA, onClick = onOpenNumerology),
-                    DashboardDestination("Full Reading", Icons.Default.AutoStories, Graha.SHUKRA, onClick = onOpenInterpretation),
-                    DashboardDestination("ChatMind", Icons.Default.Chat, Graha.RAHU, onClick = onOpenChatMind),
-                    DashboardDestination("Varshaphal", Icons.Default.Autorenew, onClick = onOpenVarshaphal),
-                    DashboardDestination("Holistic", Icons.Default.AutoAwesome, onClick = onOpenHolistic),
-                    DashboardDestination("Payments", Icons.Default.AccountBalanceWallet, onClick = onOpenPayments),
-                    DashboardDestination("Reports", Icons.Default.PictureAsPdf, onClick = onOpenReports),
-                    DashboardDestination("Readings", Icons.Default.Psychology, onClick = onOpenReadings),
-                    DashboardDestination("Referrals", Icons.Default.CardGiftcard, onClick = onOpenReferrals),
-                    DashboardDestination("Sangeet", Icons.Default.MusicNote, onClick = onOpenSangeet)
-                )
 
                 items(destinations.chunked(2)) { row ->
                     Row(
@@ -253,15 +261,15 @@ private fun ProfileSummaryCard(
                 .padding(20.dp)
         ) {
             Text(
-                text = name?.takeIf { it.isNotBlank() } ?: "Your kundli",
+                text = name?.takeIf { it.isNotBlank() } ?: stringResource(R.string.dashboard_your_kundli),
                 style = MaterialTheme.typography.headlineSmall
             )
             Spacer(modifier = Modifier.height(12.dp))
-            SummaryRow("Moon sign", moonSign)
-            SummaryRow("Lagna", lagna)
-            if (nakshatra.isNotBlank()) SummaryRow("Nakshatra", nakshatra, highlight = true)
-            if (currentMahadasha.isNotBlank()) SummaryRow("Current dasha", currentMahadasha)
-            if (astroMood.isNotBlank()) SummaryRow("Today's mood", astroMood)
+            SummaryRow(stringResource(R.string.dashboard_moon_sign), astroTerm(moonSign))
+            SummaryRow(stringResource(R.string.dashboard_lagna), astroTerm(lagna))
+            if (nakshatra.isNotBlank()) SummaryRow(stringResource(R.string.dashboard_nakshatra), astroTerm(nakshatra), highlight = true)
+            if (currentMahadasha.isNotBlank()) SummaryRow(stringResource(R.string.dashboard_current_dasha), astroTerm(currentMahadasha))
+            if (astroMood.isNotBlank()) SummaryRow(stringResource(R.string.dashboard_todays_mood), astroTerm(astroMood))
         }
     }
 }
@@ -311,7 +319,7 @@ private fun TodayCard(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.Default.WbSunny, contentDescription = null, tint = surya, modifier = Modifier.size(18.dp))
                 Spacer(modifier = Modifier.width(6.dp))
-                Text("Today", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(CoreR.string.common_today), style = MaterialTheme.typography.titleMedium)
             }
 
             if (interpretation != null) {
@@ -338,15 +346,15 @@ private fun TodayCard(
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Column {
-                                Text("Lucky color", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(stringResource(R.string.dashboard_lucky_color), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 Text(luckyColor, style = MaterialTheme.typography.bodyMedium)
                             }
                         }
                     }
                     panchang?.let { p ->
                         Column {
-                            Text("Panchang", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            Text("${p.tithi.name} · ${p.nakshatra.name}", style = MaterialTheme.typography.bodyMedium)
+                            Text(stringResource(R.string.dashboard_panchang), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text("${astroTerm(p.tithi.name)} · ${astroTerm(p.nakshatra.name)}", style = MaterialTheme.typography.bodyMedium)
                         }
                     }
                 }
@@ -354,7 +362,7 @@ private fun TodayCard(
 
             Spacer(modifier = Modifier.height(14.dp))
             Text(
-                "View today's full guidance →",
+                stringResource(R.string.dashboard_view_full_guidance),
                 style = MaterialTheme.typography.labelLarge,
                 color = surya
             )

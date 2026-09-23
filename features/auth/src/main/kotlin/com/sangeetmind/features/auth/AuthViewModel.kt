@@ -1,9 +1,11 @@
 package com.sangeetmind.features.auth
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,6 +28,7 @@ data class AuthUiState(
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
+    @ApplicationContext private val appContext: Context,
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
@@ -54,11 +57,11 @@ class AuthViewModel @Inject constructor(
         val state = _uiState.value
 
         if (!validateEmail(state.email)) {
-            _uiState.update { it.copy(error = "Invalid email address") }
+            _uiState.update { it.copy(error = appContext.getString(R.string.auth_error_invalid_email)) }
             return
         }
         if (state.password.length < 6) {
-            _uiState.update { it.copy(error = "Password must be at least 6 characters") }
+            _uiState.update { it.copy(error = appContext.getString(R.string.auth_error_password_short)) }
             return
         }
 
@@ -69,7 +72,7 @@ class AuthViewModel @Inject constructor(
                     it.copy(isLoading = false, isAuthenticated = true, error = null)
                 }
                 is Result.Error -> _uiState.update {
-                    it.copy(isLoading = false, error = result.message ?: "Sign in failed")
+                    it.copy(isLoading = false, error = result.message ?: appContext.getString(R.string.auth_error_sign_in_failed))
                 }
                 is Result.Loading -> Unit
             }
@@ -80,15 +83,15 @@ class AuthViewModel @Inject constructor(
         val state = _uiState.value
 
         if (state.name.isBlank()) {
-            _uiState.update { it.copy(error = "Name is required") }
+            _uiState.update { it.copy(error = appContext.getString(R.string.auth_error_name_required)) }
             return
         }
         if (!validateEmail(state.email)) {
-            _uiState.update { it.copy(error = "Invalid email address") }
+            _uiState.update { it.copy(error = appContext.getString(R.string.auth_error_invalid_email)) }
             return
         }
         if (state.password.length < 6) {
-            _uiState.update { it.copy(error = "Password must be at least 6 characters") }
+            _uiState.update { it.copy(error = appContext.getString(R.string.auth_error_password_short)) }
             return
         }
 
@@ -99,7 +102,7 @@ class AuthViewModel @Inject constructor(
                     it.copy(isLoading = false, isAuthenticated = true, error = null)
                 }
                 is Result.Error -> _uiState.update {
-                    it.copy(isLoading = false, error = result.message ?: "Sign up failed")
+                    it.copy(isLoading = false, error = result.message ?: appContext.getString(R.string.auth_error_sign_up_failed))
                 }
                 is Result.Loading -> Unit
             }
@@ -109,7 +112,7 @@ class AuthViewModel @Inject constructor(
     fun sendPasswordReset() {
         val state = _uiState.value
         if (!validateEmail(state.email)) {
-            _uiState.update { it.copy(error = "Invalid email address") }
+            _uiState.update { it.copy(error = appContext.getString(R.string.auth_error_invalid_email)) }
             return
         }
 
@@ -120,7 +123,7 @@ class AuthViewModel @Inject constructor(
                     it.copy(isLoading = false, resetEmailSent = true, error = null)
                 }
                 is Result.Error -> _uiState.update {
-                    it.copy(isLoading = false, error = result.message ?: "Could not send reset email")
+                    it.copy(isLoading = false, error = result.message ?: appContext.getString(R.string.auth_error_reset_failed))
                 }
                 is Result.Loading -> Unit
             }

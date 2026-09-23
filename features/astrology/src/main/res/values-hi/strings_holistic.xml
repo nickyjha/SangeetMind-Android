@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="holistic_title">समग्र फलादेश</string>
+    <string name="holistic_error_load">समग्र फलादेश लोड नहीं हो सका</string>
+    <string name="holistic_loading">आपकी कुंडली और अंकों को एक साथ पिरोया जा रहा है…</string>
+    <string name="holistic_no_kundli">अपना समग्र फलादेश पाने के लिए पहले एक कुंडली जोड़ें।</string>
+    <string name="holistic_needs_name">आपकी कुंडली में नाम नहीं है। अंक ज्योतिष के लिए आपका जन्म नाम आवश्यक है — यह फलादेश पाने के लिए कुंडली में नाम जोड़ें।</string>
+    <string name="holistic_your_reading_default">आपका समग्र फलादेश</string>
+    <string name="holistic_subtitle">वैदिक ज्योतिष × अंक ज्योतिष, एक साथ पढ़े गए</string>
+
+    <!-- Sub-tabs -->
+    <string name="holistic_tab_reading">फलादेश</string>
+    <string name="holistic_tab_insights">अंतर्दृष्टि</string>
+    <string name="holistic_tab_sangeet">संगीत</string>
+    <string name="holistic_tab_numerology">अंक ज्योतिष+</string>
+
+    <!-- At-a-glance chips -->
+    <string name="holistic_chip_life_path">जीवन पथ %1$d</string>
+    <string name="holistic_chip_moon_in">चंद्रमा %1$s में</string>
+    <string name="holistic_chip_lagna">%1$s लग्न</string>
+    <string name="holistic_chip_mahadasha">%1$s महादशा</string>
+
+    <!-- Reading tab -->
+    <string name="holistic_section_numbers">आपके अंक</string>
+    <string name="holistic_num_life_path">जीवन पथ</string>
+    <string name="holistic_num_destiny">भाग्य</string>
+    <string name="holistic_num_soul_urge">आत्मा की प्रेरणा</string>
+    <string name="holistic_num_personality">व्यक्तित्व</string>
+    <string name="holistic_num_maturity">परिपक्वता</string>
+    <string name="holistic_num_birth_day">जन्म दिन</string>
+    <string name="holistic_num_attitude">दृष्टिकोण</string>
+    <string name="holistic_section_chart">आपकी कुंडली</string>
+    <string name="holistic_label_moon_sign">चंद्र राशि</string>
+    <string name="holistic_label_lagna">लग्न</string>
+    <string name="holistic_label_nakshatra">नक्षत्र</string>
+    <string name="holistic_label_dasha">दशा</string>
+    <string name="holistic_label_todays_mood">आज की मनोदशा</string>
+    <string name="holistic_label_suggested_raag">सुझाया गया राग</string>
+    <string name="holistic_narrative_title">आपका फलादेश</string>
+    <string name="holistic_badge_ai">AI-निर्मित</string>
+    <string name="holistic_badge_template">टेम्पलेट</string>
+    <string name="holistic_regenerate">पुनः बनाएं</string>
+    <string name="holistic_no_narrative">कोई विवरण प्राप्त नहीं हुआ।</string>
+    <string name="holistic_template_note">यह फलादेश AI के बिना, आपके अंकों और कुंडली से तैयार किया गया है। AI-निर्मित संस्करण के लिए "पुनः बनाएं" दबाएं।</string>
+
+    <!-- Insights tab -->
+    <string name="holistic_section_personality_synthesis">व्यक्तित्व संश्लेषण</string>
+    <string name="holistic_section_timing">समय</string>
+    <string name="holistic_section_life_path_alignment">जीवन पथ संरेखण</string>
+    <string name="holistic_section_spiritual_guidance">आध्यात्मिक मार्गदर्शन</string>
+    <string name="holistic_section_harmonies">दोनों प्रणालियों के बीच सामंजस्य</string>
+    <string name="holistic_harmonies_empty">इस समय आपके जीवन पथ और वर्तमान महादशा स्वामी के बीच कोई सीधा सामंजस्य नहीं है — इस अवधि में दोनों प्रणालियाँ अलग-अलग स्वर में बोल रही हैं।</string>
+    <string name="holistic_section_conflicts">संभावित टकराव</string>
+    <string name="holistic_significance_high">उच्च</string>
+    <string name="holistic_significance_medium">मध्यम</string>
+    <string name="holistic_significance_low">निम्न</string>
+    <string name="holistic_source_astro">ज्योतिष</string>
+    <string name="holistic_source_numero">अंक</string>
+
+    <!-- Sangeet tab -->
+    <string name="holistic_section_combined_recommendation">संयुक्त अनुशंसा</string>
+    <string name="holistic_label_practice_time">अभ्यास समय</string>
+    <string name="holistic_practice_alternative">" (या %1$s)"</string>
+    <string name="holistic_practice_confidence">" · %1$s विश्वसनीयता"</string>
+    <string name="holistic_label_raag">राग</string>
+    <string name="holistic_label_raag_moods">राग के भाव</string>
+    <string name="holistic_section_recommendation_sources">प्रत्येक अनुशंसा का स्रोत</string>
+    <string name="holistic_section_practice_time_by_system">अभ्यास समय, प्रणाली अनुसार</string>
+    <string name="holistic_label_numerology">अंक ज्योतिष</string>
+    <string name="holistic_label_astrology">ज्योतिष</string>
+    <string name="holistic_section_emotional_guidance">भावनात्मक मार्गदर्शन</string>
+    <string name="holistic_label_nature">स्वभाव</string>
+    <string name="holistic_label_strengths">शक्तियाँ</string>
+    <string name="holistic_label_challenges">चुनौतियाँ</string>
+    <string name="holistic_label_balance_practice">संतुलन अभ्यास</string>
+    <string name="holistic_section_habit_style">आदत शैली</string>
+    <string name="holistic_label_style">शैली</string>
+    <string name="holistic_label_practice_tips">अभ्यास सुझाव</string>
+    <string name="holistic_section_daily_practices">दैनिक अभ्यास</string>
+
+    <!-- Numerology+ tab -->
+    <string name="holistic_numerology_missing">इस कुंडली के लिए विस्तृत अंक ज्योतिष प्राप्त नहीं हुआ।</string>
+    <string name="holistic_section_ruling_planet">स्वामी ग्रह</string>
+    <string name="holistic_label_day">दिन</string>
+    <string name="holistic_label_colours">रंग</string>
+    <string name="holistic_label_gemstone">रत्न</string>
+    <string name="holistic_label_metal">धातु</string>
+    <string name="holistic_label_deity">देवता</string>
+    <string name="holistic_label_mantra">मंत्र</string>
+    <string name="holistic_label_positive_influence">सकारात्मक प्रभाव</string>
+    <string name="holistic_label_watch_for">सावधान रहें</string>
+    <string name="holistic_section_numerology_yogas">अंक ज्योतिष योग</string>
+    <string name="holistic_label_effect">प्रभाव</string>
+    <string name="holistic_label_advice">सलाह</string>
+    <string name="holistic_section_life_predictions">जीवन भविष्यवाणियाँ</string>
+    <string name="holistic_label_health">स्वास्थ्य</string>
+    <string name="holistic_label_vulnerabilities">कमज़ोरियाँ</string>
+    <string name="holistic_label_best_practices">सर्वोत्तम अभ्यास</string>
+    <string name="holistic_label_wealth">धन</string>
+    <string name="holistic_label_pattern">प्रवृत्ति</string>
+    <string name="holistic_label_peak_years">शिखर वर्ष</string>
+    <string name="holistic_label_relationships">संबंध</string>
+    <string name="holistic_label_love_pattern">प्रेम प्रवृत्ति</string>
+    <string name="holistic_label_compatible_numbers">अनुकूल अंक</string>
+    <string name="holistic_label_challenging_numbers">चुनौतीपूर्ण अंक</string>
+    <string name="holistic_label_success">सफलता</string>
+    <string name="holistic_label_career_paths">करियर मार्ग</string>
+    <string name="holistic_label_peak_age">शिखर आयु</string>
+    <string name="holistic_section_cautions">सावधानियाँ</string>
+    <string name="holistic_label_watch_out_for">इनसे सावधान रहें</string>
+    <string name="holistic_label_karmic_lesson">कार्मिक सीख</string>
+    <string name="holistic_label_finances">वित्त</string>
+    <string name="holistic_section_how_to_excel">उत्कृष्ट कैसे बनें</string>
+    <string name="holistic_label_how_to_excel">उत्कृष्ट कैसे बनें</string>
+    <string name="holistic_label_leverage">लाभ उठाएं</string>
+    <string name="holistic_label_daily_practice">दैनिक अभ्यास</string>
+    <string name="holistic_label_affirmation">संकल्प वाक्य</string>
+    <string name="holistic_section_shares_life_path">आपके जीवन पथ के साझेदार</string>
+
+    <!-- Shared building blocks -->
+    <string name="holistic_cd_expand">विस्तृत करें</string>
+    <string name="holistic_cd_collapse">संक्षिप्त करें</string>
+</resources>

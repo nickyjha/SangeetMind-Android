@@ -1,10 +1,13 @@
 package com.sangeetmind.features.astrology.kundli
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.Kundli
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,6 +23,7 @@ data class KundliListUiState(
 
 @HiltViewModel
 class KundliListViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val kundliRepository: KundliRepository
 ) : ViewModel() {
 
@@ -38,7 +42,7 @@ class KundliListViewModel @Inject constructor(
                     it.copy(isLoading = false, kundlis = result.data)
                 }
                 is Result.Error -> _uiState.update {
-                    it.copy(isLoading = false, error = result.message ?: "Failed to load kundlis")
+                    it.copy(isLoading = false, error = result.message ?: context.getString(R.string.kundli_error_load_failed))
                 }
                 is Result.Loading -> Unit
             }
@@ -50,7 +54,7 @@ class KundliListViewModel @Inject constructor(
             when (val result = kundliRepository.setPrimary(id)) {
                 is Result.Success -> refresh()
                 is Result.Error -> _uiState.update {
-                    it.copy(error = result.message ?: "Failed to switch kundli")
+                    it.copy(error = result.message ?: context.getString(R.string.kundli_error_switch_failed))
                 }
                 is Result.Loading -> Unit
             }
@@ -62,7 +66,7 @@ class KundliListViewModel @Inject constructor(
             when (val result = kundliRepository.delete(id)) {
                 is Result.Success -> refresh()
                 is Result.Error -> _uiState.update {
-                    it.copy(error = result.message ?: "Failed to delete kundli")
+                    it.copy(error = result.message ?: context.getString(R.string.kundli_error_delete_failed))
                 }
                 is Result.Loading -> Unit
             }

@@ -16,12 +16,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.core.ui.language.astroTerm
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.numerology.NumerologySystemUi
 import com.sangeetmind.features.astrology.numerology.NumerologyViewModel
 import com.sangeetmind.libs.models.ChaldeanNumberDetail
@@ -48,15 +52,15 @@ fun NumerologyScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Numerology") },
+                title = { Text(stringResource(R.string.numerology_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
                     }
                 },
                 actions = {
                     IconButton(onClick = onOpenGlossary) {
-                        Icon(Icons.Default.MenuBook, contentDescription = "Number meanings")
+                        Icon(Icons.Default.MenuBook, contentDescription = stringResource(R.string.numerology_number_meanings))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -75,14 +79,14 @@ fun NumerologyScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp)
         ) {
-            Text("System", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(stringResource(R.string.numerology_system_label), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(modifier = Modifier.height(6.dp))
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 NumerologySystemUi.entries.forEach { system ->
                     FilterChip(
                         selected = uiState.system == system,
                         onClick = { viewModel.onSystemChange(system) },
-                        label = { Text(system.label) }
+                        label = { Text(stringResource(system.labelRes)) }
                     )
                 }
             }
@@ -92,7 +96,7 @@ fun NumerologyScreen(
             OutlinedTextField(
                 value = uiState.fullName,
                 onValueChange = viewModel::onFullNameChange,
-                label = { Text("Full name (as given at birth)") },
+                label = { Text(stringResource(R.string.numerology_field_full_name)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next)
@@ -103,7 +107,7 @@ fun NumerologyScreen(
             OutlinedTextField(
                 value = uiState.dateOfBirth,
                 onValueChange = viewModel::onDateOfBirthChange,
-                label = { Text("Date of birth (YYYY-MM-DD)") },
+                label = { Text(stringResource(R.string.numerology_field_dob)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done)
@@ -114,7 +118,7 @@ fun NumerologyScreen(
                 OutlinedTextField(
                     value = uiState.currentName,
                     onValueChange = viewModel::onCurrentNameChange,
-                    label = { Text("Current/known name (optional, if different)") },
+                    label = { Text(stringResource(R.string.numerology_field_current_name)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done)
@@ -123,18 +127,18 @@ fun NumerologyScreen(
 
             if (uiState.system == NumerologySystemUi.VEDIC) {
                 Spacer(modifier = Modifier.height(12.dp))
-                Text("Gender (for Kua number)", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(stringResource(R.string.numerology_gender_label), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Spacer(modifier = Modifier.height(6.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     FilterChip(
                         selected = uiState.gender == "male",
                         onClick = { viewModel.onGenderChange("male") },
-                        label = { Text("Male") }
+                        label = { Text(stringResource(R.string.numerology_gender_male)) }
                     )
                     FilterChip(
                         selected = uiState.gender == "female",
                         onClick = { viewModel.onGenderChange("female") },
-                        label = { Text("Female") }
+                        label = { Text(stringResource(R.string.numerology_gender_female)) }
                     )
                 }
             }
@@ -163,27 +167,27 @@ fun NumerologyScreen(
                 if (uiState.isLoading) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary)
                 } else {
-                    Text("Analyze")
+                    Text(stringResource(R.string.numerology_analyze))
                 }
             }
 
             when (uiState.system) {
                 NumerologySystemUi.PYTHAGOREAN -> uiState.pythagoreanResult?.let { result ->
                     Spacer(modifier = Modifier.height(24.dp))
-                    Text("Your Core Numbers", style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(R.string.numerology_core_numbers_title), style = MaterialTheme.typography.titleMedium)
                     Spacer(modifier = Modifier.height(8.dp))
                     CoreNumbersCard(result.coreNumbers)
 
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text("SangeetMind Personalization", style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(R.string.numerology_personalization_title), style = MaterialTheme.typography.titleMedium)
                     Spacer(modifier = Modifier.height(8.dp))
                     PersonalizationCard(result.sangeetmindPersonalization)
                 }
                 NumerologySystemUi.CHALDEAN -> uiState.chaldeanResult?.let { result ->
                     Spacer(modifier = Modifier.height(24.dp))
                     Text(
-                        if (result.isCurrentName) "Calculated from current name: ${result.nameUsed}"
-                        else "Calculated from birth name",
+                        if (result.isCurrentName) stringResource(R.string.numerology_calculated_from_current_name_fmt, result.nameUsed)
+                        else stringResource(R.string.numerology_calculated_from_birth_name),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -192,14 +196,14 @@ fun NumerologyScreen(
 
                     result.sangeetmindPersonalization?.let { personalization ->
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text("SangeetMind Personalization", style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.numerology_personalization_title), style = MaterialTheme.typography.titleMedium)
                         Spacer(modifier = Modifier.height(8.dp))
                         PersonalizationCard(personalization)
                     }
                 }
                 NumerologySystemUi.VEDIC -> uiState.vedicResult?.let { result ->
                     Spacer(modifier = Modifier.height(24.dp))
-                    Text("Your Vedic Numbers", style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(R.string.numerology_vedic_numbers_title), style = MaterialTheme.typography.titleMedium)
                     Spacer(modifier = Modifier.height(8.dp))
                     VedicNumbersCard(result.numbers)
 
@@ -216,7 +220,7 @@ fun NumerologyScreen(
 
                     result.sangeetmindPersonalization?.let { personalization ->
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text("SangeetMind Personalization", style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.numerology_personalization_title), style = MaterialTheme.typography.titleMedium)
                         Spacer(modifier = Modifier.height(8.dp))
                         PersonalizationCard(personalization)
                     }
@@ -230,13 +234,13 @@ fun NumerologyScreen(
 private fun CoreNumbersCard(coreNumbers: CoreNumbers) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            NumberRow("Life Path", coreNumbers.lifePath)
-            NumberRow("Destiny", coreNumbers.destiny)
-            NumberRow("Soul Urge", coreNumbers.soulUrge)
-            NumberRow("Personality", coreNumbers.personality)
-            NumberRow("Maturity", coreNumbers.maturity)
-            NumberRow("Birth Day", coreNumbers.birthDay)
-            NumberRow("Attitude", coreNumbers.attitude)
+            NumberRow(stringResource(R.string.numerology_life_path), coreNumbers.lifePath)
+            NumberRow(stringResource(R.string.numerology_destiny), coreNumbers.destiny)
+            NumberRow(stringResource(R.string.numerology_soul_urge), coreNumbers.soulUrge)
+            NumberRow(stringResource(R.string.numerology_personality), coreNumbers.personality)
+            NumberRow(stringResource(R.string.numerology_maturity), coreNumbers.maturity)
+            NumberRow(stringResource(R.string.numerology_birth_day), coreNumbers.birthDay)
+            NumberRow(stringResource(R.string.numerology_attitude), coreNumbers.attitude)
         }
     }
 }
@@ -259,13 +263,13 @@ private fun NumberRow(label: String, detail: NumberDetail) {
 private fun ChaldeanNumbersCard(numbers: ChaldeanNumbers) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Chaldean Numbers", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.numerology_chaldean_numbers), style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(8.dp))
-            ChaldeanNumberRow("Name Number", numbers.nameNumber)
-            ChaldeanNumberRow("Birth Number", numbers.birthNumber)
-            ChaldeanNumberRow("Destiny Number", numbers.destinyNumber)
-            ChaldeanNumberRow("Soul Number", numbers.soulNumber)
-            ChaldeanNumberRow("Personality Number", numbers.personalityNumber)
+            ChaldeanNumberRow(stringResource(R.string.numerology_name_number), numbers.nameNumber)
+            ChaldeanNumberRow(stringResource(R.string.numerology_birth_number), numbers.birthNumber)
+            ChaldeanNumberRow(stringResource(R.string.numerology_destiny_number), numbers.destinyNumber)
+            ChaldeanNumberRow(stringResource(R.string.numerology_soul_number), numbers.soulNumber)
+            ChaldeanNumberRow(stringResource(R.string.numerology_personality_number), numbers.personalityNumber)
         }
     }
 }
@@ -292,14 +296,14 @@ private fun ChaldeanNumberRow(label: String, detail: ChaldeanNumberDetail) {
 private fun VedicNumbersCard(numbers: VedicNumbers) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Vedic Numbers", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.numerology_vedic_numbers), style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(8.dp))
-            VedicNumberRow("Moolank (Driver)", numbers.moolank)
-            VedicNumberRow("Bhagyank (Conductor)", numbers.bhagyank)
-            VedicNumberRow("Namank", numbers.namank)
-            VedicNumberRow("Soul Number", numbers.soulNumber)
-            VedicNumberRow("Personality Number", numbers.personalityNumber)
-            VedicNumberRow("Kua Number", numbers.kuaNumber)
+            VedicNumberRow(stringResource(R.string.numerology_moolank), numbers.moolank)
+            VedicNumberRow(stringResource(R.string.numerology_bhagyank), numbers.bhagyank)
+            VedicNumberRow(stringResource(R.string.numerology_namank), numbers.namank)
+            VedicNumberRow(stringResource(R.string.numerology_soul_number), numbers.soulNumber)
+            VedicNumberRow(stringResource(R.string.numerology_personality_number), numbers.personalityNumber)
+            VedicNumberRow(stringResource(R.string.numerology_kua_number), numbers.kuaNumber)
         }
     }
 }
@@ -315,7 +319,7 @@ private fun VedicNumberRow(label: String, detail: VedicNumberDetail) {
             Text(label, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             val rulingPlanet = detail.rulingPlanet
             if (!rulingPlanet.isNullOrBlank()) {
-                Text(rulingPlanet, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(astroTerm(rulingPlanet), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
         Text("${detail.number}", style = MaterialTheme.typography.bodyLarge)
@@ -327,7 +331,7 @@ private fun LoShuGridCard(grid: LoShuGrid) {
     if (grid.gridDisplay.isEmpty()) return
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Lo Shu Grid", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.numerology_lo_shu_grid), style = MaterialTheme.typography.titleMedium)
             if (grid.interpretationSummary.isNotBlank()) {
                 Text(
                     grid.interpretationSummary,
@@ -359,7 +363,7 @@ private fun LoShuGridCard(grid: LoShuGrid) {
             if (grid.missingNumbers.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    "Missing: ${grid.missingNumbers.joinToString(", ")}",
+                    stringResource(R.string.numerology_missing_fmt, grid.missingNumbers.joinToString(", ")),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -367,7 +371,7 @@ private fun LoShuGridCard(grid: LoShuGrid) {
             if (grid.repeatedNumbers.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    "Repeated: ${grid.repeatedNumbers.joinToString(", ")}",
+                    stringResource(R.string.numerology_repeated_fmt, grid.repeatedNumbers.joinToString(", ")),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -381,7 +385,7 @@ private fun KarmicDebtsCard(debts: List<KarmicDebtDetail>) {
     val graha = LocalGrahaColors.current
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Karmic Debts", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.numerology_karmic_debts), style = MaterialTheme.typography.titleMedium)
             debts.forEach { debt ->
                 Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
                     Row(
@@ -390,10 +394,11 @@ private fun KarmicDebtsCard(debts: List<KarmicDebtDetail>) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            if (debt.name.isNotBlank()) "Debt ${debt.code} · ${debt.name}" else "Debt ${debt.code}",
+                            if (debt.name.isNotBlank()) stringResource(R.string.numerology_debt_named_fmt, debt.code, debt.name)
+                            else stringResource(R.string.numerology_debt_fmt, debt.code),
                             style = MaterialTheme.typography.bodyMedium
                         )
-                        Chip("Karmic", graha.mangala)
+                        Chip(stringResource(R.string.numerology_karmic_chip), graha.mangala)
                     }
                     if (debt.meaning.isNotBlank()) {
                         Text(
@@ -405,7 +410,7 @@ private fun KarmicDebtsCard(debts: List<KarmicDebtDetail>) {
                     }
                     if (debt.remedy.isNotBlank()) {
                         Text(
-                            "Remedy: ${debt.remedy}",
+                            stringResource(R.string.numerology_remedy_fmt, debt.remedy),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(top = 4.dp)
@@ -413,7 +418,7 @@ private fun KarmicDebtsCard(debts: List<KarmicDebtDetail>) {
                     }
                     if (debt.mantra.isNotBlank()) {
                         Text(
-                            "Mantra: ${debt.mantra}",
+                            stringResource(R.string.numerology_mantra_fmt, debt.mantra),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -434,7 +439,7 @@ private fun DriverConductorCard(compat: MoolankBhagyankCompatibility) {
     }
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Driver–Conductor Compatibility", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.numerology_driver_conductor_title), style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -442,7 +447,7 @@ private fun DriverConductorCard(compat: MoolankBhagyankCompatibility) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    "Moolank ${compat.moolank} × Bhagyank ${compat.bhagyank}",
+                    stringResource(R.string.numerology_moolank_bhagyank_fmt, compat.moolank, compat.bhagyank),
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Chip(compat.relationship, relationColor)
@@ -479,14 +484,14 @@ private fun PersonalizationCard(personalization: SangeetMindPersonalization) {
             if (personalization.raagMoods.recommended.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    "Recommended raag moods: ${personalization.raagMoods.recommended.joinToString(", ")}",
+                    stringResource(R.string.numerology_recommended_raag_moods_fmt, personalization.raagMoods.recommended.joinToString(", ")),
                     style = MaterialTheme.typography.bodySmall
                 )
             }
             if (personalization.practiceTime.preferred.isNotBlank()) {
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    "Best practice time: ${personalization.practiceTime.preferred}",
+                    stringResource(R.string.numerology_best_practice_time_fmt, personalization.practiceTime.preferred),
                     style = MaterialTheme.typography.bodySmall
                 )
             }

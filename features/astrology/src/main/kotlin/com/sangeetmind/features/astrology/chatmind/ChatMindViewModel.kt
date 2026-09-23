@@ -1,11 +1,14 @@
 package com.sangeetmind.features.astrology.chatmind
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.payments.PaymentsRepository
 import com.sangeetmind.libs.models.LlmBirthDetails
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,7 +36,8 @@ data class ChatMindUiState(
 @HiltViewModel
 class ChatMindViewModel @Inject constructor(
     private val repository: ChatMindRepository,
-    private val paymentsRepository: PaymentsRepository
+    private val paymentsRepository: PaymentsRepository,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ChatMindUiState())
@@ -81,7 +85,7 @@ class ChatMindViewModel @Inject constructor(
                             isSending = false,
                             messages = it.messages + ChatMessage(
                                 ChatRole.ASSISTANT,
-                                response.answer ?: response.error ?: "No answer returned",
+                                response.answer ?: response.error ?: context.getString(R.string.chatmind_no_answer),
                                 tier = tier
                             )
                         )

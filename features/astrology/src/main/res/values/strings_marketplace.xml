@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Marketplace: astrologer list -->
+    <string name="marketplace_title">Astrologers</string>
+    <string name="marketplace_online_only">Online only</string>
+    <string name="marketplace_empty">No astrologers found.</string>
+    <string name="marketplace_online_cd">Online</string>
+    <string name="marketplace_rate_per_min_fmt">₹%1$s/min</string>
+
+    <!-- Marketplace: astrologer detail -->
+    <string name="marketplace_astrologer">Astrologer</string>
+    <string name="marketplace_online">Online</string>
+    <string name="marketplace_offline">Offline</string>
+    <string name="marketplace_languages_fmt">Languages: %1$s</string>
+    <string name="marketplace_skills_fmt">Skills: %1$s</string>
+    <string name="marketplace_rate_per_minute_fmt">₹%1$s per minute</string>
+    <string name="marketplace_start_chat">Start Chat Session</string>
+    <string name="marketplace_leave_review">Leave a Review</string>
+    <string name="marketplace_review_thanks">Thanks for your review!</string>
+    <string name="marketplace_stars_cd">%1$d stars</string>
+    <string name="marketplace_comment">Comment</string>
+    <string name="marketplace_submit_review">Submit Review</string>
+
+    <!-- Marketplace: chat -->
+    <string name="marketplace_chat">Chat</string>
+    <string name="marketplace_message_placeholder">Message (not sent to astrologer — demo only)</string>
+    <string name="marketplace_send_cd">Send</string>
+    <string name="marketplace_session_active">Session active</string>
+    <string name="marketplace_session_not_started">Session not started</string>
+    <string name="marketplace_billed_fmt">%1$d min · ₹%2$s billed</string>
+    <string name="marketplace_end">End</string>
+    <string name="marketplace_start">Start</string>
+    <string name="marketplace_session_started_msg">Session started — you\'re now being billed per minute.</string>
+    <string name="marketplace_session_ended_msg">Session ended.</string>
+    <string name="marketplace_error_insufficient_balance">Session ended: insufficient balance</string>
+    <string name="marketplace_error_billing_failed">Billing failed, session ended</string>
+
+    <!-- Marketplace: errors -->
+    <string name="marketplace_error_load_astrologers">Failed to load astrologers</string>
+    <string name="marketplace_error_load_astrologer">Failed to load astrologer</string>
+    <string name="marketplace_error_submit_review">Failed to submit review</string>
+    <string name="marketplace_error_bill_minute">Could not bill this minute</string>
+</resources>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Reports: screen -->
+    <string name="reports_title">Reports</string>
+    <string name="reports_my_reports">My Reports</string>
+    <string name="reports_buy_a_report">Buy a Report</string>
+    <string name="reports_status_fmt">Status: %1$s</string>
+    <string name="reports_status_starting">starting</string>
+    <string name="reports_view_pdf">View PDF</string>
+    <string name="reports_pdf">PDF</string>
+    <string name="reports_buy">Buy</string>
+    <string name="reports_price_fmt">₹%1$s</string>
+
+    <!-- Reports: errors -->
+    <string name="reports_error_purchase">Could not purchase report</string>
+    <string name="reports_error_check_status">Could not check report status</string>
+    <string name="reports_error_load_mine">Could not load your reports</string>
+    <string name="reports_error_not_ready">Report not ready</string>
+    <string name="reports_error_download">Could not download report</string>
+</resources>

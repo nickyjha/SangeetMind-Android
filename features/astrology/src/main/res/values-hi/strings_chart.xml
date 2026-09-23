@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Screen chrome -->
+    <string name="chart_title">जन्म कुंडली</string>
+    <string name="chart_add_kundli_first">अपनी वैदिक जन्म कुंडली की गणना के लिए पहले एक कुंडली जोड़ें।</string>
+    <string name="chart_default_heading">आपकी वैदिक जन्म कुंडली</string>
+    <string name="chart_error_calculate">कुंडली की गणना नहीं हो सकी</string>
+
+    <!-- Summary strip -->
+    <string name="chart_lagna_label">लग्न</string>
+    <string name="chart_moon_label">चंद्र</string>
+    <string name="chart_nakshatra_label">नक्षत्र</string>
+    <string name="chart_current_dasha_label">वर्तमान दशा</string>
+    <string name="chart_nakshatra_detail">पद %1$d · %2$s</string>
+
+    <!-- Chart card titles/subtitles -->
+    <string name="chart_subtitle_north_indian">उत्तर भारतीय · संपूर्ण-राशि भाव</string>
+    <string name="chart_chalit_title">चालित चक्र</string>
+    <string name="chart_chalit_subtitle">भाव चक्र · प्लेसिडस भाव संधि</string>
+    <string name="chart_moon_chart_title">चंद्र कुंडली</string>
+    <string name="chart_moon_chart_subtitle">चंद्र कुंडली · चंद्र लग्न से संपूर्ण-राशि भाव</string>
+
+    <!-- Divisional charts: name + purpose (tab label is the purpose before the first comma) -->
+    <string name="chart_div_name_d1">D1 राशि चक्र</string>
+    <string name="chart_div_purpose_d1">जन्म कुंडली</string>
+    <string name="chart_div_name_d2">D2 होरा</string>
+    <string name="chart_div_purpose_d2">धन, आय</string>
+    <string name="chart_div_name_d3">D3 द्रेष्काण</string>
+    <string name="chart_div_purpose_d3">भाई-बहन, साहस</string>
+    <string name="chart_div_name_d4">D4 चतुर्थांश</string>
+    <string name="chart_div_purpose_d4">संपत्ति, भाग्य</string>
+    <string name="chart_div_name_d7">D7 सप्तमांश</string>
+    <string name="chart_div_purpose_d7">संतान</string>
+    <string name="chart_div_name_d9">D9 नवमांश</string>
+    <string name="chart_div_purpose_d9">विवाह, धर्म</string>
+    <string name="chart_div_name_d10">D10 दशमांश</string>
+    <string name="chart_div_purpose_d10">करियर, व्यवसाय</string>
+    <string name="chart_div_name_d12">D12 द्वादशांश</string>
+    <string name="chart_div_purpose_d12">माता-पिता, परिवार</string>
+    <string name="chart_div_name_d16">D16 षोडशांश</string>
+    <string name="chart_div_purpose_d16">वाहन, सुख-सुविधा</string>
+    <string name="chart_div_name_d20">D20 विंशांश</string>
+    <string name="chart_div_purpose_d20">आध्यात्मिक प्रगति</string>
+    <string name="chart_div_name_d24">D24 चतुर्विंशांश</string>
+    <string name="chart_div_purpose_d24">शिक्षा</string>
+    <string name="chart_div_name_d27">D27 सप्तविंशांश</string>
+    <string name="chart_div_purpose_d27">शक्तियाँ, कमज़ोरियाँ</string>
+    <string name="chart_div_name_d30">D30 त्रिंशांश</string>
+    <string name="chart_div_purpose_d30">स्वास्थ्य, सहनशक्ति</string>
+    <string name="chart_div_name_d40">D40 खवेदांश</string>
+    <string name="chart_div_purpose_d40">शुभ प्रभाव</string>
+    <string name="chart_div_name_d45">D45 अक्षवेदांश</string>
+    <string name="chart_div_purpose_d45">चरित्र, आचरण</string>
+    <string name="chart_div_name_d60">D60 षष्ट्यंश</string>
+    <string name="chart_div_purpose_d60">पूर्व कर्म</string>
+
+    <!-- D1 section tabs -->
+    <string name="chart_section_overview">सारांश</string>
+    <string name="chart_section_strength">बल</string>
+    <string name="chart_section_dasha">दशा</string>
+    <string name="chart_section_kp_jaimini">KP · जैमिनी</string>
+    <string name="chart_section_lal_kitab">लाल किताब</string>
+    <string name="chart_section_houses">भाव</string>
+
+    <!-- Planet list -->
+    <string name="chart_planet_positions">ग्रह स्थिति</string>
+    <string name="chart_dig_vargottama">वर्गोत्तम</string>
+    <string name="chart_legend_retrograde">* वक्री</string>
+    <string name="chart_legend_combust">^ अस्त</string>
+    <string name="chart_legend_exalted">↑ उच्च</string>
+    <string name="chart_legend_debilitated">↓ नीच</string>
+    <string name="chart_legend_vargottama">□ वर्गोत्तम</string>
+
+    <!-- Doshas -->
+    <string name="chart_doshas">दोष</string>
+    <string name="chart_status_present">उपस्थित</string>
+    <string name="chart_status_cancelled">निरस्त</string>
+    <string name="chart_status_not_present">अनुपस्थित</string>
+    <string name="chart_status_active">सक्रिय</string>
+    <string name="chart_status_not_active">निष्क्रिय</string>
+    <string name="chart_no_kalsarpa">इस कुंडली में कालसर्प योग नहीं है।</string>
+    <string name="chart_sadesati_until">%1$s · %2$s तक</string>
+    <string name="chart_sadesati_next">अगला: %1$s %2$s से शुरू</string>
+    <string name="chart_sadesati_none">आगामी साढ़े साती या छोटी पनौती की कोई अवधि नहीं मिली।</string>
+
+    <!-- Strength cards -->
+    <string name="chart_ashtakvarga">अष्टकवर्ग</string>
+    <string name="chart_ashtakvarga_subtitle">राशि अनुसार सर्व बिंदु बल · कुल %1$d</string>
+    <string name="chart_friendship">ग्रह मैत्री</string>
+    <string name="chart_friendship_subtitle">अन्य ग्रह %1$s के साथ कैसा व्यवहार करते हैं</string>
+    <string name="chart_rel_intimate">अति मित्र</string>
+    <string name="chart_rel_bitter_enemy">अति शत्रु</string>
+    <string name="chart_shadbala">षड्बल</string>
+    <string name="chart_shadbala_subtitle">छह प्रकार का ग्रह बल, सबसे बलवान पहले</string>
+    <string name="chart_rupas_fmt">%1$s रूपा</string>
+    <string name="chart_bhavabala">भावबल</string>
+    <string name="chart_bhavabala_subtitle">भाव बल · सबसे बलवान भाव %1$s</string>
+
+    <!-- KP / Jaimini -->
+    <string name="chart_kp_title">KP पद्धति</string>
+    <string name="chart_kp_ayanamsa_fmt">%1$s अयनांश · %2$s°</string>
+    <string name="chart_kp_cusps">भाव संधि</string>
+    <string name="chart_kp_significators">कारक</string>
+    <string name="chart_kp_no_significators">%1$s के लिए कोई कारक भाव नहीं।</string>
+    <string name="chart_jaimini">जैमिनी</string>
+    <string name="chart_jaimini_subtitle">कारकांश %1$s · स्वांश %2$s</string>
+
+    <!-- Lal Kitab -->
+    <string name="chart_lal_kitab">लाल किताब</string>
+    <string name="chart_lk_rin">कर्म ऋण</string>
+    <string name="chart_lk_rin_row">%1$s · भा%2$s</string>
+    <string name="chart_lk_remedies">उपाय</string>
+    <string name="chart_lk_placement_notes">स्थिति टिप्पणियाँ</string>
+    <string name="chart_lk_prediction_row">%1$s भा%2$s</string>
+    <string name="chart_lk_empty">इस कुंडली के लिए कोई ऋण योग या उपाय नहीं मिला।</string>
+
+    <!-- Narratives -->
+    <string name="chart_reading">फल</string>
+    <string name="chart_nakshatra_line">%1$s · पद %2$s · %3$s</string>
+    <string name="chart_ascendant_fmt">%1$s लग्न</string>
+    <string name="chart_planet_placements">ग्रह स्थितियाँ</string>
+
+    <!-- Houses -->
+    <string name="chart_house_cusps">भाव संधि</string>
+    <string name="chart_house_cusps_subtitle">प्लेसिडस भाव संधि · सक्रिय भाव पद्धति: %1$s</string>
+
+    <!-- Dasha -->
+    <string name="chart_dasha_vimshottari">विंशोत्तरी</string>
+    <string name="chart_dasha_yogini">योगिनी</string>
+    <string name="chart_dasha_chara">चर</string>
+    <string name="chart_hide_timeline">पूरी %1$s समयरेखा छिपाएं</string>
+    <string name="chart_view_timeline">पूरी %1$s समयरेखा देखें</string>
+    <string name="chart_timeline_unavailable">इस कुंडली के लिए समयरेखा का विवरण उपलब्ध नहीं है।</string>
+    <string name="chart_current_vimshottari">वर्तमान विंशोत्तरी</string>
+    <string name="chart_current_yogini">वर्तमान योगिनी</string>
+    <string name="chart_current_chara">वर्तमान चर</string>
+    <string name="chart_mahadasha">महादशा</string>
+    <string name="chart_antardasha">अंतर्दशा</string>
+    <string name="chart_pratyantar">प्रत्यंतर</string>
+    <string name="chart_dasha_row_fmt">%1$s · %2$s</string>
+    <string name="chart_yogini_name_fmt">%1$s (%2$s)</string>
+    <string name="chart_mahadasha_fmt">%1$s महादशा</string>
+    <string name="chart_antardasha_fmt">%1$s अंतर्दशा</string>
+    <string name="chart_chip_current">वर्तमान</string>
+    <string name="chart_chip_partial">आंशिक</string>
+    <string name="chart_years_fmt">%1$s वर्ष</string>
+</resources>

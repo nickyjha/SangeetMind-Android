@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Varshaphal (Tajika annual chart) screen. Keys are prefixed varshaphal_. -->
+<resources>
+    <string name="varshaphal_title">Varshaphal</string>
+    <string name="varshaphal_error_load">Failed to calculate Varshaphal</string>
+    <string name="varshaphal_no_kundli">Add a kundli first to calculate your Varshaphal.</string>
+    <string name="varshaphal_your_default">Your Varshaphal</string>
+    <string name="varshaphal_cd_previous_year">Previous year</string>
+    <string name="varshaphal_cd_next_year">Next year</string>
+    <string name="varshaphal_chart_title">Varshaphal Chart %1$d</string>
+    <string name="varshaphal_chart_subtitle">Annual solar-return chart</string>
+    <string name="varshaphal_tajika_summary">Tajika Summary</string>
+    <string name="varshaphal_solar_return_fmt">Solar return: %1$s · Age %2$d</string>
+    <string name="varshaphal_muntha">Muntha</string>
+    <string name="varshaphal_lagna">Varshaphal Lagna</string>
+    <string name="varshaphal_moon">Varshaphal Moon</string>
+    <string name="varshaphal_year_lord">Year Lord</string>
+    <string name="varshaphal_lord_suffix_fmt">" · lord %1$s"</string>
+</resources>

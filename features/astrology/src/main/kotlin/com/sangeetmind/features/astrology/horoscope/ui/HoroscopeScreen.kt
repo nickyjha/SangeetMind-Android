@@ -11,10 +11,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.horoscope.HoroscopeTab
 import com.sangeetmind.features.astrology.horoscope.HoroscopeViewModel
 import com.sangeetmind.libs.models.AuspiciousTime
@@ -35,10 +38,10 @@ fun HoroscopeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Horoscope") },
+                title = { Text(stringResource(R.string.horoscope_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -55,7 +58,7 @@ fun HoroscopeScreen(
                     Tab(
                         selected = uiState.selectedTab == tab,
                         onClick = { viewModel.selectTab(tab) },
-                        text = { Text(tab.name.lowercase().replaceFirstChar { it.uppercase() }) }
+                        text = { Text(tabLabel(tab)) }
                     )
                 }
             }
@@ -87,8 +90,18 @@ fun HoroscopeScreen(
 }
 
 @Composable
+private fun tabLabel(tab: HoroscopeTab): String = stringResource(
+    when (tab) {
+        HoroscopeTab.DAILY -> R.string.horoscope_tab_daily
+        HoroscopeTab.WEEKLY -> R.string.horoscope_tab_weekly
+        HoroscopeTab.MONTHLY -> R.string.horoscope_tab_monthly
+        HoroscopeTab.YEARLY -> R.string.horoscope_tab_yearly
+    }
+)
+
+@Composable
 private fun DailyContent(horoscope: DailyHoroscope) {
-    Text(horoscope.theme?.shortLabel ?: "Today", style = MaterialTheme.typography.titleLarge)
+    Text(horoscope.theme?.shortLabel ?: stringResource(CoreR.string.common_today), style = MaterialTheme.typography.titleLarge)
     Spacer(modifier = Modifier.height(8.dp))
     Text(horoscope.theme?.longText ?: "", style = MaterialTheme.typography.bodyLarge)
 
@@ -96,14 +109,14 @@ private fun DailyContent(horoscope: DailyHoroscope) {
 
     enhanced?.interpretation?.let { interpretation ->
         Spacer(modifier = Modifier.height(16.dp))
-        Text("Today's insight", style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.horoscope_todays_insight), style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(4.dp))
         Text(interpretation, style = MaterialTheme.typography.bodyMedium)
     }
 
     enhanced?.whatToDoToday?.takeIf { it.isNotEmpty() }?.let { items ->
         Spacer(modifier = Modifier.height(16.dp))
-        Text("What to do today", style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.horoscope_what_to_do), style = MaterialTheme.typography.titleMedium)
         items.forEach { item ->
             Text(
                 text = "• $item",
@@ -115,7 +128,7 @@ private fun DailyContent(horoscope: DailyHoroscope) {
 
     enhanced?.whatToAvoid?.takeIf { it.isNotEmpty() }?.let { items ->
         Spacer(modifier = Modifier.height(16.dp))
-        Text("What to avoid", style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.horoscope_what_to_avoid), style = MaterialTheme.typography.titleMedium)
         items.forEach { item ->
             Text(
                 text = "• $item",
@@ -143,7 +156,7 @@ private fun DailyContent(horoscope: DailyHoroscope) {
         MantraCard(mantra)
     } ?: horoscope.recommendedMantras.firstOrNull()?.name?.let { mantra ->
         Spacer(modifier = Modifier.height(16.dp))
-        Text("Recommended mantra: $mantra", style = MaterialTheme.typography.bodyMedium)
+        Text(stringResource(R.string.horoscope_recommended_mantra_fmt, mantra), style = MaterialTheme.typography.bodyMedium)
     }
 
     enhanced?.daanDonation?.takeIf { it.item.isNotBlank() }?.let { daan ->
@@ -193,7 +206,7 @@ private fun LuckyColorCard(color: String, reason: String?, modifier: Modifier = 
                         .background(swatch)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Lucky color", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(stringResource(R.string.horoscope_lucky_color), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             Spacer(modifier = Modifier.height(6.dp))
             Text(color, style = MaterialTheme.typography.titleMedium)
@@ -209,7 +222,7 @@ private fun LuckyColorCard(color: String, reason: String?, modifier: Modifier = 
 private fun AuspiciousTimeCard(window: AuspiciousTime, modifier: Modifier = Modifier) {
     Card(modifier = modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(14.dp)) {
-            Text("Auspicious time", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(stringResource(R.string.horoscope_auspicious_time), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(modifier = Modifier.height(6.dp))
             Text("${window.start} – ${window.end}", style = MaterialTheme.typography.titleMedium)
             if (window.reason.isNotBlank()) {
@@ -224,7 +237,7 @@ private fun AuspiciousTimeCard(window: AuspiciousTime, modifier: Modifier = Modi
 private fun MantraCard(mantra: EnhancedMantra) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Recommended mantra", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(stringResource(R.string.horoscope_recommended_mantra), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(modifier = Modifier.height(4.dp))
             Text(mantra.name, style = MaterialTheme.typography.titleMedium)
             val details = listOfNotNull(
@@ -247,12 +260,12 @@ private fun MantraCard(mantra: EnhancedMantra) {
 private fun DaanCard(daan: DaanDonation) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Today's daan", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(stringResource(R.string.horoscope_todays_daan), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(modifier = Modifier.height(4.dp))
             Text(daan.item, style = MaterialTheme.typography.titleMedium)
             if (daan.toWhom.isNotBlank()) {
                 Spacer(modifier = Modifier.height(2.dp))
-                Text("To: ${daan.toWhom}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(stringResource(R.string.horoscope_daan_to_fmt, daan.toWhom), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             if (daan.reason.isNotBlank()) {
                 Spacer(modifier = Modifier.height(6.dp))

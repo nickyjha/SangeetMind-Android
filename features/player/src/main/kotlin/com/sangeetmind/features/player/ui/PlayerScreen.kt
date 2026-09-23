@@ -11,14 +11,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.features.player.PlayerViewModel
+import com.sangeetmind.features.player.R
 import com.sangeetmind.features.player.RepeatMode
+import com.sangeetmind.libs.models.Mood
+import com.sangeetmind.libs.models.TimeOfDay
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,18 +37,18 @@ fun PlayerScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Now Playing") },
+                title = { Text(stringResource(R.string.player_now_playing)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.KeyboardArrowDown, "Close player")
+                        Icon(Icons.Default.KeyboardArrowDown, stringResource(R.string.player_close))
                     }
                 },
                 actions = {
                     IconButton(onClick = { /* TODO: Show queue */ }) {
-                        Icon(Icons.Default.QueueMusic, "Queue")
+                        Icon(Icons.Default.QueueMusic, stringResource(R.string.player_queue))
                     }
                     IconButton(onClick = { /* TODO: Show more options */ }) {
-                        Icon(Icons.Default.MoreVert, "More options")
+                        Icon(Icons.Default.MoreVert, stringResource(R.string.player_more_options))
                     }
                 }
             )
@@ -60,7 +65,7 @@ fun PlayerScreen(
             // Artwork
             AsyncImage(
                 model = uiState.currentRaag?.artworkUrl ?: "https://picsum.photos/400/400",
-                contentDescription = "Raag artwork",
+                contentDescription = stringResource(R.string.player_artwork),
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
@@ -77,7 +82,7 @@ fun PlayerScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = uiState.currentRaag?.name ?: "No raag playing",
+                    text = uiState.currentRaag?.name ?: stringResource(R.string.player_nothing_playing),
                     style = MaterialTheme.typography.headlineMedium,
                     textAlign = TextAlign.Center,
                     maxLines = 1,
@@ -103,13 +108,13 @@ fun PlayerScreen(
                         raag.timeOfDay?.let {
                             AssistChip(
                                 onClick = {},
-                                label = { Text(it.name, style = MaterialTheme.typography.labelSmall) }
+                                label = { Text(timeOfDayLabel(it), style = MaterialTheme.typography.labelSmall) }
                             )
                         }
                         raag.mood?.let {
                             AssistChip(
                                 onClick = {},
-                                label = { Text(it.name, style = MaterialTheme.typography.labelSmall) }
+                                label = { Text(moodLabel(it), style = MaterialTheme.typography.labelSmall) }
                             )
                         }
                     }
@@ -175,7 +180,7 @@ fun PlayerScreen(
                 IconButton(onClick = viewModel::toggleShuffle) {
                     Icon(
                         imageVector = Icons.Default.Shuffle,
-                        contentDescription = "Shuffle",
+                        contentDescription = stringResource(R.string.player_shuffle),
                         tint = if (uiState.isShuffleEnabled) {
                             MaterialTheme.colorScheme.primary
                         } else {
@@ -191,7 +196,7 @@ fun PlayerScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.SkipPrevious,
-                        contentDescription = "Previous",
+                        contentDescription = stringResource(CoreR.string.common_previous),
                         modifier = Modifier.size(32.dp)
                     )
                 }
@@ -207,7 +212,9 @@ fun PlayerScreen(
                         } else {
                             Icons.Default.PlayArrow
                         },
-                        contentDescription = if (uiState.isPlaying) "Pause" else "Play",
+                        contentDescription = stringResource(
+                            if (uiState.isPlaying) R.string.player_pause else R.string.player_play
+                        ),
                         modifier = Modifier.size(40.dp)
                     )
                 }
@@ -219,7 +226,7 @@ fun PlayerScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.SkipNext,
-                        contentDescription = "Next",
+                        contentDescription = stringResource(CoreR.string.common_next),
                         modifier = Modifier.size(32.dp)
                     )
                 }
@@ -231,7 +238,7 @@ fun PlayerScreen(
                             RepeatMode.ONE -> Icons.Default.RepeatOne
                             else -> Icons.Default.Repeat
                         },
-                        contentDescription = "Repeat",
+                        contentDescription = stringResource(R.string.player_repeat),
                         tint = if (uiState.repeatMode != RepeatMode.OFF) {
                             MaterialTheme.colorScheme.primary
                         } else {
@@ -255,7 +262,7 @@ fun PlayerScreen(
                         } else {
                             Icons.Default.FavoriteBorder
                         },
-                        contentDescription = "Favorite",
+                        contentDescription = stringResource(R.string.player_favorite),
                         tint = if (uiState.currentRaag?.isFavorite == true) {
                             MaterialTheme.colorScheme.primary
                         } else {
@@ -267,7 +274,7 @@ fun PlayerScreen(
                 IconButton(onClick = { /* TODO: Share */ }) {
                     Icon(
                         imageVector = Icons.Default.Share,
-                        contentDescription = "Share"
+                        contentDescription = stringResource(R.string.player_share)
                     )
                 }
 
@@ -278,13 +285,36 @@ fun PlayerScreen(
                         } else {
                             Icons.Default.Download
                         },
-                        contentDescription = "Download"
+                        contentDescription = stringResource(R.string.player_download)
                     )
                 }
             }
         }
     }
 }
+
+@Composable
+private fun timeOfDayLabel(timeOfDay: TimeOfDay): String = stringResource(
+    when (timeOfDay) {
+        TimeOfDay.MORNING -> R.string.player_time_morning
+        TimeOfDay.AFTERNOON -> R.string.player_time_afternoon
+        TimeOfDay.EVENING -> R.string.player_time_evening
+        TimeOfDay.NIGHT -> R.string.player_time_night
+        TimeOfDay.ANYTIME -> R.string.player_time_anytime
+    }
+)
+
+@Composable
+private fun moodLabel(mood: Mood): String = stringResource(
+    when (mood) {
+        Mood.PEACEFUL -> R.string.player_mood_peaceful
+        Mood.ENERGETIC -> R.string.player_mood_energetic
+        Mood.DEVOTIONAL -> R.string.player_mood_devotional
+        Mood.ROMANTIC -> R.string.player_mood_romantic
+        Mood.MELANCHOLIC -> R.string.player_mood_melancholic
+        Mood.JOYFUL -> R.string.player_mood_joyful
+    }
+)
 
 private fun formatTime(milliseconds: Long): String {
     val totalSeconds = (milliseconds / 1000).toInt()

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="muhurat_title">Muhurat Finder</string>
+    <string name="muhurat_purpose">What is this for?</string>
+    <string name="muhurat_intent_general">General</string>
+    <string name="muhurat_intent_marriage">Marriage</string>
+    <string name="muhurat_intent_business">Business</string>
+    <string name="muhurat_intent_travel">Travel</string>
+    <string name="muhurat_intent_griha_pravesh">Griha Pravesh</string>
+    <string name="muhurat_start_date">Start date (YYYY-MM-DD)</string>
+    <string name="muhurat_end_date">End date (YYYY-MM-DD)</string>
+    <string name="muhurat_find">Find Muhurat</string>
+    <string name="muhurat_results">Results</string>
+    <string name="muhurat_verdict_auspicious">Auspicious</string>
+    <string name="muhurat_verdict_neutral">Neutral</string>
+    <string name="muhurat_verdict_avoid">Avoid</string>
+    <string name="muhurat_score_fmt">Score %1$d</string>
+    <string name="muhurat_error_enter_dates">Please enter both start and end dates</string>
+    <string name="muhurat_error_find_failed">Failed to find muhurat</string>
+</resources>

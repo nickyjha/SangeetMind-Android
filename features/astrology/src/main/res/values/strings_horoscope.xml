@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="horoscope_title">Horoscope</string>
+    <string name="horoscope_tab_daily">Daily</string>
+    <string name="horoscope_tab_weekly">Weekly</string>
+    <string name="horoscope_tab_monthly">Monthly</string>
+    <string name="horoscope_tab_yearly">Yearly</string>
+
+    <string name="horoscope_todays_insight">Today\'s insight</string>
+    <string name="horoscope_what_to_do">What to do today</string>
+    <string name="horoscope_what_to_avoid">What to avoid</string>
+    <string name="horoscope_lucky_color">Lucky color</string>
+    <string name="horoscope_auspicious_time">Auspicious time</string>
+    <string name="horoscope_recommended_mantra">Recommended mantra</string>
+    <string name="horoscope_recommended_mantra_fmt">Recommended mantra: %1$s</string>
+    <string name="horoscope_todays_daan">Today\'s daan</string>
+    <string name="horoscope_daan_to_fmt">To: %1$s</string>
+
+    <string name="horoscope_error_load_kundlis">Failed to load kundlis</string>
+    <string name="horoscope_error_add_kundli_first">Add a kundli first to see your horoscope</string>
+    <string name="horoscope_error_moon_sign">Could not determine your moon sign</string>
+    <string name="horoscope_error_daily">Failed to load daily horoscope</string>
+    <string name="horoscope_error_weekly">Failed to load weekly horoscope</string>
+    <string name="horoscope_error_monthly">Failed to load monthly horoscope</string>
+    <string name="horoscope_error_yearly">Failed to load yearly horoscope</string>
+</resources>

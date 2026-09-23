@@ -1,16 +1,21 @@
 package com.sangeetmind.features.astrology.horoscope
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.kundli.KundliRepository
 import com.sangeetmind.features.astrology.profile.AstroProfileRepository
 import com.sangeetmind.libs.models.DailyHoroscope
 import com.sangeetmind.libs.models.PeriodHoroscope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -35,9 +40,11 @@ data class HoroscopeUiState(
  */
 @HiltViewModel
 class HoroscopeViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val horoscopeRepository: HoroscopeRepository,
     private val kundliRepository: KundliRepository,
-    private val astroProfileRepository: AstroProfileRepository
+    private val astroProfileRepository: AstroProfileRepository,
+    private val languageManager: LanguageManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HoroscopeUiState())
@@ -45,6 +52,11 @@ class HoroscopeViewModel @Inject constructor(
 
     init {
         load()
+        // The daily endpoint returns its Gemini-written fields in the requested language,
+        // so reload when the user switches language (skip the initial value).
+        viewModelScope.launch {
+            languageManager.language.drop(1).collect { load() }
+        }
     }
 
     fun selectTab(tab: HoroscopeTab) {
@@ -59,13 +71,13 @@ class HoroscopeViewModel @Inject constructor(
             val kundlis = (kundliResult as? Result.Success)?.data
             if (kundlis == null) {
                 _uiState.update {
-                    it.copy(isLoading = false, error = (kundliResult as? Result.Error)?.message ?: "Failed to load kundlis")
+                    it.copy(isLoading = false, error = (kundliResult as? Result.Error)?.message ?: context.getString(R.string.horoscope_error_load_kundlis))
                 }
                 return@launch
             }
             val primary = kundlis.firstOrNull { it.isPrimary } ?: kundlis.firstOrNull()
             if (primary == null) {
-                _uiState.update { it.copy(isLoading = false, error = "Add a kundli first to see your horoscope") }
+                _uiState.update { it.copy(isLoading = false, error = context.getString(R.string.horoscope_error_add_kundli_first)) }
                 return@launch
             }
 
@@ -73,7 +85,7 @@ class HoroscopeViewModel @Inject constructor(
             val moonSign = (profileResult as? Result.Success)?.data?.moonSign
             if (moonSign.isNullOrBlank()) {
                 _uiState.update {
-                    it.copy(isLoading = false, error = (profileResult as? Result.Error)?.message ?: "Could not determine your moon sign")
+                    it.copy(isLoading = false, error = (profileResult as? Result.Error)?.message ?: context.getString(R.string.horoscope_error_moon_sign))
                 }
                 return@launch
             }

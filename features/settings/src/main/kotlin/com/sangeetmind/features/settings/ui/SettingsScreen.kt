@@ -10,10 +10,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.core.ui.language.LanguagePickerDialog
+import com.sangeetmind.core.ui.language.LocalAppLanguage
 import com.sangeetmind.features.settings.DarkModePreference
+import com.sangeetmind.features.settings.R
 import com.sangeetmind.features.settings.SettingsViewModel
 import com.sangeetmind.libs.models.PlaybackQuality
 
@@ -27,7 +32,7 @@ fun SettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Settings") },
+                title = { Text(stringResource(R.string.settings_title)) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -42,12 +47,9 @@ fun SettingsScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             // General Section
-            SettingsSection(title = "General") {
-                LanguageSettingItem(
-                    currentLanguage = uiState.language,
-                    onLanguageChange = viewModel::setLanguage
-                )
-                
+            SettingsSection(title = stringResource(R.string.settings_section_general)) {
+                LanguageSettingItem()
+
                 DarkModeSettingItem(
                     currentPreference = uiState.darkMode,
                     onPreferenceChange = viewModel::setDarkMode
@@ -57,23 +59,23 @@ fun SettingsScreen(
             Divider()
 
             // Playback Section
-            SettingsSection(title = "Playback") {
+            SettingsSection(title = stringResource(R.string.settings_section_playback)) {
                 PlaybackQualitySettingItem(
                     currentQuality = uiState.playbackQuality,
                     onQualityChange = viewModel::setPlaybackQuality
                 )
-                
+
                 SwitchSettingItem(
-                    title = "Auto-play next",
-                    description = "Automatically play next track in queue",
+                    title = stringResource(R.string.settings_autoplay_title),
+                    description = stringResource(R.string.settings_autoplay_desc),
                     icon = Icons.Default.PlayArrow,
                     checked = uiState.autoPlayNext,
                     onCheckedChange = viewModel::setAutoPlayNext
                 )
-                
+
                 SwitchSettingItem(
-                    title = "Show lyrics",
-                    description = "Display lyrics when available",
+                    title = stringResource(R.string.settings_lyrics_title),
+                    description = stringResource(R.string.settings_lyrics_desc),
                     icon = Icons.Default.Subtitles,
                     checked = uiState.showLyrics,
                     onCheckedChange = viewModel::setShowLyrics
@@ -83,18 +85,18 @@ fun SettingsScreen(
             Divider()
 
             // Downloads Section
-            SettingsSection(title = "Downloads") {
+            SettingsSection(title = stringResource(R.string.settings_section_downloads)) {
                 SwitchSettingItem(
-                    title = "Download on Wi-Fi only",
-                    description = "Only download content when connected to Wi-Fi",
+                    title = stringResource(R.string.settings_wifi_only_title),
+                    description = stringResource(R.string.settings_wifi_only_desc),
                     icon = Icons.Default.Wifi,
                     checked = uiState.downloadOnWifiOnly,
                     onCheckedChange = viewModel::setDownloadOnWifiOnly
                 )
-                
+
                 ActionSettingItem(
-                    title = "Clear downloads",
-                    description = "Remove all downloaded content",
+                    title = stringResource(R.string.settings_clear_downloads_title),
+                    description = stringResource(R.string.settings_clear_downloads_desc),
                     icon = Icons.Default.Delete,
                     onClick = viewModel::clearDownloads
                 )
@@ -103,10 +105,10 @@ fun SettingsScreen(
             Divider()
 
             // Notifications Section
-            SettingsSection(title = "Notifications") {
+            SettingsSection(title = stringResource(R.string.settings_section_notifications)) {
                 SwitchSettingItem(
-                    title = "Enable notifications",
-                    description = "Receive updates and reminders",
+                    title = stringResource(R.string.settings_notifications_title),
+                    description = stringResource(R.string.settings_notifications_desc),
                     icon = Icons.Default.Notifications,
                     checked = uiState.notificationsEnabled,
                     onCheckedChange = viewModel::setNotificationsEnabled
@@ -116,10 +118,10 @@ fun SettingsScreen(
             Divider()
 
             // Storage Section
-            SettingsSection(title = "Storage") {
+            SettingsSection(title = stringResource(R.string.settings_section_storage)) {
                 ActionSettingItem(
-                    title = "Clear cache",
-                    description = "Free up storage space",
+                    title = stringResource(R.string.settings_clear_cache_title),
+                    description = stringResource(R.string.settings_clear_cache_desc),
                     icon = Icons.Default.CleaningServices,
                     onClick = viewModel::clearCache
                 )
@@ -128,31 +130,31 @@ fun SettingsScreen(
             Divider()
 
             // About Section
-            SettingsSection(title = "About") {
+            SettingsSection(title = stringResource(R.string.settings_section_about)) {
                 ActionSettingItem(
-                    title = "Version",
+                    title = stringResource(R.string.settings_version_title),
                     description = "1.0.0",
                     icon = Icons.Default.Info,
                     onClick = {}
                 )
-                
+
                 ActionSettingItem(
-                    title = "Privacy Policy",
-                    description = "View our privacy policy",
+                    title = stringResource(R.string.settings_privacy_title),
+                    description = stringResource(R.string.settings_privacy_desc),
                     icon = Icons.Default.PrivacyTip,
                     onClick = { /* TODO: Open privacy policy */ }
                 )
-                
+
                 ActionSettingItem(
-                    title = "Terms of Service",
-                    description = "View terms and conditions",
+                    title = stringResource(R.string.settings_terms_title),
+                    description = stringResource(R.string.settings_terms_desc),
                     icon = Icons.Default.Description,
                     onClick = { /* TODO: Open terms */ }
                 )
-                
+
                 ActionSettingItem(
-                    title = "Open Source Licenses",
-                    description = "View third-party licenses",
+                    title = stringResource(R.string.settings_licenses_title),
+                    description = stringResource(R.string.settings_licenses_desc),
                     icon = Icons.Default.Code,
                     onClick = { /* TODO: Show licenses */ }
                 )
@@ -177,54 +179,25 @@ fun SettingsSection(
     }
 }
 
+/**
+ * Shows the app's current display language and opens the shared language chooser.
+ * Backed by the real language layer ([LocalAppLanguage] / `LocalLanguageSwitcher`),
+ * so the choice persists and re-renders the whole app.
+ */
 @Composable
-fun LanguageSettingItem(
-    currentLanguage: String,
-    onLanguageChange: (String) -> Unit
-) {
+fun LanguageSettingItem() {
     var showDialog by remember { mutableStateOf(false) }
-    
+    val language = LocalAppLanguage.current
+
     ActionSettingItem(
-        title = "Language",
-        description = when (currentLanguage) {
-            "en" -> "English"
-            "hi" -> "हिंदी (Hindi)"
-            else -> currentLanguage
-        },
+        title = stringResource(CoreR.string.common_language),
+        description = language.nativeName,
         icon = Icons.Default.Language,
         onClick = { showDialog = true }
     )
 
     if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            title = { Text("Select Language") },
-            text = {
-                Column {
-                    RadioButtonItem(
-                        text = "English",
-                        selected = currentLanguage == "en",
-                        onClick = {
-                            onLanguageChange("en")
-                            showDialog = false
-                        }
-                    )
-                    RadioButtonItem(
-                        text = "हिंदी (Hindi)",
-                        selected = currentLanguage == "hi",
-                        onClick = {
-                            onLanguageChange("hi")
-                            showDialog = false
-                        }
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showDialog = false }) {
-                    Text("Cancel")
-                }
-            }
-        )
+        LanguagePickerDialog(onDismiss = { showDialog = false })
     }
 }
 
@@ -236,12 +209,14 @@ fun DarkModeSettingItem(
     var showDialog by remember { mutableStateOf(false) }
     
     ActionSettingItem(
-        title = "Dark mode",
-        description = when (currentPreference) {
-            DarkModePreference.LIGHT -> "Light"
-            DarkModePreference.DARK -> "Dark"
-            DarkModePreference.SYSTEM -> "System default"
-        },
+        title = stringResource(R.string.settings_dark_mode),
+        description = stringResource(
+            when (currentPreference) {
+                DarkModePreference.LIGHT -> R.string.settings_theme_light
+                DarkModePreference.DARK -> R.string.settings_theme_dark
+                DarkModePreference.SYSTEM -> R.string.settings_theme_system
+            }
+        ),
         icon = Icons.Default.DarkMode,
         onClick = { showDialog = true }
     )
@@ -249,11 +224,11 @@ fun DarkModeSettingItem(
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
-            title = { Text("Dark Mode") },
+            title = { Text(stringResource(R.string.settings_dark_mode)) },
             text = {
                 Column {
                     RadioButtonItem(
-                        text = "Light",
+                        text = stringResource(R.string.settings_theme_light),
                         selected = currentPreference == DarkModePreference.LIGHT,
                         onClick = {
                             onPreferenceChange(DarkModePreference.LIGHT)
@@ -261,7 +236,7 @@ fun DarkModeSettingItem(
                         }
                     )
                     RadioButtonItem(
-                        text = "Dark",
+                        text = stringResource(R.string.settings_theme_dark),
                         selected = currentPreference == DarkModePreference.DARK,
                         onClick = {
                             onPreferenceChange(DarkModePreference.DARK)
@@ -269,7 +244,7 @@ fun DarkModeSettingItem(
                         }
                     )
                     RadioButtonItem(
-                        text = "System default",
+                        text = stringResource(R.string.settings_theme_system),
                         selected = currentPreference == DarkModePreference.SYSTEM,
                         onClick = {
                             onPreferenceChange(DarkModePreference.SYSTEM)
@@ -280,7 +255,7 @@ fun DarkModeSettingItem(
             },
             confirmButton = {
                 TextButton(onClick = { showDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(CoreR.string.common_cancel))
                 }
             }
         )
@@ -295,12 +270,14 @@ fun PlaybackQualitySettingItem(
     var showDialog by remember { mutableStateOf(false) }
     
     ActionSettingItem(
-        title = "Playback quality",
-        description = when (currentQuality) {
-            PlaybackQuality.LOW -> "Low (Save data)"
-            PlaybackQuality.MEDIUM -> "Medium"
-            PlaybackQuality.HIGH -> "High (Best quality)"
-        },
+        title = stringResource(R.string.settings_playback_quality),
+        description = stringResource(
+            when (currentQuality) {
+                PlaybackQuality.LOW -> R.string.settings_quality_low
+                PlaybackQuality.MEDIUM -> R.string.settings_quality_medium
+                PlaybackQuality.HIGH -> R.string.settings_quality_high
+            }
+        ),
         icon = Icons.Default.HighQuality,
         onClick = { showDialog = true }
     )
@@ -308,11 +285,11 @@ fun PlaybackQualitySettingItem(
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
-            title = { Text("Playback Quality") },
+            title = { Text(stringResource(R.string.settings_playback_quality)) },
             text = {
                 Column {
                     RadioButtonItem(
-                        text = "Low (Save data)",
+                        text = stringResource(R.string.settings_quality_low),
                         selected = currentQuality == PlaybackQuality.LOW,
                         onClick = {
                             onQualityChange(PlaybackQuality.LOW)
@@ -320,7 +297,7 @@ fun PlaybackQualitySettingItem(
                         }
                     )
                     RadioButtonItem(
-                        text = "Medium",
+                        text = stringResource(R.string.settings_quality_medium),
                         selected = currentQuality == PlaybackQuality.MEDIUM,
                         onClick = {
                             onQualityChange(PlaybackQuality.MEDIUM)
@@ -328,7 +305,7 @@ fun PlaybackQualitySettingItem(
                         }
                     )
                     RadioButtonItem(
-                        text = "High (Best quality)",
+                        text = stringResource(R.string.settings_quality_high),
                         selected = currentQuality == PlaybackQuality.HIGH,
                         onClick = {
                             onQualityChange(PlaybackQuality.HIGH)
@@ -339,7 +316,7 @@ fun PlaybackQualitySettingItem(
             },
             confirmButton = {
                 TextButton(onClick = { showDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(CoreR.string.common_cancel))
                 }
             }
         )

@@ -11,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -19,8 +20,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.core.ui.language.LanguagePickerAction
 import com.sangeetmind.features.auth.AuthMode
+import com.sangeetmind.features.auth.AuthUiState
 import com.sangeetmind.features.auth.AuthViewModel
+import com.sangeetmind.features.auth.R
 
 @Composable
 fun AuthScreen(
@@ -41,6 +46,27 @@ fun AuthScreen(
         }
     }
 
+    Box(modifier = Modifier.fillMaxSize()) {
+        AuthContent(
+            uiState = uiState,
+            viewModel = viewModel,
+            onToggleMode = onToggleMode
+        )
+        LanguagePickerAction(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .statusBarsPadding()
+                .padding(8.dp)
+        )
+    }
+}
+
+@Composable
+private fun AuthContent(
+    uiState: AuthUiState,
+    viewModel: AuthViewModel,
+    onToggleMode: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -59,7 +85,7 @@ fun AuthScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "SangeetMind",
+            text = stringResource(CoreR.string.common_app_name),
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.primary
         )
@@ -68,9 +94,9 @@ fun AuthScreen(
 
         Text(
             text = when (uiState.mode) {
-                AuthMode.SIGNUP -> "Create your account"
-                AuthMode.FORGOT_PASSWORD -> "Reset your password"
-                AuthMode.LOGIN -> "Welcome back"
+                AuthMode.SIGNUP -> stringResource(R.string.auth_subtitle_signup)
+                AuthMode.FORGOT_PASSWORD -> stringResource(R.string.auth_subtitle_forgot)
+                AuthMode.LOGIN -> stringResource(R.string.auth_subtitle_login)
             },
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -98,7 +124,7 @@ fun AuthScreen(
             OutlinedTextField(
                 value = uiState.name,
                 onValueChange = viewModel::onNameChange,
-                label = { Text("Name") },
+                label = { Text(stringResource(R.string.auth_name)) },
                 leadingIcon = { Icon(Icons.Default.Person, null) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -113,7 +139,7 @@ fun AuthScreen(
         OutlinedTextField(
             value = uiState.email,
             onValueChange = viewModel::onEmailChange,
-            label = { Text("Email") },
+            label = { Text(stringResource(R.string.auth_email)) },
             leadingIcon = { Icon(Icons.Default.Email, null) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
@@ -129,13 +155,15 @@ fun AuthScreen(
         OutlinedTextField(
             value = uiState.password,
             onValueChange = viewModel::onPasswordChange,
-            label = { Text("Password") },
+            label = { Text(stringResource(R.string.auth_password)) },
             leadingIcon = { Icon(Icons.Default.Lock, null) },
             trailingIcon = {
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
                     Icon(
                         imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                        contentDescription = if (passwordVisible) "Hide password" else "Show password"
+                        contentDescription = stringResource(
+                            if (passwordVisible) R.string.auth_hide_password else R.string.auth_show_password
+                        )
                     )
                 }
             },
@@ -157,7 +185,7 @@ fun AuthScreen(
                 onClick = { viewModel.setMode(AuthMode.FORGOT_PASSWORD) },
                 modifier = Modifier.align(Alignment.End)
             ) {
-                Text("Forgot password?")
+                Text(stringResource(R.string.auth_forgot_password))
             }
         }
 
@@ -181,7 +209,7 @@ fun AuthScreen(
                     color = MaterialTheme.colorScheme.onPrimary
                 )
             } else {
-                Text(if (isSignupMode) "Sign Up" else "Log In")
+                Text(stringResource(if (isSignupMode) R.string.auth_sign_up else R.string.auth_log_in))
             }
         }
 
@@ -189,11 +217,9 @@ fun AuthScreen(
 
         TextButton(onClick = onToggleMode) {
             Text(
-                text = if (isSignupMode) {
-                    "Already have an account? Log in"
-                } else {
-                    "Don't have an account? Sign up"
-                }
+                text = stringResource(
+                    if (isSignupMode) R.string.auth_have_account else R.string.auth_no_account
+                )
             )
         }
     }
@@ -218,19 +244,19 @@ private fun ForgotPasswordContent(
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "Check your email for a link to reset your password.",
+            text = stringResource(R.string.auth_reset_sent),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyLarge
         )
         Spacer(modifier = Modifier.height(24.dp))
-        TextButton(onClick = onBackToLogin) { Text("Back to log in") }
+        TextButton(onClick = onBackToLogin) { Text(stringResource(R.string.auth_back_to_login)) }
         return
     }
 
     OutlinedTextField(
         value = email,
         onValueChange = onEmailChange,
-        label = { Text("Email") },
+        label = { Text(stringResource(R.string.auth_email)) },
         leadingIcon = { Icon(Icons.Default.Email, null) },
         modifier = Modifier.fillMaxWidth(),
         singleLine = true,
@@ -261,12 +287,12 @@ private fun ForgotPasswordContent(
                 color = MaterialTheme.colorScheme.onPrimary
             )
         } else {
-            Text("Send reset link")
+            Text(stringResource(R.string.auth_send_reset))
         }
     }
 
     Spacer(modifier = Modifier.height(16.dp))
-    TextButton(onClick = onBackToLogin) { Text("Back to log in") }
+    TextButton(onClick = onBackToLogin) { Text(stringResource(R.string.auth_back_to_login)) }
 }
 
 @Composable

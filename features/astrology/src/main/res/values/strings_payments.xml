@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Payments: screen -->
+    <string name="payments_title">Premium &amp; Wallet</string>
+    <string name="payments_tab_premium">Premium</string>
+    <string name="payments_tab_wallet">Wallet</string>
+    <string name="payments_premium_member">You\'re a Premium member</string>
+    <string name="payments_subscribe">Subscribe</string>
+    <string name="payments_balance">Balance</string>
+    <string name="payments_top_up">Top Up</string>
+    <string name="payments_add">Add</string>
+    <string name="payments_recent_recharges">Recent Recharges</string>
+
+    <!-- Payments: messages -->
+    <string name="payments_msg_payment_received">Payment received — updating balance</string>
+    <string name="payments_msg_now_premium">You\'re now Premium!</string>
+
+    <!-- Payments: errors -->
+    <string name="payments_error_payment_failed">Payment failed</string>
+    <string name="payments_error_load_plans">Failed to load plans</string>
+    <string name="payments_error_start_checkout">Could not start checkout</string>
+    <string name="payments_error_verify_payment">Could not verify payment</string>
+    <string name="payments_error_load_premium_status">Failed to load premium status</string>
+    <string name="payments_error_load_wallet_balance">Failed to load wallet balance</string>
+    <string name="payments_error_load_transactions">Failed to load transactions</string>
+    <string name="payments_error_spend_wallet">Could not spend wallet balance</string>
+</resources>

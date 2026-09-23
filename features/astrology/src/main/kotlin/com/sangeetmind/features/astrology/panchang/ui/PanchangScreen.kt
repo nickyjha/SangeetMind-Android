@@ -15,11 +15,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.core.ui.language.astroTerm
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.panchang.PanchangViewModel
 import com.sangeetmind.libs.models.PanchangResponse
 
@@ -34,10 +38,10 @@ fun PanchangScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Panchang") },
+                title = { Text(stringResource(R.string.panchang_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -58,7 +62,7 @@ fun PanchangScreen(
             OutlinedTextField(
                 value = uiState.date,
                 onValueChange = viewModel::onDateChange,
-                label = { Text("Date (YYYY-MM-DD)") },
+                label = { Text(stringResource(R.string.panchang_date_label)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next)
@@ -69,7 +73,7 @@ fun PanchangScreen(
             OutlinedTextField(
                 value = uiState.placeQuery,
                 onValueChange = viewModel::onPlaceQueryChange,
-                label = { Text("Place") },
+                label = { Text(stringResource(R.string.panchang_place_label)) },
                 leadingIcon = { Icon(Icons.Default.LocationOn, null) },
                 trailingIcon = {
                     if (uiState.isSearchingPlace) {
@@ -119,7 +123,7 @@ fun PanchangScreen(
                 if (uiState.isLoading) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary)
                 } else {
-                    Text("Get Panchang")
+                    Text(stringResource(R.string.panchang_get))
                 }
             }
 
@@ -137,13 +141,13 @@ private fun PanchangResultCard(result: PanchangResponse) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = result.date, style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(8.dp))
-            PanchangRow("Tithi", result.tithi.name)
-            PanchangRow("Nakshatra", result.nakshatra.name)
-            PanchangRow("Yoga", result.yoga.name)
-            PanchangRow("Karana", "#${result.karana.index}")
-            PanchangRow("Vara", result.vara.name)
-            PanchangRow("Moon sign", result.moonSign)
-            PanchangRow("Sun sign", result.sunSign)
+            PanchangRow(stringResource(R.string.panchang_tithi), astroTerm(result.tithi.name))
+            PanchangRow(stringResource(R.string.panchang_nakshatra), astroTerm(result.nakshatra.name))
+            PanchangRow(stringResource(R.string.panchang_yoga), astroTerm(result.yoga.name))
+            PanchangRow(stringResource(R.string.panchang_karana), "#${result.karana.index}")
+            PanchangRow(stringResource(R.string.panchang_vara), astroTerm(result.vara.name))
+            PanchangRow(stringResource(R.string.panchang_moon_sign), astroTerm(result.moonSign))
+            PanchangRow(stringResource(R.string.panchang_sun_sign), astroTerm(result.sunSign))
         }
     }
 }

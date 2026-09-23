@@ -9,7 +9,9 @@ data class NumerologyRequest(
     @Json(name = "full_name") val fullName: String,
     @Json(name = "date_of_birth") val dateOfBirth: String, // YYYY-MM-DD
     val gender: String = "male",
-    @Json(name = "current_name") val currentName: String? = null
+    @Json(name = "current_name") val currentName: String? = null,
+    /** en | hi — only affects the optional LLM summary (app/numerology/models.py). */
+    @Json(name = "preferred_language") val preferredLanguage: String = "en"
 )
 
 @JsonClass(generateAdapter = true)

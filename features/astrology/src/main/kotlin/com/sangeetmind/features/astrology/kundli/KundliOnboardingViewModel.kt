@@ -1,12 +1,15 @@
 package com.sangeetmind.features.astrology.kundli
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.network.NominatimApi
 import com.sangeetmind.core.network.NominatimPlace
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.toTitleCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,6 +45,7 @@ data class KundliOnboardingUiState(
  */
 @HiltViewModel
 class KundliOnboardingViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val kundliRepository: KundliRepository,
     private val nominatimApi: NominatimApi
 ) : ViewModel() {
@@ -98,20 +102,20 @@ class KundliOnboardingViewModel @Inject constructor(
         val place = state.selectedPlace
 
         if (state.birthDate.isBlank()) {
-            _uiState.update { it.copy(error = "Please enter your date of birth") }
+            _uiState.update { it.copy(error = context.getString(R.string.kundli_error_dob_required)) }
             return
         }
         if (state.birthTime.isBlank()) {
-            _uiState.update { it.copy(error = "Please enter your time of birth") }
+            _uiState.update { it.copy(error = context.getString(R.string.kundli_error_tob_required)) }
             return
         }
         val normalizedTime = normalizeBirthTime(state.birthTime)
         if (normalizedTime == null) {
-            _uiState.update { it.copy(error = "Enter time of birth as HH:MM in 24h format, e.g. 06:35") }
+            _uiState.update { it.copy(error = context.getString(R.string.kundli_error_tob_format)) }
             return
         }
         if (place == null) {
-            _uiState.update { it.copy(error = "Please pick your birth place from the suggestions") }
+            _uiState.update { it.copy(error = context.getString(R.string.kundli_error_place_required)) }
             return
         }
 
@@ -129,7 +133,7 @@ class KundliOnboardingViewModel @Inject constructor(
             when (result) {
                 is Result.Success -> _uiState.update { it.copy(isSaving = false, saved = true) }
                 is Result.Error -> _uiState.update {
-                    it.copy(isSaving = false, error = result.message ?: "Failed to save")
+                    it.copy(isSaving = false, error = result.message ?: context.getString(R.string.kundli_error_save_failed))
                 }
                 is Result.Loading -> Unit
             }

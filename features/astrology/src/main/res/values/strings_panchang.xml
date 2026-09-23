@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="panchang_title">Panchang</string>
+    <string name="panchang_date_label">Date (YYYY-MM-DD)</string>
+    <string name="panchang_place_label">Place</string>
+    <string name="panchang_get">Get Panchang</string>
+    <string name="panchang_tithi">Tithi</string>
+    <string name="panchang_nakshatra">Nakshatra</string>
+    <string name="panchang_yoga">Yoga</string>
+    <string name="panchang_karana">Karana</string>
+    <string name="panchang_vara">Vara</string>
+    <string name="panchang_moon_sign">Moon sign</string>
+    <string name="panchang_sun_sign">Sun sign</string>
+    <string name="panchang_error_enter_date">Please enter a date</string>
+    <string name="panchang_error_pick_place">Please pick a place from the suggestions</string>
+    <string name="panchang_error_load_failed">Failed to load panchang</string>
+</resources>

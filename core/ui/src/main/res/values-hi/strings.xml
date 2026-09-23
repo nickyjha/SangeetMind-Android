@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SangeetMind</string>
+    <string name="loading">लोड हो रहा है…</string>
+    <string name="error_generic">कुछ गलत हो गया। कृपया पुनः प्रयास करें।</string>
+    <string name="retry">पुनः प्रयास करें</string>
+    <string name="cancel">रद्द करें</string>
+    <string name="ok">ठीक है</string>
+    <string name="save">सहेजें</string>
+    <string name="search">खोजें</string>
+    <string name="filter">फ़िल्टर</string>
+    <string name="play">चलाएं</string>
+    <string name="pause">रोकें</string>
+    <string name="next">अगला</string>
+    <string name="previous">पिछला</string>
+</resources>

@@ -33,11 +33,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.core.ui.language.astroTerm
 import com.sangeetmind.core.ui.theme.GrahaColors
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.chart.ui.NorthIndianHouseChart
 import com.sangeetmind.features.astrology.chart.ui.PlanetListCard
 import com.sangeetmind.features.astrology.varshaphal.VarshaphalViewModel
@@ -63,15 +67,15 @@ fun VarshaphalScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Varshaphal") },
+                title = { Text(stringResource(R.string.varshaphal_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
                     }
                 },
                 actions = {
                     IconButton(onClick = viewModel::refresh) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                        Icon(Icons.Default.Refresh, contentDescription = stringResource(CoreR.string.common_refresh))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -90,7 +94,7 @@ fun VarshaphalScreen(
                 }
                 uiState.hasNoKundli -> {
                     Text(
-                        text = "Add a kundli first to calculate your Varshaphal.",
+                        text = stringResource(R.string.varshaphal_no_kundli),
                         modifier = Modifier.align(Alignment.Center).padding(24.dp),
                         style = MaterialTheme.typography.bodyLarge
                     )
@@ -106,7 +110,7 @@ fun VarshaphalScreen(
                             style = MaterialTheme.typography.bodyLarge
                         )
                         Spacer(modifier = Modifier.height(12.dp))
-                        TextButton(onClick = viewModel::refresh) { Text("Retry") }
+                        TextButton(onClick = viewModel::refresh) { Text(stringResource(CoreR.string.common_retry)) }
                     }
                 }
                 else -> {
@@ -138,7 +142,7 @@ private fun VarshaphalContent(
     ) {
         item {
             Text(
-                text = personName?.takeIf { it.isNotBlank() } ?: "Your Varshaphal",
+                text = personName?.takeIf { it.isNotBlank() } ?: stringResource(R.string.varshaphal_your_default),
                 style = MaterialTheme.typography.headlineSmall
             )
         }
@@ -149,7 +153,7 @@ private fun VarshaphalContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = { onYearChange(year - 1) }) {
-                    Icon(Icons.Default.ChevronLeft, contentDescription = "Previous year")
+                    Icon(Icons.Default.ChevronLeft, contentDescription = stringResource(R.string.varshaphal_cd_previous_year))
                 }
                 Text(
                     "$year",
@@ -157,7 +161,7 @@ private fun VarshaphalContent(
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
                 IconButton(onClick = { onYearChange(year + 1) }) {
-                    Icon(Icons.Default.ChevronRight, contentDescription = "Next year")
+                    Icon(Icons.Default.ChevronRight, contentDescription = stringResource(R.string.varshaphal_cd_next_year))
                 }
             }
         }
@@ -174,8 +178,8 @@ private fun VarshaphalContent(
                     NorthIndianHouseChart(
                         lagna = varshaphal.chart.lagna,
                         planets = varshaphal.chart.planets,
-                        title = "Varshaphal Chart $year",
-                        subtitle = "Annual solar-return chart",
+                        title = stringResource(R.string.varshaphal_chart_title, year),
+                        subtitle = stringResource(R.string.varshaphal_chart_subtitle),
                         modifier = Modifier.padding(16.dp)
                     )
                 }
@@ -198,26 +202,32 @@ private fun TajikaCard(varshaphal: VarshaphalResponse, graha: GrahaColors) {
     val tajika = varshaphal.tajika
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Tajika Summary", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.varshaphal_tajika_summary), style = MaterialTheme.typography.titleMedium)
             Text(
-                "Solar return: ${fmtSolarReturn(varshaphal.solarReturnLocal)} · Age ${tajika.ageCompleted}",
+                stringResource(
+                    R.string.varshaphal_solar_return_fmt,
+                    fmtSolarReturn(varshaphal.solarReturnLocal),
+                    tajika.ageCompleted
+                ),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(12.dp))
-            TajikaRow("Muntha", "${tajika.muntha.sign} · H${tajika.muntha.houseFromVarshaphalLagna ?: "-"}")
+            val munthaHouse = tajika.muntha.houseFromVarshaphalLagna
+                ?.let { stringResource(CoreR.string.common_house_short, it) } ?: "-"
+            TajikaRow(stringResource(R.string.varshaphal_muntha), "${astroTerm(tajika.muntha.sign)} · $munthaHouse")
             TajikaRow(
-                "Varshaphal Lagna",
-                "${tajika.varshaphalLagna.sign}" +
-                    (tajika.varshaphalLagna.lord?.let { " · lord $it" } ?: "")
+                stringResource(R.string.varshaphal_lagna),
+                astroTerm(tajika.varshaphalLagna.sign) +
+                    (tajika.varshaphalLagna.lord?.let { stringResource(R.string.varshaphal_lord_suffix_fmt, astroTerm(it)) } ?: "")
             )
             TajikaRow(
-                "Varshaphal Moon",
-                "${tajika.varshaphalMoon.sign}" +
-                    (tajika.varshaphalMoon.lord?.let { " · lord $it" } ?: "")
+                stringResource(R.string.varshaphal_moon),
+                astroTerm(tajika.varshaphalMoon.sign) +
+                    (tajika.varshaphalMoon.lord?.let { stringResource(R.string.varshaphal_lord_suffix_fmt, astroTerm(it)) } ?: "")
             )
             tajika.yearLord?.let { lord ->
-                TajikaRow("Year Lord", lord, color = grahaColorFor(lord, graha))
+                TajikaRow(stringResource(R.string.varshaphal_year_lord), astroTerm(lord), color = grahaColorFor(lord, graha))
             }
         }
     }

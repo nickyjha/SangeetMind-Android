@@ -31,10 +31,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.core.ui.language.astroTerm
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.numerology.NumerologyGlossaryViewModel
 import com.sangeetmind.libs.models.NumerologyNumberInterpretation
 import com.sangeetmind.libs.models.NumerologyNumberSummary
@@ -57,10 +61,10 @@ fun NumerologyGlossaryScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Number Meanings") },
+                title = { Text(stringResource(R.string.numerology_number_meanings)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -87,7 +91,7 @@ fun NumerologyGlossaryScreen(
                             style = MaterialTheme.typography.bodyLarge
                         )
                         Spacer(modifier = Modifier.height(12.dp))
-                        TextButton(onClick = viewModel::refresh) { Text("Retry") }
+                        TextButton(onClick = viewModel::refresh) { Text(stringResource(CoreR.string.common_retry)) }
                     }
                 }
                 else -> {
@@ -121,16 +125,16 @@ private fun GlossaryContent(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         item {
-            Text("Systems", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.numerology_glossary_systems), style = MaterialTheme.typography.titleMedium)
         }
         items(systems, key = { it.id }) { system ->
             SystemCard(system)
         }
         item {
             Spacer(modifier = Modifier.height(4.dp))
-            Text("Numbers", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.numerology_glossary_numbers), style = MaterialTheme.typography.titleMedium)
             Text(
-                "Tap a number for its full meaning",
+                stringResource(R.string.numerology_glossary_tap_hint),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -175,7 +179,7 @@ private fun SystemCard(system: NumerologySystemInfo) {
             if (system.bestFor.isNotBlank()) {
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    "Best for: ${system.bestFor}",
+                    stringResource(R.string.numerology_glossary_best_for_fmt, system.bestFor),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -190,16 +194,16 @@ private fun NumberDetailCard(detail: NumerologyNumberInterpretation) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text("${detail.number} · ${detail.name}", style = MaterialTheme.typography.titleMedium)
             Text(
-                "${detail.archetype} · ${detail.element}",
+                "${detail.archetype} · ${astroTerm(detail.element)}",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(detail.spiritualTheme, style = MaterialTheme.typography.bodyMedium)
-            DetailSection("Core traits", detail.coreTraits)
-            DetailSection("Strengths", detail.strengths)
-            DetailSection("Challenges", detail.challenges)
-            DetailSection("Growth advice", detail.growthAdvice)
+            DetailSection(stringResource(R.string.numerology_glossary_core_traits), detail.coreTraits)
+            DetailSection(stringResource(R.string.numerology_glossary_strengths), detail.strengths)
+            DetailSection(stringResource(R.string.numerology_glossary_challenges), detail.challenges)
+            DetailSection(stringResource(R.string.numerology_glossary_growth_advice), detail.growthAdvice)
             detail.contextNotes?.takeIf { it.isNotBlank() }?.let { notes ->
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(

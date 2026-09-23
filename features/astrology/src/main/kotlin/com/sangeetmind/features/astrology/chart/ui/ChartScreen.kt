@@ -44,11 +44,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.annotation.StringRes
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.core.ui.language.astroTerm
 import com.sangeetmind.core.ui.theme.GrahaColors
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.chart.ChartViewModel
 import com.sangeetmind.libs.models.BhavabalaHouse
 import com.sangeetmind.libs.models.BhuktiPeriod
@@ -69,7 +74,6 @@ import com.sangeetmind.libs.models.ChartNarratives
 import com.sangeetmind.libs.models.ChartShadbala
 import com.sangeetmind.libs.models.ChartSummaryResponse
 import com.sangeetmind.libs.models.ShadbalaRanking
-import com.sangeetmind.libs.models.DIVISIONAL_CHART_META
 import com.sangeetmind.libs.models.DashaPeriod
 import com.sangeetmind.libs.models.DivisionalChart
 import com.sangeetmind.libs.models.LagnaInfo
@@ -98,15 +102,15 @@ fun ChartScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Birth Chart") },
+                title = { Text(stringResource(R.string.chart_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
                     }
                 },
                 actions = {
                     IconButton(onClick = viewModel::refresh) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                        Icon(Icons.Default.Refresh, contentDescription = stringResource(CoreR.string.common_refresh))
                     }
                 },
                 colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
@@ -125,7 +129,7 @@ fun ChartScreen(
                 }
                 uiState.hasNoKundli -> {
                     Text(
-                        text = "Add a kundli first to calculate your Vedic birth chart.",
+                        text = stringResource(R.string.chart_add_kundli_first),
                         modifier = Modifier.align(Alignment.Center).padding(24.dp),
                         style = MaterialTheme.typography.bodyLarge
                     )
@@ -141,7 +145,7 @@ fun ChartScreen(
                             style = MaterialTheme.typography.bodyLarge
                         )
                         Spacer(modifier = Modifier.height(12.dp))
-                        TextButton(onClick = viewModel::refresh) { Text("Retry") }
+                        TextButton(onClick = viewModel::refresh) { Text(stringResource(CoreR.string.common_retry)) }
                     }
                 }
                 uiState.chart != null -> {
@@ -171,7 +175,7 @@ private fun ChartContent(
     var chartSection by remember(chart) { mutableStateOf(ChartSection.OVERVIEW) }
     val selected = availableCharts.firstOrNull { it.first == selectedKey }
         ?: availableCharts.first()
-    val meta = DIVISIONAL_CHART_META[selected.first]
+    val meta = divisionalChartMeta(selected.first)
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -180,18 +184,22 @@ private fun ChartContent(
     ) {
         item {
             Text(
-                text = personName?.takeIf { it.isNotBlank() } ?: "Your Vedic Birth Chart",
+                text = personName?.takeIf { it.isNotBlank() } ?: stringResource(R.string.chart_default_heading),
                 style = MaterialTheme.typography.headlineSmall
             )
         }
         item {
             SummaryStrip(
-                lagna = chart.lagna.sign,
+                lagna = astroTerm(chart.lagna.sign),
                 lagnaDegree = chart.lagna.absoluteDms ?: "${chart.lagna.degree.toInt()}°",
-                moonSign = moon?.sign.orEmpty(),
+                moonSign = astroTerm(moon?.sign.orEmpty()),
                 moonDegree = moon?.let { degreeDisplay(it) }.orEmpty(),
-                nakshatra = chart.moonNakshatra.displayName(),
-                nakshatraDetail = "Pada ${chart.moonNakshatra.pada} · ${chart.moonNakshatra.lord}",
+                nakshatra = astroTerm(chart.moonNakshatra.displayName()),
+                nakshatraDetail = stringResource(
+                    R.string.chart_nakshatra_detail,
+                    chart.moonNakshatra.pada,
+                    astroTerm(chart.moonNakshatra.lord)
+                ),
                 currentDasha = formatCurrentDasha(chart)
             )
         }
@@ -221,7 +229,7 @@ private fun ChartContent(
                     lagna = selected.second.lagna,
                     planets = selected.second.planets,
                     title = meta?.first ?: selected.first,
-                    subtitle = meta?.second ?: "North Indian · whole-sign houses",
+                    subtitle = meta?.second ?: stringResource(R.string.chart_subtitle_north_indian),
                     modifier = Modifier.padding(16.dp)
                 )
             }
@@ -265,7 +273,11 @@ private fun ChartContent(
                     }
                     item {
                         TextButton(onClick = onToggleTimeline) {
-                            Text(if (showFullTimeline) "Hide full ${dashaSystem.label} timeline" else "View full ${dashaSystem.label} timeline")
+                            val systemLabel = stringResource(dashaSystem.labelRes)
+                            Text(
+                                if (showFullTimeline) stringResource(R.string.chart_hide_timeline, systemLabel)
+                                else stringResource(R.string.chart_view_timeline, systemLabel)
+                            )
                         }
                     }
                 }
@@ -294,8 +306,8 @@ private fun ChartContent(
                                 NorthIndianHouseChart(
                                     lagna = chart.chalit.lagna,
                                     planets = chalitPlanets,
-                                    title = "Chalit Chart",
-                                    subtitle = "Bhava chart · Placidus house cusps",
+                                    title = stringResource(R.string.chart_chalit_title),
+                                    subtitle = stringResource(R.string.chart_chalit_subtitle),
                                     modifier = Modifier.padding(16.dp)
                                 )
                             }
@@ -315,8 +327,8 @@ private fun ChartContent(
                                 NorthIndianHouseChart(
                                     lagna = chart.moonChart.lagna,
                                     planets = moonChartPlanets,
-                                    title = "Chandra Kundli",
-                                    subtitle = "Moon chart · whole-sign houses from Moon lagna",
+                                    title = stringResource(R.string.chart_moon_chart_title),
+                                    subtitle = stringResource(R.string.chart_moon_chart_subtitle),
                                     modifier = Modifier.padding(16.dp)
                                 )
                             }
@@ -340,7 +352,7 @@ private fun ChartContent(
             if (isEmpty) {
                 item {
                     Text(
-                        text = "Timeline details are not available for this chart response.",
+                        text = stringResource(R.string.chart_timeline_unavailable),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -363,16 +375,48 @@ private fun ChartContent(
 /** "D2" -> "Wealth" — most people don't know varga numbers by heart, so the tab itself
  * shows what the chart is actually for (the D-number + full name still shows once you're
  * on the tab, as the card title/subtitle below). */
+@Composable
 private fun chartTabLabel(key: String): String =
-    DIVISIONAL_CHART_META[key]?.second?.substringBefore(',')?.trim() ?: key
+    divisionalChartMeta(key)?.second?.substringBefore(',')?.trim() ?: key
+
+/** Localized twin of [com.sangeetmind.libs.models.DIVISIONAL_CHART_META]: (name, purpose)
+ * per varga key, resolved through resources so the tab/card labels follow the app language. */
+private val DIVISIONAL_CHART_RES: Map<String, Pair<Int, Int>> = mapOf(
+    "D1" to (R.string.chart_div_name_d1 to R.string.chart_div_purpose_d1),
+    "D2" to (R.string.chart_div_name_d2 to R.string.chart_div_purpose_d2),
+    "D3" to (R.string.chart_div_name_d3 to R.string.chart_div_purpose_d3),
+    "D4" to (R.string.chart_div_name_d4 to R.string.chart_div_purpose_d4),
+    "D7" to (R.string.chart_div_name_d7 to R.string.chart_div_purpose_d7),
+    "D9" to (R.string.chart_div_name_d9 to R.string.chart_div_purpose_d9),
+    "D10" to (R.string.chart_div_name_d10 to R.string.chart_div_purpose_d10),
+    "D12" to (R.string.chart_div_name_d12 to R.string.chart_div_purpose_d12),
+    "D16" to (R.string.chart_div_name_d16 to R.string.chart_div_purpose_d16),
+    "D20" to (R.string.chart_div_name_d20 to R.string.chart_div_purpose_d20),
+    "D24" to (R.string.chart_div_name_d24 to R.string.chart_div_purpose_d24),
+    "D27" to (R.string.chart_div_name_d27 to R.string.chart_div_purpose_d27),
+    "D30" to (R.string.chart_div_name_d30 to R.string.chart_div_purpose_d30),
+    "D40" to (R.string.chart_div_name_d40 to R.string.chart_div_purpose_d40),
+    "D45" to (R.string.chart_div_name_d45 to R.string.chart_div_purpose_d45),
+    "D60" to (R.string.chart_div_name_d60 to R.string.chart_div_purpose_d60)
+)
+
+@Composable
+private fun divisionalChartMeta(key: String): Pair<String, String>? {
+    val (nameRes, purposeRes) = DIVISIONAL_CHART_RES[key] ?: return null
+    return stringResource(nameRes) to stringResource(purposeRes)
+}
 
 /** D1-only content used to stack as one long scroll — Doshas, Ashtakvarga, Friendship,
  * Shadbala, Bhavabala, KP, Jaimini, Lal Kitab, and Dasha all in a row. AstroSage (the
  * deepest competitor per the roadmap research) organizes this same feature set as
  * tabs/icons the user taps into rather than an infinite scroll — this mirrors that. */
-private enum class ChartSection(val label: String) {
-    OVERVIEW("Overview"), STRENGTH("Strength"), DASHA("Dasha"), KP_JAIMINI("KP · Jaimini"),
-    LAL_KITAB("Lal Kitab"), HOUSES("Houses")
+private enum class ChartSection(@StringRes val labelRes: Int) {
+    OVERVIEW(R.string.chart_section_overview),
+    STRENGTH(R.string.chart_section_strength),
+    DASHA(R.string.chart_section_dasha),
+    KP_JAIMINI(R.string.chart_section_kp_jaimini),
+    LAL_KITAB(R.string.chart_section_lal_kitab),
+    HOUSES(R.string.chart_section_houses)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -386,7 +430,7 @@ private fun ChartSectionSelector(selected: ChartSection, onSelect: (ChartSection
             Tab(
                 selected = section == selected,
                 onClick = { onSelect(section) },
-                text = { Text(section.label) }
+                text = { Text(stringResource(section.labelRes)) }
             )
         }
     }
@@ -409,13 +453,13 @@ private fun SummaryStrip(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            SummaryChip("Lagna", "$lagna $lagnaDegree")
+            SummaryChip(stringResource(R.string.chart_lagna_label), "$lagna $lagnaDegree")
             if (moonSign.isNotBlank()) {
-                SummaryChip("Moon", "$moonSign $moonDegree".trim())
+                SummaryChip(stringResource(R.string.chart_moon_label), "$moonSign $moonDegree".trim())
             }
-            SummaryChip("Nakshatra", "$nakshatra · $nakshatraDetail", highlight = true)
+            SummaryChip(stringResource(R.string.chart_nakshatra_label), "$nakshatra · $nakshatraDetail", highlight = true)
             if (currentDasha.isNotBlank()) {
-                SummaryChip("Current dasha", currentDasha)
+                SummaryChip(stringResource(R.string.chart_current_dasha_label), currentDasha)
             }
         }
     }
@@ -457,11 +501,11 @@ private fun dignityChips(planet: PlanetInfo): List<Pair<String, Color>> {
     val graha = LocalGrahaColors.current
     val neutral = MaterialTheme.colorScheme.onSurfaceVariant
     return buildList {
-        if (planet.retrograde) add("Retrograde" to neutral)
-        if (planet.combust) add("Combust" to graha.mangala)
-        if (planet.exalted) add("Exalted" to graha.budha)
-        if (planet.debilitated) add("Debilitated" to graha.guru)
-        if (planet.vargottama) add("Vargottama" to graha.shani)
+        if (planet.retrograde) add(astroTerm("Retrograde") to neutral)
+        if (planet.combust) add(astroTerm("Combust") to graha.mangala)
+        if (planet.exalted) add(astroTerm("Exalted") to graha.budha)
+        if (planet.debilitated) add(astroTerm("Debilitated") to graha.guru)
+        if (planet.vargottama) add(stringResource(R.string.chart_dig_vargottama) to graha.shani)
     }
 }
 
@@ -479,10 +523,11 @@ internal fun PlanetListCard(lagna: LagnaInfo, planets: Map<String, PlanetInfo>) 
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Planetary positions", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.chart_planet_positions), style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(8.dp))
             sorted.forEach { (name, planet) ->
                 val house = planet.house ?: signToHouseNumber(lagna.sign, planet.sign)
+                val signLabel = astroTerm(planet.sign)
                 Column(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -491,15 +536,15 @@ internal fun PlanetListCard(lagna: LagnaInfo, planets: Map<String, PlanetInfo>) 
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             Text(
-                                "H$house",
+                                stringResource(CoreR.string.common_house_short, house),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
-                            Text(name, style = MaterialTheme.typography.bodyMedium)
+                            Text(astroTerm(name), style = MaterialTheme.typography.bodyMedium)
                         }
                         Text(
                             text = buildString {
-                                append(planet.sign)
+                                append(signLabel)
                                 degreeDisplay(planet)?.let { append(" $it") }
                             },
                             style = MaterialTheme.typography.bodyMedium,
@@ -530,16 +575,16 @@ private fun DoshaCard(doshas: ChartDoshas) {
     val graha = LocalGrahaColors.current
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Doshas", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.chart_doshas), style = MaterialTheme.typography.titleMedium)
 
             val manglik = doshas.manglik
             DoshaRow(
-                label = "Manglik",
+                label = astroTerm("Manglik"),
                 isFlagged = manglik.effectivePresent,
                 statusText = when {
-                    manglik.effectivePresent -> "Present"
-                    manglik.cancelled -> "Cancelled"
-                    else -> "Not present"
+                    manglik.effectivePresent -> stringResource(R.string.chart_status_present)
+                    manglik.cancelled -> stringResource(R.string.chart_status_cancelled)
+                    else -> stringResource(R.string.chart_status_not_present)
                 },
                 detail = manglik.summary.ifBlank { null },
                 flaggedColor = graha.mangala,
@@ -548,13 +593,13 @@ private fun DoshaCard(doshas: ChartDoshas) {
 
             val kalsarpa = doshas.kalsarpa
             DoshaRow(
-                label = "Kalsarpa",
+                label = astroTerm("Kalsarpa"),
                 isFlagged = kalsarpa.present,
-                statusText = if (kalsarpa.present) "Present" else "Not present",
+                statusText = if (kalsarpa.present) stringResource(R.string.chart_status_present) else stringResource(R.string.chart_status_not_present),
                 detail = if (kalsarpa.present) {
                     kalsarpa.yogaFullName
                 } else {
-                    "No Kalsarpa Yoga in this chart."
+                    stringResource(R.string.chart_no_kalsarpa)
                 },
                 flaggedColor = graha.mangala,
                 clearColor = graha.budha
@@ -566,13 +611,21 @@ private fun DoshaCard(doshas: ChartDoshas) {
                 sadesati.periods.firstOrNull { it.startDate > todayIsoDate() }
             } else null
             DoshaRow(
-                label = "Sade Sati",
+                label = astroTerm("Sade Sati"),
                 isFlagged = active != null,
-                statusText = if (active != null) "Active" else "Not active",
+                statusText = if (active != null) stringResource(R.string.chart_status_active) else stringResource(R.string.chart_status_not_active),
                 detail = when {
-                    active != null -> "${active.phase ?: active.kind} · until ${fmtLocalDate(active.endDate)}"
-                    next != null -> "Next: ${next.kind} starts ${fmtLocalDate(next.startDate)}"
-                    else -> "No upcoming Sade Sati or Small Panoti period found."
+                    active != null -> stringResource(
+                        R.string.chart_sadesati_until,
+                        astroTerm(active.phase ?: active.kind),
+                        fmtLocalDate(active.endDate)
+                    )
+                    next != null -> stringResource(
+                        R.string.chart_sadesati_next,
+                        astroTerm(next.kind),
+                        fmtLocalDate(next.startDate)
+                    )
+                    else -> stringResource(R.string.chart_sadesati_none)
                 },
                 flaggedColor = graha.mangala,
                 clearColor = graha.budha
@@ -633,9 +686,9 @@ private fun AshtakvargaCard(ashtakvarga: ChartAshtakvarga) {
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Ashtakvarga", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.chart_ashtakvarga), style = MaterialTheme.typography.titleMedium)
             Text(
-                "Sarva bindu strength by sign · total ${sav.totalBindus}",
+                stringResource(R.string.chart_ashtakvarga_subtitle, sav.totalBindus),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -652,7 +705,7 @@ private fun AshtakvargaCard(ashtakvarga: ChartAshtakvarga) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        sign,
+                        astroTerm(sign),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.width(88.dp)
                     )
@@ -696,9 +749,9 @@ private fun FriendshipCard(friendship: ChartFriendship) {
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Planetary Friendship", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.chart_friendship), style = MaterialTheme.typography.titleMedium)
             Text(
-                "How the other grahas treat $selected",
+                stringResource(R.string.chart_friendship_subtitle, astroTerm(selected)),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -708,7 +761,7 @@ private fun FriendshipCard(friendship: ChartFriendship) {
                     FilterChip(
                         selected = planet == selected,
                         onClick = { selected = planet },
-                        label = { Text(planet) }
+                        label = { Text(astroTerm(planet)) }
                     )
                 }
             }
@@ -725,12 +778,21 @@ private fun FriendshipCard(friendship: ChartFriendship) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(other, style = MaterialTheme.typography.bodyMedium)
-                    Chip(relation, color)
+                    Text(astroTerm(other), style = MaterialTheme.typography.bodyMedium)
+                    Chip(friendshipRelationLabel(relation), color)
                 }
             }
         }
     }
+}
+
+/** Backend friendship relation label -> display language. Friend/Neutral/Enemy are shared
+ * astro vocabulary; the two panchadha-only extremes live in this module's strings. */
+@Composable
+private fun friendshipRelationLabel(relation: String): String = when (relation.trim().lowercase()) {
+    "intimate" -> stringResource(R.string.chart_rel_intimate)
+    "bitter enemy" -> stringResource(R.string.chart_rel_bitter_enemy)
+    else -> astroTerm(relation)
 }
 
 /** Six-fold planetary strength, strongest graha first. Rupas (virupas/60) is the human
@@ -750,9 +812,9 @@ private fun ShadbalaCard(shadbala: ChartShadbala) {
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Shadbala", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.chart_shadbala), style = MaterialTheme.typography.titleMedium)
             Text(
-                "Six-fold planetary strength, strongest first",
+                stringResource(R.string.chart_shadbala_subtitle),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -764,7 +826,7 @@ private fun ShadbalaCard(shadbala: ChartShadbala) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        entry.planet,
+                        astroTerm(entry.planet),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.width(72.dp)
                     )
@@ -786,7 +848,7 @@ private fun ShadbalaCard(shadbala: ChartShadbala) {
                         )
                     }
                     Text(
-                        "${planet.totalRupas} rupas",
+                        stringResource(R.string.chart_rupas_fmt, planet.totalRupas.toString()),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.width(72.dp).padding(start = 8.dp)
@@ -809,9 +871,9 @@ private fun BhavabalaCard(bhavabala: ChartBhavabala) {
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Bhavabala", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.chart_bhavabala), style = MaterialTheme.typography.titleMedium)
             Text(
-                "House strength · strongest is House ${bhavabala.strongestHouse ?: "-"}",
+                stringResource(R.string.chart_bhavabala_subtitle, bhavabala.strongestHouse?.toString() ?: "-"),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -827,7 +889,7 @@ private fun BhavabalaCard(bhavabala: ChartBhavabala) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        "H${house.house} ${house.lord}",
+                        "${stringResource(CoreR.string.common_house_short, house.house)} ${astroTerm(house.lord)}",
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.width(88.dp)
                     )
@@ -874,7 +936,9 @@ private fun grahaColorFor(planet: String, graha: GrahaColors): Color = when (pla
 /** KP (Krishnamurti Paddhati) — a toggle between cusp sub-lords and per-planet
  * significator houses, matching AstroSage AI's dedicated KP System tab
  * (app/services/kp_system.py). */
-private enum class KpView(val label: String) { CUSPS("Cusps"), SIGNIFICATORS("Significators") }
+private enum class KpView(@StringRes val labelRes: Int) {
+    CUSPS(R.string.chart_kp_cusps), SIGNIFICATORS(R.string.chart_kp_significators)
+}
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -888,16 +952,16 @@ private fun KpCard(kp: ChartKp) {
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("KP System", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.chart_kp_title), style = MaterialTheme.typography.titleMedium)
             Text(
-                "${kp.ayanamsaName} ayanamsa · ${"%.2f".format(kp.ayanamsaDeg)}°",
+                stringResource(R.string.chart_kp_ayanamsa_fmt, kp.ayanamsaName, "%.2f".format(kp.ayanamsaDeg)),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(10.dp))
             FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 KpView.entries.forEach { v ->
-                    FilterChip(selected = v == view, onClick = { view = v }, label = { Text(v.label) })
+                    FilterChip(selected = v == view, onClick = { view = v }, label = { Text(stringResource(v.labelRes)) })
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -908,9 +972,12 @@ private fun KpCard(kp: ChartKp) {
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("H${cusp.house} ${cusp.sign}", style = MaterialTheme.typography.bodyMedium)
                         Text(
-                            "${cusp.subLord} / ${cusp.subSubLord}",
+                            "${stringResource(CoreR.string.common_house_short, cusp.house)} ${astroTerm(cusp.sign)}",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Text(
+                            "${astroTerm(cusp.subLord)} / ${astroTerm(cusp.subSubLord)}",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -922,7 +989,7 @@ private fun KpCard(kp: ChartKp) {
                             FilterChip(
                                 selected = planet == selectedPlanet,
                                 onClick = { selectedPlanet = planet },
-                                label = { Text(planet) }
+                                label = { Text(astroTerm(planet)) }
                             )
                         }
                     }
@@ -930,13 +997,15 @@ private fun KpCard(kp: ChartKp) {
                     val houses = kp.significators[selectedPlanet].orEmpty()
                     if (houses.isEmpty()) {
                         Text(
-                            "No significator houses for $selectedPlanet.",
+                            stringResource(R.string.chart_kp_no_significators, astroTerm(selectedPlanet)),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     } else {
                         FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                            houses.forEach { house -> Chip("H$house", grahaColorFor(selectedPlanet, graha)) }
+                            houses.forEach { house ->
+                                Chip(stringResource(CoreR.string.common_house_short, house), grahaColorFor(selectedPlanet, graha))
+                            }
                         }
                     }
                 }
@@ -955,9 +1024,13 @@ private fun JaiminiCard(jaimini: ChartJaimini) {
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Jaimini", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.chart_jaimini), style = MaterialTheme.typography.titleMedium)
             Text(
-                "Karakamsa ${jaimini.karakamsa.lagnaSign} · Swamsa ${jaimini.swamsa.lagnaSign}",
+                stringResource(
+                    R.string.chart_jaimini_subtitle,
+                    astroTerm(jaimini.karakamsa.lagnaSign),
+                    astroTerm(jaimini.swamsa.lagnaSign)
+                ),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -981,7 +1054,7 @@ private fun JaiminiCard(jaimini: ChartJaimini) {
                         Text(karaka.karaka, style = MaterialTheme.typography.bodyMedium)
                     }
                     Chip(
-                        "${karaka.planet} ${"%.1f".format(karaka.degreeInSign)}°",
+                        "${astroTerm(karaka.planet)} ${"%.1f".format(karaka.degreeInSign)}°",
                         grahaColorFor(karaka.planet, graha)
                     )
                 }
@@ -1001,7 +1074,7 @@ private fun LalKitabCard(lalKitab: ChartLalKitab) {
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Lal Kitab", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.chart_lal_kitab), style = MaterialTheme.typography.titleMedium)
             if (lalKitab.systemNote.isNotBlank()) {
                 Text(
                     lalKitab.systemNote,
@@ -1011,16 +1084,16 @@ private fun LalKitabCard(lalKitab: ChartLalKitab) {
             }
             if (lalKitab.rinYogas.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(12.dp))
-                Text("Karmic debts (Rin)", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.chart_lk_rin), style = MaterialTheme.typography.titleSmall)
                 lalKitab.rinYogas.forEach { yoga ->
                     Row(
                         modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Chip(yoga.planet, grahaColorFor(yoga.planet, graha))
+                        Chip(astroTerm(yoga.planet), grahaColorFor(yoga.planet, graha))
                         Text(
-                            "${yoga.rinType} · H${yoga.house}",
+                            stringResource(R.string.chart_lk_rin_row, yoga.rinType, yoga.house),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -1029,11 +1102,11 @@ private fun LalKitabCard(lalKitab: ChartLalKitab) {
             }
             if (lalKitab.remedies.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(12.dp))
-                Text("Remedies", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.chart_lk_remedies), style = MaterialTheme.typography.titleSmall)
                 lalKitab.remedies.forEach { remedy ->
                     Row(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
                         Text(
-                            remedy.planet,
+                            astroTerm(remedy.planet),
                             style = MaterialTheme.typography.bodyMedium,
                             color = grahaColorFor(remedy.planet, graha),
                             modifier = Modifier.width(72.dp)
@@ -1044,11 +1117,11 @@ private fun LalKitabCard(lalKitab: ChartLalKitab) {
             }
             if (lalKitab.predictions.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(12.dp))
-                Text("Placement notes", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.chart_lk_placement_notes), style = MaterialTheme.typography.titleSmall)
                 lalKitab.predictions.forEach { prediction ->
                     Row(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
                         Text(
-                            "${prediction.planet} H${prediction.house}",
+                            stringResource(R.string.chart_lk_prediction_row, astroTerm(prediction.planet), prediction.house),
                             style = MaterialTheme.typography.bodyMedium,
                             color = grahaColorFor(prediction.planet, graha),
                             modifier = Modifier.width(96.dp)
@@ -1060,7 +1133,7 @@ private fun LalKitabCard(lalKitab: ChartLalKitab) {
             if (lalKitab.rinYogas.isEmpty() && lalKitab.remedies.isEmpty() && lalKitab.predictions.isEmpty()) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    "No debt yogas or remedies flagged for this chart.",
+                    stringResource(R.string.chart_lk_empty),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -1080,26 +1153,33 @@ private fun NarrativesCard(narratives: ChartNarratives) {
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Reading", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.chart_reading), style = MaterialTheme.typography.titleMedium)
             if (narratives.nakshatraPhal.text.isNotBlank()) {
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    "${narratives.nakshatraPhal.nakshatra} · Pada ${narratives.nakshatraPhal.pada ?: "-"} · " +
-                        narratives.nakshatraPhal.lord,
+                    stringResource(
+                        R.string.chart_nakshatra_line,
+                        astroTerm(narratives.nakshatraPhal.nakshatra),
+                        narratives.nakshatraPhal.pada?.toString() ?: "-",
+                        astroTerm(narratives.nakshatraPhal.lord)
+                    ),
                     style = MaterialTheme.typography.titleSmall
                 )
                 Text(narratives.nakshatraPhal.text, style = MaterialTheme.typography.bodyMedium)
             }
             if (narratives.ascendantSummary.text.isNotBlank()) {
                 Spacer(modifier = Modifier.height(12.dp))
-                Text("${narratives.ascendantSummary.sign} Ascendant", style = MaterialTheme.typography.titleSmall)
+                Text(
+                    stringResource(R.string.chart_ascendant_fmt, astroTerm(narratives.ascendantSummary.sign)),
+                    style = MaterialTheme.typography.titleSmall
+                )
                 Text(narratives.ascendantSummary.text, style = MaterialTheme.typography.bodyMedium)
             }
             val mahadashaText = dashaPhal.mahadashaText
             if (!mahadashaText.isNullOrBlank()) {
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    "${dashaPhal.currentMahadasha} Mahadasha",
+                    stringResource(R.string.chart_mahadasha_fmt, astroTerm(dashaPhal.currentMahadasha)),
                     style = MaterialTheme.typography.titleSmall,
                     color = dashaPhal.currentMahadasha?.let { grahaColorFor(it, graha) }
                         ?: MaterialTheme.colorScheme.onSurface
@@ -1115,7 +1195,7 @@ private fun NarrativesCard(narratives: ChartNarratives) {
             }
             if (narratives.planetConsiderations.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(12.dp))
-                Text("Planet placements", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.chart_planet_placements), style = MaterialTheme.typography.titleSmall)
                 narratives.planetConsiderations.forEach { line ->
                     Text(
                         "· $line",
@@ -1171,9 +1251,9 @@ private fun HouseCuspsCard(houses: ChartHouses) {
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("House Cusps", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.chart_house_cusps), style = MaterialTheme.typography.titleMedium)
             Text(
-                "Placidus cusps · active house system: ${houses.system}",
+                stringResource(R.string.chart_house_cusps_subtitle, houses.system),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -1184,9 +1264,9 @@ private fun HouseCuspsCard(houses: ChartHouses) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("H${cusp.house}", style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(CoreR.string.common_house_short, cusp.house), style = MaterialTheme.typography.bodyMedium)
                     Text(
-                        "${cusp.sign} ${cusp.absoluteDms ?: "${cusp.degree.toInt()}°"}",
+                        "${astroTerm(cusp.sign)} ${cusp.absoluteDms ?: "${cusp.degree.toInt()}°"}",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -1198,8 +1278,10 @@ private fun HouseCuspsCard(houses: ChartHouses) {
 
 /** A second/third dasha system alongside Vimshottari — same underlying birth chart, a
  * different lens on "when." Matches AstroSage AI's dasha-system toggle. */
-private enum class DashaSystem(val label: String) {
-    VIMSHOTTARI("Vimshottari"), YOGINI("Yogini"), CHARA("Chara")
+private enum class DashaSystem(@StringRes val labelRes: Int) {
+    VIMSHOTTARI(R.string.chart_dasha_vimshottari),
+    YOGINI(R.string.chart_dasha_yogini),
+    CHARA(R.string.chart_dasha_chara)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -1210,7 +1292,7 @@ private fun DashaSystemSelector(selected: DashaSystem, onSelect: (DashaSystem) -
             FilterChip(
                 selected = selected == system,
                 onClick = { onSelect(system) },
-                label = { Text(system.label) }
+                label = { Text(stringResource(system.labelRes)) }
             )
         }
     }
@@ -1223,11 +1305,11 @@ private fun CurrentDashaCard(chart: ChartSummaryResponse, system: DashaSystem) {
             val current = chart.vimshottari.current ?: return
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text("Current Vimshottari", style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(R.string.chart_current_vimshottari), style = MaterialTheme.typography.titleMedium)
                     Spacer(modifier = Modifier.height(8.dp))
-                    DashaRow("Mahadasha", current.mahadasha)
-                    DashaRow("Antardasha", current.antardasha)
-                    DashaRow("Pratyantar", current.resolvedPratyantar)
+                    DashaRow(stringResource(R.string.chart_mahadasha), current.mahadasha)
+                    DashaRow(stringResource(R.string.chart_antardasha), current.antardasha)
+                    DashaRow(stringResource(R.string.chart_pratyantar), current.resolvedPratyantar)
                 }
             }
         }
@@ -1236,10 +1318,17 @@ private fun CurrentDashaCard(chart: ChartSummaryResponse, system: DashaSystem) {
             val ad = currentYoginiAntardasha(md)
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text("Current Yogini", style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(R.string.chart_current_yogini), style = MaterialTheme.typography.titleMedium)
                     Spacer(modifier = Modifier.height(8.dp))
                     Column(modifier = Modifier.padding(vertical = 4.dp)) {
-                        Text("Mahadasha · ${md.yogini} (${md.lord})", style = MaterialTheme.typography.bodyLarge)
+                        Text(
+                            stringResource(
+                                R.string.chart_dasha_row_fmt,
+                                stringResource(R.string.chart_mahadasha),
+                                yoginiName(md.yogini, md.lord)
+                            ),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
                         Text(
                             "${fmtIso(md.start)} → ${fmtIso(md.end)}",
                             style = MaterialTheme.typography.bodySmall,
@@ -1248,7 +1337,14 @@ private fun CurrentDashaCard(chart: ChartSummaryResponse, system: DashaSystem) {
                     }
                     if (ad != null) {
                         Column(modifier = Modifier.padding(vertical = 4.dp)) {
-                            Text("Antardasha · ${ad.yogini} (${ad.lord})", style = MaterialTheme.typography.bodyLarge)
+                            Text(
+                                stringResource(
+                                    R.string.chart_dasha_row_fmt,
+                                    stringResource(R.string.chart_antardasha),
+                                    yoginiName(ad.yogini, ad.lord)
+                                ),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
                             Text(
                                 "${fmtIso(ad.start)} → ${fmtIso(ad.end)}",
                                 style = MaterialTheme.typography.bodySmall,
@@ -1264,10 +1360,13 @@ private fun CurrentDashaCard(chart: ChartSummaryResponse, system: DashaSystem) {
             val ad = currentCharaAntardasha(md)
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text("Current Chara", style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(R.string.chart_current_chara), style = MaterialTheme.typography.titleMedium)
                     Spacer(modifier = Modifier.height(8.dp))
                     Column(modifier = Modifier.padding(vertical = 4.dp)) {
-                        Text("Mahadasha · ${md.sign}", style = MaterialTheme.typography.bodyLarge)
+                        Text(
+                            stringResource(R.string.chart_dasha_row_fmt, stringResource(R.string.chart_mahadasha), astroTerm(md.sign)),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
                         Text(
                             "${fmtIso(md.start)} → ${fmtIso(md.end)}",
                             style = MaterialTheme.typography.bodySmall,
@@ -1276,7 +1375,10 @@ private fun CurrentDashaCard(chart: ChartSummaryResponse, system: DashaSystem) {
                     }
                     if (ad != null) {
                         Column(modifier = Modifier.padding(vertical = 4.dp)) {
-                            Text("Antardasha · ${ad.sign}", style = MaterialTheme.typography.bodyLarge)
+                            Text(
+                                stringResource(R.string.chart_dasha_row_fmt, stringResource(R.string.chart_antardasha), astroTerm(ad.sign)),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
                             Text(
                                 "${fmtIso(ad.start)} → ${fmtIso(ad.end)}",
                                 style = MaterialTheme.typography.bodySmall,
@@ -1326,7 +1428,10 @@ private fun currentCharaAntardasha(md: CharaMahadasha): CharaAntardasha? {
 private fun DashaRow(label: String, period: DashaPeriod?) {
     if (period == null) return
     Column(modifier = Modifier.padding(vertical = 4.dp)) {
-        Text("$label · ${period.lord}", style = MaterialTheme.typography.bodyLarge)
+        Text(
+            stringResource(R.string.chart_dasha_row_fmt, label, astroTerm(period.lord)),
+            style = MaterialTheme.typography.bodyLarge
+        )
         Text(
             text = "${fmtIso(period.start)} → ${fmtIso(period.end)}",
             style = MaterialTheme.typography.bodySmall,
@@ -1334,6 +1439,11 @@ private fun DashaRow(label: String, period: DashaPeriod?) {
         )
     }
 }
+
+/** "Mangala (Moon)" — Yogini name plus its ruling planet, both localized. */
+@Composable
+private fun yoginiName(yogini: String, lord: String): String =
+    stringResource(R.string.chart_yogini_name_fmt, astroTerm(yogini), astroTerm(lord))
 
 private fun parseIso(value: String): Instant? = runCatching { Instant.parse(value) }.getOrNull()
 
@@ -1380,17 +1490,18 @@ private fun MahadashaCard(md: MahadashaPeriod) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    "${md.lord} Mahadasha",
+                    stringResource(R.string.chart_mahadasha_fmt, astroTerm(md.lord)),
                     style = MaterialTheme.typography.titleMedium,
                     color = if (isPast) MaterialTheme.colorScheme.onSurface else accent
                 )
-                if (isCurrent) Chip("Current", accent)
-                if (md.partial) Chip("Partial", MaterialTheme.colorScheme.onSurfaceVariant)
+                if (isCurrent) Chip(stringResource(R.string.chart_chip_current), accent)
+                if (md.partial) Chip(stringResource(R.string.chart_chip_partial), MaterialTheme.colorScheme.onSurfaceVariant)
             }
+            val yearsLabel = yearsBetween(md.start, md.end)?.let { stringResource(R.string.chart_years_fmt, it.toString()) }
             Text(
                 text = buildString {
                     append(fmtIso(md.start)); append(" → "); append(fmtIso(md.end))
-                    yearsBetween(md.start, md.end)?.let { append(" · $it yrs") }
+                    yearsLabel?.let { append(" · $it") }
                 },
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -1418,8 +1529,9 @@ private fun BhuktiRow(bhukti: BhuktiPeriod, isMahadashaCurrent: Boolean, accent:
             .padding(vertical = 6.dp, horizontal = if (isCurrent) 8.dp else 0.dp)
     ) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            val antardashaLabel = stringResource(R.string.chart_antardasha_fmt, astroTerm(bhukti.lord))
             Text(
-                text = if (isCurrent) "${bhukti.lord} Antardasha  ●" else "${bhukti.lord} Antardasha",
+                text = if (isCurrent) "$antardashaLabel  ●" else antardashaLabel,
                 style = MaterialTheme.typography.bodyMedium,
                 color = if (isCurrent) accent else MaterialTheme.colorScheme.onSurface
             )
@@ -1436,9 +1548,10 @@ private fun BhuktiRow(bhukti: BhuktiPeriod, isMahadashaCurrent: Boolean, accent:
                     val prEnd = parseIso(pr.end)
                     val prCurrent = isCurrent && prStart != null && prEnd != null &&
                         !now.isBefore(prStart) && !now.isAfter(prEnd)
+                    val prLord = astroTerm(pr.lord)
                     Text(
                         text = buildString {
-                            append(pr.lord); append(": "); append(fmtIso(pr.start)); append(" → "); append(fmtIso(pr.end))
+                            append(prLord); append(": "); append(fmtIso(pr.start)); append(" → "); append(fmtIso(pr.end))
                             if (prCurrent) append("  ●")
                         },
                         style = MaterialTheme.typography.bodySmall,
@@ -1482,17 +1595,18 @@ private fun YoginiMahadashaCard(md: YoginiMahadasha) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    "${md.yogini} (${md.lord})",
+                    yoginiName(md.yogini, md.lord),
                     style = MaterialTheme.typography.titleMedium,
                     color = if (isPast) MaterialTheme.colorScheme.onSurface else accent
                 )
-                if (isCurrent) Chip("Current", accent)
-                if (md.partial) Chip("Partial", MaterialTheme.colorScheme.onSurfaceVariant)
+                if (isCurrent) Chip(stringResource(R.string.chart_chip_current), accent)
+                if (md.partial) Chip(stringResource(R.string.chart_chip_partial), MaterialTheme.colorScheme.onSurfaceVariant)
             }
+            val yearsLabel = stringResource(R.string.chart_years_fmt, "%.1f".format(md.years))
             Text(
                 text = buildString {
                     append(fmtIso(md.start)); append(" → "); append(fmtIso(md.end))
-                    append(" · ${"%.1f".format(md.years)} yrs")
+                    append(" · $yearsLabel")
                 },
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -1512,8 +1626,9 @@ private fun YoginiMahadashaCard(md: YoginiMahadasha) {
                             .padding(vertical = 6.dp, horizontal = if (adCurrent) 8.dp else 0.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
+                        val adLabel = yoginiName(ad.yogini, ad.lord)
                         Text(
-                            text = if (adCurrent) "${ad.yogini} (${ad.lord})  ●" else "${ad.yogini} (${ad.lord})",
+                            text = if (adCurrent) "$adLabel  ●" else adLabel,
                             style = MaterialTheme.typography.bodyMedium,
                             color = if (adCurrent) accent else MaterialTheme.colorScheme.onSurface
                         )
@@ -1561,17 +1676,18 @@ private fun CharaMahadashaCard(md: CharaMahadasha) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    md.sign,
+                    astroTerm(md.sign),
                     style = MaterialTheme.typography.titleMedium,
                     color = if (isPast) MaterialTheme.colorScheme.onSurface else accent
                 )
-                if (isCurrent) Chip("Current", accent)
-                if (md.partial) Chip("Partial", MaterialTheme.colorScheme.onSurfaceVariant)
+                if (isCurrent) Chip(stringResource(R.string.chart_chip_current), accent)
+                if (md.partial) Chip(stringResource(R.string.chart_chip_partial), MaterialTheme.colorScheme.onSurfaceVariant)
             }
+            val yearsLabel = stringResource(R.string.chart_years_fmt, "%.1f".format(md.years))
             Text(
                 text = buildString {
                     append(fmtIso(md.start)); append(" → "); append(fmtIso(md.end))
-                    append(" · ${"%.1f".format(md.years)} yrs")
+                    append(" · $yearsLabel")
                 },
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -1591,8 +1707,9 @@ private fun CharaMahadashaCard(md: CharaMahadasha) {
                             .padding(vertical = 6.dp, horizontal = if (adCurrent) 8.dp else 0.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
+                        val adSign = astroTerm(ad.sign)
                         Text(
-                            text = if (adCurrent) "${ad.sign}  ●" else ad.sign,
+                            text = if (adCurrent) "$adSign  ●" else adSign,
                             style = MaterialTheme.typography.bodyMedium,
                             color = if (adCurrent) accent else MaterialTheme.colorScheme.onSurface
                         )
@@ -1608,11 +1725,12 @@ private fun CharaMahadashaCard(md: CharaMahadasha) {
     }
 }
 
+@Composable
 private fun formatCurrentDasha(chart: ChartSummaryResponse): String {
     val current = chart.vimshottari.current ?: return ""
     return listOfNotNull(
         current.mahadasha?.lord,
         current.antardasha?.lord,
         current.resolvedPratyantar?.lord
-    ).joinToString(" – ")
+    ).map { astroTerm(it) }.joinToString(" – ")
 }

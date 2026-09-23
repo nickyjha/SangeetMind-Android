@@ -310,7 +310,9 @@ data class LlmNarrative(
     val error: String? = null,
     val fallback: String? = null
 ) {
-    val text: String get() = narrative ?: fallback ?: ""
+    /** Gemini tends to emit markdown emphasis (`**…**`) even when not asked; the app renders
+     * plain text, so strip the markers rather than show them literally. */
+    val text: String get() = (narrative ?: fallback ?: "").replace("**", "")
     val isLlm: Boolean get() = source == "gemini"
 }
 

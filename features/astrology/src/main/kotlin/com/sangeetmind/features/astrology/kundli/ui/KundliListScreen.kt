@@ -14,9 +14,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.kundli.KundliListViewModel
 import com.sangeetmind.libs.models.toTitleCase
 import com.sangeetmind.libs.models.Kundli
@@ -33,17 +36,17 @@ fun KundliListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("My Kundlis") },
+                title = { Text(stringResource(R.string.kundli_list_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
                     }
                 }
             )
         },
         floatingActionButton = {
             FloatingActionButton(onClick = onAddKundli) {
-                Icon(Icons.Default.Add, contentDescription = "Add kundli")
+                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.kundli_add))
             }
         }
     ) { padding ->
@@ -54,7 +57,7 @@ fun KundliListScreen(
                 }
                 uiState.kundlis.isEmpty() -> {
                     Text(
-                        text = "No kundlis yet. Tap + to add one.",
+                        text = stringResource(R.string.kundli_empty),
                         modifier = Modifier.align(Alignment.Center).padding(24.dp),
                         style = MaterialTheme.typography.bodyLarge
                     )
@@ -98,13 +101,13 @@ private fun KundliCard(
         ) {
             Icon(
                 imageVector = if (kundli.isPrimary) Icons.Default.Star else Icons.Default.RadioButtonUnchecked,
-                contentDescription = if (kundli.isPrimary) "Primary" else "Not primary",
+                contentDescription = stringResource(if (kundli.isPrimary) R.string.kundli_primary else R.string.kundli_not_primary),
                 tint = if (kundli.isPrimary) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
             )
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = kundli.fullName?.takeIf { it.isNotBlank() }?.toTitleCase() ?: "Untitled kundli",
+                    text = kundli.fullName?.takeIf { it.isNotBlank() }?.toTitleCase() ?: stringResource(R.string.kundli_untitled),
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
@@ -115,11 +118,11 @@ private fun KundliCard(
             }
             if (!kundli.isPrimary) {
                 IconButton(onClick = onSetPrimary) {
-                    Icon(Icons.Default.CheckCircle, contentDescription = "Set as primary")
+                    Icon(Icons.Default.CheckCircle, contentDescription = stringResource(R.string.kundli_set_primary))
                 }
             }
             IconButton(onClick = onDelete) {
-                Icon(Icons.Default.Delete, contentDescription = "Delete")
+                Icon(Icons.Default.Delete, contentDescription = stringResource(CoreR.string.common_delete))
             }
         }
     }

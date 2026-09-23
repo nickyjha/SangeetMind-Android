@@ -1,10 +1,13 @@
 package com.sangeetmind.features.astrology.muhurat
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.MuhuratSlot
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,6 +28,7 @@ data class MuhuratUiState(
 
 @HiltViewModel
 class MuhuratViewModel @Inject constructor(
+    @ApplicationContext private val appContext: Context,
     private val muhuratRepository: MuhuratRepository
 ) : ViewModel() {
 
@@ -46,7 +50,7 @@ class MuhuratViewModel @Inject constructor(
     fun findMuhurat() {
         val state = _uiState.value
         if (state.windowStart.isBlank() || state.windowEnd.isBlank()) {
-            _uiState.update { it.copy(error = "Please enter both start and end dates") }
+            _uiState.update { it.copy(error = appContext.getString(R.string.muhurat_error_enter_dates)) }
             return
         }
 
@@ -57,7 +61,7 @@ class MuhuratViewModel @Inject constructor(
                     it.copy(isSearching = false, results = result.data.results)
                 }
                 is Result.Error -> _uiState.update {
-                    it.copy(isSearching = false, error = result.message ?: "Failed to find muhurat")
+                    it.copy(isSearching = false, error = result.message ?: appContext.getString(R.string.muhurat_error_find_failed))
                 }
                 is Result.Loading -> Unit
             }

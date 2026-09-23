@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Referrals: screen -->
+    <string name="referrals_title">Refer &amp; Earn</string>
+    <string name="referrals_your_code">Your Code</string>
+    <string name="referrals_copy">Copy</string>
+    <string name="referrals_share">Share</string>
+    <string name="referrals_count_fmt">Referrals: %1$d</string>
+    <string name="referrals_reward_unlocked">Reward unlocked!</string>
+    <string name="referrals_have_code">Have a friend\'s code?</string>
+    <string name="referrals_code_label">Referral code</string>
+    <string name="referrals_apply">Apply</string>
+    <string name="referrals_share_text_fmt">Join me on SangeetMind! Use my referral code: %1$s</string>
+    <string name="referrals_share_chooser_title">Share your referral code</string>
+
+    <!-- Referrals: messages -->
+    <string name="referrals_msg_applied">Referral applied!</string>
+    <string name="referrals_msg_already_applied">Already applied</string>
+
+    <!-- Referrals: errors -->
+    <string name="referrals_error_enter_code">Enter a referral code</string>
+    <string name="referrals_error_load_stats">Failed to load referral stats</string>
+    <string name="referrals_error_apply_code">Failed to apply referral code</string>
+</resources>

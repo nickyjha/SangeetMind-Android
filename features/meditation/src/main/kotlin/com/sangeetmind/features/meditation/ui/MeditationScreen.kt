@@ -16,12 +16,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.features.meditation.MeditationViewModel
+import com.sangeetmind.features.meditation.R
+import com.sangeetmind.libs.models.MeditationCategory
 import com.sangeetmind.libs.models.MeditationSession
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,7 +38,7 @@ fun MeditationScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Meditation") },
+                title = { Text(stringResource(R.string.meditation_title)) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -97,14 +101,14 @@ fun SessionListView(
                 Text(text = error, style = MaterialTheme.typography.bodyLarge)
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(onClick = onRetry) {
-                    Text("Retry")
+                    Text(stringResource(CoreR.string.common_retry))
                 }
             }
         }
         sessions.isEmpty() -> {
             Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(
-                    text = "No meditation sessions available",
+                    text = stringResource(R.string.meditation_empty),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -174,25 +178,25 @@ fun MeditationSessionCard(
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     AssistChip(
                         onClick = {},
-                        label = { Text("${session.durationMinutes} min") }
+                        label = { Text(stringResource(R.string.meditation_minutes_fmt, session.durationMinutes)) }
                     )
                     AssistChip(
                         onClick = {},
-                        label = { Text(session.category.name) }
+                        label = { Text(categoryLabel(session.category)) }
                     )
                     if (session.isGuided) {
                         AssistChip(
                             onClick = {},
-                            label = { Text("Guided") }
+                            label = { Text(stringResource(R.string.meditation_guided)) }
                         )
                     }
                 }
             }
-            
+
             IconButton(onClick = onClick) {
                 Icon(
                     imageVector = Icons.Default.PlayCircle,
-                    contentDescription = "Start session",
+                    contentDescription = stringResource(R.string.meditation_start_session),
                     modifier = Modifier.size(48.dp),
                     tint = MaterialTheme.colorScheme.primary
                 )
@@ -272,7 +276,7 @@ fun ActiveSessionView(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = if (isPaused) "Paused" else "Breathe",
+                    text = stringResource(if (isPaused) R.string.meditation_paused else R.string.meditation_breathe),
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
@@ -288,7 +292,7 @@ fun ActiveSessionView(
             )
             
             Text(
-                text = "of ${formatTime(totalSeconds)}",
+                text = stringResource(R.string.meditation_of_total_fmt, formatTime(totalSeconds)),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -316,7 +320,7 @@ fun ActiveSessionView(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Stop,
-                        contentDescription = "Stop session",
+                        contentDescription = stringResource(R.string.meditation_stop_session),
                         modifier = Modifier.size(32.dp)
                     )
                 }
@@ -327,7 +331,9 @@ fun ActiveSessionView(
                 ) {
                     Icon(
                         imageVector = if (isPaused) Icons.Default.PlayArrow else Icons.Default.Pause,
-                        contentDescription = if (isPaused) "Resume" else "Pause",
+                        contentDescription = stringResource(
+                            if (isPaused) R.string.meditation_resume else R.string.meditation_pause
+                        ),
                         modifier = Modifier.size(40.dp)
                     )
                 }
@@ -335,6 +341,18 @@ fun ActiveSessionView(
         }
     }
 }
+
+@Composable
+private fun categoryLabel(category: MeditationCategory): String = stringResource(
+    when (category) {
+        MeditationCategory.BREATHING -> R.string.meditation_category_breathing
+        MeditationCategory.MINDFULNESS -> R.string.meditation_category_mindfulness
+        MeditationCategory.SLEEP -> R.string.meditation_category_sleep
+        MeditationCategory.STRESS_RELIEF -> R.string.meditation_category_stress_relief
+        MeditationCategory.FOCUS -> R.string.meditation_category_focus
+        MeditationCategory.CHAKRA -> R.string.meditation_category_chakra
+    }
+)
 
 private fun formatTime(seconds: Int): String {
     val minutes = seconds / 60

@@ -13,11 +13,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.core.ui.language.astroTerm
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.muhurat.MUHURAT_INTENTS
 import com.sangeetmind.features.astrology.muhurat.MuhuratViewModel
 import com.sangeetmind.libs.models.MuhuratSlot
@@ -33,10 +37,10 @@ fun MuhuratScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Muhurat Finder") },
+                title = { Text(stringResource(R.string.muhurat_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -54,7 +58,7 @@ fun MuhuratScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp)
         ) {
-            Text("What is this for?", style = MaterialTheme.typography.titleSmall)
+            Text(stringResource(R.string.muhurat_purpose), style = MaterialTheme.typography.titleSmall)
             Spacer(modifier = Modifier.height(8.dp))
 
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -62,7 +66,7 @@ fun MuhuratScreen(
                     FilterChip(
                         selected = uiState.intent == intent,
                         onClick = { viewModel.onIntentChange(intent) },
-                        label = { Text(intent.replaceFirstChar { it.uppercase() }) }
+                        label = { Text(intentLabel(intent)) }
                     )
                 }
             }
@@ -72,7 +76,7 @@ fun MuhuratScreen(
             OutlinedTextField(
                 value = uiState.windowStart,
                 onValueChange = viewModel::onWindowStartChange,
-                label = { Text("Start date (YYYY-MM-DD)") },
+                label = { Text(stringResource(R.string.muhurat_start_date)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next)
@@ -83,7 +87,7 @@ fun MuhuratScreen(
             OutlinedTextField(
                 value = uiState.windowEnd,
                 onValueChange = viewModel::onWindowEndChange,
-                label = { Text("End date (YYYY-MM-DD)") },
+                label = { Text(stringResource(R.string.muhurat_end_date)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done)
@@ -113,13 +117,13 @@ fun MuhuratScreen(
                 if (uiState.isSearching) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary)
                 } else {
-                    Text("Find Muhurat")
+                    Text(stringResource(R.string.muhurat_find))
                 }
             }
 
             if (uiState.results.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(24.dp))
-                Text("Results", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.muhurat_results), style = MaterialTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.height(8.dp))
                 LazyColumn(
                     modifier = Modifier.heightIn(max = 480.dp),
@@ -147,19 +151,38 @@ private fun MuhuratSlotCard(slot: MuhuratSlot) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(slot.date, style = MaterialTheme.typography.titleMedium)
                 Text(
-                    text = "${slot.vara} · ${slot.tithi} · ${slot.nakshatra}",
+                    text = "${astroTerm(slot.vara)} · ${astroTerm(slot.tithi)} · ${astroTerm(slot.nakshatra)}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             Column(horizontalAlignment = Alignment.End) {
                 Text(
-                    text = slot.verdict.replaceFirstChar { it.uppercase() },
+                    text = verdictLabel(slot.verdict),
                     color = verdictColor,
                     style = MaterialTheme.typography.labelLarge
                 )
-                Text("Score ${slot.score}", style = MaterialTheme.typography.bodySmall)
+                Text(stringResource(R.string.muhurat_score_fmt, slot.score), style = MaterialTheme.typography.bodySmall)
             }
         }
     }
+}
+
+/** Display label for an app-defined [MUHURAT_INTENTS] key (the key itself is what the backend receives). */
+@Composable
+private fun intentLabel(intent: String): String = when (intent) {
+    "general" -> stringResource(R.string.muhurat_intent_general)
+    "marriage" -> stringResource(R.string.muhurat_intent_marriage)
+    "business" -> stringResource(R.string.muhurat_intent_business)
+    "travel" -> stringResource(R.string.muhurat_intent_travel)
+    "griha pravesh" -> stringResource(R.string.muhurat_intent_griha_pravesh)
+    else -> intent.replaceFirstChar { it.uppercase() }
+}
+
+@Composable
+private fun verdictLabel(verdict: String): String = when (verdict) {
+    "auspicious" -> stringResource(R.string.muhurat_verdict_auspicious)
+    "neutral" -> stringResource(R.string.muhurat_verdict_neutral)
+    "avoid" -> stringResource(R.string.muhurat_verdict_avoid)
+    else -> verdict.replaceFirstChar { it.uppercase() }
 }

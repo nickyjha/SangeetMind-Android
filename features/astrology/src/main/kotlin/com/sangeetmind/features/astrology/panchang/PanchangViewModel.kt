@@ -1,14 +1,17 @@
 package com.sangeetmind.features.astrology.panchang
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.network.NominatimApi
 import com.sangeetmind.core.network.NominatimPlace
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.kundli.BirthPlaceSuggestion
 import com.sangeetmind.features.astrology.kundli.KundliRepository
 import com.sangeetmind.libs.models.PanchangResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,6 +46,7 @@ private fun todayIso(): String =
  */
 @HiltViewModel
 class PanchangViewModel @Inject constructor(
+    @ApplicationContext private val appContext: Context,
     private val panchangRepository: PanchangRepository,
     private val kundliRepository: KundliRepository,
     private val nominatimApi: NominatimApi
@@ -111,11 +115,11 @@ class PanchangViewModel @Inject constructor(
         val state = _uiState.value
         val place = state.selectedPlace
         if (state.date.isBlank()) {
-            _uiState.update { it.copy(error = "Please enter a date") }
+            _uiState.update { it.copy(error = appContext.getString(R.string.panchang_error_enter_date)) }
             return
         }
         if (place == null) {
-            _uiState.update { it.copy(error = "Please pick a place from the suggestions") }
+            _uiState.update { it.copy(error = appContext.getString(R.string.panchang_error_pick_place)) }
             return
         }
 
@@ -124,7 +128,7 @@ class PanchangViewModel @Inject constructor(
             when (val result = panchangRepository.getPanchang(state.date, place.latitude, place.longitude)) {
                 is Result.Success -> _uiState.update { it.copy(isLoading = false, result = result.data) }
                 is Result.Error -> _uiState.update {
-                    it.copy(isLoading = false, error = result.message ?: "Failed to load panchang")
+                    it.copy(isLoading = false, error = result.message ?: appContext.getString(R.string.panchang_error_load_failed))
                 }
                 is Result.Loading -> Unit
             }

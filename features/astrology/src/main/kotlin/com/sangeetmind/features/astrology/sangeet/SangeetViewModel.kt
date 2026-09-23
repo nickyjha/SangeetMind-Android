@@ -3,6 +3,7 @@ package com.sangeetmind.features.astrology.sangeet
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.core.common.language.LanguageManager
 import com.sangeetmind.libs.models.JapaStats
 import com.sangeetmind.libs.models.RaagPlaylist
 import com.sangeetmind.libs.models.SoundHealingSession
@@ -11,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,14 +34,26 @@ data class SangeetUiState(
 
 @HiltViewModel
 class SangeetViewModel @Inject constructor(
-    private val repository: SangeetRepository
+    private val repository: SangeetRepository,
+    languageManager: LanguageManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SangeetUiState())
     val uiState: StateFlow<SangeetUiState> = _uiState.asStateFlow()
 
+    /** Sign of the last generated voice horoscope, so a language switch can re-fetch it. */
+    private var voiceHoroscopeSign: String? = null
+
     init {
         loadDailyRaag()
+        viewModelScope.launch {
+            // The voice horoscope script is the only Sangeet content fetched in a language;
+            // regenerate it when the app language changes (skip the initial emission).
+            languageManager.language.drop(1).collect {
+                loadDailyRaag()
+                voiceHoroscopeSign?.let { sign -> getVoiceHoroscope(sign) }
+            }
+        }
     }
 
     fun setTab(tab: SangeetTab) {
@@ -98,6 +112,7 @@ class SangeetViewModel @Inject constructor(
     }
 
     fun getVoiceHoroscope(sign: String) {
+        voiceHoroscopeSign = sign
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
             when (val result = repository.getVoiceHoroscope(sign)) {

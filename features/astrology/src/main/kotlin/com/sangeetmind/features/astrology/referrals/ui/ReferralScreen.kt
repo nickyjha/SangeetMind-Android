@@ -14,9 +14,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.referrals.ReferralViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,10 +34,10 @@ fun ReferralScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Refer & Earn") },
+                title = { Text(stringResource(R.string.referrals_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
                     }
                 }
             )
@@ -49,7 +52,7 @@ fun ReferralScreen(
         ) {
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text("Your code", style = MaterialTheme.typography.labelLarge)
+                    Text(stringResource(R.string.referrals_your_code), style = MaterialTheme.typography.labelLarge)
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(uiState.myCode, style = MaterialTheme.typography.titleMedium)
                     Spacer(modifier = Modifier.height(12.dp))
@@ -57,12 +60,12 @@ fun ReferralScreen(
                         OutlinedButton(onClick = { copyToClipboard(context, uiState.myCode) }) {
                             Icon(Icons.Default.ContentCopy, contentDescription = null)
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Copy")
+                            Text(stringResource(R.string.referrals_copy))
                         }
                         Button(onClick = { shareCode(context, uiState.myCode) }) {
                             Icon(Icons.Default.Share, contentDescription = null)
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Share")
+                            Text(stringResource(R.string.referrals_share))
                         }
                     }
                 }
@@ -71,7 +74,10 @@ fun ReferralScreen(
             uiState.stats?.let { stats ->
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text("Referrals: ${stats.referralCount}", style = MaterialTheme.typography.titleMedium)
+                        Text(
+                            stringResource(R.string.referrals_count_fmt, stats.referralCount),
+                            style = MaterialTheme.typography.titleMedium
+                        )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = stats.rewardDescription,
@@ -81,7 +87,7 @@ fun ReferralScreen(
                         if (stats.rewardEligible) {
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "Reward unlocked!",
+                                text = stringResource(R.string.referrals_reward_unlocked),
                                 color = MaterialTheme.colorScheme.primary,
                                 style = MaterialTheme.typography.titleSmall
                             )
@@ -90,11 +96,11 @@ fun ReferralScreen(
                 }
             }
 
-            Text("Have a friend's code?", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.referrals_have_code), style = MaterialTheme.typography.titleMedium)
             OutlinedTextField(
                 value = uiState.codeInput,
                 onValueChange = viewModel::onCodeInputChange,
-                label = { Text("Referral code") },
+                label = { Text(stringResource(R.string.referrals_code_label)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
@@ -118,7 +124,7 @@ fun ReferralScreen(
                 if (uiState.isLoading) {
                     CircularProgressIndicator(modifier = Modifier.size(20.dp), color = MaterialTheme.colorScheme.onPrimary)
                 } else {
-                    Text("Apply")
+                    Text(stringResource(R.string.referrals_apply))
                 }
             }
         }
@@ -127,13 +133,15 @@ fun ReferralScreen(
 
 private fun copyToClipboard(context: Context, code: String) {
     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-    clipboard.setPrimaryClip(ClipData.newPlainText("Referral code", code))
+    clipboard.setPrimaryClip(ClipData.newPlainText(context.getString(R.string.referrals_code_label), code))
 }
 
 private fun shareCode(context: Context, code: String) {
     val intent = Intent(Intent.ACTION_SEND).apply {
         type = "text/plain"
-        putExtra(Intent.EXTRA_TEXT, "Join me on SangeetMind! Use my referral code: $code")
+        putExtra(Intent.EXTRA_TEXT, context.getString(R.string.referrals_share_text_fmt, code))
     }
-    context.startActivity(Intent.createChooser(intent, "Share your referral code"))
+    context.startActivity(
+        Intent.createChooser(intent, context.getString(R.string.referrals_share_chooser_title))
+    )
 }

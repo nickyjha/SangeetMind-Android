@@ -1,14 +1,18 @@
 package com.sangeetmind.features.astrology.interpretation
 
+import android.content.Context
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.di.IoDispatcher
+import com.sangeetmind.core.common.language.LanguageManager
 import com.sangeetmind.core.network.InterpretationApi
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.ChartAnalysis
 import com.sangeetmind.libs.models.ChartAnalysisRequest
 import com.sangeetmind.libs.models.ChartRequest
 import com.sangeetmind.libs.models.ChartSummaryResponse
 import com.sangeetmind.libs.models.Kundli
 import com.sangeetmind.libs.models.RulesEngineBirthDetails
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -22,8 +26,11 @@ data class InterpretationData(
 @Singleton
 class InterpretationRepository @Inject constructor(
     private val interpretationApi: InterpretationApi,
+    private val languageManager: LanguageManager,
+    @ApplicationContext private val context: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
+    /** The rules-engine narrative/effects come back in the app's current display language. */
     suspend fun getInterpretation(kundli: Kundli): Result<InterpretationData> =
         withContext(ioDispatcher) {
             try {
@@ -47,13 +54,14 @@ class InterpretationRepository @Inject constructor(
                                 coordinates = mapOf("lat" to kundli.latitude, "lon" to kundli.longitude),
                                 timezone = kundli.timezone
                             )
-                        )
+                        ),
+                        lang = languageManager.current.code
                     ).analysis
                 }.getOrNull()
 
                 Result.Success(InterpretationData(chart, analysis))
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: "Failed to load your reading")
+                Result.Error(e, e.message ?: context.getString(R.string.interpretation_err_load_reading))
             }
         }
 }

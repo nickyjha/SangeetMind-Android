@@ -17,12 +17,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.kundli.KundliOnboardingViewModel
 import java.time.Instant
 import java.time.ZoneOffset
@@ -49,12 +52,12 @@ fun KundliOnboardingScreen(
             .padding(24.dp)
     ) {
         Text(
-            text = "Tell us about your birth details",
+            text = stringResource(R.string.kundli_onboarding_title),
             style = MaterialTheme.typography.headlineSmall
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = "This creates your kundli (birth chart) — the basis for every reading in the app.",
+            text = stringResource(R.string.kundli_onboarding_subtitle),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -64,7 +67,7 @@ fun KundliOnboardingScreen(
         OutlinedTextField(
             value = uiState.fullName,
             onValueChange = viewModel::onFullNameChange,
-            label = { Text("Name") },
+            label = { Text(stringResource(R.string.kundli_field_name)) },
             leadingIcon = { Icon(Icons.Default.Person, null) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
@@ -78,7 +81,7 @@ fun KundliOnboardingScreen(
                 value = uiState.birthDate,
                 onValueChange = {},
                 readOnly = true,
-                label = { Text("Date of birth") },
+                label = { Text(stringResource(R.string.kundli_field_dob)) },
                 trailingIcon = { Icon(Icons.Default.DateRange, null) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
@@ -100,7 +103,7 @@ fun KundliOnboardingScreen(
                 value = uiState.birthTime,
                 onValueChange = {},
                 readOnly = true,
-                label = { Text("Time of birth (24h)") },
+                label = { Text(stringResource(R.string.kundli_field_tob)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
@@ -119,7 +122,7 @@ fun KundliOnboardingScreen(
         OutlinedTextField(
             value = uiState.birthPlaceQuery,
             onValueChange = viewModel::onBirthPlaceQueryChange,
-            label = { Text("Place of birth") },
+            label = { Text(stringResource(R.string.kundli_field_place)) },
             leadingIcon = { Icon(Icons.Default.LocationOn, null) },
             trailingIcon = {
                 if (uiState.isSearchingPlace) {
@@ -169,7 +172,7 @@ fun KundliOnboardingScreen(
             if (uiState.isSaving) {
                 CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary)
             } else {
-                Text("Generate my kundli")
+                Text(stringResource(R.string.kundli_generate))
             }
         }
     }
@@ -191,10 +194,10 @@ fun KundliOnboardingScreen(
                         viewModel.onBirthDateChange(date.format(DateTimeFormatter.ISO_LOCAL_DATE))
                     }
                     showDatePicker = false
-                }) { Text("OK") }
+                }) { Text(stringResource(CoreR.string.common_ok)) }
             },
             dismissButton = {
-                TextButton(onClick = { showDatePicker = false }) { Text("Cancel") }
+                TextButton(onClick = { showDatePicker = false }) { Text(stringResource(CoreR.string.common_cancel)) }
             }
         ) {
             DatePicker(state = datePickerState)
@@ -219,20 +222,20 @@ fun KundliOnboardingScreen(
                     modifier = Modifier.padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text("Time of birth", style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(R.string.kundli_time_picker_title), style = MaterialTheme.typography.titleMedium)
                     Spacer(modifier = Modifier.height(16.dp))
                     TimePicker(state = timePickerState)
                     Row(
                         modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        TextButton(onClick = { showTimePicker = false }) { Text("Cancel") }
+                        TextButton(onClick = { showTimePicker = false }) { Text(stringResource(CoreR.string.common_cancel)) }
                         TextButton(onClick = {
                             viewModel.onBirthTimeChange(
                                 "%02d:%02d".format(timePickerState.hour, timePickerState.minute)
                             )
                             showTimePicker = false
-                        }) { Text("OK") }
+                        }) { Text(stringResource(CoreR.string.common_ok)) }
                     }
                 }
             }

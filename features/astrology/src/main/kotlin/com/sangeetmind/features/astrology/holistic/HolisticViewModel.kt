@@ -3,6 +3,7 @@ package com.sangeetmind.features.astrology.holistic
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.core.common.language.LanguageManager
 import com.sangeetmind.features.astrology.kundli.KundliRepository
 import com.sangeetmind.libs.models.HolisticCombinedResponse
 import com.sangeetmind.libs.models.Kundli
@@ -11,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,7 +23,6 @@ data class HolisticUiState(
     /** Numerology needs a birth name (backend requires >= 2 chars); the kundli has none. */
     val needsName: Boolean = false,
     val kundli: Kundli? = null,
-    val language: String = "en",
     val analysis: HolisticCombinedResponse? = null,
     val error: String? = null
 )
@@ -29,7 +30,8 @@ data class HolisticUiState(
 @HiltViewModel
 class HolisticViewModel @Inject constructor(
     private val holisticRepository: HolisticRepository,
-    private val kundliRepository: KundliRepository
+    private val kundliRepository: KundliRepository,
+    private val languageManager: LanguageManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HolisticUiState())
@@ -39,6 +41,12 @@ class HolisticViewModel @Inject constructor(
 
     init {
         refresh()
+        // The narrative is generated in the requested language, so a global language switch
+        // means a new reading. `drop(1)` skips the StateFlow's replay of the current value,
+        // which `refresh()` above already used.
+        viewModelScope.launch {
+            languageManager.language.drop(1).collect { refresh() }
+        }
     }
 
     /** Full re-fetch. Also what "Regenerate" does: the narrative is not cached server-side,
@@ -71,7 +79,7 @@ class HolisticViewModel @Inject constructor(
                 _uiState.update { it.copy(isLoading = false, needsName = true) }
                 return@launch
             }
-            when (val result = holisticRepository.getCombined(kundli, name, _uiState.value.language)) {
+            when (val result = holisticRepository.getCombined(kundli, name, languageManager.current.code)) {
                 is Result.Success -> _uiState.update {
                     it.copy(isLoading = false, analysis = result.data)
                 }
@@ -81,11 +89,5 @@ class HolisticViewModel @Inject constructor(
                 is Result.Loading -> Unit
             }
         }
-    }
-
-    fun selectLanguage(language: String) {
-        if (language == _uiState.value.language) return
-        _uiState.update { it.copy(language = language) }
-        refresh()
     }
 }

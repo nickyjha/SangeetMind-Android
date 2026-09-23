@@ -12,9 +12,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.reports.ReportsViewModel
 import com.sangeetmind.libs.models.MyReportItem
 import com.sangeetmind.libs.models.Sku
@@ -42,10 +45,10 @@ fun ReportsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Reports") },
+                title = { Text(stringResource(R.string.reports_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
                     }
                 }
             )
@@ -82,7 +85,7 @@ fun ReportsScreen(
             ) {
                 if (uiState.myReports.isNotEmpty()) {
                     item {
-                        Text("My Reports", style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.reports_my_reports), style = MaterialTheme.typography.titleMedium)
                     }
                     items(uiState.myReports, key = { it.jobId }) { report ->
                         MyReportCard(
@@ -93,7 +96,7 @@ fun ReportsScreen(
                     }
                     item {
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text("Buy a report", style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.reports_buy_a_report), style = MaterialTheme.typography.titleMedium)
                     }
                 }
 
@@ -116,13 +119,19 @@ private fun ActiveJobCard(status: String?, isLoading: Boolean, onViewPdf: () -> 
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text("Status: ${status ?: "starting"}", style = MaterialTheme.typography.titleMedium)
+                Text(
+                    stringResource(
+                        R.string.reports_status_fmt,
+                        status ?: stringResource(R.string.reports_status_starting)
+                    ),
+                    style = MaterialTheme.typography.titleMedium
+                )
             }
             if (status == "completed") {
                 Button(onClick = onViewPdf, enabled = !isLoading) {
                     Icon(Icons.Default.PictureAsPdf, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("View PDF")
+                    Text(stringResource(R.string.reports_view_pdf))
                 }
             } else if (isLoading) {
                 CircularProgressIndicator(modifier = Modifier.size(24.dp))
@@ -161,7 +170,7 @@ private fun MyReportCard(
                 Button(onClick = onViewPdf, enabled = enabled) {
                     Icon(Icons.Default.PictureAsPdf, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("PDF")
+                    Text(stringResource(R.string.reports_pdf))
                 }
             }
         }
@@ -177,9 +186,12 @@ private fun ReportSkuCard(sku: Sku, enabled: Boolean, onBuy: () -> Unit) {
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(sku.label, style = MaterialTheme.typography.titleMedium)
-                Text("₹%.2f".format(sku.pricePaise / 100.0), style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    stringResource(R.string.reports_price_fmt, "%.2f".format(sku.pricePaise / 100.0)),
+                    style = MaterialTheme.typography.bodyMedium
+                )
             }
-            Button(onClick = onBuy, enabled = enabled) { Text("Buy") }
+            Button(onClick = onBuy, enabled = enabled) { Text(stringResource(R.string.reports_buy)) }
         }
     }
 }

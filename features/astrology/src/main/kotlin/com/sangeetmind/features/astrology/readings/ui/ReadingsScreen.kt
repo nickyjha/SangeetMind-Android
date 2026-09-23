@@ -9,9 +9,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.flattenToReadableText
 import com.sangeetmind.features.astrology.readings.ReadingTab
 import com.sangeetmind.features.astrology.readings.ReadingsViewModel
@@ -27,10 +30,10 @@ fun ReadingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Readings") },
+                title = { Text(stringResource(R.string.readings_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
                     }
                 }
             )
@@ -41,12 +44,12 @@ fun ReadingsScreen(
                 Tab(
                     selected = uiState.tab == ReadingTab.CAREER,
                     onClick = { viewModel.setTab(ReadingTab.CAREER) },
-                    text = { Text("Career") }
+                    text = { Text(stringResource(R.string.readings_tab_career)) }
                 )
                 Tab(
                     selected = uiState.tab == ReadingTab.STRENGTHS,
                     onClick = { viewModel.setTab(ReadingTab.STRENGTHS) },
-                    text = { Text("Strengths") }
+                    text = { Text(stringResource(R.string.readings_tab_strengths)) }
                 )
             }
 
@@ -83,14 +86,14 @@ fun ReadingsScreen(
 @Composable
 private fun CareerTab(isLoading: Boolean, text: String?, onGenerate: () -> Unit) {
     Text(
-        "₹99, or free with Premium — a Gemini-generated career outlook from your kundli's D1/D10 charts and current dasha.",
+        stringResource(R.string.readings_career_desc),
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )
     Spacer(modifier = Modifier.height(16.dp))
     Button(onClick = onGenerate, enabled = !isLoading, modifier = Modifier.fillMaxWidth()) {
         if (isLoading) CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
-        else Text("Generate career reading")
+        else Text(stringResource(R.string.readings_career_generate))
     }
     if (text != null) {
         Spacer(modifier = Modifier.height(16.dp))
@@ -107,30 +110,30 @@ private fun StrengthsTab(
     onGenerate: () -> Unit
 ) {
     Text(
-        "₹99, or free with Premium — key strengths, growth areas, and raag-based mantra remedies.",
+        stringResource(R.string.readings_strengths_desc),
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )
     Spacer(modifier = Modifier.height(16.dp))
     Button(onClick = onGenerate, enabled = !isLoading, modifier = Modifier.fillMaxWidth()) {
         if (isLoading) CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
-        else Text("Generate strengths reading")
+        else Text(stringResource(R.string.readings_strengths_generate))
     }
     if (strengths != null) {
         Spacer(modifier = Modifier.height(16.dp))
         if (strengths.strengths.isNotEmpty()) {
-            SectionCard("Strengths", strengths.strengths)
+            SectionCard(stringResource(R.string.readings_section_strengths), strengths.strengths)
         }
         if (strengths.weaknesses.isNotEmpty()) {
             Spacer(modifier = Modifier.height(12.dp))
-            SectionCard("Growth areas", strengths.weaknesses)
+            SectionCard(stringResource(R.string.readings_section_growth_areas), strengths.weaknesses)
         }
         strengths.remedies.forEach { remedy ->
             Spacer(modifier = Modifier.height(12.dp))
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(remedy.mantraTitle, style = MaterialTheme.typography.titleMedium)
-                    Text("Raag: ${remedy.raag}", style = MaterialTheme.typography.bodySmall)
+                    Text(stringResource(R.string.readings_raag_fmt, remedy.raag), style = MaterialTheme.typography.bodySmall)
                     Spacer(modifier = Modifier.height(8.dp))
                     remedy.mantraText.forEach { line -> Text(line) }
                     remedy.why?.let {

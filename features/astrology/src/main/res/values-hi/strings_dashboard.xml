@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dashboard_my_kundlis">मेरी कुंडलियाँ</string>
+    <string name="dashboard_create_kundli_title">अपनी कुंडली बनाएँ</string>
+    <string name="dashboard_create_kundli_body">अपना राशिफल, पंचांग और पूरा फलादेश देखने के लिए अपने जन्म विवरण जोड़ें।</string>
+    <string name="dashboard_get_started">शुरू करें</string>
+    <string name="dashboard_explore">एक्सप्लोर करें</string>
+
+    <string name="dashboard_dest_birth_chart">जन्म कुंडली</string>
+    <string name="dashboard_dest_horoscope">राशिफल</string>
+    <string name="dashboard_dest_panchang">पंचांग</string>
+    <string name="dashboard_dest_muhurat">मुहूर्त</string>
+    <string name="dashboard_dest_match">गुण मिलान</string>
+    <string name="dashboard_dest_numerology">अंक ज्योतिष</string>
+    <string name="dashboard_dest_full_reading">पूर्ण फलादेश</string>
+    <string name="dashboard_dest_chatmind">ChatMind</string>
+    <string name="dashboard_dest_varshaphal">वर्षफल</string>
+    <string name="dashboard_dest_holistic">समग्र</string>
+    <string name="dashboard_dest_payments">भुगतान</string>
+    <string name="dashboard_dest_reports">रिपोर्ट</string>
+    <string name="dashboard_dest_readings">रीडिंग्स</string>
+    <string name="dashboard_dest_referrals">रेफ़रल</string>
+    <string name="dashboard_dest_sangeet">संगीत</string>
+
+    <string name="dashboard_your_kundli">आपकी कुंडली</string>
+    <string name="dashboard_moon_sign">चंद्र राशि</string>
+    <string name="dashboard_lagna">लग्न</string>
+    <string name="dashboard_nakshatra">नक्षत्र</string>
+    <string name="dashboard_current_dasha">वर्तमान दशा</string>
+    <string name="dashboard_todays_mood">आज का मूड</string>
+
+    <string name="dashboard_lucky_color">शुभ रंग</string>
+    <string name="dashboard_panchang">पंचांग</string>
+    <string name="dashboard_view_full_guidance">आज का पूरा मार्गदर्शन देखें →</string>
+
+    <string name="dashboard_error_load">डैशबोर्ड लोड नहीं हो सका</string>
+</resources>

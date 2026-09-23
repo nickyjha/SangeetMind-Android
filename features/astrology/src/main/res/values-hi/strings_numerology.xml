@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Numerology screen -->
+    <string name="numerology_title">अंक ज्योतिष</string>
+    <string name="numerology_number_meanings">अंकों के अर्थ</string>
+    <string name="numerology_system_label">प्रणाली</string>
+    <string name="numerology_system_pythagorean">पाइथागोरियन</string>
+    <string name="numerology_system_chaldean">कैल्डियन</string>
+    <string name="numerology_system_vedic">वैदिक</string>
+    <string name="numerology_field_full_name">पूरा नाम (जन्म के समय दिया गया)</string>
+    <string name="numerology_field_dob">जन्म तिथि (YYYY-MM-DD)</string>
+    <string name="numerology_field_current_name">वर्तमान/प्रचलित नाम (वैकल्पिक, यदि अलग हो)</string>
+    <string name="numerology_gender_label">लिंग (कुआ अंक के लिए)</string>
+    <string name="numerology_gender_male">पुरुष</string>
+    <string name="numerology_gender_female">महिला</string>
+    <string name="numerology_analyze">विश्लेषण करें</string>
+    <string name="numerology_core_numbers_title">आपके मूल अंक</string>
+    <string name="numerology_personalization_title">SangeetMind वैयक्तिकरण</string>
+    <string name="numerology_calculated_from_current_name_fmt">वर्तमान नाम से गणना: %1$s</string>
+    <string name="numerology_calculated_from_birth_name">जन्म नाम से गणना</string>
+    <string name="numerology_vedic_numbers_title">आपके वैदिक अंक</string>
+
+    <!-- Pythagorean core numbers -->
+    <string name="numerology_life_path">जीवन पथ</string>
+    <string name="numerology_destiny">भाग्य</string>
+    <string name="numerology_soul_urge">आत्मा की प्रेरणा</string>
+    <string name="numerology_personality">व्यक्तित्व</string>
+    <string name="numerology_maturity">परिपक्वता</string>
+    <string name="numerology_birth_day">जन्म दिन</string>
+    <string name="numerology_attitude">दृष्टिकोण</string>
+
+    <!-- Chaldean numbers -->
+    <string name="numerology_chaldean_numbers">कैल्डियन अंक</string>
+    <string name="numerology_name_number">नाम अंक</string>
+    <string name="numerology_birth_number">जन्म अंक</string>
+    <string name="numerology_destiny_number">भाग्य अंक</string>
+    <string name="numerology_soul_number">आत्मा अंक</string>
+    <string name="numerology_personality_number">व्यक्तित्व अंक</string>
+
+    <!-- Vedic numbers -->
+    <string name="numerology_vedic_numbers">वैदिक अंक</string>
+    <string name="numerology_moolank">मूलांक (चालक)</string>
+    <string name="numerology_bhagyank">भाग्यांक (संवाहक)</string>
+    <string name="numerology_namank">नामांक</string>
+    <string name="numerology_kua_number">कुआ अंक</string>
+
+    <!-- Lo Shu grid -->
+    <string name="numerology_lo_shu_grid">लो शू ग्रिड</string>
+    <string name="numerology_missing_fmt">अनुपस्थित: %1$s</string>
+    <string name="numerology_repeated_fmt">दोहराए गए: %1$s</string>
+
+    <!-- Karmic debts -->
+    <string name="numerology_karmic_debts">कार्मिक ऋण</string>
+    <string name="numerology_debt_fmt">ऋण %1$d</string>
+    <string name="numerology_debt_named_fmt">ऋण %1$d · %2$s</string>
+    <string name="numerology_karmic_chip">कार्मिक</string>
+    <string name="numerology_remedy_fmt">उपाय: %1$s</string>
+    <string name="numerology_mantra_fmt">मंत्र: %1$s</string>
+
+    <!-- Driver / conductor compatibility -->
+    <string name="numerology_driver_conductor_title">चालक–संवाहक अनुकूलता</string>
+    <string name="numerology_moolank_bhagyank_fmt">मूलांक %1$d × भाग्यांक %2$d</string>
+
+    <!-- Personalization -->
+    <string name="numerology_recommended_raag_moods_fmt">अनुशंसित राग भाव: %1$s</string>
+    <string name="numerology_best_practice_time_fmt">सर्वोत्तम अभ्यास समय: %1$s</string>
+
+    <!-- Glossary screen -->
+    <string name="numerology_glossary_systems">प्रणालियाँ</string>
+    <string name="numerology_glossary_numbers">अंक</string>
+    <string name="numerology_glossary_tap_hint">पूरा अर्थ देखने के लिए किसी अंक पर टैप करें</string>
+    <string name="numerology_glossary_best_for_fmt">इसके लिए उपयुक्त: %1$s</string>
+    <string name="numerology_glossary_core_traits">मूल गुण</string>
+    <string name="numerology_glossary_strengths">शक्तियाँ</string>
+    <string name="numerology_glossary_challenges">चुनौतियाँ</string>
+    <string name="numerology_glossary_growth_advice">विकास के लिए सलाह</string>
+
+    <!-- Validation / fallback errors -->
+    <string name="numerology_error_enter_name">कृपया अपना नाम दर्ज करें</string>
+    <string name="numerology_error_enter_dob">कृपया अपनी जन्म तिथि दर्ज करें</string>
+    <string name="numerology_error_calc_failed">अंक ज्योतिष की गणना नहीं हो सकी</string>
+    <string name="numerology_error_load_systems">अंक ज्योतिष प्रणालियाँ लोड नहीं हो सकीं</string>
+    <string name="numerology_error_load_numbers">अंक ज्योतिष के अंक लोड नहीं हो सके</string>
+    <string name="numerology_error_load_interpretation_fmt">अंक %1$d की व्याख्या लोड नहीं हो सकी</string>
+    <string name="numerology_profile_load_failed">ज्योतिष प्रोफ़ाइल लोड नहीं हो सकी</string>
+</resources>

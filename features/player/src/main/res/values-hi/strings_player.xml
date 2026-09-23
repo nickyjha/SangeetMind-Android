@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="player_now_playing">अभी चल रहा है</string>
+    <string name="player_close">प्लेयर बंद करें</string>
+    <string name="player_queue">कतार</string>
+    <string name="player_more_options">अधिक विकल्प</string>
+    <string name="player_artwork">राग कलाकृति</string>
+    <string name="player_nothing_playing">कोई राग नहीं चल रहा</string>
+    <string name="player_shuffle">शफ़ल</string>
+    <string name="player_play">चलाएँ</string>
+    <string name="player_pause">रोकें</string>
+    <string name="player_repeat">दोहराएँ</string>
+    <string name="player_favorite">पसंदीदा</string>
+    <string name="player_share">साझा करें</string>
+    <string name="player_download">डाउनलोड</string>
+    <string name="player_time_morning">प्रातः</string>
+    <string name="player_time_afternoon">दोपहर</string>
+    <string name="player_time_evening">संध्या</string>
+    <string name="player_time_night">रात्रि</string>
+    <string name="player_time_anytime">कभी भी</string>
+    <string name="player_mood_peaceful">शांत</string>
+    <string name="player_mood_energetic">ऊर्जावान</string>
+    <string name="player_mood_devotional">भक्तिपूर्ण</string>
+    <string name="player_mood_romantic">श्रृंगारिक</string>
+    <string name="player_mood_melancholic">विरहपूर्ण</string>
+    <string name="player_mood_joyful">आनंदमय</string>
+</resources>

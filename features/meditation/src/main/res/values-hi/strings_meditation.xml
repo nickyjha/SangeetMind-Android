@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="meditation_title">ध्यान</string>
+    <string name="meditation_empty">कोई ध्यान सत्र उपलब्ध नहीं</string>
+    <string name="meditation_minutes_fmt">%1$d मिनट</string>
+    <string name="meditation_guided">निर्देशित</string>
+    <string name="meditation_start_session">सत्र शुरू करें</string>
+    <string name="meditation_paused">रुका हुआ</string>
+    <string name="meditation_breathe">साँस लें</string>
+    <string name="meditation_of_total_fmt">कुल %1$s में से</string>
+    <string name="meditation_stop_session">सत्र रोकें</string>
+    <string name="meditation_resume">जारी रखें</string>
+    <string name="meditation_pause">रोकें</string>
+    <string name="meditation_error_unknown">अज्ञात त्रुटि</string>
+    <string name="meditation_category_breathing">श्वास</string>
+    <string name="meditation_category_mindfulness">सजगता</string>
+    <string name="meditation_category_sleep">नींद</string>
+    <string name="meditation_category_stress_relief">तनाव मुक्ति</string>
+    <string name="meditation_category_focus">एकाग्रता</string>
+    <string name="meditation_category_chakra">चक्र</string>
+</resources>

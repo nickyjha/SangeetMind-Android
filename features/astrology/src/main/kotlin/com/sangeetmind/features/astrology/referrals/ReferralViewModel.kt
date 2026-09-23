@@ -1,11 +1,14 @@
 package com.sangeetmind.features.astrology.referrals
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.ReferralStats
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,6 +28,7 @@ data class ReferralUiState(
 @HiltViewModel
 class ReferralViewModel @Inject constructor(
     private val repository: ReferralRepository,
+    @ApplicationContext private val context: Context,
     firebaseAuth: FirebaseAuth
 ) : ViewModel() {
 
@@ -47,7 +51,10 @@ class ReferralViewModel @Inject constructor(
             when (val result = repository.getStats()) {
                 is Result.Success -> _uiState.update { it.copy(isLoading = false, stats = result.data) }
                 is Result.Error -> _uiState.update {
-                    it.copy(isLoading = false, error = result.message ?: "Failed to load stats")
+                    it.copy(
+                        isLoading = false,
+                        error = result.message ?: context.getString(R.string.referrals_error_load_stats)
+                    )
                 }
                 is Result.Loading -> Unit
             }
@@ -57,7 +64,7 @@ class ReferralViewModel @Inject constructor(
     fun applyCode() {
         val code = _uiState.value.codeInput.trim()
         if (code.isBlank()) {
-            _uiState.update { it.copy(error = "Enter a referral code") }
+            _uiState.update { it.copy(error = context.getString(R.string.referrals_error_enter_code)) }
             return
         }
         viewModelScope.launch {
@@ -68,13 +75,19 @@ class ReferralViewModel @Inject constructor(
                         it.copy(
                             isLoading = false,
                             codeInput = "",
-                            message = if (result.data.created) "Referral applied!" else "Already applied"
+                            message = context.getString(
+                                if (result.data.created) R.string.referrals_msg_applied
+                                else R.string.referrals_msg_already_applied
+                            )
                         )
                     }
                     refreshStats()
                 }
                 is Result.Error -> _uiState.update {
-                    it.copy(isLoading = false, error = result.message ?: "Failed to apply code")
+                    it.copy(
+                        isLoading = false,
+                        error = result.message ?: context.getString(R.string.referrals_error_apply_code)
+                    )
                 }
                 is Result.Loading -> Unit
             }

@@ -9,9 +9,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.core.ui.language.astroTerm
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.interpretation.InterpretationViewModel
 import com.sangeetmind.libs.models.ChartSummaryResponse
 import com.sangeetmind.libs.models.RuleEffect
@@ -27,10 +31,10 @@ fun InterpretationScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Full Reading") },
+                title = { Text(stringResource(R.string.interpretation_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -48,7 +52,7 @@ fun InterpretationScreen(
                 }
                 uiState.hasNoKundli -> {
                     Text(
-                        text = "Add a kundli first to see your full reading.",
+                        text = stringResource(R.string.interpretation_no_kundli),
                         modifier = Modifier.align(Alignment.Center).padding(24.dp),
                         style = MaterialTheme.typography.bodyLarge
                     )
@@ -95,15 +99,15 @@ private fun InterpretationContent(
         }
 
         if (positives.isNotEmpty()) {
-            item { SectionHeader("Strengths") }
+            item { SectionHeader(stringResource(R.string.interpretation_section_strengths)) }
             items(positives, key = { it.ruleId }) { EffectCard(it, isPositive = true) }
         }
         if (challenges.isNotEmpty()) {
-            item { SectionHeader("Challenges") }
+            item { SectionHeader(stringResource(R.string.interpretation_section_challenges)) }
             items(challenges, key = { it.ruleId }) { EffectCard(it, isPositive = false) }
         }
         if (remedies.isNotEmpty()) {
-            item { SectionHeader("Remedies") }
+            item { SectionHeader(stringResource(R.string.interpretation_section_remedies)) }
             items(remedies, key = { it.ruleId }) { EffectCard(it, isPositive = true) }
         }
     }
@@ -113,20 +117,28 @@ private fun InterpretationContent(
 private fun ChartSummaryCard(chart: ChartSummaryResponse) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Lagna: ${chart.lagna.sign}", style = MaterialTheme.typography.titleMedium)
             Text(
-                "Moon nakshatra pada ${chart.moonNakshatra.pada} · ruled by ${chart.moonNakshatra.lord}",
+                stringResource(R.string.interpretation_lagna_fmt, astroTerm(chart.lagna.sign)),
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                stringResource(
+                    R.string.interpretation_moon_nakshatra_fmt,
+                    chart.moonNakshatra.pada,
+                    astroTerm(chart.moonNakshatra.lord)
+                ),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(12.dp))
-            Text("Planetary positions", style = MaterialTheme.typography.labelLarge)
+            Text(stringResource(R.string.interpretation_planetary_positions), style = MaterialTheme.typography.labelLarge)
             Spacer(modifier = Modifier.height(4.dp))
             chart.planets.forEach { (name, planet) ->
                 Row(modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp)) {
-                    Text(name, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
+                    Text(astroTerm(name), modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
                     Text(
-                        planet.sign + if (planet.retrograde) " (R)" else "",
+                        if (planet.retrograde) stringResource(R.string.interpretation_sign_retrograde_fmt, astroTerm(planet.sign))
+                        else astroTerm(planet.sign),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -141,10 +153,14 @@ private fun DashaCard(chart: ChartSummaryResponse) {
     val current = chart.vimshottari.current ?: return
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Current dasha", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.interpretation_current_dasha), style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(4.dp))
-            current.mahadasha?.let { Text("Mahadasha: ${it.lord}", style = MaterialTheme.typography.bodyMedium) }
-            current.antardasha?.let { Text("Antardasha: ${it.lord}", style = MaterialTheme.typography.bodyMedium) }
+            current.mahadasha?.let {
+                Text(stringResource(R.string.interpretation_mahadasha_fmt, astroTerm(it.lord)), style = MaterialTheme.typography.bodyMedium)
+            }
+            current.antardasha?.let {
+                Text(stringResource(R.string.interpretation_antardasha_fmt, astroTerm(it.lord)), style = MaterialTheme.typography.bodyMedium)
+            }
         }
     }
 }

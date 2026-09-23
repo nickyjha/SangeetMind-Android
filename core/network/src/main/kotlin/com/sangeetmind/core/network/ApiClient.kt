@@ -9,6 +9,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import com.sangeetmind.core.common.language.LanguageManager
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -64,11 +65,22 @@ object NetworkModule {
     @Singleton
     @BaseOkHttpClient
     fun provideBaseOkHttpClient(
-        loggingInterceptor: HttpLoggingInterceptor
+        loggingInterceptor: HttpLoggingInterceptor,
+        languageManager: LanguageManager
     ): OkHttpClient = OkHttpClient.Builder()
         .connectTimeout(Constants.API_TIMEOUT_SECONDS, TimeUnit.SECONDS)
         .readTimeout(Constants.API_TIMEOUT_SECONDS, TimeUnit.SECONDS)
         .writeTimeout(Constants.API_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+        // Every request carries the display language. Endpoints that take an explicit
+        // lang/language param still get it in the body/query; this header is the
+        // future-proof default for any endpoint that starts honouring Accept-Language.
+        .addInterceptor { chain ->
+            chain.proceed(
+                chain.request().newBuilder()
+                    .header("Accept-Language", languageManager.current.code)
+                    .build()
+            )
+        }
         .addInterceptor(loggingInterceptor)
         .build()
 

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Onboarding form -->
+    <string name="kundli_onboarding_title">Tell us about your birth details</string>
+    <string name="kundli_onboarding_subtitle">This creates your kundli (birth chart) — the basis for every reading in the app.</string>
+    <string name="kundli_field_name">Name</string>
+    <string name="kundli_field_dob">Date of birth</string>
+    <string name="kundli_field_tob">Time of birth (24h)</string>
+    <string name="kundli_field_place">Place of birth</string>
+    <string name="kundli_generate">Generate my kundli</string>
+    <string name="kundli_time_picker_title">Time of birth</string>
+
+    <!-- Validation / errors -->
+    <string name="kundli_error_dob_required">Please enter your date of birth</string>
+    <string name="kundli_error_tob_required">Please enter your time of birth</string>
+    <string name="kundli_error_tob_format">Enter time of birth as HH:MM in 24h format, e.g. 06:35</string>
+    <string name="kundli_error_place_required">Please pick your birth place from the suggestions</string>
+    <string name="kundli_error_save_failed">Failed to save</string>
+    <string name="kundli_error_load_failed">Failed to load kundlis</string>
+    <string name="kundli_error_switch_failed">Failed to switch kundli</string>
+    <string name="kundli_error_delete_failed">Failed to delete kundli</string>
+    <string name="kundli_error_save_kundli_failed">Failed to save kundli</string>
+    <string name="kundli_error_update_failed">Failed to update kundli</string>
+    <string name="kundli_error_set_primary_failed">Failed to set primary kundli</string>
+
+    <!-- List -->
+    <string name="kundli_list_title">My Kundlis</string>
+    <string name="kundli_add">Add kundli</string>
+    <string name="kundli_empty">No kundlis yet. Tap + to add one.</string>
+    <string name="kundli_primary">Primary</string>
+    <string name="kundli_not_primary">Not primary</string>
+    <string name="kundli_set_primary">Set as primary</string>
+    <string name="kundli_untitled">Untitled kundli</string>
+</resources>

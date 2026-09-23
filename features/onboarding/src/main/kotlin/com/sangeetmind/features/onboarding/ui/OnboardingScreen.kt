@@ -1,5 +1,6 @@
 package com.sangeetmind.features.onboarding.ui
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -13,46 +14,43 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.core.ui.language.LanguagePickerAction
 import com.sangeetmind.features.onboarding.OnboardingViewModel
+import com.sangeetmind.features.onboarding.R
 import kotlinx.coroutines.launch
 
 data class OnboardingPage(
-    val title: String,
-    val titleHindi: String,
-    val description: String,
-    val descriptionHindi: String,
+    @StringRes val title: Int,
+    @StringRes val description: Int,
     val icon: androidx.compose.ui.graphics.vector.ImageVector
 )
 
 val onboardingPages = listOf(
     OnboardingPage(
-        title = "Discover Raag-Based Meditation",
-        titleHindi = "राग-आधारित ध्यान की खोज करें",
-        description = "Experience the healing power of classical Indian raags combined with meditation",
-        descriptionHindi = "शास्त्रीय भारतीय रागों की उपचार शक्ति को ध्यान के साथ अनुभव करें",
+        title = R.string.onboarding_page1_title,
+        description = R.string.onboarding_page1_desc,
         icon = Icons.Default.MusicNote
     ),
     OnboardingPage(
-        title = "Personalized Recommendations",
-        titleHindi = "व्यक्तिगत सुझाव",
-        description = "Get raag and meditation suggestions based on your astrological profile",
-        descriptionHindi = "अपनी ज्योतिषीय प्रोफ़ाइल के आधार पर राग और ध्यान सुझाव प्राप्त करें",
+        title = R.string.onboarding_page2_title,
+        description = R.string.onboarding_page2_desc,
         icon = Icons.Default.Star
     ),
     OnboardingPage(
-        title = "Listen Anytime, Anywhere",
-        titleHindi = "कभी भी, कहीं भी सुनें",
-        description = "Download raags for offline listening and enjoy background playback",
-        descriptionHindi = "ऑफ़लाइन सुनने के लिए राग डाउनलोड करें और बैकग्राउंड प्लेबैक का आनंद लें",
+        title = R.string.onboarding_page3_title,
+        description = R.string.onboarding_page3_desc,
         icon = Icons.Default.CloudDownload
     )
 )
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun OnboardingScreen(
     onComplete: () -> Unit = {},
@@ -62,7 +60,15 @@ fun OnboardingScreen(
     val pagerState = rememberPagerState(pageCount = { onboardingPages.size })
     val scope = rememberCoroutineScope()
 
-    Scaffold { paddingValues ->
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {},
+                actions = { LanguagePickerAction() },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
+            )
+        }
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -76,7 +82,7 @@ fun OnboardingScreen(
                 horizontalArrangement = Arrangement.End
             ) {
                 TextButton(onClick = { viewModel.completeOnboarding(onComplete) }) {
-                    Text("Skip")
+                    Text(stringResource(CoreR.string.common_skip))
                 }
             }
 
@@ -141,7 +147,7 @@ fun OnboardingScreen(
                     ) {
                         Icon(Icons.Default.ArrowBack, null)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Back")
+                        Text(stringResource(CoreR.string.common_back))
                     }
                 }
 
@@ -163,11 +169,13 @@ fun OnboardingScreen(
                     }
                 ) {
                     Text(
-                        if (pagerState.currentPage == onboardingPages.size - 1) {
-                            "Get Started"
-                        } else {
-                            "Next"
-                        }
+                        stringResource(
+                            if (pagerState.currentPage == onboardingPages.size - 1) {
+                                R.string.onboarding_get_started
+                            } else {
+                                CoreR.string.common_next
+                            }
+                        )
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Icon(Icons.Default.ArrowForward, null)
@@ -194,35 +202,17 @@ fun OnboardingPageContent(page: OnboardingPage) {
         Spacer(modifier = Modifier.height(32.dp))
 
         Text(
-            text = page.title,
+            text = stringResource(page.title),
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurface
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = page.titleHindi,
-            style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = page.description,
+            text = stringResource(page.description),
             style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = page.descriptionHindi,
-            style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -247,7 +237,7 @@ fun ConsentSection(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = "Before you continue",
+                text = stringResource(R.string.onboarding_before_continue),
                 style = MaterialTheme.typography.titleMedium
             )
 
@@ -260,7 +250,7 @@ fun ConsentSection(
                     onCheckedChange = onAcceptTerms
                 )
                 Text(
-                    text = "I agree to the Terms of Service",
+                    text = stringResource(R.string.onboarding_agree_terms),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.weight(1f)
                 )
@@ -275,7 +265,7 @@ fun ConsentSection(
                     onCheckedChange = onAcceptPrivacy
                 )
                 Text(
-                    text = "I agree to the Privacy Policy",
+                    text = stringResource(R.string.onboarding_agree_privacy),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.weight(1f)
                 )

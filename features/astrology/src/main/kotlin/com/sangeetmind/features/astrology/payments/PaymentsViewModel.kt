@@ -1,13 +1,16 @@
 package com.sangeetmind.features.astrology.payments
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.PremiumStatus
 import com.sangeetmind.libs.models.RazorpayOrder
 import com.sangeetmind.libs.models.Sku
 import com.sangeetmind.libs.models.WalletTransaction
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,7 +39,8 @@ data class PaymentsUiState(
 @HiltViewModel
 class PaymentsViewModel @Inject constructor(
     private val repository: PaymentsRepository,
-    private val resultBus: RazorpayResultBus
+    private val resultBus: RazorpayResultBus,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PaymentsUiState())
@@ -49,7 +53,11 @@ class PaymentsViewModel @Inject constructor(
                 when (result) {
                     is RazorpayResult.Success -> onCheckoutSuccess(result)
                     is RazorpayResult.Failure -> _uiState.update {
-                        it.copy(pendingOrder = null, error = result.description ?: "Payment failed")
+                        it.copy(
+                            pendingOrder = null,
+                            error = result.description
+                                ?: context.getString(R.string.payments_error_payment_failed)
+                        )
                     }
                 }
             }
@@ -127,14 +135,24 @@ class PaymentsViewModel @Inject constructor(
                 // route for wallet orders) — give it a moment, then refresh the balance.
                 delay(2000)
                 refresh()
-                _uiState.update { it.copy(isLoading = false, message = "Payment received — updating balance") }
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        message = context.getString(R.string.payments_msg_payment_received)
+                    )
+                }
             } else {
                 when (val result = repository.verifyPremiumPayment(
                     success.orderId, success.paymentId, success.signature
                 )) {
                     is Result.Success -> {
                         refresh()
-                        _uiState.update { it.copy(isLoading = false, message = "You're now Premium!") }
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                message = context.getString(R.string.payments_msg_now_premium)
+                            )
+                        }
                     }
                     is Result.Error -> _uiState.update {
                         it.copy(isLoading = false, error = result.message)

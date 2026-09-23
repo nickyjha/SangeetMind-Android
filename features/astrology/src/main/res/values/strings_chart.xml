@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Screen chrome -->
+    <string name="chart_title">Birth Chart</string>
+    <string name="chart_add_kundli_first">Add a kundli first to calculate your Vedic birth chart.</string>
+    <string name="chart_default_heading">Your Vedic Birth Chart</string>
+    <string name="chart_error_calculate">Failed to calculate chart</string>
+
+    <!-- Summary strip -->
+    <string name="chart_lagna_label">Lagna</string>
+    <string name="chart_moon_label">Moon</string>
+    <string name="chart_nakshatra_label">Nakshatra</string>
+    <string name="chart_current_dasha_label">Current dasha</string>
+    <string name="chart_nakshatra_detail">Pada %1$d · %2$s</string>
+
+    <!-- Chart card titles/subtitles -->
+    <string name="chart_subtitle_north_indian">North Indian · whole-sign houses</string>
+    <string name="chart_chalit_title">Chalit Chart</string>
+    <string name="chart_chalit_subtitle">Bhava chart · Placidus house cusps</string>
+    <string name="chart_moon_chart_title">Chandra Kundli</string>
+    <string name="chart_moon_chart_subtitle">Moon chart · whole-sign houses from Moon lagna</string>
+
+    <!-- Divisional charts: name + purpose (tab label is the purpose before the first comma) -->
+    <string name="chart_div_name_d1">D1 Rasi Chart</string>
+    <string name="chart_div_purpose_d1">Birth chart</string>
+    <string name="chart_div_name_d2">D2 Hora</string>
+    <string name="chart_div_purpose_d2">Wealth, income</string>
+    <string name="chart_div_name_d3">D3 Drekkana</string>
+    <string name="chart_div_purpose_d3">Siblings, courage</string>
+    <string name="chart_div_name_d4">D4 Chaturthamsa</string>
+    <string name="chart_div_purpose_d4">Property, fortune</string>
+    <string name="chart_div_name_d7">D7 Saptamsa</string>
+    <string name="chart_div_purpose_d7">Children</string>
+    <string name="chart_div_name_d9">D9 Navamsa</string>
+    <string name="chart_div_purpose_d9">Marriage, dharma</string>
+    <string name="chart_div_name_d10">D10 Dashamsa</string>
+    <string name="chart_div_purpose_d10">Career, profession</string>
+    <string name="chart_div_name_d12">D12 Dwadasamsa</string>
+    <string name="chart_div_purpose_d12">Parents, family</string>
+    <string name="chart_div_name_d16">D16 Shodashamsa</string>
+    <string name="chart_div_purpose_d16">Vehicles, comforts</string>
+    <string name="chart_div_name_d20">D20 Vimsamsa</string>
+    <string name="chart_div_purpose_d20">Spiritual progress</string>
+    <string name="chart_div_name_d24">D24 Chaturvimsamsa</string>
+    <string name="chart_div_purpose_d24">Education</string>
+    <string name="chart_div_name_d27">D27 Saptavimsamsa</string>
+    <string name="chart_div_purpose_d27">Strengths, weaknesses</string>
+    <string name="chart_div_name_d30">D30 Trimsamsa</string>
+    <string name="chart_div_purpose_d30">Health, resilience</string>
+    <string name="chart_div_name_d40">D40 Khavedamsa</string>
+    <string name="chart_div_purpose_d40">Auspicious effects</string>
+    <string name="chart_div_name_d45">D45 Akshavedamsa</string>
+    <string name="chart_div_purpose_d45">Character, conduct</string>
+    <string name="chart_div_name_d60">D60 Sashtiamsa</string>
+    <string name="chart_div_purpose_d60">Past karma</string>
+
+    <!-- D1 section tabs -->
+    <string name="chart_section_overview">Overview</string>
+    <string name="chart_section_strength">Strength</string>
+    <string name="chart_section_dasha">Dasha</string>
+    <string name="chart_section_kp_jaimini">KP · Jaimini</string>
+    <string name="chart_section_lal_kitab">Lal Kitab</string>
+    <string name="chart_section_houses">Houses</string>
+
+    <!-- Planet list -->
+    <string name="chart_planet_positions">Planetary positions</string>
+    <string name="chart_dig_vargottama">Vargottama</string>
+    <string name="chart_legend_retrograde">* Retrograde</string>
+    <string name="chart_legend_combust">^ Combust</string>
+    <string name="chart_legend_exalted">↑ Exalted</string>
+    <string name="chart_legend_debilitated">↓ Debilitated</string>
+    <string name="chart_legend_vargottama">□ Vargottama</string>
+
+    <!-- Doshas -->
+    <string name="chart_doshas">Doshas</string>
+    <string name="chart_status_present">Present</string>
+    <string name="chart_status_cancelled">Cancelled</string>
+    <string name="chart_status_not_present">Not present</string>
+    <string name="chart_status_active">Active</string>
+    <string name="chart_status_not_active">Not active</string>
+    <string name="chart_no_kalsarpa">No Kalsarpa Yoga in this chart.</string>
+    <string name="chart_sadesati_until">%1$s · until %2$s</string>
+    <string name="chart_sadesati_next">Next: %1$s starts %2$s</string>
+    <string name="chart_sadesati_none">No upcoming Sade Sati or Small Panoti period found.</string>
+
+    <!-- Strength cards -->
+    <string name="chart_ashtakvarga">Ashtakvarga</string>
+    <string name="chart_ashtakvarga_subtitle">Sarva bindu strength by sign · total %1$d</string>
+    <string name="chart_friendship">Planetary Friendship</string>
+    <string name="chart_friendship_subtitle">How the other grahas treat %1$s</string>
+    <string name="chart_rel_intimate">Intimate</string>
+    <string name="chart_rel_bitter_enemy">Bitter Enemy</string>
+    <string name="chart_shadbala">Shadbala</string>
+    <string name="chart_shadbala_subtitle">Six-fold planetary strength, strongest first</string>
+    <string name="chart_rupas_fmt">%1$s rupas</string>
+    <string name="chart_bhavabala">Bhavabala</string>
+    <string name="chart_bhavabala_subtitle">House strength · strongest is House %1$s</string>
+
+    <!-- KP / Jaimini -->
+    <string name="chart_kp_title">KP System</string>
+    <string name="chart_kp_ayanamsa_fmt">%1$s ayanamsa · %2$s°</string>
+    <string name="chart_kp_cusps">Cusps</string>
+    <string name="chart_kp_significators">Significators</string>
+    <string name="chart_kp_no_significators">No significator houses for %1$s.</string>
+    <string name="chart_jaimini">Jaimini</string>
+    <string name="chart_jaimini_subtitle">Karakamsa %1$s · Swamsa %2$s</string>
+
+    <!-- Lal Kitab -->
+    <string name="chart_lal_kitab">Lal Kitab</string>
+    <string name="chart_lk_rin">Karmic debts (Rin)</string>
+    <string name="chart_lk_rin_row">%1$s · H%2$s</string>
+    <string name="chart_lk_remedies">Remedies</string>
+    <string name="chart_lk_placement_notes">Placement notes</string>
+    <string name="chart_lk_prediction_row">%1$s H%2$s</string>
+    <string name="chart_lk_empty">No debt yogas or remedies flagged for this chart.</string>
+
+    <!-- Narratives -->
+    <string name="chart_reading">Reading</string>
+    <string name="chart_nakshatra_line">%1$s · Pada %2$s · %3$s</string>
+    <string name="chart_ascendant_fmt">%1$s Ascendant</string>
+    <string name="chart_planet_placements">Planet placements</string>
+
+    <!-- Houses -->
+    <string name="chart_house_cusps">House Cusps</string>
+    <string name="chart_house_cusps_subtitle">Placidus cusps · active house system: %1$s</string>
+
+    <!-- Dasha -->
+    <string name="chart_dasha_vimshottari">Vimshottari</string>
+    <string name="chart_dasha_yogini">Yogini</string>
+    <string name="chart_dasha_chara">Chara</string>
+    <string name="chart_hide_timeline">Hide full %1$s timeline</string>
+    <string name="chart_view_timeline">View full %1$s timeline</string>
+    <string name="chart_timeline_unavailable">Timeline details are not available for this chart response.</string>
+    <string name="chart_current_vimshottari">Current Vimshottari</string>
+    <string name="chart_current_yogini">Current Yogini</string>
+    <string name="chart_current_chara">Current Chara</string>
+    <string name="chart_mahadasha">Mahadasha</string>
+    <string name="chart_antardasha">Antardasha</string>
+    <string name="chart_pratyantar">Pratyantar</string>
+    <string name="chart_dasha_row_fmt">%1$s · %2$s</string>
+    <string name="chart_yogini_name_fmt">%1$s (%2$s)</string>
+    <string name="chart_mahadasha_fmt">%1$s Mahadasha</string>
+    <string name="chart_antardasha_fmt">%1$s Antardasha</string>
+    <string name="chart_chip_current">Current</string>
+    <string name="chart_chip_partial">Partial</string>
+    <string name="chart_years_fmt">%1$s yrs</string>
+</resources>

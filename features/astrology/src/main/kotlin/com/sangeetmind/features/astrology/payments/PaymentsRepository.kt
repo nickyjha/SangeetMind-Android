@@ -1,10 +1,12 @@
 package com.sangeetmind.features.astrology.payments
 
+import android.content.Context
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.di.IoDispatcher
 import com.sangeetmind.core.network.PricingApi
 import com.sangeetmind.core.network.RazorpayApi
 import com.sangeetmind.core.network.WalletApi
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.CreateOrderRequest
 import com.sangeetmind.libs.models.PremiumStatus
 import com.sangeetmind.libs.models.RazorpayOrder
@@ -14,6 +16,7 @@ import com.sangeetmind.libs.models.WalletBalance
 import com.sangeetmind.libs.models.WalletDebitRequest
 import com.sangeetmind.libs.models.WalletDebitResponse
 import com.sangeetmind.libs.models.WalletTransaction
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -24,13 +27,14 @@ class PaymentsRepository @Inject constructor(
     private val pricingApi: PricingApi,
     private val razorpayApi: RazorpayApi,
     private val walletApi: WalletApi,
+    @ApplicationContext private val context: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
     suspend fun getSkus(kind: String? = null): Result<List<Sku>> = withContext(ioDispatcher) {
         try {
             Result.Success(pricingApi.getSkus(kind).skus)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: "Failed to load plans")
+            Result.Error(e, e.message ?: context.getString(R.string.payments_error_load_plans))
         }
     }
 
@@ -38,7 +42,7 @@ class PaymentsRepository @Inject constructor(
         try {
             Result.Success(razorpayApi.createOrder(CreateOrderRequest(skuId)))
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: "Could not start checkout")
+            Result.Error(e, e.message ?: context.getString(R.string.payments_error_start_checkout))
         }
     }
 
@@ -51,7 +55,7 @@ class PaymentsRepository @Inject constructor(
             razorpayApi.verifyPayment(VerifyPaymentRequest(orderId, paymentId, signature))
             Result.Success(Unit)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: "Could not verify payment")
+            Result.Error(e, e.message ?: context.getString(R.string.payments_error_verify_payment))
         }
     }
 
@@ -59,7 +63,7 @@ class PaymentsRepository @Inject constructor(
         try {
             Result.Success(razorpayApi.getPremiumStatus())
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: "Failed to load premium status")
+            Result.Error(e, e.message ?: context.getString(R.string.payments_error_load_premium_status))
         }
     }
 
@@ -67,7 +71,7 @@ class PaymentsRepository @Inject constructor(
         try {
             Result.Success(walletApi.createOrder(CreateOrderRequest(skuId)))
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: "Could not start checkout")
+            Result.Error(e, e.message ?: context.getString(R.string.payments_error_start_checkout))
         }
     }
 
@@ -81,7 +85,7 @@ class PaymentsRepository @Inject constructor(
         try {
             Result.Success(walletApi.getBalance())
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: "Failed to load wallet balance")
+            Result.Error(e, e.message ?: context.getString(R.string.payments_error_load_wallet_balance))
         }
     }
 
@@ -89,7 +93,7 @@ class PaymentsRepository @Inject constructor(
         try {
             Result.Success(walletApi.getTransactions().transactions)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: "Failed to load transactions")
+            Result.Error(e, e.message ?: context.getString(R.string.payments_error_load_transactions))
         }
     }
 
@@ -101,7 +105,7 @@ class PaymentsRepository @Inject constructor(
         try {
             Result.Success(walletApi.debit(WalletDebitRequest(skuId, idempotencyKey, amountPaise)))
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: "Could not spend wallet balance")
+            Result.Error(e, e.message ?: context.getString(R.string.payments_error_spend_wallet))
         }
     }
 }

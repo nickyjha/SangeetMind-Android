@@ -10,12 +10,17 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.features.raaglibrary.R
 import com.sangeetmind.features.raaglibrary.RaagListViewModel
+import com.sangeetmind.libs.models.Mood
 import com.sangeetmind.libs.models.Raag
+import com.sangeetmind.libs.models.TimeOfDay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,7 +33,7 @@ fun RaagListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Raag Library") },
+                title = { Text(stringResource(R.string.raaglib_title)) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -62,16 +67,16 @@ fun RaagListScreen(
                 }
                 uiState.error != null -> {
                     ErrorView(
-                        message = uiState.error ?: "Unknown error",
+                        message = uiState.error ?: stringResource(CoreR.string.common_error_generic),
                         onRetry = viewModel::loadRaags
                     )
                 }
                 uiState.filteredRaags.isEmpty() -> {
                     EmptyView(
                         message = if (uiState.searchQuery.isNotEmpty()) {
-                            "No raags found for \"${uiState.searchQuery}\""
+                            stringResource(R.string.raaglib_no_results_fmt, uiState.searchQuery)
                         } else {
-                            "No raags available"
+                            stringResource(R.string.raaglib_no_raags)
                         }
                     )
                 }
@@ -111,11 +116,11 @@ fun SearchBar(
         value = query,
         onValueChange = onQueryChange,
         modifier = modifier,
-        placeholder = { Text("Search raags...") },
+        placeholder = { Text(stringResource(R.string.raaglib_search_hint)) },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,
-                contentDescription = "Search"
+                contentDescription = stringResource(CoreR.string.common_search)
             )
         },
         trailingIcon = {
@@ -123,7 +128,7 @@ fun SearchBar(
                 IconButton(onClick = onClearClick) {
                     Icon(
                         imageVector = Icons.Default.Clear,
-                        contentDescription = "Clear search"
+                        contentDescription = stringResource(R.string.raaglib_clear_search)
                     )
                 }
             }
@@ -187,13 +192,13 @@ fun RaagListItem(
                     raag.timeOfDay?.let { timeOfDay ->
                         AssistChip(
                             onClick = {},
-                            label = { Text(timeOfDay.name, style = MaterialTheme.typography.labelSmall) }
+                            label = { Text(timeOfDayLabel(timeOfDay), style = MaterialTheme.typography.labelSmall) }
                         )
                     }
                     raag.mood?.let { mood ->
                         AssistChip(
                             onClick = {},
-                            label = { Text(mood.name, style = MaterialTheme.typography.labelSmall) }
+                            label = { Text(moodLabel(mood), style = MaterialTheme.typography.labelSmall) }
                         )
                     }
                 }
@@ -206,14 +211,16 @@ fun RaagListItem(
                 IconButton(onClick = onFavoriteClick) {
                     Icon(
                         imageVector = if (raag.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = if (raag.isFavorite) "Remove from favorites" else "Add to favorites",
+                        contentDescription = stringResource(
+                            if (raag.isFavorite) R.string.raaglib_remove_favorite else R.string.raaglib_add_favorite
+                        ),
                         tint = if (raag.isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 IconButton(onClick = { /* TODO: Play raag */ }) {
                     Icon(
                         imageVector = Icons.Default.PlayArrow,
-                        contentDescription = "Play raag"
+                        contentDescription = stringResource(R.string.raaglib_play)
                     )
                 }
             }
@@ -246,10 +253,33 @@ fun ErrorView(
         )
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = onRetry) {
-            Text("Retry")
+            Text(stringResource(CoreR.string.common_retry))
         }
     }
 }
+
+@Composable
+private fun timeOfDayLabel(timeOfDay: TimeOfDay): String = stringResource(
+    when (timeOfDay) {
+        TimeOfDay.MORNING -> R.string.raaglib_time_morning
+        TimeOfDay.AFTERNOON -> R.string.raaglib_time_afternoon
+        TimeOfDay.EVENING -> R.string.raaglib_time_evening
+        TimeOfDay.NIGHT -> R.string.raaglib_time_night
+        TimeOfDay.ANYTIME -> R.string.raaglib_time_anytime
+    }
+)
+
+@Composable
+private fun moodLabel(mood: Mood): String = stringResource(
+    when (mood) {
+        Mood.PEACEFUL -> R.string.raaglib_mood_peaceful
+        Mood.ENERGETIC -> R.string.raaglib_mood_energetic
+        Mood.DEVOTIONAL -> R.string.raaglib_mood_devotional
+        Mood.ROMANTIC -> R.string.raaglib_mood_romantic
+        Mood.MELANCHOLIC -> R.string.raaglib_mood_melancholic
+        Mood.JOYFUL -> R.string.raaglib_mood_joyful
+    }
+)
 
 @Composable
 fun EmptyView(

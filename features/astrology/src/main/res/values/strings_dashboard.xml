@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dashboard_my_kundlis">My kundlis</string>
+    <string name="dashboard_create_kundli_title">Create your kundli</string>
+    <string name="dashboard_create_kundli_body">Add your birth details to unlock your horoscope, panchang, and full reading.</string>
+    <string name="dashboard_get_started">Get started</string>
+    <string name="dashboard_explore">Explore</string>
+
+    <string name="dashboard_dest_birth_chart">Birth Chart</string>
+    <string name="dashboard_dest_horoscope">Horoscope</string>
+    <string name="dashboard_dest_panchang">Panchang</string>
+    <string name="dashboard_dest_muhurat">Muhurat</string>
+    <string name="dashboard_dest_match">Match</string>
+    <string name="dashboard_dest_numerology">Numerology</string>
+    <string name="dashboard_dest_full_reading">Full Reading</string>
+    <string name="dashboard_dest_chatmind">ChatMind</string>
+    <string name="dashboard_dest_varshaphal">Varshaphal</string>
+    <string name="dashboard_dest_holistic">Holistic</string>
+    <string name="dashboard_dest_payments">Payments</string>
+    <string name="dashboard_dest_reports">Reports</string>
+    <string name="dashboard_dest_readings">Readings</string>
+    <string name="dashboard_dest_referrals">Referrals</string>
+    <string name="dashboard_dest_sangeet">Sangeet</string>
+
+    <string name="dashboard_your_kundli">Your kundli</string>
+    <string name="dashboard_moon_sign">Moon sign</string>
+    <string name="dashboard_lagna">Lagna</string>
+    <string name="dashboard_nakshatra">Nakshatra</string>
+    <string name="dashboard_current_dasha">Current dasha</string>
+    <string name="dashboard_todays_mood">Today\'s mood</string>
+
+    <string name="dashboard_lucky_color">Lucky color</string>
+    <string name="dashboard_panchang">Panchang</string>
+    <string name="dashboard_view_full_guidance">View today\'s full guidance →</string>
+
+    <string name="dashboard_error_load">Failed to load dashboard</string>
+</resources>

@@ -12,7 +12,6 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class SettingsUiState(
-    val language: String = "en",
     val playbackQuality: PlaybackQuality = PlaybackQuality.HIGH,
     val downloadOnWifiOnly: Boolean = true,
     val notificationsEnabled: Boolean = true,
@@ -42,11 +41,6 @@ class SettingsViewModel @Inject constructor(
             // TODO: Load from DataStore
             // For now, using default values
         }
-    }
-
-    fun setLanguage(language: String) {
-        _uiState.update { it.copy(language = language) }
-        saveSettings()
     }
 
     fun setPlaybackQuality(quality: PlaybackQuality) {

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="meditation_title">Meditation</string>
+    <string name="meditation_empty">No meditation sessions available</string>
+    <string name="meditation_minutes_fmt">%1$d min</string>
+    <string name="meditation_guided">Guided</string>
+    <string name="meditation_start_session">Start session</string>
+    <string name="meditation_paused">Paused</string>
+    <string name="meditation_breathe">Breathe</string>
+    <string name="meditation_of_total_fmt">of %1$s</string>
+    <string name="meditation_stop_session">Stop session</string>
+    <string name="meditation_resume">Resume</string>
+    <string name="meditation_pause">Pause</string>
+    <string name="meditation_error_unknown">Unknown error</string>
+    <string name="meditation_category_breathing">Breathing</string>
+    <string name="meditation_category_mindfulness">Mindfulness</string>
+    <string name="meditation_category_sleep">Sleep</string>
+    <string name="meditation_category_stress_relief">Stress Relief</string>
+    <string name="meditation_category_focus">Focus</string>
+    <string name="meditation_category_chakra">Chakra</string>
+</resources>

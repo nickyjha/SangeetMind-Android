@@ -12,10 +12,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.razorpay.Checkout
+import com.sangeetmind.core.common.language.findActivity
+import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.payments.PaymentsTab
 import com.sangeetmind.features.astrology.payments.PaymentsViewModel
 import com.sangeetmind.libs.models.RazorpayOrder
@@ -33,7 +37,8 @@ fun PaymentsScreen(
 
     LaunchedEffect(uiState.pendingOrder) {
         val order = uiState.pendingOrder ?: return@LaunchedEffect
-        val activity = context as? Activity
+        // LocalContext is the language-layer wrapper, not the Activity itself; unwrap it.
+        val activity = context.findActivity()
         if (activity != null) {
             launchRazorpayCheckout(activity, order)
         }
@@ -43,10 +48,10 @@ fun PaymentsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Premium & Wallet") },
+                title = { Text(stringResource(R.string.payments_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
                     }
                 }
             )
@@ -57,12 +62,12 @@ fun PaymentsScreen(
                 Tab(
                     selected = uiState.tab == PaymentsTab.PREMIUM,
                     onClick = { viewModel.setTab(PaymentsTab.PREMIUM) },
-                    text = { Text("Premium") }
+                    text = { Text(stringResource(R.string.payments_tab_premium)) }
                 )
                 Tab(
                     selected = uiState.tab == PaymentsTab.WALLET,
                     onClick = { viewModel.setTab(PaymentsTab.WALLET) },
-                    text = { Text("Wallet") }
+                    text = { Text(stringResource(R.string.payments_tab_wallet)) }
                 )
             }
 
@@ -119,12 +124,14 @@ private fun PremiumTab(isPremium: Boolean, plans: List<Sku>, onBuy: (Sku) -> Uni
                     Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Default.Star, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("You're a Premium member")
+                        Text(stringResource(R.string.payments_premium_member))
                     }
                 }
             }
         }
-        items(plans) { sku -> SkuCard(sku, buttonLabel = "Subscribe", onClick = { onBuy(sku) }) }
+        items(plans) { sku ->
+            SkuCard(sku, buttonLabel = stringResource(R.string.payments_subscribe), onClick = { onBuy(sku) })
+        }
     }
 }
 
@@ -143,7 +150,7 @@ private fun WalletTab(
         item {
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text("Balance", style = MaterialTheme.typography.labelLarge)
+                    Text(stringResource(R.string.payments_balance), style = MaterialTheme.typography.labelLarge)
                     Text(
                         text = formatPaise(balancePaise ?: 0),
                         style = MaterialTheme.typography.headlineMedium
@@ -151,12 +158,14 @@ private fun WalletTab(
                 }
             }
         }
-        item { Text("Top up", style = MaterialTheme.typography.titleMedium) }
-        items(presets) { sku -> SkuCard(sku, buttonLabel = "Add", onClick = { onRecharge(sku) }) }
+        item { Text(stringResource(R.string.payments_top_up), style = MaterialTheme.typography.titleMedium) }
+        items(presets) { sku ->
+            SkuCard(sku, buttonLabel = stringResource(R.string.payments_add), onClick = { onRecharge(sku) })
+        }
         if (transactions.isNotEmpty()) {
             item {
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Recent recharges", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.payments_recent_recharges), style = MaterialTheme.typography.titleMedium)
             }
             items(transactions) { tx ->
                 ListItem(

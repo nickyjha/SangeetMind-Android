@@ -1,12 +1,15 @@
 package com.sangeetmind.features.astrology.marketplace
 
+import android.content.Context
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.di.IoDispatcher
 import com.sangeetmind.core.network.MarketplaceApi
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.Astrologer
 import com.sangeetmind.libs.models.DebitChatMinuteRequest
 import com.sangeetmind.libs.models.DebitChatMinuteResponse
 import com.sangeetmind.libs.models.SubmitReviewRequest
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -15,6 +18,7 @@ import javax.inject.Singleton
 @Singleton
 class MarketplaceRepository @Inject constructor(
     private val marketplaceApi: MarketplaceApi,
+    @ApplicationContext private val context: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
     suspend fun listAstrologers(onlineOnly: Boolean = false): Result<List<Astrologer>> =
@@ -22,7 +26,7 @@ class MarketplaceRepository @Inject constructor(
             try {
                 Result.Success(marketplaceApi.listAstrologers(onlineOnly).astrologers)
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: "Failed to load astrologers")
+                Result.Error(e, e.message ?: context.getString(R.string.marketplace_error_load_astrologers))
             }
         }
 
@@ -30,7 +34,7 @@ class MarketplaceRepository @Inject constructor(
         try {
             Result.Success(marketplaceApi.getAstrologer(id))
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: "Failed to load astrologer")
+            Result.Error(e, e.message ?: context.getString(R.string.marketplace_error_load_astrologer))
         }
     }
 
@@ -40,7 +44,7 @@ class MarketplaceRepository @Inject constructor(
                 marketplaceApi.submitReview(astrologerId, SubmitReviewRequest(rating, comment))
                 Result.Success(Unit)
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: "Failed to submit review")
+                Result.Error(e, e.message ?: context.getString(R.string.marketplace_error_submit_review))
             }
         }
 
@@ -51,7 +55,7 @@ class MarketplaceRepository @Inject constructor(
                     marketplaceApi.debitChatMinute(DebitChatMinuteRequest(astrologerId, idempotencyKey))
                 )
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: "Could not bill this minute")
+                Result.Error(e, e.message ?: context.getString(R.string.marketplace_error_bill_minute))
             }
         }
 }

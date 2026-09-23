@@ -1,8 +1,11 @@
 package com.sangeetmind.features.astrology.dashboard
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.horoscope.HoroscopeRepository
 import com.sangeetmind.features.astrology.kundli.KundliRepository
 import com.sangeetmind.features.astrology.panchang.PanchangRepository
@@ -12,10 +15,12 @@ import com.sangeetmind.libs.models.DailyHoroscope
 import com.sangeetmind.libs.models.Kundli
 import com.sangeetmind.libs.models.PanchangResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -37,10 +42,12 @@ private fun todayIso(): String = SimpleDateFormat("yyyy-MM-dd", Locale.US).forma
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val kundliRepository: KundliRepository,
     private val astroProfileRepository: AstroProfileRepository,
     private val horoscopeRepository: HoroscopeRepository,
-    private val panchangRepository: PanchangRepository
+    private val panchangRepository: PanchangRepository,
+    private val languageManager: LanguageManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DashboardUiState())
@@ -48,6 +55,11 @@ class DashboardViewModel @Inject constructor(
 
     init {
         refresh()
+        // The daily horoscope's Gemini-written fields come back in the requested language,
+        // so re-fetch the Today card when the user switches language (skip the initial value).
+        viewModelScope.launch {
+            languageManager.language.drop(1).collect { refresh() }
+        }
     }
 
     fun refresh() {
@@ -78,7 +90,7 @@ class DashboardViewModel @Inject constructor(
                     }
                 }
                 is Result.Error -> _uiState.update {
-                    it.copy(isLoading = false, error = kundliResult.message ?: "Failed to load dashboard")
+                    it.copy(isLoading = false, error = kundliResult.message ?: context.getString(R.string.dashboard_error_load))
                 }
                 is Result.Loading -> Unit
             }

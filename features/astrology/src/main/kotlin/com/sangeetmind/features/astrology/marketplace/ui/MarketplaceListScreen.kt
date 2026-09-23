@@ -12,9 +12,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.marketplace.MarketplaceListViewModel
 import com.sangeetmind.libs.models.Astrologer
 
@@ -30,10 +33,10 @@ fun MarketplaceListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Astrologers") },
+                title = { Text(stringResource(R.string.marketplace_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
                     }
                 }
             )
@@ -44,7 +47,7 @@ fun MarketplaceListScreen(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Online only", modifier = Modifier.weight(1f))
+                Text(stringResource(R.string.marketplace_online_only), modifier = Modifier.weight(1f))
                 Switch(checked = uiState.onlineOnly, onCheckedChange = viewModel::setOnlineOnly)
             }
 
@@ -55,7 +58,7 @@ fun MarketplaceListScreen(
                     }
                     uiState.astrologers.isEmpty() -> {
                         Text(
-                            "No astrologers found.",
+                            stringResource(R.string.marketplace_empty),
                             modifier = Modifier.align(Alignment.Center).padding(24.dp)
                         )
                     }
@@ -96,7 +99,7 @@ private fun AstrologerCard(astrologer: Astrologer, onClick: () -> Unit) {
                         Spacer(modifier = Modifier.width(6.dp))
                         Icon(
                             Icons.Default.Circle,
-                            contentDescription = "Online",
+                            contentDescription = stringResource(R.string.marketplace_online_cd),
                             tint = Color(0xFF4CAF50),
                             modifier = Modifier.size(10.dp)
                         )
@@ -114,7 +117,10 @@ private fun AstrologerCard(astrologer: Astrologer, onClick: () -> Unit) {
                 }
             }
             Text(
-                text = "₹%.2f/min".format(astrologer.ratePaisePerMin / 100.0),
+                text = stringResource(
+                    R.string.marketplace_rate_per_min_fmt,
+                    "%.2f".format(astrologer.ratePaisePerMin / 100.0)
+                ),
                 style = MaterialTheme.typography.bodyMedium
             )
         }

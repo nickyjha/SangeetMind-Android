@@ -37,7 +37,28 @@ data class PlanetInfo(
     val debilitated: Boolean = false,
     val vargottama: Boolean = false,
     /** Whole-sign houses (1-12) this planet's drishti falls on (app/services/chart_aspects.py). */
-    @Json(name = "aspects_houses") val aspectsHouses: List<Int> = emptyList()
+    @Json(name = "aspects_houses") val aspectsHouses: List<Int> = emptyList(),
+    /** Same aspects with which-aspect (`offset`, e.g. 7) and drishti-bala `strength` %. */
+    val aspects: List<PlanetAspect> = emptyList()
+)
+
+/** One drishti cast by a planet: the house it lands on, which aspect it is (offset from
+ * the planet's own house, e.g. 7 = the universal 7th-house aspect) and its strength
+ * (7th = 100%, Mars/Saturn specials = 75%, Jupiter/nodes specials = 50%). */
+@JsonClass(generateAdapter = true)
+data class PlanetAspect(
+    val house: Int,
+    val offset: Int = 0,
+    val strength: Int = 100
+)
+
+/** Two grahas that aspect each other's house ("mutual aspect"). */
+@JsonClass(generateAdapter = true)
+data class MutualAspect(
+    @Json(name = "planet_a") val planetA: String,
+    @Json(name = "house_a") val houseA: Int,
+    @Json(name = "planet_b") val planetB: String,
+    @Json(name = "house_b") val houseB: Int
 )
 
 @JsonClass(generateAdapter = true)
@@ -503,6 +524,7 @@ data class ChartSummaryResponse(
     val friendship: ChartFriendship = ChartFriendship(),
     val shadbala: ChartShadbala = ChartShadbala(),
     val bhavabala: ChartBhavabala = ChartBhavabala(),
+    @Json(name = "mutual_aspects") val mutualAspects: List<MutualAspect> = emptyList(),
     val kp: ChartKp = ChartKp(),
     val jaimini: ChartJaimini = ChartJaimini(),
     @Json(name = "lal_kitab") val lalKitab: ChartLalKitab = ChartLalKitab(),

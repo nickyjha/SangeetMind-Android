@@ -78,6 +78,7 @@ import com.sangeetmind.libs.models.DashaPeriod
 import com.sangeetmind.libs.models.DivisionalChart
 import com.sangeetmind.libs.models.LagnaInfo
 import com.sangeetmind.libs.models.MahadashaPeriod
+import com.sangeetmind.libs.models.MutualAspect
 import com.sangeetmind.libs.models.PlanetInfo
 import com.sangeetmind.libs.models.SadesatiPeriod
 import com.sangeetmind.libs.models.YoginiAntardasha
@@ -241,6 +242,11 @@ private fun ChartContent(
         if (selected.first == "D1" && chart.bhavabala.houses.isNotEmpty()) {
             item {
                 HouseDetailsCard(chart.planets, chart.bhavabala)
+            }
+        }
+        if (selected.first == "D1" && chart.mutualAspects.isNotEmpty()) {
+            item {
+                MutualAspectsCard(chart.mutualAspects)
             }
         }
         if (selected.first == "D1") {
@@ -515,24 +521,58 @@ private fun dignityChips(planet: PlanetInfo): List<Pair<String, Color>> {
     }
 }
 
+/** Classical navagraha only — Uranus/Neptune/Pluto are in the planets map (chart_service.py
+ * computes them for reference) but excluded from Vedic house/aspect UI everywhere else
+ * (the wheel, PlanetListCard), so the house/aspect tables exclude them too. */
+private val VEDIC_PLANETS = setOf("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu")
+
+/** Pairs of planets that aspect each other's house (backend `mutual_aspects`, D1 only). */
+@Composable
+internal fun MutualAspectsCard(pairs: List<MutualAspect>) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(stringResource(R.string.chart_mutual_aspects_title), style = MaterialTheme.typography.titleMedium)
+            Text(
+                stringResource(R.string.chart_mutual_aspects_subtitle),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            pairs.forEach { pair ->
+                val a = "${astroTerm(pair.planetA)} (${stringResource(CoreR.string.common_house_short, pair.houseA)})"
+                val b = "${astroTerm(pair.planetB)} (${stringResource(CoreR.string.common_house_short, pair.houseB)})"
+                Text(
+                    stringResource(R.string.chart_mutual_aspect_row_fmt, a, b),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(vertical = 4.dp)
+                )
+            }
+        }
+    }
+}
+
 /**
  * House-by-house table (D1 only): for each house, its sign, lord (bhavabala.houses —
  * already computed by the backend from this chart's own lagna), which planets occupy it,
- * and which planets aspect (drishti) it — the inverse of each planet's aspectsHouses.
+ * and which planets aspect (drishti) it — the inverse of each planet's aspects — with the
+ * drishti-bala strength shown for partial (non-7th) aspects.
  */
 @Composable
 internal fun HouseDetailsCard(planets: Map<String, PlanetInfo>, bhavabala: ChartBhavabala) {
-    // Classical navagraha only — Uranus/Neptune/Pluto are in the planets map (chart_service.py
-    // computes them for reference) but excluded from Vedic house/aspect UI everywhere else
-    // (the wheel, PlanetListCard), so exclude them here too for consistency.
-    val vedicPlanets = planets.filterKeys {
-        it in setOf("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu")
-    }
+    val vedicPlanets = planets.filterKeys { it in VEDIC_PLANETS }
     val occupantsByHouse = (1..12).associateWith { house ->
         vedicPlanets.filterValues { it.house == house }.keys.toList()
     }
+    // house -> (planet, strength %). Falls back to aspectsHouses / 100% if the detailed list is absent.
     val influencersByHouse = (1..12).associateWith { house ->
-        vedicPlanets.filterValues { house in it.aspectsHouses }.keys.toList()
+        vedicPlanets.mapNotNull { (name, info) ->
+            val detailed = info.aspects.firstOrNull { it.house == house }
+            when {
+                detailed != null -> name to detailed.strength
+                house in info.aspectsHouses -> name to 100
+                else -> null
+            }
+        }
     }
 
     Card(modifier = Modifier.fillMaxWidth()) {
@@ -541,7 +581,13 @@ internal fun HouseDetailsCard(planets: Map<String, PlanetInfo>, bhavabala: Chart
             Spacer(modifier = Modifier.height(8.dp))
             bhavabala.houses.sortedBy { it.house }.forEach { house ->
                 val occupantNames = occupantsByHouse[house.house].orEmpty().map { astroTerm(it) }
-                val influencerNames = influencersByHouse[house.house].orEmpty().map { astroTerm(it) }
+                val influencerNames = influencersByHouse[house.house].orEmpty().map { (name, strength) ->
+                    if (strength < 100) {
+                        stringResource(R.string.chart_house_influencer_strength_fmt, astroTerm(name), strength)
+                    } else {
+                        astroTerm(name)
+                    }
+                }
                 Column(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(
@@ -632,6 +678,19 @@ internal fun PlanetListCard(lagna: LagnaInfo, planets: Map<String, PlanetInfo>) 
                         ) {
                             chips.forEach { (label, color) -> Chip(label, color) }
                         }
+                    }
+                    // An aspect on an occupied house also falls on the planet sitting there.
+                    val aspectedBy = planets
+                        .filter { (other, info) -> other != name && other in VEDIC_PLANETS && house in info.aspectsHouses }
+                        .keys
+                        .map { astroTerm(it) }
+                    if (aspectedBy.isNotEmpty()) {
+                        Text(
+                            stringResource(R.string.chart_planet_aspected_by_fmt, aspectedBy.joinToString(", ")),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = 4.dp, start = 28.dp)
+                        )
                     }
                 }
             }

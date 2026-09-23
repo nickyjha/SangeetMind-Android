@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.core.ui.language.astroTerm
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.horoscope.HoroscopeTab
@@ -156,7 +157,7 @@ private fun DailyContent(horoscope: DailyHoroscope) {
         MantraCard(mantra)
     } ?: horoscope.recommendedMantras.firstOrNull()?.name?.let { mantra ->
         Spacer(modifier = Modifier.height(16.dp))
-        Text(stringResource(R.string.horoscope_recommended_mantra_fmt, mantra), style = MaterialTheme.typography.bodyMedium)
+        Text(stringResource(R.string.horoscope_recommended_mantra_fmt, astroTerm(mantra)), style = MaterialTheme.typography.bodyMedium)
     }
 
     enhanced?.daanDonation?.takeIf { it.item.isNotBlank() }?.let { daan ->
@@ -239,7 +240,7 @@ private fun MantraCard(mantra: EnhancedMantra) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(stringResource(R.string.horoscope_recommended_mantra), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(modifier = Modifier.height(4.dp))
-            Text(mantra.name, style = MaterialTheme.typography.titleMedium)
+            Text(astroTerm(mantra.name), style = MaterialTheme.typography.titleMedium)
             val details = listOfNotNull(
                 mantra.count.takeIf { it.isNotBlank() },
                 mantra.bestTime.takeIf { it.isNotBlank() }

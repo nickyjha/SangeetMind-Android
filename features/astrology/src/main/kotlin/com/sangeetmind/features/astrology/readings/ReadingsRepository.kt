@@ -1,9 +1,11 @@
 package com.sangeetmind.features.astrology.readings
 
 import android.content.Context
+import androidx.annotation.StringRes
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.di.IoDispatcher
 import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.core.common.language.withAppLanguage
 import com.sangeetmind.core.network.LlmApi
 import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.features.astrology.R
@@ -37,12 +39,15 @@ class ReadingsRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
+    private fun str(@StringRes id: Int): String =
+        context.withAppLanguage(languageManager.current).getString(id)
+
     private suspend fun primaryKundli(): Result<Kundli> = when (val result = kundliRepository.listKundlis()) {
         is Result.Success -> {
             val primary = result.data.firstOrNull { it.isPrimary } ?: result.data.firstOrNull()
             if (primary == null) Result.Error(
                 IllegalStateException("No kundli"),
-                context.getString(CoreR.string.common_add_kundli_first)
+                str(CoreR.string.common_add_kundli_first)
             )
             else Result.Success(primary)
         }
@@ -60,7 +65,7 @@ class ReadingsRepository @Inject constructor(
             is Result.Success -> if (debit.data.success) Result.Success(Unit) else
                 Result.Error(
                     IllegalStateException("Debit failed"),
-                    context.getString(R.string.readings_err_insufficient_balance)
+                    str(R.string.readings_err_insufficient_balance)
                 )
             is Result.Error -> Result.Error(debit.exception, debit.message)
             is Result.Loading -> Result.Loading
@@ -91,7 +96,7 @@ class ReadingsRepository @Inject constructor(
             )
             Result.Success(llmApi.getCareerReading(request))
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: context.getString(R.string.readings_err_career))
+            Result.Error(e, e.message ?: str(R.string.readings_err_career))
         }
     }
 
@@ -117,7 +122,7 @@ class ReadingsRepository @Inject constructor(
             )
             Result.Success(llmApi.getStrengthsReading(request))
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: context.getString(R.string.readings_err_strengths))
+            Result.Error(e, e.message ?: str(R.string.readings_err_strengths))
         }
     }
 }

@@ -205,6 +205,50 @@
     <string name="astro_raag_mood_selfish">Selfish</string>
     <string name="astro_raag_mood_static">Static</string>
 
+    <!-- Chart yoga names (app/engine/rules_yogas.py, rendered in the Full Reading strengths/challenges list) -->
+    <string name="astro_yoga_ruchaka">Ruchaka Yoga (Mars)</string>
+    <string name="astro_yoga_bhadra">Bhadra Yoga (Mercury)</string>
+    <string name="astro_yoga_hamsa">Hamsa Yoga (Jupiter)</string>
+    <string name="astro_yoga_malavya">Malavya Yoga (Venus)</string>
+    <string name="astro_yoga_sasa">Sasa Yoga (Saturn)</string>
+    <string name="astro_yoga_gajakesari">Gajakesari Yoga</string>
+    <string name="astro_yoga_dhana_basic">Dhana Yoga (Basic Wealth)</string>
+    <string name="astro_yoga_saraswati">Saraswati Yoga</string>
+    <string name="astro_yoga_chandra_mangala">Chandra Mangala Yoga</string>
+    <string name="astro_yoga_adhi">Adhi Yoga</string>
+    <string name="astro_yoga_vasumati">Vasumati Yoga</string>
+    <string name="astro_yoga_trilochana">Trilochana Yoga</string>
+    <string name="astro_yoga_parvata">Parvata Yoga</string>
+    <string name="astro_yoga_budhaditya">Budhaditya Yoga</string>
+    <string name="astro_yoga_guru_mangala">Guru Mangala Yoga</string>
+    <string name="astro_yoga_shubha_kartari">Shubha Kartari Yoga</string>
+    <string name="astro_yoga_lakshmi">Lakshmi Yoga</string>
+    <string name="astro_yoga_dharma_karmadhipati">Dharma Karmadhipati Yoga</string>
+    <string name="astro_yoga_kendradhipati_raja">Kendradhipati Raja Yoga</string>
+    <string name="astro_yoga_amala">Amala Yoga</string>
+    <string name="astro_yoga_neecha_bhanga_raja_enhanced">Neecha Bhanga Raja Yoga (Enhanced)</string>
+    <string name="astro_yoga_mridanga">Mridanga Yoga</string>
+    <string name="astro_yoga_sannyasa">Sannyasa Yoga</string>
+    <string name="astro_yoga_parivrajya">Parivrajya Yoga</string>
+    <string name="astro_yoga_mahapataka">Mahapataka Yoga</string>
+    <string name="astro_yoga_moksha">Moksha Yoga</string>
+    <string name="astro_yoga_viparita_raja_harsha">Viparita Raja Yoga - Harsha</string>
+    <string name="astro_yoga_viparita_raja_sarala">Viparita Raja Yoga - Sarala</string>
+    <string name="astro_yoga_viparita_raja_vimala">Viparita Raja Yoga - Vimala</string>
+    <string name="astro_yoga_pasa">Pasa Yoga</string>
+
+    <!-- Mantra names (app/data/mantras.json) -->
+    <string name="astro_mantra_gayatri">Gayatri Mantra</string>
+    <string name="astro_mantra_jupiter_gayatri">Jupiter Gayatri</string>
+    <string name="astro_mantra_mangal_gayatri">Mangal Gayatri</string>
+    <string name="astro_mantra_shani_gayatri">Shani Gayatri</string>
+    <string name="astro_mantra_shukra_gayatri">Shukra Gayatri</string>
+    <string name="astro_mantra_chandra_gayatri">Chandra Gayatri</string>
+    <string name="astro_mantra_surya_gayatri">Surya Gayatri</string>
+    <string name="astro_mantra_budh_gayatri">Budh Gayatri</string>
+    <string name="astro_mantra_rahu_gayatri">Rahu Gayatri</string>
+    <string name="astro_mantra_ketu_gayatri">Ketu Gayatri</string>
+
     <!-- Numerology archetype names (app/numerology/interpretations/data.py) -->
     <string name="astro_archetype_pioneer">The Pioneer</string>
     <string name="astro_archetype_harmonizer">The Harmonizer</string>

@@ -1,9 +1,11 @@
 package com.sangeetmind.features.astrology.sangeet
 
 import android.content.Context
+import androidx.annotation.StringRes
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.di.IoDispatcher
 import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.core.common.language.withAppLanguage
 import com.sangeetmind.core.network.SangeetApi
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.JapaLogRequest
@@ -24,12 +26,15 @@ class SangeetRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
+    private fun str(@StringRes id: Int): String =
+        context.withAppLanguage(languageManager.current).getString(id)
+
     /** The playlist's descriptive text follows the app language (`locale` on the backend). */
     suspend fun getDailyRaag(): Result<RaagPlaylist> = withContext(ioDispatcher) {
         try {
             Result.Success(sangeetApi.getDailyRaag(languageManager.current.code).playlist)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: context.getString(R.string.sangeet_err_raag))
+            Result.Error(e, e.message ?: str(R.string.sangeet_err_raag))
         }
     }
 
@@ -38,7 +43,7 @@ class SangeetRepository @Inject constructor(
             sangeetApi.logJapa(JapaLogRequest(mantraId, japaCount))
             Result.Success(Unit)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: context.getString(R.string.sangeet_err_japa_log))
+            Result.Error(e, e.message ?: str(R.string.sangeet_err_japa_log))
         }
     }
 
@@ -46,7 +51,7 @@ class SangeetRepository @Inject constructor(
         try {
             Result.Success(sangeetApi.getJapaStats().stats)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: context.getString(R.string.sangeet_err_japa_stats))
+            Result.Error(e, e.message ?: str(R.string.sangeet_err_japa_stats))
         }
     }
 
@@ -56,7 +61,7 @@ class SangeetRepository @Inject constructor(
             try {
                 Result.Success(sangeetApi.getVoiceHoroscope(sign, lang = languageManager.current.code))
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: context.getString(R.string.sangeet_err_voice))
+                Result.Error(e, e.message ?: str(R.string.sangeet_err_voice))
             }
         }
 
@@ -64,7 +69,7 @@ class SangeetRepository @Inject constructor(
         try {
             Result.Success(sangeetApi.getSoundHealingSessions())
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: context.getString(R.string.sangeet_err_sound))
+            Result.Error(e, e.message ?: str(R.string.sangeet_err_sound))
         }
     }
 }

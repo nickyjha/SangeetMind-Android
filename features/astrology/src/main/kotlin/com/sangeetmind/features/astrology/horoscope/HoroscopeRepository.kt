@@ -4,6 +4,7 @@ import android.content.Context
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.di.IoDispatcher
 import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.core.common.language.withAppLanguage
 import com.sangeetmind.core.network.HoroscopeApi
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.DailyHoroscope
@@ -21,36 +22,40 @@ class HoroscopeRepository @Inject constructor(
     private val languageManager: LanguageManager,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
-    /** Daily is the only endpoint with backend language support (Gemini-written fields). */
+    private fun str(@androidx.annotation.StringRes id: Int): String =
+        context.withAppLanguage(languageManager.current).getString(id)
+
+    /** Daily's Gemini-written fields follow `lang`; weekly/monthly/yearly reuse the same
+     * non-LLM computation as Daily, so `lang` there only swaps the static house-theme copy. */
     suspend fun getDaily(sign: String): Result<DailyHoroscope> = withContext(ioDispatcher) {
         try {
             Result.Success(horoscopeApi.getDailyForSign(sign, lang = languageManager.current.code).horoscope)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: context.getString(R.string.horoscope_error_daily))
+            Result.Error(e, e.message ?: str(R.string.horoscope_error_daily))
         }
     }
 
     suspend fun getWeekly(sign: String): Result<PeriodHoroscope> = withContext(ioDispatcher) {
         try {
-            Result.Success(horoscopeApi.getWeekly(sign).horoscope)
+            Result.Success(horoscopeApi.getWeekly(sign, lang = languageManager.current.code).horoscope)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: context.getString(R.string.horoscope_error_weekly))
+            Result.Error(e, e.message ?: str(R.string.horoscope_error_weekly))
         }
     }
 
     suspend fun getMonthly(sign: String): Result<PeriodHoroscope> = withContext(ioDispatcher) {
         try {
-            Result.Success(horoscopeApi.getMonthly(sign).horoscope)
+            Result.Success(horoscopeApi.getMonthly(sign, lang = languageManager.current.code).horoscope)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: context.getString(R.string.horoscope_error_monthly))
+            Result.Error(e, e.message ?: str(R.string.horoscope_error_monthly))
         }
     }
 
     suspend fun getYearly(sign: String): Result<PeriodHoroscope> = withContext(ioDispatcher) {
         try {
-            Result.Success(horoscopeApi.getYearly(sign).horoscope)
+            Result.Success(horoscopeApi.getYearly(sign, lang = languageManager.current.code).horoscope)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: context.getString(R.string.horoscope_error_yearly))
+            Result.Error(e, e.message ?: str(R.string.horoscope_error_yearly))
         }
     }
 }

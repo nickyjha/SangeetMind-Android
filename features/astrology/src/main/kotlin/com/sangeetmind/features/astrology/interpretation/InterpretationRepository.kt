@@ -1,9 +1,11 @@
 package com.sangeetmind.features.astrology.interpretation
 
 import android.content.Context
+import androidx.annotation.StringRes
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.di.IoDispatcher
 import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.core.common.language.withAppLanguage
 import com.sangeetmind.core.network.InterpretationApi
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.ChartAnalysis
@@ -30,6 +32,9 @@ class InterpretationRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
+    private fun str(@StringRes id: Int): String =
+        context.withAppLanguage(languageManager.current).getString(id)
+
     /** The rules-engine narrative/effects come back in the app's current display language. */
     suspend fun getInterpretation(kundli: Kundli): Result<InterpretationData> =
         withContext(ioDispatcher) {
@@ -61,7 +66,7 @@ class InterpretationRepository @Inject constructor(
 
                 Result.Success(InterpretationData(chart, analysis))
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: context.getString(R.string.interpretation_err_load_reading))
+                Result.Error(e, e.message ?: str(R.string.interpretation_err_load_reading))
             }
         }
 }

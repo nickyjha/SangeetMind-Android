@@ -1,8 +1,11 @@
 package com.sangeetmind.features.astrology.kundli
 
 import android.content.Context
+import androidx.annotation.StringRes
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.di.IoDispatcher
+import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.core.common.language.withAppLanguage
 import com.sangeetmind.core.network.KundliApi
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.Kundli
@@ -18,13 +21,17 @@ import javax.inject.Singleton
 class KundliRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val kundliApi: KundliApi,
+    private val languageManager: LanguageManager,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
+    private fun str(@StringRes id: Int): String =
+        context.withAppLanguage(languageManager.current).getString(id)
+
     suspend fun listKundlis(): Result<List<Kundli>> = withContext(ioDispatcher) {
         try {
             Result.Success(kundliApi.listKundlis())
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: context.getString(R.string.kundli_error_load_failed))
+            Result.Error(e, e.message ?: str(R.string.kundli_error_load_failed))
         }
     }
 
@@ -43,7 +50,7 @@ class KundliRepository @Inject constructor(
             )
             Result.Success(created)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: context.getString(R.string.kundli_error_save_kundli_failed))
+            Result.Error(e, e.message ?: str(R.string.kundli_error_save_kundli_failed))
         }
     }
 
@@ -64,7 +71,7 @@ class KundliRepository @Inject constructor(
             )
             Result.Success(updated)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: context.getString(R.string.kundli_error_update_failed))
+            Result.Error(e, e.message ?: str(R.string.kundli_error_update_failed))
         }
     }
 
@@ -72,7 +79,7 @@ class KundliRepository @Inject constructor(
         try {
             Result.Success(kundliApi.setPrimaryKundli(id))
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: context.getString(R.string.kundli_error_set_primary_failed))
+            Result.Error(e, e.message ?: str(R.string.kundli_error_set_primary_failed))
         }
     }
 
@@ -81,7 +88,7 @@ class KundliRepository @Inject constructor(
             kundliApi.deleteKundli(id)
             Result.Success(Unit)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: context.getString(R.string.kundli_error_delete_failed))
+            Result.Error(e, e.message ?: str(R.string.kundli_error_delete_failed))
         }
     }
 }

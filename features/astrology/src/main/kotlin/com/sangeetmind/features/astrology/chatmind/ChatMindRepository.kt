@@ -1,9 +1,11 @@
 package com.sangeetmind.features.astrology.chatmind
 
 import android.content.Context
+import androidx.annotation.StringRes
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.di.IoDispatcher
 import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.core.common.language.withAppLanguage
 import com.sangeetmind.core.network.LlmApi
 import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.features.astrology.R
@@ -25,6 +27,9 @@ class ChatMindRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
+    private fun str(@StringRes id: Int): String =
+        context.withAppLanguage(languageManager.current).getString(id)
+
     suspend fun getPrimaryBirthDetails(): Result<LlmBirthDetails> = withContext(ioDispatcher) {
         when (val result = kundliRepository.listKundlis()) {
             is Result.Success -> {
@@ -32,7 +37,7 @@ class ChatMindRepository @Inject constructor(
                 if (primary == null) {
                     Result.Error(
                         IllegalStateException("No kundli"),
-                        context.getString(CoreR.string.common_add_kundli_first)
+                        str(CoreR.string.common_add_kundli_first)
                     )
                 } else {
                     Result.Success(
@@ -70,7 +75,7 @@ class ChatMindRepository @Inject constructor(
                 )
             )
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: context.getString(R.string.chatmind_err_could_not_answer))
+            Result.Error(e, e.message ?: str(R.string.chatmind_err_could_not_answer))
         }
     }
 }

@@ -198,7 +198,7 @@ private fun EffectCard(effect: RuleEffect, isPositive: Boolean) {
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
-            Text(effect.ruleName, style = MaterialTheme.typography.titleSmall)
+            Text(astroTerm(effect.ruleName), style = MaterialTheme.typography.titleSmall)
             Spacer(modifier = Modifier.height(4.dp))
             Text(effect.content, style = MaterialTheme.typography.bodyMedium)
         }

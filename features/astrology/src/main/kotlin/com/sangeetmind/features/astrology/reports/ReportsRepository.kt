@@ -2,10 +2,12 @@ package com.sangeetmind.features.astrology.reports
 
 import android.content.Context
 import android.net.Uri
+import androidx.annotation.StringRes
 import androidx.core.content.FileProvider
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.di.IoDispatcher
 import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.core.common.language.withAppLanguage
 import com.sangeetmind.core.network.ReportsApi
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.BirthDetailsPayload
@@ -28,6 +30,9 @@ class ReportsRepository @Inject constructor(
     private val languageManager: LanguageManager,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
+    private fun str(@StringRes id: Int): String =
+        appContext.withAppLanguage(languageManager.current).getString(id)
+
     /** [lang] defaults to the app's current display language so the PDF is generated in it. */
     suspend fun purchase(
         skuId: String,
@@ -43,7 +48,7 @@ class ReportsRepository @Inject constructor(
             )
             Result.Success(reportsApi.purchaseReport(request))
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: appContext.getString(R.string.reports_error_purchase))
+            Result.Error(e, e.message ?: str(R.string.reports_error_purchase))
         }
     }
 
@@ -51,7 +56,7 @@ class ReportsRepository @Inject constructor(
         try {
             Result.Success(reportsApi.getReportStatus(jobId))
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: appContext.getString(R.string.reports_error_check_status))
+            Result.Error(e, e.message ?: str(R.string.reports_error_check_status))
         }
     }
 
@@ -59,7 +64,7 @@ class ReportsRepository @Inject constructor(
         try {
             Result.Success(reportsApi.listMyReports().reports)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: appContext.getString(R.string.reports_error_load_mine))
+            Result.Error(e, e.message ?: str(R.string.reports_error_load_mine))
         }
     }
 
@@ -70,7 +75,7 @@ class ReportsRepository @Inject constructor(
                 val response = reportsApi.downloadReport(jobId)
                 val body = response.body() ?: return@withContext Result.Error(
                     IllegalStateException("Empty response"),
-                    appContext.getString(R.string.reports_error_not_ready)
+                    str(R.string.reports_error_not_ready)
                 )
                 val dir = File(appContext.filesDir, "reports").apply { mkdirs() }
                 val file = File(dir, "$skuId-$jobId.pdf")
@@ -82,7 +87,7 @@ class ReportsRepository @Inject constructor(
                 )
                 Result.Success(uri)
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: appContext.getString(R.string.reports_error_download))
+                Result.Error(e, e.message ?: str(R.string.reports_error_download))
             }
         }
 }

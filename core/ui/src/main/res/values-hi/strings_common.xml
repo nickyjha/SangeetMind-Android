@@ -2,16 +2,16 @@
 <resources>
     <string name="common_app_name">SangeetMind</string>
     <string name="common_back">वापस</string>
-    <string name="common_retry">पुनः प्रयास करें</string>
+    <string name="common_retry">फिर से कोशिश करें</string>
     <string name="common_refresh">रीफ़्रेश करें</string>
     <string name="common_loading">लोड हो रहा है…</string>
-    <string name="common_error_generic">कुछ गलत हो गया। कृपया पुनः प्रयास करें।</string>
+    <string name="common_error_generic">कुछ गड़बड़ हो गई। फिर से कोशिश करें।</string>
     <string name="common_ok">ठीक है</string>
     <string name="common_cancel">रद्द करें</string>
     <string name="common_close">बंद करें</string>
-    <string name="common_save">सहेजें</string>
+    <string name="common_save">सेव करें</string>
     <string name="common_delete">हटाएं</string>
-    <string name="common_edit">संपादित करें</string>
+    <string name="common_edit">बदलें</string>
     <string name="common_done">हो गया</string>
     <string name="common_next">अगला</string>
     <string name="common_previous">पिछला</string>
@@ -21,11 +21,11 @@
     <string name="common_yes">हाँ</string>
     <string name="common_no">नहीं</string>
     <string name="common_none">कोई नहीं</string>
-    <string name="common_unknown">अज्ञात</string>
+    <string name="common_unknown">पता नहीं</string>
     <string name="common_language">भाषा</string>
     <string name="common_select_language">भाषा चुनें</string>
     <string name="common_add_kundli_first">पहले एक कुंडली जोड़ें।</string>
-    <string name="common_premium_required">प्रीमियम आवश्यक है</string>
+    <string name="common_premium_required">इसके लिए प्रीमियम चाहिए</string>
     <string name="common_today">आज</string>
     <string name="common_house_n">भाव %1$d</string>
     <string name="common_house_short">भा%1$d</string>

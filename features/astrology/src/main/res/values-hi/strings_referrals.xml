@@ -7,10 +7,10 @@
     <string name="referrals_share">शेयर करें</string>
     <string name="referrals_count_fmt">रेफ़रल: %1$d</string>
     <string name="referrals_reward_unlocked">इनाम अनलॉक हो गया!</string>
-    <string name="referrals_have_code">क्या आपके पास किसी मित्र का कोड है?</string>
+    <string name="referrals_have_code">किसी दोस्त का कोड है?</string>
     <string name="referrals_code_label">रेफ़रल कोड</string>
     <string name="referrals_apply">लागू करें</string>
-    <string name="referrals_share_text_fmt">SangeetMind पर मेरे साथ जुड़ें! मेरा रेफ़रल कोड इस्तेमाल करें: %1$s</string>
+    <string name="referrals_share_text_fmt">SangeetMind पर मेरे साथ जुड़ें! मेरा रेफ़रल कोड डालें: %1$s</string>
     <string name="referrals_share_chooser_title">अपना रेफ़रल कोड शेयर करें</string>
 
     <!-- Referrals: messages -->
@@ -18,7 +18,7 @@
     <string name="referrals_msg_already_applied">पहले से लागू है</string>
 
     <!-- Referrals: errors -->
-    <string name="referrals_error_enter_code">रेफ़रल कोड दर्ज करें</string>
-    <string name="referrals_error_load_stats">रेफ़रल आँकड़े लोड नहीं हो सके</string>
+    <string name="referrals_error_enter_code">रेफ़रल कोड डालें</string>
+    <string name="referrals_error_load_stats">रेफ़रल की जानकारी लोड नहीं हो सकी</string>
     <string name="referrals_error_apply_code">रेफ़रल कोड लागू नहीं हो सका</string>
 </resources>

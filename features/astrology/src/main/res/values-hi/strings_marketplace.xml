@@ -2,7 +2,7 @@
 <resources>
     <!-- Marketplace: astrologer list -->
     <string name="marketplace_title">ज्योतिषी</string>
-    <string name="marketplace_online_only">केवल ऑनलाइन</string>
+    <string name="marketplace_online_only">सिर्फ़ ऑनलाइन</string>
     <string name="marketplace_empty">कोई ज्योतिषी नहीं मिला।</string>
     <string name="marketplace_online_cd">ऑनलाइन</string>
     <string name="marketplace_rate_per_min_fmt">₹%1$s/मिनट</string>
@@ -12,32 +12,32 @@
     <string name="marketplace_online">ऑनलाइन</string>
     <string name="marketplace_offline">ऑफ़लाइन</string>
     <string name="marketplace_languages_fmt">भाषाएँ: %1$s</string>
-    <string name="marketplace_skills_fmt">विशेषज्ञता: %1$s</string>
+    <string name="marketplace_skills_fmt">खासियत: %1$s</string>
     <string name="marketplace_rate_per_minute_fmt">₹%1$s प्रति मिनट</string>
-    <string name="marketplace_start_chat">चैट सत्र शुरू करें</string>
-    <string name="marketplace_leave_review">समीक्षा लिखें</string>
-    <string name="marketplace_review_thanks">आपकी समीक्षा के लिए धन्यवाद!</string>
+    <string name="marketplace_start_chat">चैट शुरू करें</string>
+    <string name="marketplace_leave_review">रिव्यू लिखें</string>
+    <string name="marketplace_review_thanks">रिव्यू देने के लिए धन्यवाद!</string>
     <string name="marketplace_stars_cd">%1$d स्टार</string>
-    <string name="marketplace_comment">टिप्पणी</string>
-    <string name="marketplace_submit_review">समीक्षा भेजें</string>
+    <string name="marketplace_comment">कमेंट</string>
+    <string name="marketplace_submit_review">रिव्यू भेजें</string>
 
     <!-- Marketplace: chat -->
     <string name="marketplace_chat">चैट</string>
-    <string name="marketplace_message_placeholder">संदेश (ज्योतिषी को नहीं भेजा जाएगा — केवल डेमो)</string>
+    <string name="marketplace_message_placeholder">मैसेज (ज्योतिषी को नहीं जाएगा — सिर्फ़ डेमो)</string>
     <string name="marketplace_send_cd">भेजें</string>
-    <string name="marketplace_session_active">सत्र चालू है</string>
-    <string name="marketplace_session_not_started">सत्र शुरू नहीं हुआ</string>
-    <string name="marketplace_billed_fmt">%1$d मिनट · ₹%2$s बिल हुआ</string>
-    <string name="marketplace_end">समाप्त करें</string>
+    <string name="marketplace_session_active">चैट चालू है</string>
+    <string name="marketplace_session_not_started">चैट शुरू नहीं हुई</string>
+    <string name="marketplace_billed_fmt">%1$d मिनट · ₹%2$s कटे</string>
+    <string name="marketplace_end">ख़त्म करें</string>
     <string name="marketplace_start">शुरू करें</string>
-    <string name="marketplace_session_started_msg">सत्र शुरू हुआ — अब आपसे प्रति मिनट शुल्क लिया जा रहा है।</string>
-    <string name="marketplace_session_ended_msg">सत्र समाप्त हुआ।</string>
-    <string name="marketplace_error_insufficient_balance">सत्र समाप्त: पर्याप्त बैलेंस नहीं है</string>
-    <string name="marketplace_error_billing_failed">बिलिंग विफल, सत्र समाप्त हुआ</string>
+    <string name="marketplace_session_started_msg">चैट शुरू हुई — अब हर मिनट के पैसे कटेंगे।</string>
+    <string name="marketplace_session_ended_msg">चैट ख़त्म हुई।</string>
+    <string name="marketplace_error_insufficient_balance">चैट ख़त्म: बैलेंस कम है</string>
+    <string name="marketplace_error_billing_failed">पैसे नहीं कट पाए, चैट ख़त्म हुई</string>
 
     <!-- Marketplace: errors -->
     <string name="marketplace_error_load_astrologers">ज्योतिषी लोड नहीं हो सके</string>
     <string name="marketplace_error_load_astrologer">ज्योतिषी लोड नहीं हो सका</string>
-    <string name="marketplace_error_submit_review">समीक्षा भेजी नहीं जा सकी</string>
-    <string name="marketplace_error_bill_minute">इस मिनट का बिल नहीं हो सका</string>
+    <string name="marketplace_error_submit_review">रिव्यू नहीं भेजा जा सका</string>
+    <string name="marketplace_error_bill_minute">इस मिनट के पैसे नहीं कट पाए</string>
 </resources>

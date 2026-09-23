@@ -3,18 +3,18 @@
     <string name="muhurat_title">मुहूर्त खोज</string>
     <string name="muhurat_purpose">यह किस काम के लिए है?</string>
     <string name="muhurat_intent_general">सामान्य</string>
-    <string name="muhurat_intent_marriage">विवाह</string>
+    <string name="muhurat_intent_marriage">शादी</string>
     <string name="muhurat_intent_business">व्यापार</string>
     <string name="muhurat_intent_travel">यात्रा</string>
     <string name="muhurat_intent_griha_pravesh">गृह प्रवेश</string>
-    <string name="muhurat_start_date">प्रारंभ तिथि (YYYY-MM-DD)</string>
-    <string name="muhurat_end_date">अंतिम तिथि (YYYY-MM-DD)</string>
+    <string name="muhurat_start_date">शुरू की तारीख़ (YYYY-MM-DD)</string>
+    <string name="muhurat_end_date">आख़िरी तारीख़ (YYYY-MM-DD)</string>
     <string name="muhurat_find">मुहूर्त खोजें</string>
-    <string name="muhurat_results">परिणाम</string>
+    <string name="muhurat_results">नतीजे</string>
     <string name="muhurat_verdict_auspicious">शुभ</string>
     <string name="muhurat_verdict_neutral">सामान्य</string>
     <string name="muhurat_verdict_avoid">टालें</string>
     <string name="muhurat_score_fmt">स्कोर %1$d</string>
-    <string name="muhurat_error_enter_dates">कृपया प्रारंभ और अंतिम दोनों तिथियाँ दर्ज करें</string>
-    <string name="muhurat_error_find_failed">मुहूर्त नहीं मिल सका</string>
+    <string name="muhurat_error_enter_dates">शुरू और आख़िरी, दोनों तारीख़ें डालें</string>
+    <string name="muhurat_error_find_failed">मुहूर्त नहीं मिल पाया</string>
 </resources>

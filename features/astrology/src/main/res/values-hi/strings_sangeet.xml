@@ -5,32 +5,32 @@
     <string name="sangeet_tab_daily_raag">आज का राग</string>
     <string name="sangeet_tab_japa">जप</string>
     <string name="sangeet_tab_voice_horoscope">वॉइस राशिफल</string>
-    <string name="sangeet_tab_sound_healing">ध्वनि चिकित्सा</string>
+    <string name="sangeet_tab_sound_healing">साउंड हीलिंग</string>
 
     <string name="sangeet_raag_personalized">आज आपके लिए</string>
     <string name="sangeet_raag_meta_fmt">%1$s • %2$s • दशा: %3$s</string>
     <string name="sangeet_raag_dasha_pair_fmt">%1$s / %2$s</string>
-    <string name="sangeet_raag_preview_only">केवल पूर्वावलोकन — पूरी प्लेलिस्ट प्रीमियम के साथ अनलॉक करें।</string>
+    <string name="sangeet_raag_preview_only">सिर्फ़ झलक — पूरी प्लेलिस्ट के लिए प्रीमियम लें।</string>
 
     <string name="sangeet_japa_stats_fmt">स्ट्रीक: %1$d दिन • कुल जप: %2$d</string>
     <string name="sangeet_japa_tap">टैप करें</string>
     <string name="sangeet_japa_reset">रीसेट</string>
-    <string name="sangeet_japa_log_session">सत्र दर्ज करें</string>
-    <string name="sangeet_japa_session_logged">सत्र दर्ज हो गया</string>
-    <string name="sangeet_japa_by_mantra">मंत्र के अनुसार</string>
-    <string name="sangeet_japa_session_one">1 सत्र</string>
-    <string name="sangeet_japa_sessions_fmt">%1$d सत्र</string>
+    <string name="sangeet_japa_log_session">जप सेव करें</string>
+    <string name="sangeet_japa_session_logged">जप सेव हो गया</string>
+    <string name="sangeet_japa_by_mantra">मंत्र के हिसाब से</string>
+    <string name="sangeet_japa_session_one">1 बार</string>
+    <string name="sangeet_japa_sessions_fmt">%1$d बार</string>
 
-    <string name="sangeet_voice_premium_desc">प्रीमियम — आपकी राशि के लिए बोला गया दैनिक राशिफल।</string>
+    <string name="sangeet_voice_premium_desc">प्रीमियम — आपकी राशि का रोज़ का राशिफल, आवाज़ में।</string>
     <string name="sangeet_voice_sign_label">राशि</string>
     <string name="sangeet_voice_generate">वॉइस राशिफल बनाएँ</string>
 
-    <string name="sangeet_sound_preview">एक पूर्वावलोकन सत्र दिखाया जा रहा है। पूरी ध्वनि चिकित्सा लाइब्रेरी प्रीमियम के साथ अनलॉक करें।</string>
+    <string name="sangeet_sound_preview">अभी झलक दिख रही है। पूरी साउंड हीलिंग लाइब्रेरी के लिए प्रीमियम लें।</string>
     <string name="sangeet_sound_session_meta_fmt">%1$d मिनट • %2$s</string>
 
     <string name="sangeet_err_raag">आज का राग लोड नहीं हो सका</string>
-    <string name="sangeet_err_japa_log">जप दर्ज नहीं हो सका</string>
-    <string name="sangeet_err_japa_stats">जप आँकड़े लोड नहीं हो सके</string>
+    <string name="sangeet_err_japa_log">जप सेव नहीं हो सका</string>
+    <string name="sangeet_err_japa_stats">जप की जानकारी लोड नहीं हो सकी</string>
     <string name="sangeet_err_voice">वॉइस राशिफल के लिए प्रीमियम चाहिए</string>
-    <string name="sangeet_err_sound">ध्वनि चिकित्सा लाइब्रेरी लोड नहीं हो सकी</string>
+    <string name="sangeet_err_sound">साउंड हीलिंग लाइब्रेरी लोड नहीं हो सकी</string>
 </resources>

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="onboarding_page1_title">राग-आधारित ध्यान की खोज करें</string>
-    <string name="onboarding_page1_desc">शास्त्रीय भारतीय रागों की उपचार शक्ति को ध्यान के साथ अनुभव करें</string>
-    <string name="onboarding_page2_title">व्यक्तिगत सुझाव</string>
-    <string name="onboarding_page2_desc">अपनी ज्योतिषीय प्रोफ़ाइल के आधार पर राग और ध्यान के सुझाव पाएँ</string>
+    <string name="onboarding_page1_title">रागों के साथ ध्यान करें</string>
+    <string name="onboarding_page1_desc">शास्त्रीय रागों और ध्यान से मन को सुकून दें</string>
+    <string name="onboarding_page2_title">आपके लिए सुझाव</string>
+    <string name="onboarding_page2_desc">अपनी कुंडली के हिसाब से राग और ध्यान के सुझाव पाएँ</string>
     <string name="onboarding_page3_title">कभी भी, कहीं भी सुनें</string>
-    <string name="onboarding_page3_desc">ऑफ़लाइन सुनने के लिए राग डाउनलोड करें और बैकग्राउंड प्लेबैक का आनंद लें</string>
+    <string name="onboarding_page3_desc">राग डाउनलोड करके ऑफ़लाइन सुनें, बैकग्राउंड में भी</string>
     <string name="onboarding_get_started">शुरू करें</string>
     <string name="onboarding_before_continue">आगे बढ़ने से पहले</string>
     <string name="onboarding_agree_terms">मैं सेवा की शर्तों से सहमत हूँ</string>
-    <string name="onboarding_agree_privacy">मैं गोपनीयता नीति से सहमत हूँ</string>
+    <string name="onboarding_agree_privacy">मैं प्राइवेसी पॉलिसी से सहमत हूँ</string>
 </resources>

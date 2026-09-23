@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="panchang_title">पंचांग</string>
-    <string name="panchang_date_label">तारीख (YYYY-MM-DD)</string>
-    <string name="panchang_place_label">स्थान</string>
+    <string name="panchang_date_label">तारीख़ (YYYY-MM-DD)</string>
+    <string name="panchang_place_label">जगह</string>
     <string name="panchang_get">पंचांग देखें</string>
     <string name="panchang_tithi">तिथि</string>
     <string name="panchang_nakshatra">नक्षत्र</string>
@@ -11,7 +11,7 @@
     <string name="panchang_vara">वार</string>
     <string name="panchang_moon_sign">चंद्र राशि</string>
     <string name="panchang_sun_sign">सूर्य राशि</string>
-    <string name="panchang_error_enter_date">कृपया तारीख दर्ज करें</string>
-    <string name="panchang_error_pick_place">कृपया सुझावों में से कोई स्थान चुनें</string>
-    <string name="panchang_error_load_failed">पंचांग लोड नहीं हो सका</string>
+    <string name="panchang_error_enter_date">तारीख़ डालें</string>
+    <string name="panchang_error_pick_place">सुझावों में से कोई जगह चुनें</string>
+    <string name="panchang_error_load_failed">पंचांग लोड नहीं हो पाया</string>
 </resources>

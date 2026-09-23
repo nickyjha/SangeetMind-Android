@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Interpretation: "Full Reading" rules-engine analysis screen. -->
-    <string name="interpretation_title">पूर्ण विश्लेषण</string>
-    <string name="interpretation_no_kundli">पूर्ण विश्लेषण देखने के लिए पहले कुंडली जोड़ें।</string>
-    <string name="interpretation_section_strengths">शक्तियाँ</string>
-    <string name="interpretation_section_challenges">चुनौतियाँ</string>
+    <string name="interpretation_title">पूरा फलादेश</string>
+    <string name="interpretation_no_kundli">पूरा फलादेश देखने के लिए पहले कुंडली जोड़ें।</string>
+    <string name="interpretation_section_strengths">खूबियाँ</string>
+    <string name="interpretation_section_challenges">मुश्किलें</string>
     <string name="interpretation_section_remedies">उपाय</string>
     <string name="interpretation_lagna_fmt">लग्न: %1$s</string>
     <string name="interpretation_moon_nakshatra_fmt">चंद्र नक्षत्र पद %1$d · स्वामी %2$s</string>
     <string name="interpretation_planetary_positions">ग्रह स्थिति</string>
     <string name="interpretation_sign_retrograde_fmt">%1$s (वक्री)</string>
-    <string name="interpretation_current_dasha">वर्तमान दशा</string>
+    <string name="interpretation_current_dasha">अभी की दशा</string>
     <string name="interpretation_mahadasha_fmt">महादशा: %1$s</string>
     <string name="interpretation_antardasha_fmt">अंतर्दशा: %1$s</string>
-    <string name="interpretation_err_load_reading">आपका विश्लेषण लोड नहीं हो सका</string>
-    <string name="interpretation_err_load">लोड नहीं हो सका</string>
+    <string name="interpretation_err_load_reading">आपका फलादेश लोड नहीं हो पाया</string>
+    <string name="interpretation_err_load">लोड नहीं हो पाया</string>
 </resources>

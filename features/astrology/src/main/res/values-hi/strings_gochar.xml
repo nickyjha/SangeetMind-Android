@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- गोचर स्क्रीन। Keys are prefixed gochar_. -->
+<resources>
+    <string name="gochar_title">गोचर</string>
+    <string name="gochar_error_load">गोचर लोड नहीं हो पाया</string>
+    <string name="gochar_no_kundli">पहले कुंडली जोड़ें, फिर देखें कि आज के ग्रह आप पर क्या असर डाल रहे हैं।</string>
+    <string name="gochar_your_default">आपका गोचर</string>
+    <string name="gochar_cd_previous_month">पिछला महीना</string>
+    <string name="gochar_cd_next_month">अगला महीना</string>
+    <string name="gochar_cd_pick_date">तारीख़ चुनें</string>
+    <string name="gochar_today">आज</string>
+    <string name="gochar_now">अभी</string>
+    <string name="gochar_chart_title">%1$s के ग्रह</string>
+    <string name="gochar_chart_subtitle">आपकी कुंडली के भावों में</string>
+    <string name="gochar_planets_title">कौन-सा ग्रह कहाँ है</string>
+    <string name="gochar_planets_legend">भाव आपके लग्न से और आपकी चंद्र राशि (%1$s) से गिने गए हैं। अच्छा / भारी चंद्र राशि से गोचर के पुराने नियम से है।</string>
+    <string name="gochar_favourable">अच्छा</string>
+    <string name="gochar_challenging">भारी</string>
+    <string name="gochar_label_house">भाव</string>
+    <string name="gochar_label_aspects">दृष्टि</string>
+    <string name="gochar_label_next">आगे</string>
+    <string name="gochar_from_lagna_fmt">लग्न से %1$d</string>
+    <string name="gochar_from_moon_fmt">चंद्र से %1$d</string>
+    <string name="gochar_aspect_strength_fmt">भाव %1$d %2$d%%</string>
+    <string name="gochar_next_sign_fmt">→ %1$s · %2$s</string>
+    <string name="gochar_station_retrograde_fmt">वक्री · %1$s</string>
+    <string name="gochar_station_direct_fmt">मार्गी · %1$s</string>
+    <string name="gochar_upcoming_title">आगे क्या बदलेगा</string>
+    <string name="gochar_upcoming_legend">इस तारीख़ के बाद राशि बदलना और वक्री/मार्गी होना</string>
+    <string name="gochar_event_enters_fmt">%1$s %2$s में जाएगा</string>
+    <string name="gochar_event_retrograde_fmt">%1$s वक्री होगा</string>
+    <string name="gochar_event_direct_fmt">%1$s मार्गी होगा</string>
+    <string name="gochar_event_house_fmt">आपका भाव %1$d</string>
+</resources>

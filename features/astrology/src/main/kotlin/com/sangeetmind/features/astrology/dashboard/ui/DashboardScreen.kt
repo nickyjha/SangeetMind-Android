@@ -108,6 +108,7 @@ fun DashboardScreen(
     onOpenReferrals: () -> Unit,
     onOpenSangeet: () -> Unit,
     onOpenVarshaphal: () -> Unit,
+    onOpenGochar: () -> Unit,
     onOpenHolistic: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel()
 ) {
@@ -119,6 +120,7 @@ fun DashboardScreen(
         DashboardDestination(stringResource(R.string.dashboard_dest_birth_chart), Icons.Default.DonutLarge, Graha.SHANI, featured = true, onClick = onOpenChart),
         DashboardDestination(stringResource(R.string.dashboard_dest_horoscope), Icons.Default.Insights, Graha.SURYA, featured = true, onClick = onOpenHoroscope),
         DashboardDestination(stringResource(R.string.dashboard_dest_panchang), Icons.Default.CalendarMonth, Graha.CHANDRA, onClick = onOpenPanchang),
+        DashboardDestination(stringResource(R.string.dashboard_dest_gochar), Icons.Default.Public, Graha.SHANI, onClick = onOpenGochar),
         DashboardDestination(stringResource(R.string.dashboard_dest_muhurat), Icons.Default.Schedule, Graha.GURU, onClick = onOpenMuhurat),
         DashboardDestination(stringResource(R.string.dashboard_dest_match), Icons.Default.Favorite, Graha.MANGALA, onClick = onOpenMatch),
         DashboardDestination(stringResource(R.string.dashboard_dest_numerology), Icons.Default.Tag, Graha.BUDHA, onClick = onOpenNumerology),

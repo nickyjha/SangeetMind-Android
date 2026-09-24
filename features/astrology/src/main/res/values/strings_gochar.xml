@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Gochar (transits) screen. Keys are prefixed gochar_. -->
+<resources>
+    <string name="gochar_title">Transits (Gochar)</string>
+    <string name="gochar_error_load">Failed to load transits</string>
+    <string name="gochar_no_kundli">Add a kundli first to see how today\'s planets affect you.</string>
+    <string name="gochar_your_default">Your transits</string>
+    <string name="gochar_cd_previous_month">Previous month</string>
+    <string name="gochar_cd_next_month">Next month</string>
+    <string name="gochar_cd_pick_date">Pick a date</string>
+    <string name="gochar_today">Today</string>
+    <string name="gochar_now">Right now</string>
+    <string name="gochar_chart_title">Planets on %1$s</string>
+    <string name="gochar_chart_subtitle">Shown in your birth-chart houses</string>
+    <string name="gochar_planets_title">Where each planet is</string>
+    <string name="gochar_planets_legend">Houses are counted from your lagna and from your Moon sign (%1$s). Good / Tough is the classical from-Moon rule.</string>
+    <string name="gochar_favourable">Good</string>
+    <string name="gochar_challenging">Tough</string>
+    <string name="gochar_label_house">House</string>
+    <string name="gochar_label_aspects">Aspects</string>
+    <string name="gochar_label_next">Next</string>
+    <string name="gochar_from_lagna_fmt">H%1$d from lagna</string>
+    <string name="gochar_from_moon_fmt">H%1$d from Moon</string>
+    <string name="gochar_aspect_strength_fmt">H%1$d %2$d%%</string>
+    <string name="gochar_next_sign_fmt">→ %1$s · %2$s</string>
+    <string name="gochar_station_retrograde_fmt">Retrograde · %1$s</string>
+    <string name="gochar_station_direct_fmt">Direct · %1$s</string>
+    <string name="gochar_upcoming_title">Coming up</string>
+    <string name="gochar_upcoming_legend">Sign changes and retrograde turns after this date</string>
+    <string name="gochar_event_enters_fmt">%1$s enters %2$s</string>
+    <string name="gochar_event_retrograde_fmt">%1$s turns retrograde</string>
+    <string name="gochar_event_direct_fmt">%1$s turns direct</string>
+    <string name="gochar_event_house_fmt">your H%1$d</string>
+</resources>

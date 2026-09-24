@@ -495,7 +495,7 @@ private fun SummaryChip(label: String, value: String, highlight: Boolean = false
 
 /** A small colored pill — used for dignity flags (Retrograde/Combust/…) and dasha status tags. */
 @Composable
-private fun Chip(text: String, color: Color) {
+internal fun Chip(text: String, color: Color) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(6.dp))
@@ -1095,7 +1095,7 @@ private fun BhavabalaCard(bhavabala: ChartBhavabala) {
     }
 }
 
-private fun grahaColorFor(planet: String, graha: GrahaColors): Color = when (planet) {
+internal fun grahaColorFor(planet: String, graha: GrahaColors): Color = when (planet) {
     "Sun" -> graha.surya
     "Moon" -> graha.chandra
     "Mars" -> graha.mangala

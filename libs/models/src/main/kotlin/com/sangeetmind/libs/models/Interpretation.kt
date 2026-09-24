@@ -644,6 +644,73 @@ data class VarshaphalResponse(
     val chart: ChartSummaryResponse
 )
 
+// ---- POST /v1/transit (Gochar: planets on a date over the natal chart) ----
+
+@JsonClass(generateAdapter = true)
+data class TransitRequest(
+    val date: String,
+    val time: String,
+    val timezone: String? = null,
+    val place: String = "",
+    val lat: Double,
+    val lon: Double,
+    @Json(name = "transit_date") val transitDate: String, // YYYY-MM-DD
+    @Json(name = "transit_time") val transitTime: String? = null // HH:MM, in `timezone`
+)
+
+/** When a transiting planet next enters a new sign; `date` is local "YYYY-MM-DDTHH:MM". */
+@JsonClass(generateAdapter = true)
+data class TransitSignChange(
+    val date: String = "",
+    val sign: String = ""
+)
+
+/** When a planet next stations; `type` is "retrograde" or "direct". */
+@JsonClass(generateAdapter = true)
+data class TransitStation(
+    val date: String = "",
+    val type: String = ""
+)
+
+/** One graha's transit position (app/services/transit_service.py). Houses are whole-sign,
+ * counted from the natal lagna and from the natal Moon; `gochar_effect` is the classical
+ * from-Moon verdict ("favourable" / "challenging"). */
+@JsonClass(generateAdapter = true)
+data class TransitPlanet(
+    val sign: String = "",
+    val degree: Double = 0.0,
+    val absolute: String = "",
+    val retrograde: Boolean = false,
+    val combust: Boolean = false,
+    val exalted: Boolean = false,
+    val debilitated: Boolean = false,
+    @Json(name = "house_from_natal_lagna") val houseFromNatalLagna: Int? = null,
+    @Json(name = "house_from_natal_moon") val houseFromNatalMoon: Int? = null,
+    @Json(name = "gochar_effect") val gocharEffect: String? = null,
+    @Json(name = "aspects_natal_houses") val aspectsNatalHouses: List<PlanetAspect> = emptyList(),
+    @Json(name = "next_sign_change") val nextSignChange: TransitSignChange? = null,
+    @Json(name = "next_station") val nextStation: TransitStation? = null
+)
+
+@JsonClass(generateAdapter = true)
+data class TransitNatal(
+    val lagna: LagnaInfo,
+    @Json(name = "moon_sign") val moonSign: String? = null
+)
+
+@JsonClass(generateAdapter = true)
+data class TransitSnapshot(
+    val date: String = "",
+    val time: String = "",
+    val planets: Map<String, TransitPlanet> = emptyMap()
+)
+
+@JsonClass(generateAdapter = true)
+data class TransitResponse(
+    val natal: TransitNatal,
+    val transit: TransitSnapshot = TransitSnapshot()
+)
+
 // ---- POST /rules-engine/analyze-chart ----
 
 @JsonClass(generateAdapter = true)

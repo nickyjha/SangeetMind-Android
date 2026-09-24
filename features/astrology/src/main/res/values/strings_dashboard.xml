@@ -14,6 +14,7 @@
     <string name="dashboard_dest_numerology">Numerology</string>
     <string name="dashboard_dest_full_reading">Full Reading</string>
     <string name="dashboard_dest_chatmind">ChatMind</string>
+    <string name="dashboard_dest_gochar">Transits</string>
     <string name="dashboard_dest_varshaphal">Varshaphal</string>
     <string name="dashboard_dest_holistic">Holistic</string>
     <string name="dashboard_dest_payments">Payments</string>

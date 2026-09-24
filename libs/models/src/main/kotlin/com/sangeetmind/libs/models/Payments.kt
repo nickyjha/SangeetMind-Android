@@ -79,3 +79,10 @@ data class WalletDebitResponse(
     val premium: Boolean? = null,
     @Json(name = "balancePaise") val balancePaise: Long
 )
+
+/** POST /v1/wallet/reconcile: how many missed recharges were just credited, and the balance. */
+@JsonClass(generateAdapter = true)
+data class WalletReconcileResponse(
+    val credited: Int = 0,
+    @Json(name = "balancePaise") val balancePaise: Long = 0
+)

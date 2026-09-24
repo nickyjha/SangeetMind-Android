@@ -12,7 +12,7 @@
     <string name="payments_recent_recharges">हाल के रिचार्ज</string>
 
     <!-- Payments: messages -->
-    <string name="payments_msg_payment_received">पेमेंट मिल गया — बैलेंस अपडेट हो रहा है</string>
+    <string name="payments_msg_payment_received">पेमेंट मिल गया — वॉलेट में जुड़ गया</string>
     <string name="payments_msg_now_premium">अब आप प्रीमियम हैं!</string>
 
     <!-- Payments: errors -->
@@ -24,4 +24,5 @@
     <string name="payments_error_load_wallet_balance">वॉलेट बैलेंस लोड नहीं हो सका</string>
     <string name="payments_error_load_transactions">लेन-देन लोड नहीं हो सके</string>
     <string name="payments_error_spend_wallet">वॉलेट से पैसे नहीं कट पाए</string>
+    <string name="payments_msg_recharge_pending">पेमेंट मिल गया, लेकिन वॉलेट में बैलेंस अभी नहीं जुड़ा। Razorpay से पुष्टि होते ही जुड़ जाएगा। एक घंटे में न दिखे तो सपोर्ट से संपर्क करें।</string>
 </resources>

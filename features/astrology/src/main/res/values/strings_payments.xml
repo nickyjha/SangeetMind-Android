@@ -12,7 +12,7 @@
     <string name="payments_recent_recharges">Recent Recharges</string>
 
     <!-- Payments: messages -->
-    <string name="payments_msg_payment_received">Payment received — updating balance</string>
+    <string name="payments_msg_payment_received">Payment received — wallet updated</string>
     <string name="payments_msg_now_premium">You\'re now Premium!</string>
 
     <!-- Payments: errors -->
@@ -24,4 +24,5 @@
     <string name="payments_error_load_wallet_balance">Failed to load wallet balance</string>
     <string name="payments_error_load_transactions">Failed to load transactions</string>
     <string name="payments_error_spend_wallet">Could not spend wallet balance</string>
+    <string name="payments_msg_recharge_pending">Payment received, but your wallet has not been credited yet. It will update once Razorpay confirms the payment. Contact support if it does not appear within an hour.</string>
 </resources>

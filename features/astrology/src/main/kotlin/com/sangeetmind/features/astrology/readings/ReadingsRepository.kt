@@ -81,7 +81,14 @@ class ReadingsRepository @Inject constructor(
         val status = paymentsRepository.getPremiumStatus()
         if (status is Result.Success && status.data.premium) return Result.Success(true)
         return when (val balance = paymentsRepository.getWalletBalance()) {
-            is Result.Success -> Result.Success(balance.data.balancePaise >= amountPaise)
+            is Result.Success -> {
+                if (balance.data.balancePaise >= amountPaise) return Result.Success(true)
+                // Short on balance: a paid recharge may not have been credited yet.
+                val reconciled = paymentsRepository.reconcileWallet()
+                Result.Success(
+                    reconciled is Result.Success && reconciled.data.balancePaise >= amountPaise
+                )
+            }
             is Result.Error -> Result.Error(balance.exception, balance.message)
             is Result.Loading -> Result.Loading
         }

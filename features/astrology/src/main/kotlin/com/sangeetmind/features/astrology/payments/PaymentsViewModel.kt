@@ -81,6 +81,8 @@ class PaymentsViewModel @Inject constructor(
             val premiumResult = repository.getSkus("subscription")
             val walletSkusResult = repository.getSkus("recharge")
             val statusResult = repository.getPremiumStatus()
+            // Pick up any paid recharge the webhook missed before reading the balance.
+            repository.reconcileWallet()
             val balanceResult = repository.getWalletBalance()
             val txResult = repository.getWalletTransactions()
 
@@ -138,18 +140,27 @@ class PaymentsViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, pendingOrder = null) }
             if (wasWalletRecharge) {
-                // Wallet recharges settle via the Razorpay webhook alone (no verify-payment
-                // route for wallet orders) — give it a moment, then refresh the balance.
-                delay(2000)
+                // Credit the wallet right away via verify-payment (the backend credits
+                // wallet orders idempotently, same as the webhook) instead of waiting on the
+                // webhook, which can be late or never arrive.
+                val verified = repository.verifyPayment(
+                    success.orderId, success.paymentId, success.signature
+                )
                 refresh()
                 _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        message = str(R.string.payments_msg_payment_received)
-                    )
+                    when (verified) {
+                        is Result.Error -> it.copy(
+                            isLoading = false,
+                            error = str(R.string.payments_msg_recharge_pending)
+                        )
+                        else -> it.copy(
+                            isLoading = false,
+                            message = str(R.string.payments_msg_payment_received)
+                        )
+                    }
                 }
             } else {
-                when (val result = repository.verifyPremiumPayment(
+                when (val result = repository.verifyPayment(
                     success.orderId, success.paymentId, success.signature
                 )) {
                     is Result.Success -> {

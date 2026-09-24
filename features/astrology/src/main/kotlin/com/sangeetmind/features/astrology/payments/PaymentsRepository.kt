@@ -16,6 +16,7 @@ import com.sangeetmind.libs.models.VerifyPaymentRequest
 import com.sangeetmind.libs.models.WalletBalance
 import com.sangeetmind.libs.models.WalletDebitRequest
 import com.sangeetmind.libs.models.WalletDebitResponse
+import com.sangeetmind.libs.models.WalletReconcileResponse
 import com.sangeetmind.libs.models.WalletTransaction
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
@@ -48,7 +49,12 @@ class PaymentsRepository @Inject constructor(
         }
     }
 
-    suspend fun verifyPremiumPayment(
+    /**
+     * Server-side confirmation of a Checkout success (POST razorpay/verify-payment). The
+     * backend looks up the order's purpose and either activates Premium or credits the
+     * wallet, idempotently, so this is safe to call for both and alongside the webhook.
+     */
+    suspend fun verifyPayment(
         orderId: String,
         paymentId: String,
         signature: String
@@ -77,12 +83,15 @@ class PaymentsRepository @Inject constructor(
         }
     }
 
-    /**
-     * Wallet recharges (unlike premium purchases) settle via the Razorpay webhook alone
-     * (see wallet_routes.py) — there is no wallet-specific verify-payment endpoint, so this
-     * just re-reads the balance after Checkout succeeds. The caller should poll briefly if
-     * the webhook hasn't landed yet.
-     */
+    /** Asks the server to credit any paid recharge it missed (webhook lost or late). */
+    suspend fun reconcileWallet(): Result<WalletReconcileResponse> = withContext(ioDispatcher) {
+        try {
+            Result.Success(walletApi.reconcile())
+        } catch (e: Exception) {
+            Result.Error(e, e.message ?: context.getString(R.string.payments_error_load_wallet_balance))
+        }
+    }
+
     suspend fun getWalletBalance(): Result<WalletBalance> = withContext(ioDispatcher) {
         try {
             Result.Success(walletApi.getBalance())

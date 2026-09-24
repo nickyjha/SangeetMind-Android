@@ -673,7 +673,7 @@ private fun HouseChipRow(label: String, chips: @Composable () -> Unit) {
             label,
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.width(44.dp)
+            modifier = Modifier.width(64.dp)
         )
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(6.dp),

@@ -1269,13 +1269,10 @@ private fun ArudhaPadasCard(padas: List<ArudhaPada>) {
                     Text(
                         stringResource(meaningRes),
                         style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(start = 36.dp)
                     )
-                    if (pada.occupants.isNotEmpty()) {
-                        HouseChipRow(stringResource(R.string.chart_house_occupants_label)) {
-                            pada.occupants.forEach { Chip(astroTerm(it), grahaColorFor(it, graha)) }
-                        }
-                    }
+                    PadaOccupants(pada.occupants)
                 }
             }
             others.forEach { pada ->
@@ -1287,11 +1284,7 @@ private fun ArudhaPadasCard(padas: List<ArudhaPada>) {
                 )
                 Column(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
                     PadaHeader(pada, highlight = false)
-                    if (pada.occupants.isNotEmpty()) {
-                        HouseChipRow(stringResource(R.string.chart_house_occupants_label)) {
-                            pada.occupants.forEach { Chip(astroTerm(it), grahaColorFor(it, graha)) }
-                        }
-                    }
+                    PadaOccupants(pada.occupants)
                 }
             }
         }
@@ -1324,6 +1317,21 @@ private fun PadaHeader(pada: ArudhaPada, highlight: Boolean) {
             "${astroTerm(pada.sign)} · ${stringResource(CoreR.string.common_house_short, pada.house)}",
             grahaColorFor(pada.signLord, graha)
         )
+    }
+}
+
+/** Planets sitting in the pada's sign, as chips aligned under the pada name. */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun PadaOccupants(occupants: List<String>) {
+    if (occupants.isEmpty()) return
+    val graha = LocalGrahaColors.current
+    FlowRow(
+        modifier = Modifier.padding(top = 6.dp, start = 36.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        occupants.forEach { Chip(astroTerm(it), grahaColorFor(it, graha)) }
     }
 }
 

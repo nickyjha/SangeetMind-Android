@@ -4,6 +4,8 @@ import com.sangeetmind.libs.models.CareerReadingRequest
 import com.sangeetmind.libs.models.CareerReadingResponse
 import com.sangeetmind.libs.models.ChatMindRequest
 import com.sangeetmind.libs.models.ChatMindResponse
+import com.sangeetmind.libs.models.MarriageReadingRequest
+import com.sangeetmind.libs.models.MarriageReadingResponse
 import com.sangeetmind.libs.models.StrengthsReadingRequest
 import com.sangeetmind.libs.models.StrengthsReadingResponse
 import retrofit2.http.Body
@@ -19,4 +21,7 @@ interface LlmApi {
 
     @POST("llm/strengths")
     suspend fun getStrengthsReading(@Body body: StrengthsReadingRequest): StrengthsReadingResponse
+
+    @POST("llm/marriage")
+    suspend fun getMarriageReading(@Body body: MarriageReadingRequest): MarriageReadingResponse
 }

@@ -14,4 +14,26 @@
     <string name="readings_err_insufficient_balance">वॉलेट में बैलेंस कम है</string>
     <string name="readings_err_career">करियर रीडिंग नहीं बन पाई</string>
     <string name="readings_err_strengths">खूबियों की रीडिंग नहीं बन पाई</string>
+    <string name="readings_tab_marriage">शादी</string>
+    <string name="readings_marriage_desc">₹99, या प्रीमियम में मुफ़्त। आपके 7वें भाव, उपपद, दाराकारक, D9 और दशा से जीवनसाथी का स्वभाव, रिश्ते की खूबियाँ और सही समय। पैसे तभी कटेंगे जब रीडिंग तैयार हो।</string>
+    <string name="readings_marriage_single">अभी शादी नहीं हुई</string>
+    <string name="readings_marriage_married">शादीशुदा</string>
+    <string name="readings_marriage_generate">शादी की रीडिंग बनाएँ</string>
+    <string name="readings_err_marriage">शादी की रीडिंग नहीं बन पाई। आपके पैसे नहीं कटे।</string>
+    <string name="readings_marriage_summary">सार</string>
+    <string name="readings_marriage_spouse">आपका जीवनसाथी</string>
+    <string name="readings_marriage_timing_single">शादी कब होने के योग हैं</string>
+    <string name="readings_marriage_timing_married">आगे का समय</string>
+    <string name="readings_marriage_timing_legend">तारीख़ें आपकी दशा और गुरु–शनि के गोचर से निकाली गई हैं।</string>
+    <string name="readings_marriage_kind_marriage">शादी का समय</string>
+    <string name="readings_marriage_kind_supportive">अच्छा समय</string>
+    <string name="readings_marriage_kind_sensitive">संभलकर</string>
+    <string name="readings_marriage_strong">मज़बूत</string>
+    <string name="readings_marriage_dasha_fmt">%1$s – %2$s दशा</string>
+    <string name="readings_marriage_strengths">रिश्ते की खूबियाँ</string>
+    <string name="readings_marriage_challenges">चुनौतियाँ</string>
+    <string name="readings_marriage_manglik">मांगलिक</string>
+    <string name="readings_marriage_advice">सलाह</string>
+    <string name="readings_marriage_remedies">उपाय</string>
+    <string name="readings_marriage_remedy_fmt">%1$s (%2$s)</string>
 </resources>

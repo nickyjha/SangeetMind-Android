@@ -124,3 +124,55 @@ fun Map<String, Any>.flattenToReadableText(indent: String = ""): String =
             else -> "$label $value"
         }
     }
+
+// ---- Marriage reading: POST /llm/marriage ----
+// Timing windows are computed server-side; Gemini only explains them (by window id), so
+// every date here comes from the calculation (app/services/llm_marriage_service.py).
+
+@JsonClass(generateAdapter = true)
+data class MarriageReadingRequest(
+    @Json(name = "birth_details") val birthDetails: CareerBirthDetails,
+    @Json(name = "marital_status") val maritalStatus: String, // "single" | "married"
+    val lang: String = "en"
+)
+
+/** One timing window: `kind` is "marriage" (single), "supportive" or "sensitive" (married);
+ * `strength` is "strong" or "moderate"; dates are "YYYY-MM-DD". */
+@JsonClass(generateAdapter = true)
+data class MarriageTiming(
+    val id: String = "",
+    val start: String = "",
+    val end: String = "",
+    val kind: String = "",
+    val strength: String = "",
+    val mahadasha: String = "",
+    val antardasha: String = "",
+    val why: String = ""
+)
+
+@JsonClass(generateAdapter = true)
+data class MarriageRemedy(
+    val remedy: String = "",
+    @Json(name = "for_planet") val forPlanet: String = ""
+)
+
+@JsonClass(generateAdapter = true)
+data class MarriageReading(
+    val summary: String = "",
+    @Json(name = "spouse_nature") val spouseNature: String = "",
+    @Json(name = "relationship_strengths") val relationshipStrengths: List<String> = emptyList(),
+    val challenges: List<String> = emptyList(),
+    @Json(name = "manglik_note") val manglikNote: String = "",
+    val timing: List<MarriageTiming> = emptyList(),
+    val advice: List<String> = emptyList(),
+    val remedies: List<MarriageRemedy> = emptyList()
+)
+
+@JsonClass(generateAdapter = true)
+data class MarriageReadingResponse(
+    val ok: Boolean,
+    @Json(name = "marital_status") val maritalStatus: String = "single",
+    val reading: MarriageReading? = null,
+    val windows: List<MarriageTiming> = emptyList(),
+    val error: String? = null
+)

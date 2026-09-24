@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.libs.models.CareerReadingResponse
+import com.sangeetmind.libs.models.MarriageReadingResponse
 import com.sangeetmind.libs.models.StrengthsReadingResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,13 +14,15 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-enum class ReadingTab { CAREER, STRENGTHS }
+enum class ReadingTab { CAREER, STRENGTHS, MARRIAGE }
 
 data class ReadingsUiState(
     val tab: ReadingTab = ReadingTab.CAREER,
     val isLoading: Boolean = false,
     val career: CareerReadingResponse? = null,
     val strengths: StrengthsReadingResponse? = null,
+    val marriage: MarriageReadingResponse? = null,
+    val married: Boolean = false,
     val error: String? = null
 )
 
@@ -51,6 +54,22 @@ class ReadingsViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, error = null) }
             when (val result = repository.getStrengthsReading()) {
                 is Result.Success -> _uiState.update { it.copy(isLoading = false, strengths = result.data) }
+                is Result.Error -> _uiState.update { it.copy(isLoading = false, error = result.message) }
+                is Result.Loading -> Unit
+            }
+        }
+    }
+
+    fun setMarried(married: Boolean) {
+        _uiState.update { it.copy(married = married) }
+    }
+
+    fun generateMarriageReading() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            val status = if (_uiState.value.married) "married" else "single"
+            when (val result = repository.getMarriageReading(status)) {
+                is Result.Success -> _uiState.update { it.copy(isLoading = false, marriage = result.data) }
                 is Result.Error -> _uiState.update { it.copy(isLoading = false, error = result.message) }
                 is Result.Loading -> Unit
             }

@@ -14,4 +14,26 @@
     <string name="readings_err_insufficient_balance">Insufficient wallet balance</string>
     <string name="readings_err_career">Could not generate career reading</string>
     <string name="readings_err_strengths">Could not generate strengths reading</string>
+    <string name="readings_tab_marriage">Marriage</string>
+    <string name="readings_marriage_desc">₹99, or free with Premium. Spouse nature, relationship strengths and timing from your 7th house, Upapada, Darakaraka, D9 and dashas. You\'re only charged if the reading is ready.</string>
+    <string name="readings_marriage_single">Not married yet</string>
+    <string name="readings_marriage_married">Married</string>
+    <string name="readings_marriage_generate">Generate marriage reading</string>
+    <string name="readings_err_marriage">Could not generate marriage reading. You have not been charged.</string>
+    <string name="readings_marriage_summary">Summary</string>
+    <string name="readings_marriage_spouse">Your spouse</string>
+    <string name="readings_marriage_timing_single">When marriage is likely</string>
+    <string name="readings_marriage_timing_married">Periods ahead</string>
+    <string name="readings_marriage_timing_legend">Dates come from your dasha periods and Jupiter–Saturn transits.</string>
+    <string name="readings_marriage_kind_marriage">Marriage window</string>
+    <string name="readings_marriage_kind_supportive">Supportive</string>
+    <string name="readings_marriage_kind_sensitive">Sensitive</string>
+    <string name="readings_marriage_strong">Strong</string>
+    <string name="readings_marriage_dasha_fmt">%1$s – %2$s dasha</string>
+    <string name="readings_marriage_strengths">Relationship strengths</string>
+    <string name="readings_marriage_challenges">Challenges</string>
+    <string name="readings_marriage_manglik">Manglik</string>
+    <string name="readings_marriage_advice">Advice</string>
+    <string name="readings_marriage_remedies">Remedies</string>
+    <string name="readings_marriage_remedy_fmt">%1$s (%2$s)</string>
 </resources>

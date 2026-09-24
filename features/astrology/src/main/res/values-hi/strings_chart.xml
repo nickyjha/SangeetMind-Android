@@ -167,4 +167,20 @@
     <string name="chart_chip_current">अभी</string>
     <string name="chart_chip_partial">अधूरा</string>
     <string name="chart_years_fmt">%1$s साल</string>
+    <string name="chart_arudha_title">आरूढ़ पद</string>
+    <string name="chart_arudha_legend">हर भाव दुनिया को कैसा दिखता है। लग्न आपका असली रूप है, आरूढ़ वह छवि है जो लोग देखते हैं।</string>
+    <string name="chart_arudha_al_meaning">आपकी छवि, लोग आपको कैसे देखते हैं</string>
+    <string name="chart_arudha_ul_meaning">शादी और जीवनसाथी</string>
+    <string name="chart_pada_1">आरूढ़ लग्न (AL)</string>
+    <string name="chart_pada_2">पैसा</string>
+    <string name="chart_pada_3">हिम्मत, भाई-बहन</string>
+    <string name="chart_pada_4">घर, प्रॉपर्टी</string>
+    <string name="chart_pada_5">बुद्धि, संतान</string>
+    <string name="chart_pada_6">विरोधी, सेहत</string>
+    <string name="chart_pada_7">साथी, बिज़नेस</string>
+    <string name="chart_pada_8">अचानक बदलाव</string>
+    <string name="chart_pada_9">भाग्य, पिता</string>
+    <string name="chart_pada_10">करियर, रुतबा</string>
+    <string name="chart_pada_11">लाभ, कमाई</string>
+    <string name="chart_pada_12">उपपद लग्न (UL)</string>
 </resources>

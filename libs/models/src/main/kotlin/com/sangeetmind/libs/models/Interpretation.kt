@@ -304,13 +304,30 @@ data class JaiminiSubChart(
     val source: String = ""
 )
 
+/** Arudha pada of one house (A1 = Arudha Lagna, A12 = Upapada): the sign that shows how
+ * that house's matters appear to the world. `house` is the pada's own whole-sign house
+ * from the lagna; `ofHouse` is the house it is the pada of (app/services/jaimini_charts.py). */
+@JsonClass(generateAdapter = true)
+data class ArudhaPada(
+    val pada: String = "",
+    @Json(name = "of_house") val ofHouse: Int = 0,
+    val name: String = "",
+    val sign: String = "",
+    val house: Int = 0,
+    @Json(name = "sign_lord") val signLord: String = "",
+    val occupants: List<String> = emptyList(),
+    @Json(name = "house_lord") val houseLord: String = "",
+    @Json(name = "house_lord_sign") val houseLordSign: String = ""
+)
+
 @JsonClass(generateAdapter = true)
 data class ChartJaimini(
     @Json(name = "chara_karakas") val charaKarakas: List<CharaKaraka> = emptyList(),
     val atmakaraka: String = "",
     val amatyakaraka: String = "",
     val karakamsa: JaiminiSubChart = JaiminiSubChart(),
-    val swamsa: JaiminiSubChart = JaiminiSubChart()
+    val swamsa: JaiminiSubChart = JaiminiSubChart(),
+    @Json(name = "arudha_padas") val arudhaPadas: List<ArudhaPada> = emptyList()
 )
 
 /** Lal Kitab — the backend's own scope note: whole-sign D1 houses from birth lagna, not

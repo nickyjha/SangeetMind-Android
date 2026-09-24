@@ -55,6 +55,7 @@ import com.sangeetmind.core.ui.theme.GrahaColors
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.chart.ChartViewModel
+import com.sangeetmind.libs.models.ArudhaPada
 import com.sangeetmind.libs.models.BhavabalaHouse
 import com.sangeetmind.libs.models.BhuktiPeriod
 import com.sangeetmind.libs.models.CharaAntardasha
@@ -299,6 +300,9 @@ private fun ChartContent(
                     }
                     item {
                         JaiminiCard(chart.jaimini)
+                    }
+                    item {
+                        ArudhaPadasCard(chart.jaimini.arudhaPadas)
                     }
                 }
                 ChartSection.LAL_KITAB -> {
@@ -1234,6 +1238,108 @@ private fun JaiminiCard(jaimini: ChartJaimini) {
             }
         }
     }
+}
+
+/** Arudha padas: Arudha Lagna (how others see you) and Upapada (marriage, spouse) first,
+ * each with its meaning and occupants, then the other ten padas as compact rows
+ * (app/services/jaimini_charts.py). */
+@Composable
+private fun ArudhaPadasCard(padas: List<ArudhaPada>) {
+    if (padas.isEmpty()) return
+    val graha = LocalGrahaColors.current
+    val byHouse = padas.associateBy { it.ofHouse }
+    val headline = listOfNotNull(
+        byHouse[1]?.let { it to R.string.chart_arudha_al_meaning },
+        byHouse[12]?.let { it to R.string.chart_arudha_ul_meaning }
+    )
+    val others = padas.filter { it.ofHouse in 2..11 }.sortedBy { it.ofHouse }
+
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(stringResource(R.string.chart_arudha_title), style = MaterialTheme.typography.titleMedium)
+            Text(
+                stringResource(R.string.chart_arudha_legend),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            headline.forEach { (pada, meaningRes) ->
+                Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+                    PadaHeader(pada, highlight = true)
+                    Text(
+                        stringResource(meaningRes),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    if (pada.occupants.isNotEmpty()) {
+                        HouseChipRow(stringResource(R.string.chart_house_occupants_label)) {
+                            pada.occupants.forEach { Chip(astroTerm(it), grahaColorFor(it, graha)) }
+                        }
+                    }
+                }
+            }
+            others.forEach { pada ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                )
+                Column(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
+                    PadaHeader(pada, highlight = false)
+                    if (pada.occupants.isNotEmpty()) {
+                        HouseChipRow(stringResource(R.string.chart_house_occupants_label)) {
+                            pada.occupants.forEach { Chip(astroTerm(it), grahaColorFor(it, graha)) }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** "A2  Dhana pada · wealth" on the left, "Virgo · H10" chip (in the sign lord's colour) on the right. */
+@Composable
+private fun PadaHeader(pada: ArudhaPada, highlight: Boolean) {
+    val graha = LocalGrahaColors.current
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(
+                pada.pada,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.width(28.dp)
+            )
+            Text(
+                stringResource(padaLabelRes(pada.ofHouse)),
+                style = if (highlight) MaterialTheme.typography.titleSmall else MaterialTheme.typography.bodyMedium,
+                color = if (highlight) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+            )
+        }
+        Chip(
+            "${astroTerm(pada.sign)} · ${stringResource(CoreR.string.common_house_short, pada.house)}",
+            grahaColorFor(pada.signLord, graha)
+        )
+    }
+}
+
+private fun padaLabelRes(ofHouse: Int): Int = when (ofHouse) {
+    1 -> R.string.chart_pada_1
+    2 -> R.string.chart_pada_2
+    3 -> R.string.chart_pada_3
+    4 -> R.string.chart_pada_4
+    5 -> R.string.chart_pada_5
+    6 -> R.string.chart_pada_6
+    7 -> R.string.chart_pada_7
+    8 -> R.string.chart_pada_8
+    9 -> R.string.chart_pada_9
+    10 -> R.string.chart_pada_10
+    11 -> R.string.chart_pada_11
+    else -> R.string.chart_pada_12
 }
 
 /** Lal Kitab — the backend flags this as its own scoped preview (`system_note`, shown

@@ -169,4 +169,20 @@
     <string name="chart_chip_current">Current</string>
     <string name="chart_chip_partial">Partial</string>
     <string name="chart_years_fmt">%1$s yrs</string>
+    <string name="chart_arudha_title">Arudha Padas</string>
+    <string name="chart_arudha_legend">How each house shows up in the world. Your real self is the lagna; the Arudha is the image others see.</string>
+    <string name="chart_arudha_al_meaning">Your public image, how people see you</string>
+    <string name="chart_arudha_ul_meaning">Marriage and spouse</string>
+    <string name="chart_pada_1">Arudha Lagna (AL)</string>
+    <string name="chart_pada_2">Wealth</string>
+    <string name="chart_pada_3">Courage, siblings</string>
+    <string name="chart_pada_4">Home, property</string>
+    <string name="chart_pada_5">Intellect, children</string>
+    <string name="chart_pada_6">Rivals, health</string>
+    <string name="chart_pada_7">Partners, business</string>
+    <string name="chart_pada_8">Sudden change</string>
+    <string name="chart_pada_9">Fortune, father</string>
+    <string name="chart_pada_10">Career, status</string>
+    <string name="chart_pada_11">Gains, income</string>
+    <string name="chart_pada_12">Upapada (UL)</string>
 </resources>

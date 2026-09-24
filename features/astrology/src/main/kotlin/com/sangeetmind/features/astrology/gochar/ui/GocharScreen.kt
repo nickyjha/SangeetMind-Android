@@ -324,7 +324,7 @@ private fun TransitPlanetsCard(transit: TransitResponse, date: LocalDate) {
                                 val label = if (aspect.strength < 100) {
                                     stringResource(R.string.gochar_aspect_strength_fmt, aspect.house, aspect.strength)
                                 } else {
-                                    stringResource(CoreR.string.common_house_short, aspect.house)
+                                    stringResource(R.string.gochar_aspect_full_fmt, aspect.house)
                                 }
                                 Chip(label, grahaColorFor(name, graha))
                             }
@@ -393,7 +393,7 @@ private fun UpcomingCard(transit: TransitResponse, date: LocalDate) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        eventDate(event.at, date),
+                        eventDate(event.at, date, withTime = false),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.width(92.dp)
@@ -461,13 +461,13 @@ private fun parseLocal(iso: String): LocalDateTime? = runCatching { LocalDateTim
 private fun eventDate(iso: String, from: LocalDate): String =
     parseLocal(iso)?.let { eventDate(it, from) } ?: iso
 
-/** "17 Oct" for this year, "3 Jun 2027" for later years; within 3 days it adds the time,
- * which matters for the fast Moon. */
+/** "17 Oct" for this year, "3 Jun 2027" for later years; within 3 days it adds the time
+ * (unless [withTime] is off), which matters for the fast Moon. */
 @Composable
-private fun eventDate(at: LocalDateTime, from: LocalDate): String {
+private fun eventDate(at: LocalDateTime, from: LocalDate, withTime: Boolean = true): String {
     val locale: Locale = LocalConfiguration.current.locales[0]
     val pattern = when {
-        ChronoUnit.DAYS.between(from, at.toLocalDate()) < 3 -> "d MMM, h:mm a"
+        withTime && ChronoUnit.DAYS.between(from, at.toLocalDate()) < 3 -> "d MMM, h:mm a"
         at.year != from.year -> "d MMM yyyy"
         else -> "d MMM"
     }

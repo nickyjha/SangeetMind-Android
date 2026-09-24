@@ -50,6 +50,7 @@ import androidx.annotation.StringRes
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.core.ui.language.LocalAppLanguage
 import com.sangeetmind.core.ui.language.astroTerm
 import com.sangeetmind.core.ui.theme.GrahaColors
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
@@ -565,6 +566,7 @@ internal fun MutualAspectsCard(pairs: List<MutualAspect>) {
 @Composable
 internal fun HouseDetailsCard(planets: Map<String, PlanetInfo>, bhavabala: ChartBhavabala) {
     val graha = LocalGrahaColors.current
+    val languageCode = LocalAppLanguage.current.code
     val vedicPlanets = planets.filterKeys { it in VEDIC_PLANETS }
     val occupantsByHouse = (1..12).associateWith { house ->
         vedicPlanets.filterValues { it.house == house }.keys.toList()
@@ -625,6 +627,15 @@ internal fun HouseDetailsCard(planets: Map<String, PlanetInfo>, bhavabala: Chart
                         Chip(
                             stringResource(R.string.chart_house_lord_chip_fmt, astroTerm(house.lord)),
                             grahaColorFor(house.lord, graha)
+                        )
+                    }
+                    val meaning = house.lordPlacement?.forLanguage(languageCode).orEmpty()
+                    if (meaning.isNotBlank() && house.lordHouse != null) {
+                        Text(
+                            stringResource(R.string.chart_house_lord_meaning_fmt, house.lordHouse!!, meaning),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = 4.dp, start = 28.dp)
                         )
                     }
                     if (occupants.isNotEmpty()) {

@@ -222,11 +222,25 @@ data class BhavabalaHouse(
     val sign: String = "",
     val lord: String = "",
     @Json(name = "lord_house") val lordHouse: Int? = null,
+    /** What this lord sitting in `lordHouse` means (app/data/lord_in_house.json). */
+    @Json(name = "lord_placement") val lordPlacement: LocalizedText? = null,
     @Json(name = "sav_bindus") val savBindus: Double = 0.0,
     @Json(name = "lord_shadbala_virupas") val lordShadbalaVirupas: Double = 0.0,
     @Json(name = "total_virupas") val totalVirupas: Double = 0.0,
     val rank: Int = 0
 )
+
+/** Backend text shipped in every supported language; [forLanguage] falls back to English. */
+@JsonClass(generateAdapter = true)
+data class LocalizedText(
+    val en: String = "",
+    val hi: String = ""
+) {
+    fun forLanguage(code: String): String = when (code) {
+        "hi" -> hi.ifBlank { en }
+        else -> en
+    }
+}
 
 @JsonClass(generateAdapter = true)
 data class ChartBhavabala(

@@ -183,4 +183,5 @@
     <string name="chart_pada_10">करियर, रुतबा</string>
     <string name="chart_pada_11">लाभ, कमाई</string>
     <string name="chart_pada_12">उपपद लग्न (UL)</string>
+    <string name="chart_house_lord_meaning_fmt">स्वामी भाव %1$d में: %2$s</string>
 </resources>

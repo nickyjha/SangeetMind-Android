@@ -185,4 +185,5 @@
     <string name="chart_pada_10">Career, status</string>
     <string name="chart_pada_11">Gains, income</string>
     <string name="chart_pada_12">Upapada (UL)</string>
+    <string name="chart_house_lord_meaning_fmt">Lord in H%1$d: %2$s</string>
 </resources>

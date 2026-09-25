@@ -24,7 +24,8 @@ import com.sangeetmind.core.ui.language.astroTerm
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.features.astrology.chart.ui.Chip
 import com.sangeetmind.features.astrology.chart.ui.grahaColorFor
-import com.sangeetmind.libs.models.ChildrenReading
+import androidx.annotation.StringRes
+import com.sangeetmind.libs.models.MarriageRemedy
 import com.sangeetmind.libs.models.MarriageReading
 import com.sangeetmind.libs.models.MarriageTiming
 import java.time.LocalDate
@@ -51,27 +52,21 @@ fun ReadingsScreen(
         }
     ) { padding ->
         Column(modifier = Modifier.fillMaxSize().padding(padding)) {
-            TabRow(selectedTabIndex = uiState.tab.ordinal) {
-                Tab(
-                    selected = uiState.tab == ReadingTab.CAREER,
-                    onClick = { viewModel.setTab(ReadingTab.CAREER) },
-                    text = { Text(stringResource(R.string.readings_tab_career)) }
-                )
-                Tab(
-                    selected = uiState.tab == ReadingTab.STRENGTHS,
-                    onClick = { viewModel.setTab(ReadingTab.STRENGTHS) },
-                    text = { Text(stringResource(R.string.readings_tab_strengths)) }
-                )
-                Tab(
-                    selected = uiState.tab == ReadingTab.MARRIAGE,
-                    onClick = { viewModel.setTab(ReadingTab.MARRIAGE) },
-                    text = { Text(stringResource(R.string.readings_tab_marriage)) }
-                )
-                Tab(
-                    selected = uiState.tab == ReadingTab.CHILDREN,
-                    onClick = { viewModel.setTab(ReadingTab.CHILDREN) },
-                    text = { Text(stringResource(R.string.readings_tab_children), maxLines = 1) }
-                )
+            val tabLabels = mapOf(
+                ReadingTab.CAREER to R.string.readings_tab_career,
+                ReadingTab.STRENGTHS to R.string.readings_tab_strengths,
+                ReadingTab.MARRIAGE to R.string.readings_tab_marriage,
+                ReadingTab.CHILDREN to R.string.readings_tab_children,
+                ReadingTab.FOREIGN to R.string.readings_tab_foreign
+            )
+            ScrollableTabRow(selectedTabIndex = uiState.tab.ordinal, edgePadding = 8.dp) {
+                ReadingTab.values().forEach { tab ->
+                    Tab(
+                        selected = uiState.tab == tab,
+                        onClick = { viewModel.setTab(tab) },
+                        text = { Text(stringResource(tabLabels.getValue(tab)), maxLines = 1) }
+                    )
+                }
             }
 
             Column(
@@ -106,13 +101,63 @@ fun ReadingsScreen(
                         onMarriedChange = viewModel::setMarried,
                         onGenerate = viewModel::generateMarriageReading
                     )
-                    ReadingTab.CHILDREN -> ChildrenTab(
+                    ReadingTab.CHILDREN -> LifeReadingTab(
+                        descRes = R.string.readings_children_desc,
+                        firstOptionRes = R.string.readings_children_planning,
+                        secondOptionRes = R.string.readings_children_parent,
+                        secondSelected = uiState.isParent,
+                        onSecondSelectedChange = viewModel::setParent,
+                        generateRes = R.string.readings_children_generate,
                         isLoading = uiState.isLoading,
-                        isParent = uiState.isParent,
-                        reading = uiState.children?.reading,
-                        readingIsForParent = uiState.children?.status == "parent",
-                        onParentChange = viewModel::setParent,
-                        onGenerate = viewModel::generateChildrenReading
+                        onGenerate = viewModel::generateChildrenReading,
+                        content = uiState.children?.reading?.let { r ->
+                            LifeReadingContent(
+                                summary = r.summary,
+                                natureTitle = stringResource(R.string.readings_children_nature),
+                                nature = r.childrenNature,
+                                timingTitle = stringResource(
+                                    if (uiState.children?.status == "parent") R.string.readings_marriage_timing_married
+                                    else R.string.readings_children_timing_planning
+                                ),
+                                timing = r.timing,
+                                strengthsTitle = stringResource(R.string.readings_children_strengths),
+                                strengths = r.strengths,
+                                careTitle = stringResource(R.string.readings_children_care),
+                                care = r.carePoints,
+                                advice = r.advice,
+                                remedies = r.remedies,
+                                disclaimer = stringResource(R.string.readings_children_disclaimer)
+                            )
+                        }
+                    )
+                    ReadingTab.FOREIGN -> LifeReadingTab(
+                        descRes = R.string.readings_foreign_desc,
+                        firstOptionRes = R.string.readings_foreign_planning,
+                        secondOptionRes = R.string.readings_foreign_abroad,
+                        secondSelected = uiState.livesAbroad,
+                        onSecondSelectedChange = viewModel::setLivesAbroad,
+                        generateRes = R.string.readings_foreign_generate,
+                        isLoading = uiState.isLoading,
+                        onGenerate = viewModel::generateForeignReading,
+                        content = uiState.foreign?.reading?.let { r ->
+                            LifeReadingContent(
+                                summary = r.summary,
+                                natureTitle = stringResource(R.string.readings_foreign_outlook),
+                                nature = r.abroadOutlook,
+                                timingTitle = stringResource(
+                                    if (uiState.foreign?.status == "abroad") R.string.readings_marriage_timing_married
+                                    else R.string.readings_foreign_timing_planning
+                                ),
+                                timing = r.timing,
+                                strengthsTitle = stringResource(R.string.readings_children_strengths),
+                                strengths = r.strengths,
+                                careTitle = stringResource(R.string.readings_children_care),
+                                care = r.carePoints,
+                                advice = r.advice,
+                                remedies = r.remedies,
+                                disclaimer = stringResource(R.string.readings_foreign_disclaimer)
+                            )
+                        }
                     )
                 }
             }
@@ -276,83 +321,99 @@ private fun MarriageTab(
     }
 }
 
+/** Display-ready slice of a status-based life reading (children, foreign, ...). */
+private class LifeReadingContent(
+    val summary: String,
+    val natureTitle: String,
+    val nature: String,
+    val timingTitle: String,
+    val timing: List<MarriageTiming>,
+    val strengthsTitle: String,
+    val strengths: List<String>,
+    val careTitle: String,
+    val care: List<String>,
+    val advice: List<String>,
+    val remedies: List<MarriageRemedy>,
+    val disclaimer: String?
+)
+
+/** Two status chips, a generate button, then the reading cards. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ChildrenTab(
+private fun LifeReadingTab(
+    @StringRes descRes: Int,
+    @StringRes firstOptionRes: Int,
+    @StringRes secondOptionRes: Int,
+    secondSelected: Boolean,
+    onSecondSelectedChange: (Boolean) -> Unit,
+    @StringRes generateRes: Int,
     isLoading: Boolean,
-    isParent: Boolean,
-    reading: ChildrenReading?,
-    readingIsForParent: Boolean,
-    onParentChange: (Boolean) -> Unit,
-    onGenerate: () -> Unit
+    onGenerate: () -> Unit,
+    content: LifeReadingContent?
 ) {
     Text(
-        stringResource(R.string.readings_children_desc),
+        stringResource(descRes),
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )
     Spacer(modifier = Modifier.height(12.dp))
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         FilterChip(
-            selected = !isParent,
-            onClick = { onParentChange(false) },
-            label = { Text(stringResource(R.string.readings_children_planning)) }
+            selected = !secondSelected,
+            onClick = { onSecondSelectedChange(false) },
+            label = { Text(stringResource(firstOptionRes)) }
         )
         FilterChip(
-            selected = isParent,
-            onClick = { onParentChange(true) },
-            label = { Text(stringResource(R.string.readings_children_parent)) }
+            selected = secondSelected,
+            onClick = { onSecondSelectedChange(true) },
+            label = { Text(stringResource(secondOptionRes)) }
         )
     }
     Spacer(modifier = Modifier.height(12.dp))
     Button(onClick = onGenerate, enabled = !isLoading, modifier = Modifier.fillMaxWidth()) {
         if (isLoading) CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
-        else Text(stringResource(R.string.readings_children_generate))
+        else Text(stringResource(generateRes))
     }
-    if (reading == null) return
+    val r = content ?: return
 
     Spacer(modifier = Modifier.height(16.dp))
-    TextCard(stringResource(R.string.readings_marriage_summary), reading.summary)
+    TextCard(stringResource(R.string.readings_marriage_summary), r.summary)
     Spacer(modifier = Modifier.height(12.dp))
-    TextCard(stringResource(R.string.readings_children_nature), reading.childrenNature)
-    if (reading.timing.isNotEmpty()) {
+    TextCard(r.natureTitle, r.nature)
+    if (r.timing.isNotEmpty()) {
         Spacer(modifier = Modifier.height(12.dp))
-        TimingCard(
-            title = stringResource(
-                if (readingIsForParent) R.string.readings_marriage_timing_married
-                else R.string.readings_children_timing_planning
-            ),
-            timing = reading.timing
-        )
+        TimingCard(title = r.timingTitle, timing = r.timing)
     }
-    if (reading.strengths.isNotEmpty()) {
+    if (r.strengths.isNotEmpty()) {
         Spacer(modifier = Modifier.height(12.dp))
-        SectionCard(stringResource(R.string.readings_children_strengths), reading.strengths)
+        SectionCard(r.strengthsTitle, r.strengths)
     }
-    if (reading.carePoints.isNotEmpty()) {
+    if (r.care.isNotEmpty()) {
         Spacer(modifier = Modifier.height(12.dp))
-        SectionCard(stringResource(R.string.readings_children_care), reading.carePoints)
+        SectionCard(r.careTitle, r.care)
     }
-    if (reading.advice.isNotEmpty()) {
+    if (r.advice.isNotEmpty()) {
         Spacer(modifier = Modifier.height(12.dp))
-        SectionCard(stringResource(R.string.readings_marriage_advice), reading.advice)
+        SectionCard(stringResource(R.string.readings_marriage_advice), r.advice)
     }
-    if (reading.remedies.isNotEmpty()) {
+    if (r.remedies.isNotEmpty()) {
         Spacer(modifier = Modifier.height(12.dp))
         SectionCard(
             stringResource(R.string.readings_marriage_remedies),
-            reading.remedies.map { r ->
-                if (r.forPlanet.isBlank()) r.remedy
-                else stringResource(R.string.readings_marriage_remedy_fmt, r.remedy, astroTerm(r.forPlanet))
+            r.remedies.map { rem ->
+                if (rem.forPlanet.isBlank()) rem.remedy
+                else stringResource(R.string.readings_marriage_remedy_fmt, rem.remedy, astroTerm(rem.forPlanet))
             }
         )
     }
-    Spacer(modifier = Modifier.height(12.dp))
-    Text(
-        stringResource(R.string.readings_children_disclaimer),
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
-    )
+    if (r.disclaimer != null) {
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            r.disclaimer,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
 }
 
 @Composable
@@ -396,6 +457,7 @@ private fun TimingCard(title: String, timing: List<MarriageTiming>) {
                         when (w.kind) {
                             "marriage" -> Chip(stringResource(R.string.readings_marriage_kind_marriage), graha.shukra)
                             "children" -> Chip(stringResource(R.string.readings_children_kind_children), graha.guru)
+                            "abroad" -> Chip(stringResource(R.string.readings_foreign_kind_abroad), graha.rahu)
                             "supportive" -> Chip(stringResource(R.string.readings_marriage_kind_supportive), graha.budha)
                             "sensitive" -> Chip(stringResource(R.string.readings_marriage_kind_sensitive), graha.mangala)
                         }

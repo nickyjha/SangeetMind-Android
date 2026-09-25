@@ -208,3 +208,34 @@ data class ChildrenReadingResponse(
     val windows: List<MarriageTiming> = emptyList(),
     val error: String? = null
 )
+
+// ---- Foreign travel / settlement reading: POST /llm/foreign ----
+// Windows from 12th lord, 9th lord, Rahu, 9th/12th occupants antardashas + double transit.
+// Timing `kind` is "abroad" (planning) or "supportive" (already abroad).
+
+@JsonClass(generateAdapter = true)
+data class ForeignReadingRequest(
+    @Json(name = "birth_details") val birthDetails: CareerBirthDetails,
+    val status: String, // "planning" | "abroad"
+    val lang: String = "en"
+)
+
+@JsonClass(generateAdapter = true)
+data class ForeignReading(
+    val summary: String = "",
+    @Json(name = "abroad_outlook") val abroadOutlook: String = "",
+    val strengths: List<String> = emptyList(),
+    @Json(name = "care_points") val carePoints: List<String> = emptyList(),
+    val timing: List<MarriageTiming> = emptyList(),
+    val advice: List<String> = emptyList(),
+    val remedies: List<MarriageRemedy> = emptyList()
+)
+
+@JsonClass(generateAdapter = true)
+data class ForeignReadingResponse(
+    val ok: Boolean,
+    val status: String = "planning",
+    val reading: ForeignReading? = null,
+    val windows: List<MarriageTiming> = emptyList(),
+    val error: String? = null
+)

@@ -48,4 +48,14 @@
     <string name="readings_children_strengths">What supports you</string>
     <string name="readings_children_care">Take care</string>
     <string name="readings_children_disclaimer">Astrology is for guidance only. For health or fertility questions, please talk to a doctor.</string>
+    <string name="readings_tab_foreign">Abroad</string>
+    <string name="readings_foreign_desc">₹99, or free with Premium. Travel, study, work or settling abroad, and the good periods for it, from your 12th and 9th houses, Rahu, D4 and dashas. You\'re only charged if the reading is ready.</string>
+    <string name="readings_foreign_planning">Planning to go</string>
+    <string name="readings_foreign_abroad">Already abroad</string>
+    <string name="readings_foreign_generate">Generate abroad reading</string>
+    <string name="readings_err_foreign">Could not generate abroad reading. You have not been charged.</string>
+    <string name="readings_foreign_outlook">You and foreign lands</string>
+    <string name="readings_foreign_timing_planning">Good periods to go abroad</string>
+    <string name="readings_foreign_kind_abroad">Good for abroad</string>
+    <string name="readings_foreign_disclaimer">Astrology is for guidance only. Visa and immigration decisions depend on your documents and the law.</string>
 </resources>

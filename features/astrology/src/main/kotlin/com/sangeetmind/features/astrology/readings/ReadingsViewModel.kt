@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.libs.models.CareerReadingResponse
 import com.sangeetmind.libs.models.ChildrenReadingResponse
+import com.sangeetmind.libs.models.ForeignReadingResponse
 import com.sangeetmind.libs.models.MarriageReadingResponse
 import com.sangeetmind.libs.models.StrengthsReadingResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +16,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-enum class ReadingTab { CAREER, STRENGTHS, MARRIAGE, CHILDREN }
+enum class ReadingTab { CAREER, STRENGTHS, MARRIAGE, CHILDREN, FOREIGN }
 
 data class ReadingsUiState(
     val tab: ReadingTab = ReadingTab.CAREER,
@@ -26,6 +27,8 @@ data class ReadingsUiState(
     val married: Boolean = false,
     val children: ChildrenReadingResponse? = null,
     val isParent: Boolean = false,
+    val foreign: ForeignReadingResponse? = null,
+    val livesAbroad: Boolean = false,
     val error: String? = null
 )
 
@@ -89,6 +92,22 @@ class ReadingsViewModel @Inject constructor(
             val status = if (_uiState.value.isParent) "parent" else "planning"
             when (val result = repository.getChildrenReading(status)) {
                 is Result.Success -> _uiState.update { it.copy(isLoading = false, children = result.data) }
+                is Result.Error -> _uiState.update { it.copy(isLoading = false, error = result.message) }
+                is Result.Loading -> Unit
+            }
+        }
+    }
+
+    fun setLivesAbroad(livesAbroad: Boolean) {
+        _uiState.update { it.copy(livesAbroad = livesAbroad) }
+    }
+
+    fun generateForeignReading() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            val status = if (_uiState.value.livesAbroad) "abroad" else "planning"
+            when (val result = repository.getForeignReading(status)) {
+                is Result.Success -> _uiState.update { it.copy(isLoading = false, foreign = result.data) }
                 is Result.Error -> _uiState.update { it.copy(isLoading = false, error = result.message) }
                 is Result.Loading -> Unit
             }

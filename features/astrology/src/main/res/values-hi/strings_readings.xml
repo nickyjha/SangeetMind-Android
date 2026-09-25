@@ -48,4 +48,14 @@
     <string name="readings_children_strengths">क्या आपका साथ देता है</string>
     <string name="readings_children_care">इन बातों का ध्यान रखें</string>
     <string name="readings_children_disclaimer">ज्योतिष सिर्फ़ राह दिखाता है। सेहत या बच्चे होने से जुड़े सवालों के लिए डॉक्टर से बात करें।</string>
+    <string name="readings_tab_foreign">विदेश</string>
+    <string name="readings_foreign_desc">₹99, या प्रीमियम में मुफ़्त। आपके 12वें और 9वें भाव, राहु, D4 और दशा से विदेश जाना, पढ़ाई, नौकरी या वहाँ बसना, और इसका अच्छा समय। पैसे तभी कटेंगे जब रीडिंग तैयार हो।</string>
+    <string name="readings_foreign_planning">जाने की सोच रहे हैं</string>
+    <string name="readings_foreign_abroad">विदेश में रहते हैं</string>
+    <string name="readings_foreign_generate">विदेश की रीडिंग बनाएँ</string>
+    <string name="readings_err_foreign">विदेश की रीडिंग नहीं बन पाई। आपके पैसे नहीं कटे।</string>
+    <string name="readings_foreign_outlook">आप और विदेश</string>
+    <string name="readings_foreign_timing_planning">विदेश जाने का अच्छा समय</string>
+    <string name="readings_foreign_kind_abroad">विदेश के लिए अच्छा</string>
+    <string name="readings_foreign_disclaimer">ज्योतिष सिर्फ़ राह दिखाता है। वीज़ा और इमिग्रेशन का फ़ैसला आपके कागज़ात और कानून पर होता है।</string>
 </resources>

@@ -16,6 +16,8 @@ import com.sangeetmind.libs.models.CareerReadingRequest
 import com.sangeetmind.libs.models.CareerReadingResponse
 import com.sangeetmind.libs.models.ChildrenReadingRequest
 import com.sangeetmind.libs.models.ChildrenReadingResponse
+import com.sangeetmind.libs.models.ForeignReadingRequest
+import com.sangeetmind.libs.models.ForeignReadingResponse
 import com.sangeetmind.libs.models.Kundli
 import com.sangeetmind.libs.models.MarriageReadingRequest
 import com.sangeetmind.libs.models.MarriageReadingResponse
@@ -37,6 +39,8 @@ private const val MARRIAGE_SKU = "llm_marriage"
 private const val MARRIAGE_PRICE_PAISE = 9900L
 private const val CHILDREN_SKU = "llm_children"
 private const val CHILDREN_PRICE_PAISE = 9900L
+private const val FOREIGN_SKU = "llm_foreign"
+private const val FOREIGN_PRICE_PAISE = 9900L
 
 @Singleton
 class ReadingsRepository @Inject constructor(
@@ -168,6 +172,21 @@ class ReadingsRepository @Inject constructor(
         ) { kundli ->
             llmApi.getChildrenReading(
                 ChildrenReadingRequest(
+                    birthDetails(kundli),
+                    status = status,
+                    lang = languageManager.current.code
+                )
+            )
+        }
+
+    /** Foreign travel / settlement reading; [status] is "planning" or "abroad". */
+    suspend fun getForeignReading(status: String): Result<ForeignReadingResponse> =
+        payAfterSuccess(
+            FOREIGN_SKU, FOREIGN_PRICE_PAISE, R.string.readings_err_foreign,
+            succeeded = { it.ok && it.reading != null }
+        ) { kundli ->
+            llmApi.getForeignReading(
+                ForeignReadingRequest(
                     birthDetails(kundli),
                     status = status,
                     lang = languageManager.current.code

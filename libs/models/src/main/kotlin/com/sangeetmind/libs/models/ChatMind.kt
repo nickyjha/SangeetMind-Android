@@ -176,3 +176,35 @@ data class MarriageReadingResponse(
     val windows: List<MarriageTiming> = emptyList(),
     val error: String? = null
 )
+
+// ---- Children (santaan) reading: POST /llm/children ----
+// Same shape as marriage: windows come from the calculation (5th lord, Jupiter, Putrakaraka,
+// 9th lord, D7 5th lord antardashas + Jupiter/Saturn double transit), Gemini only explains.
+// Timing `kind` is "children" (planning) or "supportive" (parent).
+
+@JsonClass(generateAdapter = true)
+data class ChildrenReadingRequest(
+    @Json(name = "birth_details") val birthDetails: CareerBirthDetails,
+    val status: String, // "planning" | "parent"
+    val lang: String = "en"
+)
+
+@JsonClass(generateAdapter = true)
+data class ChildrenReading(
+    val summary: String = "",
+    @Json(name = "children_nature") val childrenNature: String = "",
+    val strengths: List<String> = emptyList(),
+    @Json(name = "care_points") val carePoints: List<String> = emptyList(),
+    val timing: List<MarriageTiming> = emptyList(),
+    val advice: List<String> = emptyList(),
+    val remedies: List<MarriageRemedy> = emptyList()
+)
+
+@JsonClass(generateAdapter = true)
+data class ChildrenReadingResponse(
+    val ok: Boolean,
+    val status: String = "planning",
+    val reading: ChildrenReading? = null,
+    val windows: List<MarriageTiming> = emptyList(),
+    val error: String? = null
+)

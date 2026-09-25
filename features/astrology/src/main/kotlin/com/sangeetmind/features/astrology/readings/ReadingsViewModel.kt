@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.libs.models.CareerReadingResponse
+import com.sangeetmind.libs.models.ChildrenReadingResponse
 import com.sangeetmind.libs.models.MarriageReadingResponse
 import com.sangeetmind.libs.models.StrengthsReadingResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +15,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-enum class ReadingTab { CAREER, STRENGTHS, MARRIAGE }
+enum class ReadingTab { CAREER, STRENGTHS, MARRIAGE, CHILDREN }
 
 data class ReadingsUiState(
     val tab: ReadingTab = ReadingTab.CAREER,
@@ -23,6 +24,8 @@ data class ReadingsUiState(
     val strengths: StrengthsReadingResponse? = null,
     val marriage: MarriageReadingResponse? = null,
     val married: Boolean = false,
+    val children: ChildrenReadingResponse? = null,
+    val isParent: Boolean = false,
     val error: String? = null
 )
 
@@ -70,6 +73,22 @@ class ReadingsViewModel @Inject constructor(
             val status = if (_uiState.value.married) "married" else "single"
             when (val result = repository.getMarriageReading(status)) {
                 is Result.Success -> _uiState.update { it.copy(isLoading = false, marriage = result.data) }
+                is Result.Error -> _uiState.update { it.copy(isLoading = false, error = result.message) }
+                is Result.Loading -> Unit
+            }
+        }
+    }
+
+    fun setParent(isParent: Boolean) {
+        _uiState.update { it.copy(isParent = isParent) }
+    }
+
+    fun generateChildrenReading() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            val status = if (_uiState.value.isParent) "parent" else "planning"
+            when (val result = repository.getChildrenReading(status)) {
+                is Result.Success -> _uiState.update { it.copy(isLoading = false, children = result.data) }
                 is Result.Error -> _uiState.update { it.copy(isLoading = false, error = result.message) }
                 is Result.Loading -> Unit
             }

@@ -4,16 +4,16 @@
     <string name="readings_title">रीडिंग्स</string>
     <string name="readings_tab_career">करियर</string>
     <string name="readings_tab_strengths">खूबियाँ</string>
-    <string name="readings_career_desc">₹99, या प्रीमियम में फ़्री — आपकी कुंडली के D1/D10 चार्ट और अभी की दशा से Gemini की बनाई करियर रीडिंग।</string>
+    <string name="readings_career_desc">₹99, या प्रीमियम में फ़्री — आपकी कुंडली के D1/D10 चार्ट और अभी की दशा से Gemini की बनाई करियर रीडिंग। पैसे तभी कटेंगे जब रीडिंग तैयार हो।</string>
     <string name="readings_career_generate">करियर रीडिंग बनाएँ</string>
-    <string name="readings_strengths_desc">₹99, या प्रीमियम में फ़्री — आपकी खूबियाँ, किन बातों में सुधार करें, और राग वाले मंत्र उपाय।</string>
+    <string name="readings_strengths_desc">₹99, या प्रीमियम में फ़्री — आपकी खूबियाँ, किन बातों में सुधार करें, और राग वाले मंत्र उपाय। पैसे तभी कटेंगे जब रीडिंग तैयार हो।</string>
     <string name="readings_strengths_generate">खूबियों की रीडिंग बनाएँ</string>
     <string name="readings_section_strengths">खूबियाँ</string>
     <string name="readings_section_growth_areas">इनमें सुधार करें</string>
     <string name="readings_raag_fmt">राग: %1$s</string>
     <string name="readings_err_insufficient_balance">वॉलेट में बैलेंस कम है</string>
-    <string name="readings_err_career">करियर रीडिंग नहीं बन पाई</string>
-    <string name="readings_err_strengths">खूबियों की रीडिंग नहीं बन पाई</string>
+    <string name="readings_err_career">करियर रीडिंग नहीं बन पाई। आपके पैसे नहीं कटे।</string>
+    <string name="readings_err_strengths">खूबियों की रीडिंग नहीं बन पाई। आपके पैसे नहीं कटे।</string>
     <string name="readings_tab_marriage">शादी</string>
     <string name="readings_marriage_desc">₹99, या प्रीमियम में मुफ़्त। आपके 7वें भाव, उपपद, दाराकारक, D9 और दशा से जीवनसाथी का स्वभाव, रिश्ते की खूबियाँ और सही समय। पैसे तभी कटेंगे जब रीडिंग तैयार हो।</string>
     <string name="readings_marriage_single">अभी शादी नहीं हुई</string>
@@ -36,4 +36,16 @@
     <string name="readings_marriage_advice">सलाह</string>
     <string name="readings_marriage_remedies">उपाय</string>
     <string name="readings_marriage_remedy_fmt">%1$s (%2$s)</string>
+    <string name="readings_tab_children">संतान</string>
+    <string name="readings_children_desc">₹99, या प्रीमियम में मुफ़्त। आपके 5वें भाव, गुरु, पुत्रकारक, D7 और दशा से बच्चों से आपका रिश्ता, क्या साथ देता है और अच्छा समय। पैसे तभी कटेंगे जब रीडिंग तैयार हो।</string>
+    <string name="readings_children_planning">अभी बच्चे नहीं हैं</string>
+    <string name="readings_children_parent">बच्चे हैं</string>
+    <string name="readings_children_generate">संतान की रीडिंग बनाएँ</string>
+    <string name="readings_err_children">संतान की रीडिंग नहीं बन पाई। आपके पैसे नहीं कटे।</string>
+    <string name="readings_children_nature">आप और आपके बच्चे</string>
+    <string name="readings_children_timing_planning">संतान के लिए अच्छा समय</string>
+    <string name="readings_children_kind_children">संतान के लिए अच्छा</string>
+    <string name="readings_children_strengths">क्या आपका साथ देता है</string>
+    <string name="readings_children_care">इन बातों का ध्यान रखें</string>
+    <string name="readings_children_disclaimer">ज्योतिष सिर्फ़ राह दिखाता है। सेहत या बच्चे होने से जुड़े सवालों के लिए डॉक्टर से बात करें।</string>
 </resources>

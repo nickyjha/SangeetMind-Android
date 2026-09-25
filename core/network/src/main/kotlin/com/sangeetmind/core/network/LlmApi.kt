@@ -4,6 +4,8 @@ import com.sangeetmind.libs.models.CareerReadingRequest
 import com.sangeetmind.libs.models.CareerReadingResponse
 import com.sangeetmind.libs.models.ChatMindRequest
 import com.sangeetmind.libs.models.ChatMindResponse
+import com.sangeetmind.libs.models.ChildrenReadingRequest
+import com.sangeetmind.libs.models.ChildrenReadingResponse
 import com.sangeetmind.libs.models.MarriageReadingRequest
 import com.sangeetmind.libs.models.MarriageReadingResponse
 import com.sangeetmind.libs.models.StrengthsReadingRequest
@@ -24,4 +26,7 @@ interface LlmApi {
 
     @POST("llm/marriage")
     suspend fun getMarriageReading(@Body body: MarriageReadingRequest): MarriageReadingResponse
+
+    @POST("llm/children")
+    suspend fun getChildrenReading(@Body body: ChildrenReadingRequest): ChildrenReadingResponse
 }

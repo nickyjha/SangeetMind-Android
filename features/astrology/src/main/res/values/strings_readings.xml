@@ -58,4 +58,14 @@
     <string name="readings_foreign_timing_planning">Good periods to go abroad</string>
     <string name="readings_foreign_kind_abroad">Good for abroad</string>
     <string name="readings_foreign_disclaimer">Astrology is for guidance only. Visa and immigration decisions depend on your documents and the law.</string>
+    <string name="readings_tab_wealth">Wealth</string>
+    <string name="readings_wealth_desc">₹99, or free with Premium. How you earn, save and grow money, and your good periods for it, from your 2nd and 11th houses, Jupiter, dhana yogas, D2 and dashas. You\'re only charged if the reading is ready.</string>
+    <string name="readings_wealth_job">Job</string>
+    <string name="readings_wealth_business">Business / self-employed</string>
+    <string name="readings_wealth_generate">Generate wealth reading</string>
+    <string name="readings_err_wealth">Could not generate wealth reading. You have not been charged.</string>
+    <string name="readings_wealth_nature">You and money</string>
+    <string name="readings_wealth_timing">Good periods for money</string>
+    <string name="readings_wealth_kind">Good for money</string>
+    <string name="readings_wealth_disclaimer">Astrology is for guidance only, not financial advice. For investments and big money decisions, talk to a qualified financial adviser.</string>
 </resources>

@@ -57,7 +57,8 @@ fun ReadingsScreen(
                 ReadingTab.STRENGTHS to R.string.readings_tab_strengths,
                 ReadingTab.MARRIAGE to R.string.readings_tab_marriage,
                 ReadingTab.CHILDREN to R.string.readings_tab_children,
-                ReadingTab.FOREIGN to R.string.readings_tab_foreign
+                ReadingTab.FOREIGN to R.string.readings_tab_foreign,
+                ReadingTab.WEALTH to R.string.readings_tab_wealth
             )
             ScrollableTabRow(selectedTabIndex = uiState.tab.ordinal, edgePadding = 8.dp) {
                 ReadingTab.values().forEach { tab ->
@@ -156,6 +157,32 @@ fun ReadingsScreen(
                                 advice = r.advice,
                                 remedies = r.remedies,
                                 disclaimer = stringResource(R.string.readings_foreign_disclaimer)
+                            )
+                        }
+                    )
+                    ReadingTab.WEALTH -> LifeReadingTab(
+                        descRes = R.string.readings_wealth_desc,
+                        firstOptionRes = R.string.readings_wealth_job,
+                        secondOptionRes = R.string.readings_wealth_business,
+                        secondSelected = uiState.ownsBusiness,
+                        onSecondSelectedChange = viewModel::setOwnsBusiness,
+                        generateRes = R.string.readings_wealth_generate,
+                        isLoading = uiState.isLoading,
+                        onGenerate = viewModel::generateWealthReading,
+                        content = uiState.wealth?.reading?.let { r ->
+                            LifeReadingContent(
+                                summary = r.summary,
+                                natureTitle = stringResource(R.string.readings_wealth_nature),
+                                nature = r.moneyNature,
+                                timingTitle = stringResource(R.string.readings_wealth_timing),
+                                timing = r.timing,
+                                strengthsTitle = stringResource(R.string.readings_children_strengths),
+                                strengths = r.strengths,
+                                careTitle = stringResource(R.string.readings_children_care),
+                                care = r.carePoints,
+                                advice = r.advice,
+                                remedies = r.remedies,
+                                disclaimer = stringResource(R.string.readings_wealth_disclaimer)
                             )
                         }
                     )
@@ -458,6 +485,7 @@ private fun TimingCard(title: String, timing: List<MarriageTiming>) {
                             "marriage" -> Chip(stringResource(R.string.readings_marriage_kind_marriage), graha.shukra)
                             "children" -> Chip(stringResource(R.string.readings_children_kind_children), graha.guru)
                             "abroad" -> Chip(stringResource(R.string.readings_foreign_kind_abroad), graha.rahu)
+                            "wealth" -> Chip(stringResource(R.string.readings_wealth_kind), graha.chandra)
                             "supportive" -> Chip(stringResource(R.string.readings_marriage_kind_supportive), graha.budha)
                             "sensitive" -> Chip(stringResource(R.string.readings_marriage_kind_sensitive), graha.mangala)
                         }

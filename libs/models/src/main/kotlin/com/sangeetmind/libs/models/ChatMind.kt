@@ -239,3 +239,34 @@ data class ForeignReadingResponse(
     val windows: List<MarriageTiming> = emptyList(),
     val error: String? = null
 )
+
+// ---- Wealth (dhana) reading: POST /llm/wealth ----
+// Windows from 2nd lord, 11th lord, Jupiter, 9th lord, 2nd/11th occupants and dhana-yoga
+// planets + double transit over the 2nd/11th. Timing `kind` is always "wealth".
+
+@JsonClass(generateAdapter = true)
+data class WealthReadingRequest(
+    @Json(name = "birth_details") val birthDetails: CareerBirthDetails,
+    val status: String, // "job" | "business"
+    val lang: String = "en"
+)
+
+@JsonClass(generateAdapter = true)
+data class WealthReading(
+    val summary: String = "",
+    @Json(name = "money_nature") val moneyNature: String = "",
+    val strengths: List<String> = emptyList(),
+    @Json(name = "care_points") val carePoints: List<String> = emptyList(),
+    val timing: List<MarriageTiming> = emptyList(),
+    val advice: List<String> = emptyList(),
+    val remedies: List<MarriageRemedy> = emptyList()
+)
+
+@JsonClass(generateAdapter = true)
+data class WealthReadingResponse(
+    val ok: Boolean,
+    val status: String = "job",
+    val reading: WealthReading? = null,
+    val windows: List<MarriageTiming> = emptyList(),
+    val error: String? = null
+)

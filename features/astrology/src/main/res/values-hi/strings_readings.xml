@@ -58,4 +58,14 @@
     <string name="readings_foreign_timing_planning">विदेश जाने का अच्छा समय</string>
     <string name="readings_foreign_kind_abroad">विदेश के लिए अच्छा</string>
     <string name="readings_foreign_disclaimer">ज्योतिष सिर्फ़ राह दिखाता है। वीज़ा और इमिग्रेशन का फ़ैसला आपके कागज़ात और कानून पर होता है।</string>
+    <string name="readings_tab_wealth">धन</string>
+    <string name="readings_wealth_desc">₹99, या प्रीमियम में मुफ़्त। आपके 2रे और 11वें भाव, गुरु, धन योग, D2 और दशा से आप कैसे कमाते, बचाते और पैसा बढ़ाते हैं, और इसका अच्छा समय। पैसे तभी कटेंगे जब रीडिंग तैयार हो।</string>
+    <string name="readings_wealth_job">नौकरी</string>
+    <string name="readings_wealth_business">बिज़नेस / अपना काम</string>
+    <string name="readings_wealth_generate">धन की रीडिंग बनाएँ</string>
+    <string name="readings_err_wealth">धन की रीडिंग नहीं बन पाई। आपके पैसे नहीं कटे।</string>
+    <string name="readings_wealth_nature">आप और पैसा</string>
+    <string name="readings_wealth_timing">पैसे के लिए अच्छा समय</string>
+    <string name="readings_wealth_kind">पैसे के लिए अच्छा</string>
+    <string name="readings_wealth_disclaimer">ज्योतिष सिर्फ़ राह दिखाता है, यह पैसे की सलाह नहीं है। निवेश और बड़े फ़ैसलों के लिए किसी जानकार वित्तीय सलाहकार से बात करें।</string>
 </resources>

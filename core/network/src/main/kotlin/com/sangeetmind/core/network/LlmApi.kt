@@ -12,6 +12,8 @@ import com.sangeetmind.libs.models.MarriageReadingRequest
 import com.sangeetmind.libs.models.MarriageReadingResponse
 import com.sangeetmind.libs.models.StrengthsReadingRequest
 import com.sangeetmind.libs.models.StrengthsReadingResponse
+import com.sangeetmind.libs.models.WealthReadingRequest
+import com.sangeetmind.libs.models.WealthReadingResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 
@@ -34,4 +36,7 @@ interface LlmApi {
 
     @POST("llm/foreign")
     suspend fun getForeignReading(@Body body: ForeignReadingRequest): ForeignReadingResponse
+
+    @POST("llm/wealth")
+    suspend fun getWealthReading(@Body body: WealthReadingRequest): WealthReadingResponse
 }

@@ -8,6 +8,7 @@ import com.sangeetmind.libs.models.ChildrenReadingResponse
 import com.sangeetmind.libs.models.ForeignReadingResponse
 import com.sangeetmind.libs.models.MarriageReadingResponse
 import com.sangeetmind.libs.models.StrengthsReadingResponse
+import com.sangeetmind.libs.models.WealthReadingResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,7 +17,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-enum class ReadingTab { CAREER, STRENGTHS, MARRIAGE, CHILDREN, FOREIGN }
+enum class ReadingTab { CAREER, STRENGTHS, MARRIAGE, CHILDREN, FOREIGN, WEALTH }
 
 data class ReadingsUiState(
     val tab: ReadingTab = ReadingTab.CAREER,
@@ -29,6 +30,8 @@ data class ReadingsUiState(
     val isParent: Boolean = false,
     val foreign: ForeignReadingResponse? = null,
     val livesAbroad: Boolean = false,
+    val wealth: WealthReadingResponse? = null,
+    val ownsBusiness: Boolean = false,
     val error: String? = null
 )
 
@@ -108,6 +111,22 @@ class ReadingsViewModel @Inject constructor(
             val status = if (_uiState.value.livesAbroad) "abroad" else "planning"
             when (val result = repository.getForeignReading(status)) {
                 is Result.Success -> _uiState.update { it.copy(isLoading = false, foreign = result.data) }
+                is Result.Error -> _uiState.update { it.copy(isLoading = false, error = result.message) }
+                is Result.Loading -> Unit
+            }
+        }
+    }
+
+    fun setOwnsBusiness(ownsBusiness: Boolean) {
+        _uiState.update { it.copy(ownsBusiness = ownsBusiness) }
+    }
+
+    fun generateWealthReading() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            val status = if (_uiState.value.ownsBusiness) "business" else "job"
+            when (val result = repository.getWealthReading(status)) {
+                is Result.Success -> _uiState.update { it.copy(isLoading = false, wealth = result.data) }
                 is Result.Error -> _uiState.update { it.copy(isLoading = false, error = result.message) }
                 is Result.Loading -> Unit
             }

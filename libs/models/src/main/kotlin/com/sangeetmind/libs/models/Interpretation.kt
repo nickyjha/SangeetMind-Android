@@ -416,6 +416,22 @@ data class VimshottariMahadashaPhal(
     @Json(name = "antardasha_note") val antardashaNote: String? = null
 )
 
+/** One classical yoga found in D1 (backend `chart_yogas.compute_yogas`). `kind` is
+ * "benefic" or "challenging"; `cancelled` only for Kemadruma/Shakata cancellations. */
+@JsonClass(generateAdapter = true)
+data class ChartYoga(
+    val id: String = "",
+    val name: LocalizedText = LocalizedText(),
+    val kind: String = "benefic",
+    val planets: List<String> = emptyList(),
+    val reason: LocalizedText = LocalizedText(),
+    val meaning: LocalizedText = LocalizedText(),
+    val cancelled: Boolean = false,
+    val cancellation: LocalizedText? = null
+) {
+    val isChallenging: Boolean get() = kind == "challenging"
+}
+
 @JsonClass(generateAdapter = true)
 data class ChartNarratives(
     @Json(name = "nakshatra_phal") val nakshatraPhal: NakshatraPhal = NakshatraPhal(),
@@ -560,6 +576,7 @@ data class ChartSummaryResponse(
     val jaimini: ChartJaimini = ChartJaimini(),
     @Json(name = "lal_kitab") val lalKitab: ChartLalKitab = ChartLalKitab(),
     val narratives: ChartNarratives = ChartNarratives(),
+    val yogas: List<ChartYoga> = emptyList(),
     val houses: ChartHouses = ChartHouses(),
     val chalit: ChartChalit = ChartChalit(),
     @Json(name = "moon_chart") val moonChart: ChartMoonChart = ChartMoonChart(),

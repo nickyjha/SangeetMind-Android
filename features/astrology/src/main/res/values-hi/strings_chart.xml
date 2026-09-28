@@ -184,4 +184,10 @@
     <string name="chart_pada_11">लाभ, कमाई</string>
     <string name="chart_pada_12">उपपद लग्न (UL)</string>
     <string name="chart_house_lord_meaning_fmt">स्वामी भाव %1$d में: %2$s</string>
+    <string name="chart_yogas_title">योग</string>
+    <string name="chart_yogas_summary_fmt">%1$d शुभ · %2$d चुनौती वाले</string>
+    <string name="chart_yogas_note">आपकी जन्म कुंडली के शास्त्रीय योग। ये झुकाव बताते हैं और ज़्यादातर इन ग्रहों की दशा में असर दिखाते हैं।</string>
+    <string name="chart_yogas_none">इस कुंडली में कोई बड़ा शास्त्रीय योग नहीं मिला।</string>
+    <string name="chart_yoga_benefic">शुभ</string>
+    <string name="chart_yoga_challenging">चुनौती</string>
 </resources>

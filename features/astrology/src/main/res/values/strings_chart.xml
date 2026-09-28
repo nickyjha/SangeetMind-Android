@@ -186,4 +186,10 @@
     <string name="chart_pada_11">Gains, income</string>
     <string name="chart_pada_12">Upapada (UL)</string>
     <string name="chart_house_lord_meaning_fmt">Lord in H%1$d: %2$s</string>
+    <string name="chart_yogas_title">Yogas</string>
+    <string name="chart_yogas_summary_fmt">%1$d benefic · %2$d challenging</string>
+    <string name="chart_yogas_note">Classical combinations in your birth chart. They show tendencies and act mostly in the periods of the planets involved.</string>
+    <string name="chart_yogas_none">No major classical yogas found in this chart.</string>
+    <string name="chart_yoga_benefic">Benefic</string>
+    <string name="chart_yoga_challenging">Challenging</string>
 </resources>

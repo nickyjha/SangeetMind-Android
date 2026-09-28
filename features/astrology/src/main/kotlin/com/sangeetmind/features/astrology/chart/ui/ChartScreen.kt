@@ -75,6 +75,7 @@ import com.sangeetmind.libs.models.ChartMoonChart
 import com.sangeetmind.libs.models.ChartNarratives
 import com.sangeetmind.libs.models.ChartShadbala
 import com.sangeetmind.libs.models.ChartSummaryResponse
+import com.sangeetmind.libs.models.ChartYoga
 import com.sangeetmind.libs.models.ShadbalaRanking
 import com.sangeetmind.libs.models.DashaPeriod
 import com.sangeetmind.libs.models.DivisionalChart
@@ -259,6 +260,9 @@ private fun ChartContent(
                 ChartSection.OVERVIEW -> {
                     item {
                         DoshaCard(chart.doshas)
+                    }
+                    item {
+                        YogasCard(chart.yogas)
                     }
                     item {
                         NarrativesCard(chart.narratives)
@@ -818,6 +822,85 @@ private fun DoshaCard(doshas: ChartDoshas) {
                 flaggedColor = graha.mangala,
                 clearColor = graha.budha
             )
+        }
+    }
+}
+
+/** Classical yogas in D1: a benefic/challenging chip, planet chips, why this chart has it
+ * and what it classically means. Cancelled Kemadruma/Shakata show their cancellation. */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun YogasCard(yogas: List<ChartYoga>) {
+    val graha = LocalGrahaColors.current
+    val languageCode = LocalAppLanguage.current.code
+    val muted = MaterialTheme.colorScheme.onSurfaceVariant
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(stringResource(R.string.chart_yogas_title), style = MaterialTheme.typography.titleMedium)
+            if (yogas.isEmpty()) {
+                Text(
+                    stringResource(R.string.chart_yogas_none),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = muted,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+                return@Column
+            }
+            val active = yogas.filterNot { it.cancelled }
+            Text(
+                stringResource(
+                    R.string.chart_yogas_summary_fmt,
+                    active.count { !it.isChallenging },
+                    active.count { it.isChallenging }
+                ),
+                style = MaterialTheme.typography.labelSmall,
+                color = muted
+            )
+            Text(
+                stringResource(R.string.chart_yogas_note),
+                style = MaterialTheme.typography.labelSmall,
+                color = muted,
+                modifier = Modifier.padding(top = 2.dp)
+            )
+            yogas.forEach { yoga ->
+                Spacer(modifier = Modifier.height(12.dp))
+                val (kindLabel, kindColor) = when {
+                    yoga.cancelled -> stringResource(R.string.chart_status_cancelled) to muted
+                    yoga.isChallenging -> stringResource(R.string.chart_yoga_challenging) to graha.mangala
+                    else -> stringResource(R.string.chart_yoga_benefic) to graha.budha
+                }
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        yoga.name.forLanguage(languageCode),
+                        style = MaterialTheme.typography.titleSmall,
+                        color = if (yoga.cancelled) muted else MaterialTheme.colorScheme.onSurface
+                    )
+                    Chip(kindLabel, kindColor)
+                    yoga.planets.forEach { Chip(astroTerm(it), grahaColorFor(it, graha)) }
+                }
+                Text(
+                    yoga.reason.forLanguage(languageCode),
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+                yoga.cancellation?.let {
+                    Text(
+                        it.forLanguage(languageCode),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = muted,
+                        modifier = Modifier.padding(top = 2.dp)
+                    )
+                }
+                Text(
+                    yoga.meaning.forLanguage(languageCode),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = muted,
+                    modifier = Modifier.padding(top = 2.dp)
+                )
+            }
         }
     }
 }

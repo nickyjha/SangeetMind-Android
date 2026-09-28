@@ -1,0 +1,122 @@
+{
+ "lagna": {
+  "sign": "Sagittarius",
+  "degree": 29.678915066600894,
+  "absolute": 269.6789,
+  "house": 1
+ },
+ "yogas": [
+  {
+   "id": "chandra_mangala",
+   "name": {
+    "en": "Chandra-Mangala Yoga",
+    "hi": "चंद्र-मंगल योग"
+   },
+   "kind": "benefic",
+   "planets": [
+    "Moon",
+    "Mars"
+   ],
+   "reason": {
+    "en": "The Moon and Mars are together.",
+    "hi": "चंद्र और मंगल साथ हैं।"
+   },
+   "meaning": {
+    "en": "Earning drive and business sense; money comes through your own effort.",
+    "hi": "कमाने की लगन और व्यापार की समझ; पैसा अपनी मेहनत से आता है।"
+   },
+   "cancelled": false,
+   "cancellation": null
+  },
+  {
+   "id": "raja",
+   "name": {
+    "en": "Raja Yoga",
+    "hi": "राजयोग"
+   },
+   "kind": "benefic",
+   "planets": [
+    "Jupiter",
+    "Sun"
+   ],
+   "reason": {
+    "en": "Jupiter (1st lord) and Sun (9th lord) sit together in the 2nd house.",
+    "hi": "गुरु (पहले भाव का स्वामी) और सूर्य (नौवें भाव का स्वामी) दूसरे भाव में साथ बैठे हैं।"
+   },
+   "meaning": {
+    "en": "Link between effort (kendra) and fortune (trikona) lords; rise in status, mainly in the periods of these planets.",
+    "hi": "केंद्र (मेहनत) और त्रिकोण (भाग्य) के स्वामियों का मेल; इन ग्रहों की दशा में पद और मान बढ़ता है।"
+   },
+   "cancelled": false,
+   "cancellation": null
+  },
+  {
+   "id": "dhana",
+   "name": {
+    "en": "Dhana Yoga",
+    "hi": "धन योग"
+   },
+   "kind": "benefic",
+   "planets": [
+    "Saturn",
+    "Mars",
+    "Venus"
+   ],
+   "reason": {
+    "en": "Saturn (2nd lord) and Mars (5th lord) exchange signs; Mars (5th lord) and Venus (11th lord) sit together in the 3rd house.",
+    "hi": "शनि (दूसरे भाव का स्वामी) और मंगल (पांचवें भाव का स्वामी) आपस में राशि बदलते हैं; मंगल (पांचवें भाव का स्वामी) और शुक्र (ग्यारहवें भाव का स्वामी) तीसरे भाव में साथ बैठे हैं।"
+   },
+   "meaning": {
+    "en": "Lords of the wealth houses work together; supports income and savings.",
+    "hi": "धन भावों के स्वामी साथ काम करते हैं; कमाई और बचत में मदद।"
+   },
+   "cancelled": false,
+   "cancellation": null
+  },
+  {
+   "id": "neecha_bhanga",
+   "name": {
+    "en": "Neecha Bhanga Raja Yoga",
+    "hi": "नीचभंग राजयोग"
+   },
+   "kind": "benefic",
+   "planets": [
+    "Jupiter",
+    "Mars",
+    "Saturn"
+   ],
+   "reason": {
+    "en": "Jupiter is debilitated in Capricorn, but Mars and Saturn are in a kendra from the lagna or the Moon, cancelling the debility.",
+    "hi": "गुरु मकर में नीच है, पर मंगल और शनि लग्न या चंद्र से केंद्र में हैं, जिससे नीचता भंग होती है।"
+   },
+   "meaning": {
+    "en": "A weak (debilitated) planet gets support, so its early struggles turn into strength later.",
+    "hi": "नीच ग्रह को सहारा मिलता है, इसलिए शुरू की मुश्किलें बाद में ताक़त बन जाती हैं।"
+   },
+   "cancelled": false,
+   "cancellation": null
+  },
+  {
+   "id": "dainya_parivartana",
+   "name": {
+    "en": "Dainya Parivartana Yoga",
+    "hi": "दैन्य परिवर्तन योग"
+   },
+   "kind": "challenging",
+   "planets": [
+    "Mars",
+    "Saturn"
+   ],
+   "reason": {
+    "en": "Mars (in the 3rd house) and Saturn (in the 12th house) are in each other's signs.",
+    "hi": "मंगल (तीसरे भाव में) और शनि (बारहवें भाव में) एक-दूसरे की राशि में हैं।"
+   },
+   "meaning": {
+    "en": "An exchange involving a dusthana (6, 8, 12): the houses involved need patience and care.",
+    "hi": "6, 8 या 12 भाव से जुड़ा राशि परिवर्तन: इन भावों के मामलों में धैर्य और ध्यान चाहिए।"
+   },
+   "cancelled": false,
+   "cancellation": null
+  }
+ ]
+}

@@ -1531,6 +1531,14 @@ private fun NarrativesCard(narratives: ChartNarratives) {
     if (narratives.nakshatraPhal.text.isBlank() && narratives.ascendantSummary.text.isBlank()) return
     val graha = LocalGrahaColors.current
     val dashaPhal = narratives.vimshottariMahadashaPhal
+    // Hindi siblings fall back to English for charts cached before they existed.
+    val hindi = LocalAppLanguage.current.code == "hi"
+    fun pick(en: String?, hi: String?): String? = if (hindi && !hi.isNullOrBlank()) hi else en
+    val planetLines = if (hindi && narratives.planetConsiderationsHi.isNotEmpty()) {
+        narratives.planetConsiderationsHi
+    } else {
+        narratives.planetConsiderations
+    }
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -1546,7 +1554,10 @@ private fun NarrativesCard(narratives: ChartNarratives) {
                     ),
                     style = MaterialTheme.typography.titleSmall
                 )
-                Text(narratives.nakshatraPhal.text, style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    pick(narratives.nakshatraPhal.text, narratives.nakshatraPhal.textHi).orEmpty(),
+                    style = MaterialTheme.typography.bodyMedium
+                )
             }
             if (narratives.ascendantSummary.text.isNotBlank()) {
                 Spacer(modifier = Modifier.height(12.dp))
@@ -1554,9 +1565,12 @@ private fun NarrativesCard(narratives: ChartNarratives) {
                     stringResource(R.string.chart_ascendant_fmt, astroTerm(narratives.ascendantSummary.sign)),
                     style = MaterialTheme.typography.titleSmall
                 )
-                Text(narratives.ascendantSummary.text, style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    pick(narratives.ascendantSummary.text, narratives.ascendantSummary.textHi).orEmpty(),
+                    style = MaterialTheme.typography.bodyMedium
+                )
             }
-            val mahadashaText = dashaPhal.mahadashaText
+            val mahadashaText = pick(dashaPhal.mahadashaText, dashaPhal.mahadashaTextHi)
             if (!mahadashaText.isNullOrBlank()) {
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
@@ -1566,7 +1580,7 @@ private fun NarrativesCard(narratives: ChartNarratives) {
                         ?: MaterialTheme.colorScheme.onSurface
                 )
                 Text(mahadashaText, style = MaterialTheme.typography.bodyMedium)
-                dashaPhal.antardashaNote?.takeIf { it.isNotBlank() }?.let { note ->
+                pick(dashaPhal.antardashaNote, dashaPhal.antardashaNoteHi)?.takeIf { it.isNotBlank() }?.let { note ->
                     Text(
                         note,
                         style = MaterialTheme.typography.bodySmall,
@@ -1574,10 +1588,10 @@ private fun NarrativesCard(narratives: ChartNarratives) {
                     )
                 }
             }
-            if (narratives.planetConsiderations.isNotEmpty()) {
+            if (planetLines.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(stringResource(R.string.chart_planet_placements), style = MaterialTheme.typography.titleSmall)
-                narratives.planetConsiderations.forEach { line ->
+                planetLines.forEach { line ->
                     Text(
                         "· $line",
                         style = MaterialTheme.typography.bodySmall,
@@ -1589,7 +1603,7 @@ private fun NarrativesCard(narratives: ChartNarratives) {
             if (narratives.disclaimer.isNotBlank()) {
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    narratives.disclaimer,
+                    pick(narratives.disclaimer, narratives.disclaimerHi).orEmpty(),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

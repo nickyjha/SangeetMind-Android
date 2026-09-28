@@ -398,13 +398,15 @@ data class NakshatraPhal(
     val nakshatra: String = "",
     val pada: Int? = null,
     val lord: String = "",
-    val text: String = ""
+    val text: String = "",
+    @Json(name = "text_hi") val textHi: String = ""
 )
 
 @JsonClass(generateAdapter = true)
 data class AscendantSummary(
     val sign: String = "",
-    val text: String = ""
+    val text: String = "",
+    @Json(name = "text_hi") val textHi: String = ""
 )
 
 @JsonClass(generateAdapter = true)
@@ -413,7 +415,9 @@ data class VimshottariMahadashaPhal(
     @Json(name = "current_antardasha") val currentAntardasha: String? = null,
     @Json(name = "current_pratyantardasha") val currentPratyantardasha: String? = null,
     @Json(name = "mahadasha_text") val mahadashaText: String? = null,
-    @Json(name = "antardasha_note") val antardashaNote: String? = null
+    @Json(name = "mahadasha_text_hi") val mahadashaTextHi: String? = null,
+    @Json(name = "antardasha_note") val antardashaNote: String? = null,
+    @Json(name = "antardasha_note_hi") val antardashaNoteHi: String? = null
 )
 
 /** One classical yoga found in D1 (backend `chart_yogas.compute_yogas`). `kind` is
@@ -440,7 +444,9 @@ data class ChartNarratives(
     @Json(name = "vimshottari_mahadasha_phal")
     val vimshottariMahadashaPhal: VimshottariMahadashaPhal = VimshottariMahadashaPhal(),
     @Json(name = "planet_considerations") val planetConsiderations: List<String> = emptyList(),
-    val disclaimer: String = ""
+    @Json(name = "planet_considerations_hi") val planetConsiderationsHi: List<String> = emptyList(),
+    val disclaimer: String = "",
+    @Json(name = "disclaimer_hi") val disclaimerHi: String = ""
 )
 
 /** Placidus house cusps for the active `system` (whole_sign or placidus)

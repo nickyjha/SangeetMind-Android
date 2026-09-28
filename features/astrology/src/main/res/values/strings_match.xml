@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="match_title">Kundli Match</string>
-    <string name="match_intro">Pick two saved kundlis to check Ashtakoot compatibility (guna milan).</string>
+    <string name="match_intro">Pick the boy\'s and the girl\'s saved kundlis to check Ashtakoot compatibility (guna milan).</string>
     <string name="match_need_two">You need at least two saved kundlis to run a match.</string>
-    <string name="match_person_a">Person A</string>
-    <string name="match_person_b">Person B</string>
+    <string name="match_person_a">Boy (groom)</string>
+    <string name="match_person_b">Girl (bride)</string>
     <string name="match_check">Check Compatibility</string>
     <string name="match_gunas_fmt">%1$d / %2$d Gunas</string>
     <string name="match_koota_varna">Varna</string>
@@ -16,8 +16,8 @@
     <string name="match_koota_bhakoot">Bhakoot</string>
     <string name="match_koota_nadi">Nadi</string>
     <string name="match_status_fmt">%1$s status</string>
-    <string name="match_person_a_fmt">Person A: %1$s</string>
-    <string name="match_person_b_fmt">Person B: %1$s</string>
+    <string name="match_person_a_fmt">Boy: %1$s</string>
+    <string name="match_person_b_fmt">Girl: %1$s</string>
     <string name="match_error_load_kundlis">Failed to load kundlis</string>
     <string name="match_error_pick_both">Please pick both people</string>
     <string name="match_error_compute">Failed to compute compatibility</string>

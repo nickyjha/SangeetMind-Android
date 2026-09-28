@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="match_title">कुंडली मिलान</string>
-    <string name="match_intro">गुण मिलान (अष्टकूट) देखने के लिए दो सेव की हुई कुंडलियाँ चुनें।</string>
+    <string name="match_intro">गुण मिलान (अष्टकूट) देखने के लिए लड़के और लड़की की सेव की हुई कुंडली चुनें।</string>
     <string name="match_need_two">मिलान के लिए कम से कम दो सेव की हुई कुंडलियाँ चाहिए।</string>
-    <string name="match_person_a">व्यक्ति A</string>
-    <string name="match_person_b">व्यक्ति B</string>
+    <string name="match_person_a">लड़का (वर)</string>
+    <string name="match_person_b">लड़की (वधू)</string>
     <string name="match_check">मिलान देखें</string>
     <string name="match_gunas_fmt">%1$d / %2$d गुण</string>
     <string name="match_koota_varna">वर्ण</string>
@@ -16,8 +16,8 @@
     <string name="match_koota_bhakoot">भकूट</string>
     <string name="match_koota_nadi">नाड़ी</string>
     <string name="match_status_fmt">%1$s स्थिति</string>
-    <string name="match_person_a_fmt">व्यक्ति A: %1$s</string>
-    <string name="match_person_b_fmt">व्यक्ति B: %1$s</string>
+    <string name="match_person_a_fmt">लड़का: %1$s</string>
+    <string name="match_person_b_fmt">लड़की: %1$s</string>
     <string name="match_error_load_kundlis">कुंडलियाँ लोड नहीं हो पाईं</string>
     <string name="match_error_pick_both">दोनों लोगों को चुनें</string>
     <string name="match_error_compute">मिलान नहीं हो पाया</string>

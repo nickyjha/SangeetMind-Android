@@ -39,7 +39,30 @@ data class PlanetInfo(
     /** Whole-sign houses (1-12) this planet's drishti falls on (app/services/chart_aspects.py). */
     @Json(name = "aspects_houses") val aspectsHouses: List<Int> = emptyList(),
     /** Same aspects with which-aspect (`offset`, e.g. 7) and drishti-bala `strength` %. */
-    val aspects: List<PlanetAspect> = emptyList()
+    val aspects: List<PlanetAspect> = emptyList(),
+    /** D1 only (app/services/chart_meanings.py): the planet's nakshatra and what that
+     * placement means; retrograde/combust notes only when the flag is set. */
+    val nakshatra: PlanetNakshatra? = null,
+    @Json(name = "nakshatra_meaning") val nakshatraMeaning: LocalizedText? = null,
+    @Json(name = "retrograde_meaning") val retrogradeMeaning: LocalizedText? = null,
+    @Json(name = "combust_meaning") val combustMeaning: LocalizedText? = null
+)
+
+@JsonClass(generateAdapter = true)
+data class PlanetNakshatra(
+    val index: Int = 0,
+    val name: String = "",
+    val pada: Int = 0,
+    val lord: String = ""
+)
+
+/** Two grahas in the same D1 sign (backend `conjunctions`). */
+@JsonClass(generateAdapter = true)
+data class ChartConjunction(
+    val planets: List<String> = emptyList(),
+    val sign: String = "",
+    val house: Int? = null,
+    val meaning: LocalizedText = LocalizedText()
 )
 
 /** One drishti cast by a planet: the house it lands on, which aspect it is (offset from
@@ -84,7 +107,9 @@ data class VimshottariCurrent(
     val pratyantardasha: DashaPeriod? = null,
     @Json(name = "pratyantar_dasha") val pratyantarDashaAlt: DashaPeriod? = null,
     val pratyantar: DashaPeriod? = null,
-    val now: String? = null
+    val now: String? = null,
+    /** What the current antardasha tends to bring inside its mahadasha. */
+    val meaning: LocalizedText? = null
 ) {
     val resolvedPratyantar: DashaPeriod?
         get() = pratyantardasha ?: pratyantarDashaAlt ?: pratyantar
@@ -96,7 +121,8 @@ data class BhuktiPeriod(
     val start: String,
     val end: String,
     val partial: Boolean = false,
-    val pratyantars: List<DashaPeriod> = emptyList()
+    val pratyantars: List<DashaPeriod> = emptyList(),
+    val meaning: LocalizedText? = null
 )
 
 @JsonClass(generateAdapter = true)
@@ -583,6 +609,7 @@ data class ChartSummaryResponse(
     @Json(name = "lal_kitab") val lalKitab: ChartLalKitab = ChartLalKitab(),
     val narratives: ChartNarratives = ChartNarratives(),
     val yogas: List<ChartYoga> = emptyList(),
+    val conjunctions: List<ChartConjunction> = emptyList(),
     val houses: ChartHouses = ChartHouses(),
     val chalit: ChartChalit = ChartChalit(),
     @Json(name = "moon_chart") val moonChart: ChartMoonChart = ChartMoonChart(),

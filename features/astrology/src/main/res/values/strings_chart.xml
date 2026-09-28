@@ -192,4 +192,8 @@
     <string name="chart_yogas_none">No major classical yogas found in this chart.</string>
     <string name="chart_yoga_benefic">Benefic</string>
     <string name="chart_yoga_challenging">Challenging</string>
+    <string name="chart_planet_meanings_title">Planets in nakshatras</string>
+    <string name="chart_planet_in_nak_fmt">in %1$s · pada %2$d</string>
+    <string name="chart_conjunctions_title">Conjunctions</string>
+    <string name="chart_conjunction_where_fmt">in %1$s · H%2$d</string>
 </resources>

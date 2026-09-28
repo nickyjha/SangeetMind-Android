@@ -65,6 +65,7 @@ import com.sangeetmind.libs.models.CharaMahadasha
 import com.sangeetmind.libs.models.ChartAshtakvarga
 import com.sangeetmind.libs.models.ChartBhavabala
 import com.sangeetmind.libs.models.ChartChalit
+import com.sangeetmind.libs.models.ChartConjunction
 import com.sangeetmind.libs.models.ChartDoshas
 import com.sangeetmind.libs.models.ChartFriendship
 import com.sangeetmind.libs.models.ChartHouses
@@ -266,6 +267,9 @@ private fun ChartContent(
                     }
                     item {
                         NarrativesCard(chart.narratives)
+                    }
+                    item {
+                        PlanetMeaningsCard(chart.planets, chart.conjunctions)
                     }
                 }
                 ChartSection.STRENGTH -> {
@@ -904,6 +908,79 @@ private fun YogasCard(yogas: List<ChartYoga>) {
         }
     }
 }
+
+/** What each graha's nakshatra placement means, with retrograde/combust notes, then the
+ * D1 conjunctions (backend chart_meanings.py). Hidden for charts cached before meanings. */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun PlanetMeaningsCard(planets: Map<String, PlanetInfo>, conjunctions: List<ChartConjunction>) {
+    val placed = GRAHA_ORDER.mapNotNull { name ->
+        planets[name]?.takeIf { it.nakshatra != null && it.nakshatraMeaning != null }?.let { name to it }
+    }
+    if (placed.isEmpty()) return
+    val graha = LocalGrahaColors.current
+    val languageCode = LocalAppLanguage.current.code
+    val muted = MaterialTheme.colorScheme.onSurfaceVariant
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(stringResource(R.string.chart_planet_meanings_title), style = MaterialTheme.typography.titleMedium)
+            placed.forEach { (name, info) ->
+                val nak = info.nakshatra!!
+                Spacer(modifier = Modifier.height(12.dp))
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Chip(astroTerm(name), grahaColorFor(name, graha))
+                    Text(
+                        stringResource(R.string.chart_planet_in_nak_fmt, astroTerm(nak.name), nak.pada),
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                    if (info.retrogradeMeaning != null) Chip(astroTerm("Retrograde"), muted)
+                    if (info.combustMeaning != null) Chip(astroTerm("Combust"), graha.mangala)
+                }
+                Text(
+                    info.nakshatraMeaning!!.forLanguage(languageCode),
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+                listOfNotNull(info.retrogradeMeaning, info.combustMeaning).forEach { note ->
+                    Text(
+                        note.forLanguage(languageCode),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = muted,
+                        modifier = Modifier.padding(top = 2.dp)
+                    )
+                }
+            }
+            if (conjunctions.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(stringResource(R.string.chart_conjunctions_title), style = MaterialTheme.typography.titleSmall)
+                conjunctions.forEach { conj ->
+                    Spacer(modifier = Modifier.height(8.dp))
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        conj.planets.forEach { Chip(astroTerm(it), grahaColorFor(it, graha)) }
+                        Text(
+                            stringResource(R.string.chart_conjunction_where_fmt, astroTerm(conj.sign), conj.house ?: 0),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = muted
+                        )
+                    }
+                    Text(
+                        conj.meaning.forLanguage(languageCode),
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+private val GRAHA_ORDER = listOf("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu")
 
 @Composable
 private fun DoshaRow(
@@ -1705,6 +1782,13 @@ private fun CurrentDashaCard(chart: ChartSummaryResponse, system: DashaSystem) {
                     DashaRow(stringResource(R.string.chart_mahadasha), current.mahadasha)
                     DashaRow(stringResource(R.string.chart_antardasha), current.antardasha)
                     DashaRow(stringResource(R.string.chart_pratyantar), current.resolvedPratyantar)
+                    current.meaning?.let { meaning ->
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            meaning.forLanguage(LocalAppLanguage.current.code),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
                 }
             }
         }
@@ -1915,6 +1999,7 @@ private fun BhuktiRow(bhukti: BhuktiPeriod, isMahadashaCurrent: Boolean, accent:
     val start = parseIso(bhukti.start)
     val end = parseIso(bhukti.end)
     val isCurrent = isMahadashaCurrent && start != null && end != null && !now.isBefore(start) && !now.isAfter(end)
+    val isPast = end != null && now.isAfter(end)
 
     Column(
         modifier = Modifier
@@ -1935,6 +2020,17 @@ private fun BhuktiRow(bhukti: BhuktiPeriod, isMahadashaCurrent: Boolean, accent:
                 style = MaterialTheme.typography.bodySmall,
                 color = if (isCurrent) accent else MaterialTheme.colorScheme.onSurfaceVariant
             )
+        }
+        // Past periods stay compact; current and upcoming ones say what they tend to bring.
+        if (!isPast) {
+            bhukti.meaning?.let { meaning ->
+                Text(
+                    meaning.forLanguage(LocalAppLanguage.current.code),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 2.dp)
+                )
+            }
         }
         if (bhukti.pratyantars.isNotEmpty()) {
             Column(modifier = Modifier.padding(start = 12.dp, top = 4.dp)) {

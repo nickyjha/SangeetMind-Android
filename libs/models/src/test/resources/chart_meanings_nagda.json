@@ -1,0 +1,348 @@
+{
+ "lagna": {
+  "sign": "Sagittarius",
+  "degree": 29.678915066600894,
+  "absolute": 269.6789,
+  "house": 1
+ },
+ "planets": {
+  "Sun": {
+   "sign": "Capricorn",
+   "degree": 10.3468,
+   "absolute": "10°20′48″",
+   "retrograde": false,
+   "combust": false,
+   "exalted": false,
+   "debilitated": false,
+   "house": 2,
+   "aspects_houses": [
+    8
+   ],
+   "aspects": [
+    {
+     "house": 8,
+     "offset": 7,
+     "strength": 100
+    }
+   ],
+   "vargottama": false,
+   "nakshatra": {
+    "index": 21,
+    "name": "Shravana",
+    "pada": 1,
+    "lord": "Moon"
+   },
+   "nakshatra_meaning": {
+    "en": "A good listener who learns from teachers and tradition. Respect grows through knowledge, careful speech and patient effort.",
+    "hi": "अच्छे सुनने वाले, जो गुरुओं और परंपरा से सीखते हैं। ज्ञान, सोच-समझकर बोलने और धीरज भरी मेहनत से इज़्ज़त बढ़ती है।"
+   }
+  },
+  "Moon": {
+   "sign": "Aquarius",
+   "degree": 14.6407,
+   "absolute": "14°38′26″",
+   "retrograde": false,
+   "combust": false,
+   "exalted": false,
+   "debilitated": false,
+   "house": 3,
+   "aspects_houses": [
+    9
+   ],
+   "aspects": [
+    {
+     "house": 9,
+     "offset": 7,
+     "strength": 100
+    }
+   ],
+   "vargottama": true,
+   "nakshatra": {
+    "index": 23,
+    "name": "Shatabhisha",
+    "pada": 3,
+    "lord": "Rahu"
+   },
+   "nakshatra_meaning": {
+    "en": "A private, thoughtful mind that needs time alone. You are drawn to healing and unusual ideas, and may keep feelings to yourself.",
+    "hi": "निजी और सोचने वाला मन, जिसे अकेले में समय चाहिए। इलाज और अलग तरह के विचारों की ओर खिंचाव, और भावनाएँ अक्सर अपने तक रखते हैं।"
+   }
+  },
+  "Mars": {
+   "sign": "Aquarius",
+   "degree": 29.0419,
+   "absolute": "29°02′30″",
+   "retrograde": false,
+   "combust": false,
+   "exalted": false,
+   "debilitated": false,
+   "house": 3,
+   "aspects_houses": [
+    6,
+    9,
+    10
+   ],
+   "aspects": [
+    {
+     "house": 6,
+     "offset": 4,
+     "strength": 75
+    },
+    {
+     "house": 9,
+     "offset": 7,
+     "strength": 100
+    },
+    {
+     "house": 10,
+     "offset": 8,
+     "strength": 75
+    }
+   ],
+   "vargottama": false,
+   "nakshatra": {
+    "index": 24,
+    "name": "Purva Bhadrapada",
+    "pada": 3,
+    "lord": "Jupiter"
+   },
+   "nakshatra_meaning": {
+    "en": "Fiery, idealistic energy with strong convictions. You can work passionately for a cause; keep temper and extremes in check.",
+    "hi": "जोशीली, आदर्शों वाली ताकत और पक्के विश्वास। किसी मकसद के लिए पूरे जोश से काम करते हैं; बस गुस्से और हद से ज़्यादा जाने पर लगाम रखें।"
+   }
+  },
+  "Jupiter": {
+   "sign": "Capricorn",
+   "degree": 3.2014,
+   "absolute": "3°12′04″",
+   "retrograde": false,
+   "combust": true,
+   "exalted": false,
+   "debilitated": true,
+   "house": 2,
+   "aspects_houses": [
+    6,
+    8,
+    10
+   ],
+   "aspects": [
+    {
+     "house": 6,
+     "offset": 5,
+     "strength": 50
+    },
+    {
+     "house": 8,
+     "offset": 7,
+     "strength": 100
+    },
+    {
+     "house": 10,
+     "offset": 9,
+     "strength": 50
+    }
+   ],
+   "vargottama": true,
+   "nakshatra": {
+    "index": 20,
+    "name": "Uttara Ashadha",
+    "pada": 2,
+    "lord": "Sun"
+   },
+   "nakshatra_meaning": {
+    "en": "Righteous and steady; wisdom is practical and principled, and patient effort leads to lasting respect and achievement.",
+    "hi": "धर्म पर चलने वाले और स्थिर; समझ व्यावहारिक और उसूलों वाली, धीरज भरी मेहनत से टिकाऊ सम्मान और कामयाबी मिलती है।"
+   },
+   "combust_meaning": {
+    "en": "Combust Jupiter: guidance and good advice may come late; trust your own learning and keep your principles.",
+    "hi": "अस्त गुरु: सही सलाह और मार्गदर्शन देर से मिल सकता है; अपने ज्ञान और उसूलों पर भरोसा रखें।"
+   }
+  }
+ },
+ "conjunctions": [
+  {
+   "planets": [
+    "Sun",
+    "Jupiter"
+   ],
+   "sign": "Capricorn",
+   "house": 2,
+   "meaning": {
+    "en": "Wisdom with authority: respected, principled and a good guide to others; support from elders and teachers.",
+    "hi": "ज्ञान के साथ अधिकार: इज़्ज़तदार, उसूलों वाले और दूसरों को सही राह दिखाने वाले; बड़ों और गुरुओं का साथ।"
+   }
+  },
+  {
+   "planets": [
+    "Moon",
+    "Mars"
+   ],
+   "sign": "Aquarius",
+   "house": 3,
+   "meaning": {
+    "en": "Chandra-Mangala: strong earning drive and quick emotions; channel the energy into work and business.",
+    "hi": "चंद्र-मंगल: कमाने की लगन और तेज़ भावनाएँ; इस जोश को काम और व्यापार में लगाएँ।"
+   }
+  },
+  {
+   "planets": [
+    "Moon",
+    "Venus"
+   ],
+   "sign": "Aquarius",
+   "house": 3,
+   "meaning": {
+    "en": "Affectionate, artistic and comfort-loving; a pleasant nature that enjoys beauty and good company.",
+    "hi": "प्यार भरा, कलाप्रेमी और सुख चाहने वाला मन; सुंदरता और अच्छी संगत पसंद।"
+   }
+  },
+  {
+   "planets": [
+    "Mars",
+    "Venus"
+   ],
+   "sign": "Aquarius",
+   "house": 3,
+   "meaning": {
+    "en": "Passionate and creative with strong attraction; love life is lively, so avoid rushing into things.",
+    "hi": "जोशीला और रचनात्मक स्वभाव, गहरा आकर्षण; प्रेम जीवन रंगीन, पर जल्दबाज़ी से बचें।"
+   }
+  },
+  {
+   "planets": [
+    "Saturn",
+    "Ketu"
+   ],
+   "sign": "Scorpio",
+   "house": 12,
+   "meaning": {
+    "en": "Simple, disciplined and detached; drawn to research, service or spiritual practice.",
+    "hi": "सादा, अनुशासित और वैरागी स्वभाव; शोध, सेवा या साधना की ओर झुकाव।"
+   }
+  }
+ ],
+ "vimshottari": {
+  "current": {
+   "mahadasha": {
+    "lord": "Saturn",
+    "start": "2008-04-19T15:05:53Z",
+    "end": "2027-04-20T09:05:53Z"
+   },
+   "antardasha": {
+    "lord": "Jupiter",
+    "start": "2024-10-07T01:53:53Z",
+    "end": "2027-04-20T09:05:53Z"
+   },
+   "pratyantardasha": {
+    "lord": "Moon",
+    "start": "2026-07-24T11:59:53Z",
+    "end": "2026-10-09T14:35:53Z"
+   },
+   "now": "2026-09-28T06:01:53.650599Z",
+   "meaning": {
+    "en": "Wisdom lightens the load; guidance, children's matters and faith offer support. Good for steady growth and meaningful service.",
+    "hi": "ज्ञान बोझ हल्का करता है; गुरु का साथ, बच्चों के मामले और आस्था सहारा देते हैं। धीमी पर पक्की तरक्की और सेवा के लिए अच्छा।"
+   }
+  },
+  "mahadashas": [
+   {
+    "lord": "Saturn",
+    "start": "2008-04-19T15:05:53Z",
+    "end": "2027-04-20T09:05:53Z",
+    "partial": false,
+    "bhuktis": [
+     {
+      "lord": "Saturn",
+      "start": "2008-04-19T15:05:53Z",
+      "end": "2011-04-23T10:08:53Z",
+      "pratyantars": [],
+      "meaning": {
+       "en": "Discipline in its purest form: hard work, responsibility and patience. Progress is slow but lasting, and steady, honest effort tends to be rewarded.",
+       "hi": "शनि का असली दौर: अनुशासन, कड़ी मेहनत, ज़िम्मेदारी और धीरज। तरक्की धीमी पर टिकाऊ होती है; ईमानदार मेहनत का फल मिलता है।"
+      }
+     },
+     {
+      "lord": "Mercury",
+      "start": "2011-04-23T10:08:53Z",
+      "end": "2013-12-31T13:17:53Z",
+      "pratyantars": [],
+      "meaning": {
+       "en": "Steady, practical progress: good for study, trade, paperwork and building skills. Careful planning pays off.",
+       "hi": "धीमी पर पक्की तरक्की: पढ़ाई, व्यापार, कागज़ी काम और हुनर बढ़ाने के लिए अच्छा समय। सोच-समझकर की गई योजना फल देती है।"
+      }
+     },
+     {
+      "lord": "Ketu",
+      "start": "2013-12-31T13:17:53Z",
+      "end": "2015-02-09T08:56:53Z",
+      "pratyantars": [],
+      "meaning": {
+       "en": "Isolation, detachment and slow going; hidden obstacles may surface. Good for introspection, research and spiritual discipline.",
+       "hi": "अकेलापन, वैराग्य और धीमी चाल; छिपी रुकावटें सामने आ सकती हैं। आत्म-चिंतन, खोज और साधना के लिए अच्छा समय।"
+      }
+     },
+     {
+      "lord": "Venus",
+      "start": "2015-02-09T08:56:53Z",
+      "end": "2018-04-10T23:56:53Z",
+      "pratyantars": [],
+      "meaning": {
+       "en": "Friendly energies bring comforts earned through effort: relationships stabilise, assets grow and creative work pays off. Often a rewarding stretch.",
+       "hi": "दोस्त ग्रह मेहनत से कमाया सुख देते हैं: रिश्ते टिकते हैं, संपत्ति बढ़ती है और कला का काम फल देता है। अक्सर अच्छा दौर रहता है।"
+      }
+     },
+     {
+      "lord": "Sun",
+      "start": "2018-04-10T23:56:53Z",
+      "end": "2019-03-23T23:38:53Z",
+      "pratyantars": [],
+      "meaning": {
+       "en": "Pride may clash with responsibility, and seniors or officials can seem demanding. Quiet persistence and care for health help you through.",
+       "hi": "स्वाभिमान और ज़िम्मेदारी टकरा सकते हैं, बड़े या अफसर सख्त लग सकते हैं। चुपचाप लगे रहें और सेहत का ध्यान रखें, समय निकल जाएगा।"
+      }
+     },
+     {
+      "lord": "Moon",
+      "start": "2019-03-23T23:38:53Z",
+      "end": "2020-10-22T07:08:53Z",
+      "pratyantars": [],
+      "meaning": {
+       "en": "The mind may feel heavy, lonely or anxious under responsibilities. Caring for mother, rest and gentle routines keep emotions steady.",
+       "hi": "ज़िम्मेदारियों के बोझ से मन भारी, अकेला या परेशान लग सकता है। माँ की सेवा, आराम और हल्की दिनचर्या मन को संभाले रखते हैं।"
+      }
+     },
+     {
+      "lord": "Mars",
+      "start": "2020-10-22T07:08:53Z",
+      "end": "2021-12-01T02:47:53Z",
+      "pratyantars": [],
+      "meaning": {
+       "en": "A tough mix of force and restriction: arguments, property disputes and frustration are possible. Avoid confrontation; slow and steady wins.",
+       "hi": "जोश और रोक का कठिन मेल: झगड़े, ज़मीन के विवाद और खीझ हो सकती है। टकराव से बचें; धीरे-धीरे चलने वाला ही आगे निकलता है।"
+      }
+     },
+     {
+      "lord": "Rahu",
+      "start": "2021-12-01T02:47:53Z",
+      "end": "2024-10-07T01:53:53Z",
+      "pratyantars": [],
+      "meaning": {
+       "en": "Ambitions grow through hard work and unconventional paths, and foreign links are possible. Stay alert to confusion and avoid shortcuts.",
+       "hi": "मेहनत और अलग रास्तों से चाहतें पूरी होती हैं; विदेश से जुड़ाव हो सकता है। उलझन से सावधान रहें और छोटे रास्तों से बचें।"
+      }
+     },
+     {
+      "lord": "Jupiter",
+      "start": "2024-10-07T01:53:53Z",
+      "end": "2027-04-20T09:05:53Z",
+      "pratyantars": [],
+      "meaning": {
+       "en": "Wisdom lightens the load; guidance, children's matters and faith offer support. Good for steady growth and meaningful service.",
+       "hi": "ज्ञान बोझ हल्का करता है; गुरु का साथ, बच्चों के मामले और आस्था सहारा देते हैं। धीमी पर पक्की तरक्की और सेवा के लिए अच्छा।"
+      }
+     }
+    ]
+   }
+  ]
+ }
+}

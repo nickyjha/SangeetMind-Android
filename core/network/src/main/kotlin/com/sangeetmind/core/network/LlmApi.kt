@@ -14,6 +14,8 @@ import com.sangeetmind.libs.models.StrengthsReadingRequest
 import com.sangeetmind.libs.models.StrengthsReadingResponse
 import com.sangeetmind.libs.models.CareerQuestionRequest
 import com.sangeetmind.libs.models.CareerQuestionResponse
+import com.sangeetmind.libs.models.PropertyReadingRequest
+import com.sangeetmind.libs.models.PropertyReadingResponse
 import com.sangeetmind.libs.models.WealthReadingRequest
 import com.sangeetmind.libs.models.WealthReadingResponse
 import retrofit2.http.Body
@@ -41,6 +43,9 @@ interface LlmApi {
 
     @POST("llm/wealth")
     suspend fun getWealthReading(@Body body: WealthReadingRequest): WealthReadingResponse
+
+    @POST("llm/property")
+    suspend fun getPropertyReading(@Body body: PropertyReadingRequest): PropertyReadingResponse
 
     @POST("llm/career-question")
     suspend fun getCareerQuestionReading(@Body body: CareerQuestionRequest): CareerQuestionResponse

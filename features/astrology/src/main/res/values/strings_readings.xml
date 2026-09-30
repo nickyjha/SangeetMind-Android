@@ -91,4 +91,17 @@
     <string name="readings_career_v_business">Leans to business</string>
     <string name="readings_career_v_job">Leans to a job</string>
     <string name="readings_career_v_either">Both paths are open</string>
+    <string name="readings_tab_property">Property</string>
+    <string name="readings_err_property">Could not generate property reading. You have not been charged.</string>
+    <string name="readings_property_desc">₹99, or free with Premium. How your chart supports owning a home, land or a vehicle, and good periods to buy, from your 4th house, Mars, Venus, the D4 and D16 charts and dashas. You\'re only charged if the reading is ready.</string>
+    <string name="readings_property_home">Home / land</string>
+    <string name="readings_property_vehicle">Vehicle</string>
+    <string name="readings_property_generate">Generate property reading</string>
+    <string name="readings_property_outlook_home">You and home</string>
+    <string name="readings_property_outlook_vehicle">You and vehicles</string>
+    <string name="readings_property_timing_home">Good periods to buy a home</string>
+    <string name="readings_property_timing_vehicle">Good periods to buy a vehicle</string>
+    <string name="readings_property_kind_home">Good for property</string>
+    <string name="readings_property_kind_vehicle">Good for a vehicle</string>
+    <string name="readings_property_disclaimer">Astrology is for guidance only. Check documents carefully, and take legal or financial advice before a big purchase.</string>
 </resources>

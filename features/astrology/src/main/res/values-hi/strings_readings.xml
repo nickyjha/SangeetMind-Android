@@ -91,4 +91,17 @@
     <string name="readings_career_v_business">बिज़नेस की ओर झुकाव</string>
     <string name="readings_career_v_job">नौकरी की ओर झुकाव</string>
     <string name="readings_career_v_either">दोनों रास्ते खुले हैं</string>
+    <string name="readings_tab_property">घर-वाहन</string>
+    <string name="readings_err_property">घर-वाहन की रीडिंग नहीं बन पाई। आपके पैसे नहीं कटे।</string>
+    <string name="readings_property_desc">₹99, या प्रीमियम में मुफ़्त। आपके चौथे भाव, मंगल, शुक्र, D4 और D16 चार्ट और दशा से घर, ज़मीन या वाहन का योग, और ख़रीदने का अच्छा समय। पैसे तभी कटेंगे जब रीडिंग तैयार हो।</string>
+    <string name="readings_property_home">घर / ज़मीन</string>
+    <string name="readings_property_vehicle">वाहन</string>
+    <string name="readings_property_generate">घर-वाहन की रीडिंग बनाएँ</string>
+    <string name="readings_property_outlook_home">आप और घर</string>
+    <string name="readings_property_outlook_vehicle">आप और वाहन</string>
+    <string name="readings_property_timing_home">घर ख़रीदने का अच्छा समय</string>
+    <string name="readings_property_timing_vehicle">वाहन ख़रीदने का अच्छा समय</string>
+    <string name="readings_property_kind_home">घर-ज़मीन के लिए अच्छा</string>
+    <string name="readings_property_kind_vehicle">वाहन के लिए अच्छा</string>
+    <string name="readings_property_disclaimer">ज्योतिष सिर्फ़ राह दिखाता है। बड़ी ख़रीद से पहले कागज़ ध्यान से जाँचें और क़ानूनी या वित्तीय सलाह लें।</string>
 </resources>

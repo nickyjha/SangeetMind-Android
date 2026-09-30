@@ -307,3 +307,34 @@ data class CareerQuestionResponse(
     val facts: CareerQuestionFacts = CareerQuestionFacts(),
     val error: String? = null
 )
+
+// ---- Property / vehicle reading: POST /llm/property ----
+// status "property" (4th house, Mars, Moon, D4) or "vehicle" (Venus, 4th house, D16).
+// Timing `kind` equals the status.
+
+@JsonClass(generateAdapter = true)
+data class PropertyReadingRequest(
+    @Json(name = "birth_details") val birthDetails: CareerBirthDetails,
+    val status: String, // "property" | "vehicle"
+    val lang: String = "en"
+)
+
+@JsonClass(generateAdapter = true)
+data class PropertyReading(
+    val summary: String = "",
+    val outlook: String = "",
+    val strengths: List<String> = emptyList(),
+    @Json(name = "care_points") val carePoints: List<String> = emptyList(),
+    val timing: List<MarriageTiming> = emptyList(),
+    val advice: List<String> = emptyList(),
+    val remedies: List<MarriageRemedy> = emptyList()
+)
+
+@JsonClass(generateAdapter = true)
+data class PropertyReadingResponse(
+    val ok: Boolean,
+    val status: String = "property",
+    val reading: PropertyReading? = null,
+    val windows: List<MarriageTiming> = emptyList(),
+    val error: String? = null
+)

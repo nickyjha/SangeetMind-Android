@@ -25,6 +25,15 @@ import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.muhurat.MUHURAT_INTENTS
 import com.sangeetmind.features.astrology.muhurat.MuhuratViewModel
 import com.sangeetmind.libs.models.MuhuratSlot
+import com.sangeetmind.libs.models.VivahResponse
+import com.sangeetmind.libs.models.toTitleCase
+import com.sangeetmind.core.ui.language.LocalAppLanguage
+import com.sangeetmind.core.ui.theme.LocalGrahaColors
+import com.sangeetmind.features.astrology.chart.ui.Chip
+import androidx.compose.ui.platform.LocalConfiguration
+import java.time.LocalDate
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -68,6 +77,26 @@ fun MuhuratScreen(
                         onClick = { viewModel.onIntentChange(intent) },
                         label = { Text(intentLabel(intent)) }
                     )
+                }
+            }
+
+            if (uiState.isMarriage && uiState.kundlis.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(stringResource(R.string.muhurat_vivah_couple), style = MaterialTheme.typography.titleSmall)
+                Text(
+                    stringResource(R.string.muhurat_vivah_couple_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    uiState.kundlis.forEach { k ->
+                        FilterChip(
+                            selected = k.id in uiState.coupleIds,
+                            onClick = { viewModel.toggleCouple(k.id) },
+                            label = { Text(k.fullName?.takeIf { it.isNotBlank() }?.toTitleCase() ?: k.birthDate) }
+                        )
+                    }
                 }
             }
 
@@ -121,7 +150,11 @@ fun MuhuratScreen(
                 }
             }
 
-            if (uiState.results.isNotEmpty()) {
+            val vivah = uiState.vivah
+            if (uiState.isMarriage && vivah != null) {
+                Spacer(modifier = Modifier.height(24.dp))
+                VivahResults(vivah)
+            } else if (uiState.results.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(stringResource(R.string.muhurat_results), style = MaterialTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.height(8.dp))
@@ -166,6 +199,71 @@ private fun MuhuratSlotCard(slot: MuhuratSlot) {
             }
         }
     }
+}
+
+/** Vivah muhurat: a card per day with its windows (time, nakshatras, tithis), then the
+ * periods with no muhurat and why. */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun VivahResults(vivah: VivahResponse) {
+    val graha = LocalGrahaColors.current
+    val languageCode = LocalAppLanguage.current.code
+    val locale = LocalConfiguration.current.locales[0]
+    val dayFmt = DateTimeFormatter.ofPattern("EEE, d MMM yyyy", locale)
+    val timeFmt = DateTimeFormatter.ofPattern("d MMM, HH:mm", locale)
+    val shortDate = DateTimeFormatter.ofPattern("d MMM", locale)
+    fun time(iso: String) = runCatching { OffsetDateTime.parse(iso).format(timeFmt) }.getOrDefault(iso)
+    fun date(iso: String, fmt: DateTimeFormatter) = runCatching { LocalDate.parse(iso).format(fmt) }.getOrDefault(iso)
+
+    Text(stringResource(R.string.muhurat_vivah_results_fmt, vivah.days.size), style = MaterialTheme.typography.titleMedium)
+    if (vivah.coupleChecked) {
+        Text(
+            stringResource(R.string.muhurat_vivah_couple_checked),
+            style = MaterialTheme.typography.bodySmall,
+            color = graha.budha
+        )
+    }
+    vivah.days.forEach { day ->
+        Spacer(modifier = Modifier.height(8.dp))
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(date(day.date, dayFmt), style = MaterialTheme.typography.titleMedium)
+                day.windows.forEach { w ->
+                    Text(
+                        stringResource(R.string.muhurat_vivah_window_fmt, time(w.start), time(w.end)),
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(top = 6.dp)
+                    )
+                    FlowRow(
+                        modifier = Modifier.padding(top = 4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        w.nakshatras.forEach { Chip(astroTerm(it), graha.shukra) }
+                        w.tithis.forEach { Chip(it.forLanguage(languageCode), graha.chandra) }
+                    }
+                }
+            }
+        }
+    }
+    if (vivah.blocked.isNotEmpty()) {
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(stringResource(R.string.muhurat_vivah_blocked), style = MaterialTheme.typography.titleMedium)
+        vivah.blocked.forEach { b ->
+            Text(
+                "${date(b.start, shortDate)} – ${date(b.end, shortDate)}: ${b.text.forLanguage(languageCode)}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+    }
+    Spacer(modifier = Modifier.height(12.dp))
+    Text(
+        stringResource(R.string.muhurat_vivah_note),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
 }
 
 /** Display label for an app-defined [MUHURAT_INTENTS] key (the key itself is what the backend receives). */

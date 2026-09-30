@@ -17,4 +17,11 @@
     <string name="muhurat_score_fmt">स्कोर %1$d</string>
     <string name="muhurat_error_enter_dates">शुरू और आख़िरी, दोनों तारीख़ें डालें</string>
     <string name="muhurat_error_find_failed">मुहूर्त नहीं मिल पाया</string>
+    <string name="muhurat_vivah_couple">वर-वधू के लिए जाँचें (वैकल्पिक)</string>
+    <string name="muhurat_vivah_couple_hint">चंद्र बल और तारा बल के लिए दो सेव की हुई कुंडलियाँ चुनें। समय आपकी मुख्य कुंडली की जगह का है।</string>
+    <string name="muhurat_vivah_results_fmt">%1$d दिन विवाह मुहूर्त वाले</string>
+    <string name="muhurat_vivah_couple_checked">दोनों कुंडलियों से जाँचा गया (चंद्र बल और तारा बल)।</string>
+    <string name="muhurat_vivah_window_fmt">%1$s → %2$s</string>
+    <string name="muhurat_vivah_blocked">इन समयों में मुहूर्त नहीं</string>
+    <string name="muhurat_vivah_note">मुहूर्त विवाह के 11 नक्षत्रों और शुभ तिथियों से निकाले गए हैं, और खरमास, चातुर्मास, अधिक मास, गुरु-शुक्र अस्त और ग्रहण के दिन छोड़े गए हैं। पंचांगों में थोड़ा फ़र्क होता है; अंतिम मुहूर्त और लग्न पंडित जी से पक्का करें।</string>
 </resources>

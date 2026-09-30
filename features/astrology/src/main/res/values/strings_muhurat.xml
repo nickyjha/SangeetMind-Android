@@ -17,4 +17,11 @@
     <string name="muhurat_score_fmt">Score %1$d</string>
     <string name="muhurat_error_enter_dates">Please enter both start and end dates</string>
     <string name="muhurat_error_find_failed">Failed to find muhurat</string>
+    <string name="muhurat_vivah_couple">Check for the couple (optional)</string>
+    <string name="muhurat_vivah_couple_hint">Pick up to two saved kundlis to add Chandra bala and Tara bala. Times are for the place in your primary kundli.</string>
+    <string name="muhurat_vivah_results_fmt">%1$d days with a vivah muhurat</string>
+    <string name="muhurat_vivah_couple_checked">Checked against both kundlis (Chandra bala and Tara bala).</string>
+    <string name="muhurat_vivah_window_fmt">%1$s → %2$s</string>
+    <string name="muhurat_vivah_blocked">No muhurat in these periods</string>
+    <string name="muhurat_vivah_note">Windows use the 11 vivah nakshatras and good tithis, and skip Kharmas, Chaturmas, adhik maas, Guru/Shukra asta and eclipse days. Panchangs differ a little; confirm the final muhurat and lagna with your pandit.</string>
 </resources>

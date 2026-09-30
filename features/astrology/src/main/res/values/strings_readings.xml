@@ -155,6 +155,4 @@
     <string name="readings_preview_inc_care">What to watch</string>
     <string name="readings_preview_inc_advice">Advice</string>
     <string name="readings_preview_inc_remedies">Remedies</string>
-    <string name="readings_preview_price_fmt">₹%1$d · charged only if the reading is made</string>
-    <string name="readings_preview_premium">Included in your Premium</string>
 </resources>

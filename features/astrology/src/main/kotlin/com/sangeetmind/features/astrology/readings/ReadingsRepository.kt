@@ -72,9 +72,6 @@ private const val EDUCATION_PRICE_PAISE = 9900L
 private const val PROPERTY_PRICE_PAISE = 9900L
 private const val CAREER_QUESTION_PRICE_PAISE = 9900L
 
-/** What every paid reading costs today (all SKUs above), shown on the preview card. */
-const val READING_PRICE_PAISE = 9900L
-
 @Singleton
 class ReadingsRepository @Inject constructor(
     private val llmApi: LlmApi,
@@ -149,10 +146,6 @@ class ReadingsRepository @Inject constructor(
                 Result.Error(e, e.message ?: "")
             }
         }
-
-    suspend fun isPremium(): Boolean = withContext(ioDispatcher) {
-        (paymentsRepository.getPremiumStatus() as? Result.Success)?.data?.premium == true
-    }
 
     private fun birthDetails(kundli: Kundli) = CareerBirthDetails(
         date = kundli.birthDate,

@@ -56,7 +56,6 @@ data class ReadingsUiState(
     val aboutDispute: Boolean = false,
     // Free previews by "topic|status" (see previewKey); a missing key is not loaded (yet).
     val previews: Map<String, ReadingPreview> = emptyMap(),
-    val premium: Boolean = false,
     val error: String? = null
 ) {
     /** The preview topic and status for the open tab, or null when it has no preview. */
@@ -103,10 +102,6 @@ class ReadingsViewModel @Inject constructor(
     private val previewsLoading = mutableSetOf<String>()
 
     init {
-        viewModelScope.launch {
-            val premium = repository.isPremium()
-            _uiState.update { it.copy(premium = premium) }
-        }
         loadPreview()
     }
 

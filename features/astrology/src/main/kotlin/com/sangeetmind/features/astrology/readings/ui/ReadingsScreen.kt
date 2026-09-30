@@ -18,7 +18,6 @@ import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.flattenToReadableText
 import com.sangeetmind.features.astrology.readings.CAREER_QUESTIONS
 import com.sangeetmind.features.astrology.readings.ReadingTab
-import com.sangeetmind.features.astrology.readings.READING_PRICE_PAISE
 import com.sangeetmind.features.astrology.readings.ReadingsViewModel
 import com.sangeetmind.core.ui.language.LocalAppLanguage
 import com.sangeetmind.libs.models.ReadingPreview
@@ -93,12 +92,8 @@ fun ReadingsScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                 }
 
-                if (!uiState.tabHasReading) {
-                    SalesCard(
-                        preview = uiState.previewKey?.let { uiState.previews[it] },
-                        hasPreview = uiState.previewKey != null,
-                        premium = uiState.premium
-                    )
+                if (!uiState.tabHasReading && uiState.previewKey != null) {
+                    PreviewCard(preview = uiState.previews[uiState.previewKey])
                     Spacer(modifier = Modifier.height(16.dp))
                 }
 
@@ -764,66 +759,57 @@ private fun TimingCard(title: String, timing: List<MarriageTiming>) {
 }
 
 /** Before a paid reading: the free chart preview (key planets, how many good periods lie
- * ahead), what the full reading covers, and its price (charged only if it succeeds). */
+ * ahead) and what the full reading covers. The price is in each tab's description. */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun SalesCard(preview: ReadingPreview?, hasPreview: Boolean, premium: Boolean) {
+private fun PreviewCard(preview: ReadingPreview?) {
     val graha = LocalGrahaColors.current
     val languageCode = LocalAppLanguage.current.code
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            if (hasPreview) {
-                Text(stringResource(R.string.readings_preview_title), style = MaterialTheme.typography.titleMedium)
-                if (preview == null) {
-                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp))
-                } else {
-                    FlowRow(
-                        modifier = Modifier.padding(top = 8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        preview.keyPlanets.forEach { p ->
-                            val sign = p.sign
-                            val house = p.house
-                            val text = if (sign != null && house != null) {
-                                stringResource(R.string.readings_preview_planet_fmt, astroTerm(p.planet), astroTerm(sign), house)
-                            } else astroTerm(p.planet)
-                            Chip(text, grahaColorFor(p.planet, graha))
-                        }
-                    }
-                    Text(
-                        preview.teaser.forLanguage(languageCode),
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(top = 8.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    stringResource(R.string.readings_preview_includes),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+            Text(stringResource(R.string.readings_preview_title), style = MaterialTheme.typography.titleMedium)
+            if (preview == null) {
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp))
+            } else {
                 FlowRow(
-                    modifier = Modifier.padding(top = 4.dp),
+                    modifier = Modifier.padding(top = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    listOf(
-                        R.string.readings_preview_inc_timing,
-                        R.string.readings_preview_inc_strengths,
-                        R.string.readings_preview_inc_care,
-                        R.string.readings_preview_inc_advice,
-                        R.string.readings_preview_inc_remedies
-                    ).forEach { Chip(stringResource(it), graha.guru) }
+                    preview.keyPlanets.forEach { p ->
+                        val sign = p.sign
+                        val house = p.house
+                        val text = if (sign != null && house != null) {
+                            stringResource(R.string.readings_preview_planet_fmt, astroTerm(p.planet), astroTerm(sign), house)
+                        } else astroTerm(p.planet)
+                        Chip(text, grahaColorFor(p.planet, graha))
+                    }
                 }
-                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    preview.teaser.forLanguage(languageCode),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
             }
+            Spacer(modifier = Modifier.height(12.dp))
             Text(
-                if (premium) stringResource(R.string.readings_preview_premium)
-                else stringResource(R.string.readings_preview_price_fmt, (READING_PRICE_PAISE / 100).toInt()),
+                stringResource(R.string.readings_preview_includes),
                 style = MaterialTheme.typography.labelLarge,
-                color = graha.budha
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+            FlowRow(
+                modifier = Modifier.padding(top = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                listOf(
+                    R.string.readings_preview_inc_timing,
+                    R.string.readings_preview_inc_strengths,
+                    R.string.readings_preview_inc_care,
+                    R.string.readings_preview_inc_advice,
+                    R.string.readings_preview_inc_remedies
+                ).forEach { Chip(stringResource(it), graha.guru) }
+            }
         }
     }
 }

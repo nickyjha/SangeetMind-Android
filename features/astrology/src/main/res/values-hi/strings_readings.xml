@@ -15,7 +15,7 @@
     <string name="readings_err_career">करियर रीडिंग नहीं बन पाई। आपके पैसे नहीं कटे।</string>
     <string name="readings_err_strengths">खूबियों की रीडिंग नहीं बन पाई। आपके पैसे नहीं कटे।</string>
     <string name="readings_tab_marriage">शादी</string>
-    <string name="readings_marriage_desc">₹99, या प्रीमियम में मुफ़्त। आपके 7वें भाव, उपपद, दाराकारक, D9 और दशा से जीवनसाथी का स्वभाव, रिश्ते की खूबियाँ और सही समय। पैसे तभी कटेंगे जब रीडिंग तैयार हो।</string>
+    <string name="readings_marriage_desc">₹99, या प्रीमियम में मुफ़्त। आपके सातवें भाव, उपपद, दाराकारक, D9 और दशा से जीवनसाथी का स्वभाव, रिश्ते की खूबियाँ और सही समय। पैसे तभी कटेंगे जब रीडिंग तैयार हो।</string>
     <string name="readings_marriage_single">अभी शादी नहीं हुई</string>
     <string name="readings_marriage_married">शादीशुदा</string>
     <string name="readings_marriage_generate">शादी की रीडिंग बनाएँ</string>
@@ -37,7 +37,7 @@
     <string name="readings_marriage_remedies">उपाय</string>
     <string name="readings_marriage_remedy_fmt">%1$s (%2$s)</string>
     <string name="readings_tab_children">संतान</string>
-    <string name="readings_children_desc">₹99, या प्रीमियम में मुफ़्त। आपके 5वें भाव, गुरु, पुत्रकारक, D7 और दशा से बच्चों से आपका रिश्ता, क्या साथ देता है और अच्छा समय। पैसे तभी कटेंगे जब रीडिंग तैयार हो।</string>
+    <string name="readings_children_desc">₹99, या प्रीमियम में मुफ़्त। आपके पाँचवें भाव, गुरु, पुत्रकारक, D7 और दशा से बच्चों से आपका रिश्ता, क्या साथ देता है और अच्छा समय। पैसे तभी कटेंगे जब रीडिंग तैयार हो।</string>
     <string name="readings_children_planning">अभी बच्चे नहीं हैं</string>
     <string name="readings_children_parent">बच्चे हैं</string>
     <string name="readings_children_generate">संतान की रीडिंग बनाएँ</string>
@@ -49,7 +49,7 @@
     <string name="readings_children_care">इन बातों का ध्यान रखें</string>
     <string name="readings_children_disclaimer">ज्योतिष सिर्फ़ राह दिखाता है। सेहत या बच्चे होने से जुड़े सवालों के लिए डॉक्टर से बात करें।</string>
     <string name="readings_tab_foreign">विदेश</string>
-    <string name="readings_foreign_desc">₹99, या प्रीमियम में मुफ़्त। आपके 12वें और 9वें भाव, राहु, D4 और दशा से विदेश जाना, पढ़ाई, नौकरी या वहाँ बसना, और इसका अच्छा समय। पैसे तभी कटेंगे जब रीडिंग तैयार हो।</string>
+    <string name="readings_foreign_desc">₹99, या प्रीमियम में मुफ़्त। आपके बारहवें और नौवें भाव, राहु, D4 और दशा से विदेश जाना, पढ़ाई, नौकरी या वहाँ बसना, और इसका अच्छा समय। पैसे तभी कटेंगे जब रीडिंग तैयार हो।</string>
     <string name="readings_foreign_planning">जाने की सोच रहे हैं</string>
     <string name="readings_foreign_abroad">विदेश में रहते हैं</string>
     <string name="readings_foreign_generate">विदेश की रीडिंग बनाएँ</string>
@@ -59,7 +59,7 @@
     <string name="readings_foreign_kind_abroad">विदेश के लिए अच्छा</string>
     <string name="readings_foreign_disclaimer">ज्योतिष सिर्फ़ राह दिखाता है। वीज़ा और इमिग्रेशन का फ़ैसला आपके कागज़ात और कानून पर होता है।</string>
     <string name="readings_tab_wealth">धन</string>
-    <string name="readings_wealth_desc">₹99, या प्रीमियम में मुफ़्त। आपके 2रे और 11वें भाव, गुरु, धन योग, D2 और दशा से आप कैसे कमाते, बचाते और पैसा बढ़ाते हैं, और इसका अच्छा समय। पैसे तभी कटेंगे जब रीडिंग तैयार हो।</string>
+    <string name="readings_wealth_desc">₹99, या प्रीमियम में मुफ़्त। आपके दूसरे और ग्यारहवें भाव, गुरु, धन योग, D2 और दशा से आप कैसे कमाते, बचाते और पैसा बढ़ाते हैं, और इसका अच्छा समय। पैसे तभी कटेंगे जब रीडिंग तैयार हो।</string>
     <string name="readings_wealth_job">नौकरी</string>
     <string name="readings_wealth_business">बिज़नेस / अपना काम</string>
     <string name="readings_wealth_generate">धन की रीडिंग बनाएँ</string>
@@ -155,6 +155,4 @@
     <string name="readings_preview_inc_care">किन बातों का ध्यान रखें</string>
     <string name="readings_preview_inc_advice">सलाह</string>
     <string name="readings_preview_inc_remedies">उपाय</string>
-    <string name="readings_preview_price_fmt">₹%1$d · पैसे तभी कटेंगे जब रीडिंग बन जाए</string>
-    <string name="readings_preview_premium">आपके प्रीमियम में शामिल</string>
 </resources>

@@ -24,6 +24,8 @@ import com.sangeetmind.libs.models.MarriageReadingResponse
 import com.sangeetmind.libs.models.StrengthsBirthDetails
 import com.sangeetmind.libs.models.StrengthsReadingRequest
 import com.sangeetmind.libs.models.StrengthsReadingResponse
+import com.sangeetmind.libs.models.CareerQuestionRequest
+import com.sangeetmind.libs.models.CareerQuestionResponse
 import com.sangeetmind.libs.models.WealthReadingRequest
 import com.sangeetmind.libs.models.WealthReadingResponse
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -45,6 +47,8 @@ private const val FOREIGN_SKU = "llm_foreign"
 private const val FOREIGN_PRICE_PAISE = 9900L
 private const val WEALTH_SKU = "llm_wealth"
 private const val WEALTH_PRICE_PAISE = 9900L
+private const val CAREER_QUESTION_SKU = "llm_career_question"
+private const val CAREER_QUESTION_PRICE_PAISE = 9900L
 
 @Singleton
 class ReadingsRepository @Inject constructor(
@@ -208,6 +212,21 @@ class ReadingsRepository @Inject constructor(
                 WealthReadingRequest(
                     birthDetails(kundli),
                     status = status,
+                    lang = languageManager.current.code
+                )
+            )
+        }
+
+    /** One career question: job_change, promotion, govt_private or job_business. */
+    suspend fun getCareerQuestionReading(question: String): Result<CareerQuestionResponse> =
+        payAfterSuccess(
+            CAREER_QUESTION_SKU, CAREER_QUESTION_PRICE_PAISE, R.string.readings_err_career,
+            succeeded = { it.ok && it.reading != null }
+        ) { kundli ->
+            llmApi.getCareerQuestionReading(
+                CareerQuestionRequest(
+                    birthDetails(kundli),
+                    question = question,
                     lang = languageManager.current.code
                 )
             )

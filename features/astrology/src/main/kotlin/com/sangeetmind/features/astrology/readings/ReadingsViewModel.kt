@@ -8,6 +8,7 @@ import com.sangeetmind.libs.models.ChildrenReadingResponse
 import com.sangeetmind.libs.models.ForeignReadingResponse
 import com.sangeetmind.libs.models.MarriageReadingResponse
 import com.sangeetmind.libs.models.StrengthsReadingResponse
+import com.sangeetmind.libs.models.CareerQuestionResponse
 import com.sangeetmind.libs.models.WealthReadingResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,12 +18,17 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+val CAREER_QUESTIONS = listOf("job_change", "promotion", "govt_private", "job_business")
+
 enum class ReadingTab { CAREER, STRENGTHS, MARRIAGE, CHILDREN, FOREIGN, WEALTH }
 
 data class ReadingsUiState(
     val tab: ReadingTab = ReadingTab.CAREER,
     val isLoading: Boolean = false,
     val career: CareerReadingResponse? = null,
+    // null = the full career reading; otherwise one of CAREER_QUESTIONS.
+    val careerQuestion: String? = null,
+    val careerAnswer: CareerQuestionResponse? = null,
     val strengths: StrengthsReadingResponse? = null,
     val marriage: MarriageReadingResponse? = null,
     val married: Boolean = false,
@@ -47,11 +53,28 @@ class ReadingsViewModel @Inject constructor(
         _uiState.update { it.copy(tab = tab, error = null) }
     }
 
+    fun setCareerQuestion(question: String?) {
+        _uiState.update { it.copy(careerQuestion = question, error = null) }
+    }
+
     fun generateCareerReading() {
+        val question = _uiState.value.careerQuestion
+        if (question != null) return generateCareerQuestion(question)
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
             when (val result = repository.getCareerReading()) {
                 is Result.Success -> _uiState.update { it.copy(isLoading = false, career = result.data) }
+                is Result.Error -> _uiState.update { it.copy(isLoading = false, error = result.message) }
+                is Result.Loading -> Unit
+            }
+        }
+    }
+
+    private fun generateCareerQuestion(question: String) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            when (val result = repository.getCareerQuestionReading(question)) {
+                is Result.Success -> _uiState.update { it.copy(isLoading = false, careerAnswer = result.data) }
                 is Result.Error -> _uiState.update { it.copy(isLoading = false, error = result.message) }
                 is Result.Loading -> Unit
             }

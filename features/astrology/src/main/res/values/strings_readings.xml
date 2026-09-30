@@ -68,4 +68,27 @@
     <string name="readings_wealth_timing">Good periods for money</string>
     <string name="readings_wealth_kind">Good for money</string>
     <string name="readings_wealth_disclaimer">Astrology is for guidance only, not financial advice. For investments and big money decisions, talk to a qualified financial adviser.</string>
+    <string name="readings_career_q_full">Full reading</string>
+    <string name="readings_career_q_job_change">Job change</string>
+    <string name="readings_career_q_promotion">Promotion</string>
+    <string name="readings_career_q_govt_private">Govt or private</string>
+    <string name="readings_career_q_job_business">Job or business</string>
+    <string name="readings_career_q_desc">₹99 per question, or free with Premium. A direct answer from your 10th house and its lord, the Sun, Saturn, the D10 chart and your dashas, with good periods for it. You\'re only charged if the reading is ready.</string>
+    <string name="readings_career_q_generate">Ask this question</string>
+    <string name="readings_career_answer">Your chart\'s answer</string>
+    <string name="readings_career_outlook">Your career pattern</string>
+    <string name="readings_career_timing">Good periods for this</string>
+    <string name="readings_career_kind">Good for career</string>
+    <string name="readings_career_disclaimer">Astrology shows tendencies, not results. Weigh real offers, your skills and advice from people you trust before you decide.</string>
+    <string name="readings_career_v_frequent_change">Change-prone career</string>
+    <string name="readings_career_v_some_change">Some change, some stability</string>
+    <string name="readings_career_v_stable">Stable career</string>
+    <string name="readings_career_v_strong">Strong support for promotion</string>
+    <string name="readings_career_v_moderate">Good support for promotion</string>
+    <string name="readings_career_v_mild">Promotion needs steady effort</string>
+    <string name="readings_career_v_government">Leans to government work</string>
+    <string name="readings_career_v_private">Leans to private work</string>
+    <string name="readings_career_v_business">Leans to business</string>
+    <string name="readings_career_v_job">Leans to a job</string>
+    <string name="readings_career_v_either">Both paths are open</string>
 </resources>

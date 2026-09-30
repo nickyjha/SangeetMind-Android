@@ -16,6 +16,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.flattenToReadableText
+import com.sangeetmind.features.astrology.readings.CAREER_QUESTIONS
 import com.sangeetmind.features.astrology.readings.ReadingTab
 import com.sangeetmind.features.astrology.readings.ReadingsViewModel
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -25,6 +26,7 @@ import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.features.astrology.chart.ui.Chip
 import com.sangeetmind.features.astrology.chart.ui.grahaColorFor
 import androidx.annotation.StringRes
+import com.sangeetmind.libs.models.CareerQuestionResponse
 import com.sangeetmind.libs.models.MarriageRemedy
 import com.sangeetmind.libs.models.MarriageReading
 import com.sangeetmind.libs.models.MarriageTiming
@@ -86,7 +88,10 @@ fun ReadingsScreen(
                 when (uiState.tab) {
                     ReadingTab.CAREER -> CareerTab(
                         isLoading = uiState.isLoading,
+                        question = uiState.careerQuestion,
+                        onQuestionChange = viewModel::setCareerQuestion,
                         text = uiState.career?.let { it.analysis?.flattenToReadableText() ?: it.rawModelText },
+                        answer = uiState.careerAnswer?.takeIf { it.question == uiState.careerQuestion },
                         onGenerate = viewModel::generateCareerReading
                     )
                     ReadingTab.STRENGTHS -> StrengthsTab(
@@ -192,24 +197,108 @@ fun ReadingsScreen(
     }
 }
 
+/** The full career reading, or one career question with the chart's computed answer. */
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
-private fun CareerTab(isLoading: Boolean, text: String?, onGenerate: () -> Unit) {
+private fun CareerTab(
+    isLoading: Boolean,
+    question: String?,
+    onQuestionChange: (String?) -> Unit,
+    text: String?,
+    answer: CareerQuestionResponse?,
+    onGenerate: () -> Unit
+) {
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        FilterChip(
+            selected = question == null,
+            onClick = { onQuestionChange(null) },
+            label = { Text(stringResource(R.string.readings_career_q_full)) }
+        )
+        CAREER_QUESTIONS.forEach { q ->
+            FilterChip(
+                selected = question == q,
+                onClick = { onQuestionChange(q) },
+                label = { Text(stringResource(careerQuestionLabel(q))) }
+            )
+        }
+    }
+    Spacer(modifier = Modifier.height(12.dp))
     Text(
-        stringResource(R.string.readings_career_desc),
+        stringResource(if (question == null) R.string.readings_career_desc else R.string.readings_career_q_desc),
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )
     Spacer(modifier = Modifier.height(16.dp))
     Button(onClick = onGenerate, enabled = !isLoading, modifier = Modifier.fillMaxWidth()) {
         if (isLoading) CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
-        else Text(stringResource(R.string.readings_career_generate))
+        else Text(stringResource(if (question == null) R.string.readings_career_generate else R.string.readings_career_q_generate))
     }
-    if (text != null) {
+    if (question == null) {
+        if (text != null) {
+            Spacer(modifier = Modifier.height(16.dp))
+            Card(modifier = Modifier.fillMaxWidth()) {
+                Text(text, modifier = Modifier.padding(16.dp))
+            }
+        }
+        return
+    }
+    val r = answer?.reading ?: return
+    careerVerdictLabel(answer.facts.verdict)?.let { label ->
         Spacer(modifier = Modifier.height(16.dp))
         Card(modifier = Modifier.fillMaxWidth()) {
-            Text(text, modifier = Modifier.padding(16.dp))
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(stringResource(R.string.readings_career_answer), style = MaterialTheme.typography.labelLarge)
+                Text(
+                    stringResource(label),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
         }
     }
+    LifeReadingCards(
+        LifeReadingContent(
+            summary = r.summary,
+            natureTitle = stringResource(R.string.readings_career_outlook),
+            nature = r.outlook,
+            timingTitle = stringResource(R.string.readings_career_timing),
+            timing = r.timing,
+            strengthsTitle = stringResource(R.string.readings_children_strengths),
+            strengths = r.strengths,
+            careTitle = stringResource(R.string.readings_children_care),
+            care = r.carePoints,
+            advice = r.advice,
+            remedies = r.remedies,
+            disclaimer = stringResource(R.string.readings_career_disclaimer)
+        )
+    )
+}
+
+@StringRes
+private fun careerQuestionLabel(question: String): Int = when (question) {
+    "promotion" -> R.string.readings_career_q_promotion
+    "govt_private" -> R.string.readings_career_q_govt_private
+    "job_business" -> R.string.readings_career_q_job_business
+    else -> R.string.readings_career_q_job_change
+}
+
+@StringRes
+private fun careerVerdictLabel(verdict: String): Int? = when (verdict) {
+    "frequent_change" -> R.string.readings_career_v_frequent_change
+    "some_change" -> R.string.readings_career_v_some_change
+    "stable" -> R.string.readings_career_v_stable
+    "strong" -> R.string.readings_career_v_strong
+    "moderate" -> R.string.readings_career_v_moderate
+    "mild" -> R.string.readings_career_v_mild
+    "government" -> R.string.readings_career_v_government
+    "private" -> R.string.readings_career_v_private
+    "business" -> R.string.readings_career_v_business
+    "job" -> R.string.readings_career_v_job
+    "either" -> R.string.readings_career_v_either
+    else -> null
 }
 
 @Composable
@@ -401,8 +490,12 @@ private fun LifeReadingTab(
         if (isLoading) CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
         else Text(stringResource(generateRes))
     }
-    val r = content ?: return
+    content?.let { LifeReadingCards(it) }
+}
 
+/** Summary, nature, timing, strengths, care points, advice, remedies and the disclaimer. */
+@Composable
+private fun LifeReadingCards(r: LifeReadingContent) {
     Spacer(modifier = Modifier.height(16.dp))
     TextCard(stringResource(R.string.readings_marriage_summary), r.summary)
     Spacer(modifier = Modifier.height(12.dp))
@@ -486,6 +579,7 @@ private fun TimingCard(title: String, timing: List<MarriageTiming>) {
                             "children" -> Chip(stringResource(R.string.readings_children_kind_children), graha.guru)
                             "abroad" -> Chip(stringResource(R.string.readings_foreign_kind_abroad), graha.rahu)
                             "wealth" -> Chip(stringResource(R.string.readings_wealth_kind), graha.chandra)
+                            "career" -> Chip(stringResource(R.string.readings_career_kind), graha.shani)
                             "supportive" -> Chip(stringResource(R.string.readings_marriage_kind_supportive), graha.budha)
                             "sensitive" -> Chip(stringResource(R.string.readings_marriage_kind_sensitive), graha.mangala)
                         }

@@ -68,4 +68,27 @@
     <string name="readings_wealth_timing">पैसे के लिए अच्छा समय</string>
     <string name="readings_wealth_kind">पैसे के लिए अच्छा</string>
     <string name="readings_wealth_disclaimer">ज्योतिष सिर्फ़ राह दिखाता है, यह पैसे की सलाह नहीं है। निवेश और बड़े फ़ैसलों के लिए किसी जानकार वित्तीय सलाहकार से बात करें।</string>
+    <string name="readings_career_q_full">पूरी रीडिंग</string>
+    <string name="readings_career_q_job_change">नौकरी बदलना</string>
+    <string name="readings_career_q_promotion">प्रमोशन</string>
+    <string name="readings_career_q_govt_private">सरकारी या प्राइवेट</string>
+    <string name="readings_career_q_job_business">नौकरी या बिज़नेस</string>
+    <string name="readings_career_q_desc">हर सवाल ₹99, या प्रीमियम में मुफ़्त। आपके दसवें भाव और उसके स्वामी, सूर्य, शनि, D10 और दशा से सीधा जवाब, और इसका अच्छा समय। पैसे तभी कटेंगे जब रीडिंग तैयार हो।</string>
+    <string name="readings_career_q_generate">यह सवाल पूछें</string>
+    <string name="readings_career_answer">आपकी कुंडली का जवाब</string>
+    <string name="readings_career_outlook">आपका करियर</string>
+    <string name="readings_career_timing">इसके लिए अच्छा समय</string>
+    <string name="readings_career_kind">करियर के लिए अच्छा</string>
+    <string name="readings_career_disclaimer">ज्योतिष झुकाव बताता है, नतीजा नहीं। फ़ैसले से पहले असली ऑफ़र, अपनी काबिलियत और भरोसेमंद लोगों की सलाह भी देखें।</string>
+    <string name="readings_career_v_frequent_change">बदलाव वाला करियर</string>
+    <string name="readings_career_v_some_change">कुछ बदलाव, कुछ स्थिरता</string>
+    <string name="readings_career_v_stable">स्थिर करियर</string>
+    <string name="readings_career_v_strong">प्रमोशन के मज़बूत योग</string>
+    <string name="readings_career_v_moderate">प्रमोशन के अच्छे योग</string>
+    <string name="readings_career_v_mild">प्रमोशन के लिए लगातार मेहनत चाहिए</string>
+    <string name="readings_career_v_government">सरकारी काम की ओर झुकाव</string>
+    <string name="readings_career_v_private">प्राइवेट काम की ओर झुकाव</string>
+    <string name="readings_career_v_business">बिज़नेस की ओर झुकाव</string>
+    <string name="readings_career_v_job">नौकरी की ओर झुकाव</string>
+    <string name="readings_career_v_either">दोनों रास्ते खुले हैं</string>
 </resources>

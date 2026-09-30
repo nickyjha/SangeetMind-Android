@@ -3,6 +3,7 @@ package com.sangeetmind.core.network
 import com.sangeetmind.libs.models.DailyScoresRequest
 import com.sangeetmind.libs.models.DailyScoresResponse
 import com.sangeetmind.libs.models.EclipseCalendarResponse
+import com.sangeetmind.libs.models.FestivalCalendarResponse
 import com.sangeetmind.libs.models.PanchangResponse
 import com.sangeetmind.libs.models.PrashnaRequest
 import com.sangeetmind.libs.models.PrashnaResponse
@@ -27,6 +28,14 @@ interface PanchangApi {
         @Query("lon") lon: Double,
         @Query("tz") tz: String
     ): EclipseCalendarResponse
+
+    @GET("v1/festivals")
+    suspend fun getFestivals(
+        @Query("year") year: Int,
+        @Query("lat") lat: Double,
+        @Query("lon") lon: Double,
+        @Query("tz") tz: String
+    ): FestivalCalendarResponse
 
     @GET("v1/kp/ruling-planets")
     suspend fun getRulingPlanets(

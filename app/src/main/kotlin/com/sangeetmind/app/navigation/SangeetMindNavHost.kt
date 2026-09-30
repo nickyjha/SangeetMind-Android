@@ -30,6 +30,7 @@ import com.sangeetmind.features.astrology.reports.ui.ReportsScreen
 import com.sangeetmind.features.astrology.sangeet.ui.SangeetScreen
 import com.sangeetmind.features.astrology.holistic.ui.HolisticScreen
 import com.sangeetmind.features.astrology.eclipse.ui.EclipseScreen
+import com.sangeetmind.features.astrology.festival.ui.FestivalScreen
 import com.sangeetmind.features.astrology.prashna.ui.PrashnaScreen
 import com.sangeetmind.features.astrology.gochar.ui.GocharScreen
 import com.sangeetmind.features.astrology.varshaphal.ui.VarshaphalScreen
@@ -121,6 +122,7 @@ fun SangeetMindNavHost(
                 onOpenVarshaphal = { navController.navigate("varshaphal") },
                 onOpenGochar = { navController.navigate("gochar") },
                 onOpenEclipses = { navController.navigate("eclipses") },
+                onOpenFestivals = { navController.navigate("festivals") },
                 onOpenPrashna = { navController.navigate("prashna") },
                 onAskChatMind = { q -> navController.navigate("chatmind?q=${Uri.encode(q)}") },
                 onOpenHolistic = { navController.navigate("holistic") }
@@ -233,6 +235,9 @@ fun SangeetMindNavHost(
         }
         composable("prashna") {
             PrashnaScreen(onNavigateBack = { navController.popBackStack() })
+        }
+        composable("festivals") {
+            FestivalScreen(onNavigateBack = { navController.popBackStack() })
         }
         composable("eclipses") {
             EclipseScreen(onNavigateBack = { navController.popBackStack() })

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="festival_title">Festivals</string>
+    <string name="festival_error_load">Could not load the festival calendar.</string>
+    <string name="festival_place_fmt">Dates for %1$s</string>
+    <string name="festival_place_default">Dates for Delhi</string>
+    <string name="festival_none">No festivals found for this year.</string>
+    <string name="festival_today">Today</string>
+    <string name="festival_tomorrow">Tomorrow</string>
+    <string name="festival_in_days_fmt">In %1$d days</string>
+    <string name="festival_note">Dates follow the tithi at each festival\'s traditional time (sunrise, midday, sunset or midnight) at your place. Panchangs and regions sometimes differ by a day.</string>
+</resources>

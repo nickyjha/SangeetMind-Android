@@ -53,4 +53,5 @@
     <string name="dashboard_action_commit">I\'ll do this today</string>
     <string name="dashboard_action_done">✓ Planned for today</string>
     <string name="dashboard_action_streak_fmt">🔥 %1$d-day streak</string>
+    <string name="dashboard_dest_festivals">Festivals</string>
 </resources>

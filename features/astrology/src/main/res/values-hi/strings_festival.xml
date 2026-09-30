@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="festival_title">त्योहार</string>
+    <string name="festival_error_load">त्योहारों की जानकारी लोड नहीं हो पाई।</string>
+    <string name="festival_place_fmt">%1$s के हिसाब से तारीखें</string>
+    <string name="festival_place_default">दिल्ली के हिसाब से तारीखें</string>
+    <string name="festival_none">इस साल के त्योहार नहीं मिले।</string>
+    <string name="festival_today">आज</string>
+    <string name="festival_tomorrow">कल</string>
+    <string name="festival_in_days_fmt">%1$d दिन बाद</string>
+    <string name="festival_note">तारीखें आपकी जगह पर हर त्योहार के पारंपरिक समय (सूर्योदय, दोपहर, शाम या आधी रात) की तिथि से निकाली गई हैं। अलग-अलग पंचांगों और इलाकों में कभी-कभी एक दिन का फ़र्क हो सकता है।</string>
+</resources>

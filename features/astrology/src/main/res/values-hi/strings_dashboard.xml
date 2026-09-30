@@ -53,4 +53,5 @@
     <string name="dashboard_action_commit">पक्का, आज यह करना है</string>
     <string name="dashboard_action_done">✓ आज के लिए तय</string>
     <string name="dashboard_action_streak_fmt">🔥 लगातार %1$d दिन</string>
+    <string name="dashboard_dest_festivals">त्योहार</string>
 </resources>

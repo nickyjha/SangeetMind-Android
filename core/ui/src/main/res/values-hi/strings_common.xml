@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="common_app_name">SangeetMind</string>
+    <string name="common_app_name">AstroGeet</string>
     <string name="common_back">वापस</string>
     <string name="common_retry">फिर से कोशिश करें</string>
     <string name="common_refresh">रीफ़्रेश करें</string>

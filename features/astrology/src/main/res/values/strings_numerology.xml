@@ -15,7 +15,7 @@
     <string name="numerology_gender_female">Female</string>
     <string name="numerology_analyze">Analyze</string>
     <string name="numerology_core_numbers_title">Your Core Numbers</string>
-    <string name="numerology_personalization_title">SangeetMind Personalization</string>
+    <string name="numerology_personalization_title">AstroGeet Personalization</string>
     <string name="numerology_calculated_from_current_name_fmt">Calculated from current name: %1$s</string>
     <string name="numerology_calculated_from_birth_name">Calculated from birth name</string>
     <string name="numerology_vedic_numbers_title">Your Vedic Numbers</string>

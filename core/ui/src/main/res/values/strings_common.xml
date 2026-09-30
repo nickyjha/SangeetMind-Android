@@ -2,7 +2,7 @@
 <!-- Strings shared by many screens. Feature modules reference these as
      com.sangeetmind.core.ui.R.string.common_* instead of redefining them. -->
 <resources>
-    <string name="common_app_name">SangeetMind</string>
+    <string name="common_app_name">AstroGeet</string>
     <string name="common_back">Back</string>
     <string name="common_retry">Retry</string>
     <string name="common_refresh">Refresh</string>

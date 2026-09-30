@@ -10,7 +10,7 @@
     <string name="referrals_have_code">किसी दोस्त का कोड है?</string>
     <string name="referrals_code_label">रेफ़रल कोड</string>
     <string name="referrals_apply">लागू करें</string>
-    <string name="referrals_share_text_fmt">SangeetMind पर मेरे साथ जुड़ें! मेरा रेफ़रल कोड डालें: %1$s</string>
+    <string name="referrals_share_text_fmt">AstroGeet पर मेरे साथ जुड़ें! मेरा रेफ़रल कोड डालें: %1$s</string>
     <string name="referrals_share_chooser_title">अपना रेफ़रल कोड शेयर करें</string>
 
     <!-- Referrals: messages -->

@@ -202,7 +202,7 @@ private fun launchRazorpayCheckout(activity: Activity, order: RazorpayOrder) {
     val checkout = Checkout()
     checkout.setKeyID(order.keyId)
     val options = JSONObject().apply {
-        put("name", "SangeetMind")
+        put("name", "AstroGeet")
         put("order_id", order.orderId)
         put("currency", order.currency)
         put("amount", order.amount.toString())

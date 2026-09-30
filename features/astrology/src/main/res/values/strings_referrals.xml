@@ -10,7 +10,7 @@
     <string name="referrals_have_code">Have a friend\'s code?</string>
     <string name="referrals_code_label">Referral code</string>
     <string name="referrals_apply">Apply</string>
-    <string name="referrals_share_text_fmt">Join me on SangeetMind! Use my referral code: %1$s</string>
+    <string name="referrals_share_text_fmt">Join me on AstroGeet! Use my referral code: %1$s</string>
     <string name="referrals_share_chooser_title">Share your referral code</string>
 
     <!-- Referrals: messages -->

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SangeetMind</string>
+    <string name="app_name">AstroGeet</string>
     <string name="loading">लोड हो रहा है…</string>
     <string name="error_generic">कुछ गड़बड़ हो गई। फिर से कोशिश करें।</string>
     <string name="retry">फिर से कोशिश करें</string>

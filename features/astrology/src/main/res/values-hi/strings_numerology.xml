@@ -15,7 +15,7 @@
     <string name="numerology_gender_female">महिला</string>
     <string name="numerology_analyze">नतीजा देखें</string>
     <string name="numerology_core_numbers_title">आपके मुख्य अंक</string>
-    <string name="numerology_personalization_title">SangeetMind आपके लिए</string>
+    <string name="numerology_personalization_title">AstroGeet आपके लिए</string>
     <string name="numerology_calculated_from_current_name_fmt">अभी के नाम से: %1$s</string>
     <string name="numerology_calculated_from_birth_name">जन्म के नाम से</string>
     <string name="numerology_vedic_numbers_title">आपके वैदिक अंक</string>

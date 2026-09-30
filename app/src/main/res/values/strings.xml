@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SangeetMind</string>
+    <string name="app_name">AstroGeet</string>
     
     <!-- Home Screen -->
-    <string name="home_title">SangeetMind</string>
+    <string name="home_title">AstroGeet</string>
     <string name="home_daily_raag">Daily Raag</string>
     <string name="home_recommended">Recommended for You</string>
     
@@ -56,7 +56,7 @@
     <string name="auth_google_signin">Sign in with Google</string>
     
     <!-- Onboarding -->
-    <string name="onboarding_welcome">Welcome to SangeetMind</string>
+    <string name="onboarding_welcome">Welcome to AstroGeet</string>
     <string name="onboarding_description">Discover the healing power of raag-based meditation</string>
     <string name="onboarding_next">Next</string>
     <string name="onboarding_skip">Skip</string>

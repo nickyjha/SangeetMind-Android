@@ -2,6 +2,11 @@ package com.sangeetmind.core.network
 
 import com.sangeetmind.libs.models.EclipseCalendarResponse
 import com.sangeetmind.libs.models.PanchangResponse
+import com.sangeetmind.libs.models.PrashnaRequest
+import com.sangeetmind.libs.models.PrashnaResponse
+import com.sangeetmind.libs.models.RulingPlanetsResponse
+import retrofit2.http.Body
+import retrofit2.http.POST
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -20,4 +25,14 @@ interface PanchangApi {
         @Query("lon") lon: Double,
         @Query("tz") tz: String
     ): EclipseCalendarResponse
+
+    @GET("v1/kp/ruling-planets")
+    suspend fun getRulingPlanets(
+        @Query("lat") lat: Double,
+        @Query("lon") lon: Double,
+        @Query("tz") tz: String
+    ): RulingPlanetsResponse
+
+    @POST("v1/kp/prashna")
+    suspend fun askPrashna(@Body body: PrashnaRequest): PrashnaResponse
 }

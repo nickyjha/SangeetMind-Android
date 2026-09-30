@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prashna_title">प्रश्न कुंडली (KP)</string>
+    <string name="prashna_ruling_title">अभी के शासक ग्रह</string>
+    <string name="prashna_ruling_hint">KP में इस पल के शासक ग्रहों से जवाब और समय की पुष्टि की जाती है।</string>
+    <string name="prashna_pick_question">आपका सवाल</string>
+    <string name="prashna_q_marriage">शादी</string>
+    <string name="prashna_q_job">नौकरी</string>
+    <string name="prashna_q_property">संपत्ति</string>
+    <string name="prashna_q_abroad">विदेश जाना</string>
+    <string name="prashna_q_children">संतान</string>
+    <string name="prashna_q_exam">परीक्षा</string>
+    <string name="prashna_number_hint">शांत मन से अपना सवाल सोचें और 1 से 249 के बीच जो पहला अंक मन में आए, वह चुनें।</string>
+    <string name="prashna_number">अंक (1–249)</string>
+    <string name="prashna_ask">जवाब देखें</string>
+    <string name="prashna_error_number">1 से 249 के बीच का अंक डालें।</string>
+    <string name="prashna_error_failed">जवाब नहीं मिल पाया। फिर से कोशिश करें।</string>
+    <string name="prashna_verdict_yes">हाँ, कुंडली साथ देती है</string>
+    <string name="prashna_verdict_delayed">हाँ, पर देर या रुकावट के साथ</string>
+    <string name="prashna_verdict_no">अभी योग नहीं दिखता</string>
+    <string name="prashna_number_chip_fmt">अंक %1$d</string>
+    <string name="prashna_lagna_fmt">लग्न %1$s</string>
+    <string name="prashna_csl_fmt">%1$dवें भाव का उप-स्वामी: %2$s</string>
+    <string name="prashna_fruitful">साथ देने वाले शासक ग्रह (संभावित समय)</string>
+    <string name="prashna_note">एक बार में एक ही सच्चा सवाल पूछें और उसी दिन दोबारा न पूछें। प्रश्न का जवाब इस पल की राह दिखाता है, पक्की बात नहीं।</string>
+</resources>

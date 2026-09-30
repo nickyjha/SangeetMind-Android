@@ -110,6 +110,7 @@ fun DashboardScreen(
     onOpenVarshaphal: () -> Unit,
     onOpenGochar: () -> Unit,
     onOpenEclipses: () -> Unit,
+    onOpenPrashna: () -> Unit,
     onOpenHolistic: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel()
 ) {
@@ -123,6 +124,7 @@ fun DashboardScreen(
         DashboardDestination(stringResource(R.string.dashboard_dest_panchang), Icons.Default.CalendarMonth, Graha.CHANDRA, onClick = onOpenPanchang),
         DashboardDestination(stringResource(R.string.dashboard_dest_gochar), Icons.Default.Public, Graha.SHANI, onClick = onOpenGochar),
         DashboardDestination(stringResource(R.string.dashboard_dest_eclipses), Icons.Default.DarkMode, Graha.RAHU, onClick = onOpenEclipses),
+        DashboardDestination(stringResource(R.string.dashboard_dest_prashna), Icons.Default.HelpOutline, Graha.BUDHA, onClick = onOpenPrashna),
         DashboardDestination(stringResource(R.string.dashboard_dest_muhurat), Icons.Default.Schedule, Graha.GURU, onClick = onOpenMuhurat),
         DashboardDestination(stringResource(R.string.dashboard_dest_match), Icons.Default.Favorite, Graha.MANGALA, onClick = onOpenMatch),
         DashboardDestination(stringResource(R.string.dashboard_dest_numerology), Icons.Default.Tag, Graha.BUDHA, onClick = onOpenNumerology),

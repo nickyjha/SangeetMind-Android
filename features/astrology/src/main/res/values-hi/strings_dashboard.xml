@@ -36,4 +36,5 @@
 
     <string name="dashboard_error_load">डैशबोर्ड लोड नहीं हो पाया</string>
     <string name="dashboard_dest_eclipses">ग्रहण</string>
+    <string name="dashboard_dest_prashna">प्रश्न (KP)</string>
 </resources>

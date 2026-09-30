@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prashna_title">Prashna (KP horary)</string>
+    <string name="prashna_ruling_title">Ruling planets now</string>
+    <string name="prashna_ruling_hint">KP uses the planets ruling this moment to confirm answers and timing.</string>
+    <string name="prashna_pick_question">Your question</string>
+    <string name="prashna_q_marriage">Marriage</string>
+    <string name="prashna_q_job">Job</string>
+    <string name="prashna_q_property">Property</string>
+    <string name="prashna_q_abroad">Going abroad</string>
+    <string name="prashna_q_children">Children</string>
+    <string name="prashna_q_exam">Exam</string>
+    <string name="prashna_number_hint">Think of your question calmly and say the first number from 1 to 249 that comes to mind.</string>
+    <string name="prashna_number">Number (1–249)</string>
+    <string name="prashna_ask">Get the answer</string>
+    <string name="prashna_error_number">Enter a number from 1 to 249.</string>
+    <string name="prashna_error_failed">Could not get the answer. Please try again.</string>
+    <string name="prashna_verdict_yes">Yes, the chart supports it</string>
+    <string name="prashna_verdict_delayed">Yes, but with delay or obstacles</string>
+    <string name="prashna_verdict_no">Not indicated now</string>
+    <string name="prashna_number_chip_fmt">Number %1$d</string>
+    <string name="prashna_lagna_fmt">Lagna %1$s</string>
+    <string name="prashna_csl_fmt">House %1$d sub-lord: %2$s</string>
+    <string name="prashna_fruitful">Ruling planets that support it (likely timing)</string>
+    <string name="prashna_note">Ask one sincere question at a time and do not repeat it the same day. A horary answer is guidance for this moment, not a certainty.</string>
+</resources>

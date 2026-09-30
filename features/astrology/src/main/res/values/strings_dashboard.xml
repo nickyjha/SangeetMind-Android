@@ -36,4 +36,5 @@
 
     <string name="dashboard_error_load">Failed to load dashboard</string>
     <string name="dashboard_dest_eclipses">Eclipses</string>
+    <string name="dashboard_dest_prashna">Prashna (KP)</string>
 </resources>

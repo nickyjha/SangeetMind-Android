@@ -1,0 +1,134 @@
+{
+ "number": 100,
+ "question": "marriage",
+ "question_text": {
+  "en": "Will I get married?",
+  "hi": "क्या मेरी शादी होगी?"
+ },
+ "moment": "2026-09-30T18:00:00+05:30",
+ "ascendant": {
+  "sign": "Leo",
+  "degree": 24.0,
+  "star_lord": "Venus",
+  "sub_lord": "Mercury"
+ },
+ "main_house": 7,
+ "cusp_sub_lord": "Mercury",
+ "significations": {
+  "star_lord": "Mars",
+  "via_star": [
+   4,
+   9,
+   11
+  ],
+  "self": [
+   2,
+   11
+  ]
+ },
+ "favourable_houses": [
+  2,
+  7,
+  11
+ ],
+ "unfavourable_houses": [
+  1,
+  6,
+  10
+ ],
+ "verdict": "yes",
+ "reason": {
+  "en": "The sub-lord of your 7th cusp is Mercury. Through its star lord Mars it signifies houses 4, 9, 11, and by itself 2, 11. Favourable houses touched: 2, 11; unfavourable: -.",
+  "hi": "आपके 7वें भाव के कस्प का उप-स्वामी बुध है। अपने नक्षत्र स्वामी मंगल के ज़रिये यह भाव 4, 9, 11 और ख़ुद भाव 2, 11 दिखाता है। अनुकूल भाव: 2, 11; प्रतिकूल: -।"
+ },
+ "ruling_planets": [
+  "Saturn",
+  "Jupiter",
+  "Moon",
+  "Sun",
+  "Venus",
+  "Mercury",
+  "Rahu",
+  "Ketu"
+ ],
+ "fruitful_planets": [
+  "Saturn",
+  "Jupiter",
+  "Mercury",
+  "Rahu"
+ ],
+ "cusps": [
+  {
+   "house": 1,
+   "sign": "Leo",
+   "degree": 24.0,
+   "sub_lord": "Mercury"
+  },
+  {
+   "house": 2,
+   "sign": "Virgo",
+   "degree": 21.38,
+   "sub_lord": "Venus"
+  },
+  {
+   "house": 3,
+   "sign": "Libra",
+   "degree": 21.74,
+   "sub_lord": "Jupiter"
+  },
+  {
+   "house": 4,
+   "sign": "Scorpio",
+   "degree": 23.47,
+   "sub_lord": "Mars"
+  },
+  {
+   "house": 5,
+   "sign": "Sagittarius",
+   "degree": 25.06,
+   "sub_lord": "Mercury"
+  },
+  {
+   "house": 6,
+   "sign": "Capricorn",
+   "degree": 25.54,
+   "sub_lord": "Rahu"
+  },
+  {
+   "house": 7,
+   "sign": "Aquarius",
+   "degree": 24.0,
+   "sub_lord": "Mercury"
+  },
+  {
+   "house": 8,
+   "sign": "Pisces",
+   "degree": 21.38,
+   "sub_lord": "Venus"
+  },
+  {
+   "house": 9,
+   "sign": "Aries",
+   "degree": 21.74,
+   "sub_lord": "Jupiter"
+  },
+  {
+   "house": 10,
+   "sign": "Taurus",
+   "degree": 23.47,
+   "sub_lord": "Mars"
+  },
+  {
+   "house": 11,
+   "sign": "Gemini",
+   "degree": 25.06,
+   "sub_lord": "Mercury"
+  },
+  {
+   "house": 12,
+   "sign": "Cancer",
+   "degree": 25.54,
+   "sub_lord": "Rahu"
+  }
+ ]
+}

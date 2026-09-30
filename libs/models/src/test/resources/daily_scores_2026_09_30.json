@@ -1,0 +1,267 @@
+{
+ "today": "2026-09-30",
+ "tz": "Asia/Kolkata",
+ "days": [
+  {
+   "date": "2026-09-29",
+   "label": "yesterday",
+   "overall": 78,
+   "areas": {
+    "self": {
+     "score": 79,
+     "level": "good",
+     "text": {
+      "en": "A good day for your own plans and energy.",
+      "hi": "अपने कामों और ऊर्जा के लिए अच्छा दिन।"
+     },
+     "reason": {
+      "en": "The Moon lights up your own houses today.",
+      "hi": "आज चंद्र आपके अपने भावों को सक्रिय कर रहा है।"
+     },
+     "question": {
+      "en": "What should I focus on today?",
+      "hi": "आज मुझे किस पर ध्यान देना चाहिए?"
+     }
+    },
+    "wealth": {
+     "score": 73,
+     "level": "good",
+     "text": {
+      "en": "Good for money matters and planning.",
+      "hi": "पैसे के कामों और योजना के लिए अच्छा दिन।"
+     },
+     "reason": {
+      "en": "The Moon is in a friendly star for you.",
+      "hi": "चंद्र आपके लिए शुभ नक्षत्र में है।"
+     },
+     "question": {
+      "en": "Is this a good time for a money decision?",
+      "hi": "क्या यह पैसे का फ़ैसला लेने का अच्छा समय है?"
+     }
+    },
+    "love": {
+     "score": 85,
+     "level": "good",
+     "text": {
+      "en": "A warm day for relationships; reach out.",
+      "hi": "रिश्तों के लिए अच्छा दिन; अपनों से बात करें।"
+     },
+     "reason": {
+      "en": "The Moon passes your houses of love and partnership.",
+      "hi": "आज चंद्र आपके प्रेम और साझेदारी के भावों से गुज़र रहा है।"
+     },
+     "question": {
+      "en": "How can I improve my relationship now?",
+      "hi": "मैं अभी अपने रिश्ते को कैसे बेहतर बनाऊँ?"
+     }
+    },
+    "career": {
+     "score": 73,
+     "level": "good",
+     "text": {
+      "en": "Good for work, meetings and asking for what you want.",
+      "hi": "काम, मीटिंग और अपनी बात रखने के लिए अच्छा दिन।"
+     },
+     "reason": {
+      "en": "The Moon is in a friendly star for you.",
+      "hi": "चंद्र आपके लिए शुभ नक्षत्र में है।"
+     },
+     "question": {
+      "en": "Is this the right time for a career move?",
+      "hi": "क्या यह करियर में कदम बढ़ाने का सही समय है?"
+     }
+    }
+   },
+   "lucky_number": 8,
+   "lucky_time": {
+    "name": "Amrit",
+    "start": "12:18",
+    "end": "13:48"
+   }
+  },
+  {
+   "date": "2026-09-30",
+   "label": "today",
+   "overall": 56,
+   "areas": {
+    "self": {
+     "score": 57,
+     "level": "mixed",
+     "text": {
+      "en": "Pace yourself; steady effort works best.",
+      "hi": "आराम से चलें; लगातार कोशिश सबसे अच्छी रहेगी।"
+     },
+     "reason": {
+      "en": "Today's star is less friendly for you.",
+      "hi": "आज का नक्षत्र आपके लिए कम अनुकूल है।"
+     },
+     "question": {
+      "en": "What should I focus on today?",
+      "hi": "आज मुझे किस पर ध्यान देना चाहिए?"
+     }
+    },
+    "wealth": {
+     "score": 51,
+     "level": "mixed",
+     "text": {
+      "en": "Keep spending in check.",
+      "hi": "खर्च पर ध्यान रखें।"
+     },
+     "reason": {
+      "en": "Today's star is less friendly for you.",
+      "hi": "आज का नक्षत्र आपके लिए कम अनुकूल है।"
+     },
+     "question": {
+      "en": "Is this a good time for a money decision?",
+      "hi": "क्या यह पैसे का फ़ैसला लेने का अच्छा समय है?"
+     }
+    },
+    "love": {
+     "score": 63,
+     "level": "mixed",
+     "text": {
+      "en": "Listen more than you speak.",
+      "hi": "बोलने से ज़्यादा सुनें।"
+     },
+     "reason": {
+      "en": "Today's star is less friendly for you.",
+      "hi": "आज का नक्षत्र आपके लिए कम अनुकूल है।"
+     },
+     "question": {
+      "en": "How can I improve my relationship now?",
+      "hi": "मैं अभी अपने रिश्ते को कैसे बेहतर बनाऊँ?"
+     }
+    },
+    "career": {
+     "score": 51,
+     "level": "mixed",
+     "text": {
+      "en": "Focus on routine work.",
+      "hi": "रोज़ के कामों पर ध्यान दें।"
+     },
+     "reason": {
+      "en": "Today's star is less friendly for you.",
+      "hi": "आज का नक्षत्र आपके लिए कम अनुकूल है।"
+     },
+     "question": {
+      "en": "Is this the right time for a career move?",
+      "hi": "क्या यह करियर में कदम बढ़ाने का सही समय है?"
+     }
+    }
+   },
+   "lucky_number": 9,
+   "lucky_time": {
+    "name": "Amrit",
+    "start": "07:49",
+    "end": "09:18"
+   }
+  },
+  {
+   "date": "2026-10-01",
+   "label": "tomorrow",
+   "overall": 56,
+   "areas": {
+    "self": {
+     "score": 43,
+     "level": "low",
+     "text": {
+      "en": "Take it easy and avoid big starts today.",
+      "hi": "आज आराम से रहें, बड़ी शुरुआत टालें।"
+     },
+     "reason": {
+      "en": "The Moon passes a difficult house for this.",
+      "hi": "चंद्र इसके लिए कठिन भाव से गुज़र रहा है।"
+     },
+     "question": {
+      "en": "What should I focus on today?",
+      "hi": "आज मुझे किस पर ध्यान देना चाहिए?"
+     }
+    },
+    "wealth": {
+     "score": 59,
+     "level": "mixed",
+     "text": {
+      "en": "Keep spending in check.",
+      "hi": "खर्च पर ध्यान रखें।"
+     },
+     "reason": {
+      "en": "The Moon is in a friendly star for you.",
+      "hi": "चंद्र आपके लिए शुभ नक्षत्र में है।"
+     },
+     "question": {
+      "en": "Is this a good time for a money decision?",
+      "hi": "क्या यह पैसे का फ़ैसला लेने का अच्छा समय है?"
+     }
+    },
+    "love": {
+     "score": 49,
+     "level": "low",
+     "text": {
+      "en": "Keep patience and avoid arguments.",
+      "hi": "धैर्य रखें और बहस से बचें।"
+     },
+     "reason": {
+      "en": "The Moon passes a difficult house for this.",
+      "hi": "चंद्र इसके लिए कठिन भाव से गुज़र रहा है।"
+     },
+     "question": {
+      "en": "How can I improve my relationship now?",
+      "hi": "मैं अभी अपने रिश्ते को कैसे बेहतर बनाऊँ?"
+     }
+    },
+    "career": {
+     "score": 71,
+     "level": "good",
+     "text": {
+      "en": "Good for work, meetings and asking for what you want.",
+      "hi": "काम, मीटिंग और अपनी बात रखने के लिए अच्छा दिन।"
+     },
+     "reason": {
+      "en": "The Moon passes your houses of work today.",
+      "hi": "आज चंद्र आपके काम के भावों से गुज़र रहा है।"
+     },
+     "question": {
+      "en": "Is this the right time for a career move?",
+      "hi": "क्या यह करियर में कदम बढ़ाने का सही समय है?"
+     }
+    }
+   },
+   "lucky_number": 7,
+   "lucky_time": {
+    "name": "Amrit",
+    "start": "13:47",
+    "end": "15:16"
+   }
+  }
+ ],
+ "strip": [
+  {
+   "date": "2026-09-30",
+   "overall": 56
+  },
+  {
+   "date": "2026-10-01",
+   "overall": 56
+  },
+  {
+   "date": "2026-10-02",
+   "overall": 56
+  },
+  {
+   "date": "2026-10-03",
+   "overall": 46
+  },
+  {
+   "date": "2026-10-04",
+   "overall": 60
+  },
+  {
+   "date": "2026-10-05",
+   "overall": 40
+  },
+  {
+   "date": "2026-10-06",
+   "overall": 62
+  }
+ ]
+}

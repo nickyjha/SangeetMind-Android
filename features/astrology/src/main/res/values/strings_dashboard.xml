@@ -37,4 +37,16 @@
     <string name="dashboard_error_load">Failed to load dashboard</string>
     <string name="dashboard_dest_eclipses">Eclipses</string>
     <string name="dashboard_dest_prashna">Prashna (KP)</string>
+    <string name="dashboard_scores_title">Your day</string>
+    <string name="dashboard_scores_yesterday">Yesterday</string>
+    <string name="dashboard_scores_today">Today</string>
+    <string name="dashboard_scores_tomorrow">Tomorrow</string>
+    <string name="dashboard_scores_ask">Ask →</string>
+    <string name="dashboard_scores_week">Next 7 days</string>
+    <string name="dashboard_area_self">Self</string>
+    <string name="dashboard_area_wealth">Wealth</string>
+    <string name="dashboard_area_love">Love</string>
+    <string name="dashboard_area_career">Career</string>
+    <string name="dashboard_lucky_number">Lucky number</string>
+    <string name="dashboard_lucky_time">Lucky time</string>
 </resources>

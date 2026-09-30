@@ -111,6 +111,7 @@ fun DashboardScreen(
     onOpenGochar: () -> Unit,
     onOpenEclipses: () -> Unit,
     onOpenPrashna: () -> Unit,
+    onAskChatMind: (String) -> Unit,
     onOpenHolistic: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel()
 ) {
@@ -181,6 +182,10 @@ fun DashboardScreen(
                                 panchang = uiState.todayPanchang,
                                 onOpenHoroscope = onOpenHoroscope
                             )
+                            uiState.dailyScores?.let {
+                                Spacer(modifier = Modifier.height(16.dp))
+                                DailyScoresCard(it, onAsk = onAskChatMind)
+                            }
                         }
                     }
                     uiState.hasNoKundlis -> {

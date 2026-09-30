@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.chatmind
 
+import androidx.lifecycle.SavedStateHandle
 import android.content.Context
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
@@ -41,10 +42,12 @@ class ChatMindViewModel @Inject constructor(
     private val repository: ChatMindRepository,
     private val paymentsRepository: PaymentsRepository,
     private val languageManager: LanguageManager,
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ChatMindUiState())
+    // A question handed over from the dashboard's "Ask" buttons pre-fills the input.
+    private val _uiState = MutableStateFlow(ChatMindUiState(input = savedStateHandle.get<String>("q").orEmpty()))
     val uiState: StateFlow<ChatMindUiState> = _uiState.asStateFlow()
 
     private var birthDetails: LlmBirthDetails? = null

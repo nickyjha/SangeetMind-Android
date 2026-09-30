@@ -1,5 +1,9 @@
 package com.sangeetmind.features.astrology.dashboard
 
+import com.sangeetmind.core.network.PanchangApi
+import com.sangeetmind.libs.models.CareerBirthDetails
+import com.sangeetmind.libs.models.DailyScoresRequest
+import com.sangeetmind.libs.models.DailyScoresResponse
 import android.content.Context
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
@@ -37,6 +41,7 @@ data class DashboardUiState(
     val profile: AstroProfileSummary? = null,
     val todayHoroscope: DailyHoroscope? = null,
     val todayPanchang: PanchangResponse? = null,
+    val dailyScores: DailyScoresResponse? = null,
     val error: String? = null
 )
 
@@ -49,6 +54,7 @@ class DashboardViewModel @Inject constructor(
     private val astroProfileRepository: AstroProfileRepository,
     private val horoscopeRepository: HoroscopeRepository,
     private val panchangRepository: PanchangRepository,
+    private val panchangApi: PanchangApi,
     private val languageManager: LanguageManager
 ) : ViewModel() {
 
@@ -87,6 +93,7 @@ class DashboardViewModel @Inject constructor(
                                 it.copy(isLoading = false, profile = profileResult.data)
                             }
                             loadTodayHub(profileResult.data.moonSign, primary.latitude, primary.longitude)
+                            loadDailyScores(primary)
                         }
                         is Result.Error -> _uiState.update {
                             it.copy(isLoading = false, error = profileResult.message)
@@ -113,6 +120,28 @@ class DashboardViewModel @Inject constructor(
             val panchang = (panchangDeferred.await() as? Result.Success)?.data
 
             _uiState.update { it.copy(todayHoroscope = horoscope, todayPanchang = panchang) }
+        }
+    }
+
+    /** Life-area scores for yesterday/today/tomorrow and the week (rule-based, free). */
+    private fun loadDailyScores(kundli: Kundli) {
+        viewModelScope.launch {
+            val scores = runCatching {
+                panchangApi.getDailyScores(
+                    DailyScoresRequest(
+                        birthDetails = CareerBirthDetails(
+                            date = kundli.birthDate,
+                            time = kundli.birthTime,
+                            timezone = kundli.timezone,
+                            place = kundli.birthPlace,
+                            lat = kundli.latitude,
+                            lon = kundli.longitude
+                        ),
+                        tz = kundli.timezone.ifBlank { null }
+                    )
+                )
+            }.getOrNull()
+            _uiState.update { it.copy(dailyScores = scores) }
         }
     }
 }

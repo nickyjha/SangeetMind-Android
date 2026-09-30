@@ -1,5 +1,7 @@
 package com.sangeetmind.core.network
 
+import com.sangeetmind.libs.models.DailyScoresRequest
+import com.sangeetmind.libs.models.DailyScoresResponse
 import com.sangeetmind.libs.models.EclipseCalendarResponse
 import com.sangeetmind.libs.models.PanchangResponse
 import com.sangeetmind.libs.models.PrashnaRequest
@@ -32,6 +34,9 @@ interface PanchangApi {
         @Query("lon") lon: Double,
         @Query("tz") tz: String
     ): RulingPlanetsResponse
+
+    @POST("v1/daily/scores")
+    suspend fun getDailyScores(@Body body: DailyScoresRequest): DailyScoresResponse
 
     @POST("v1/kp/prashna")
     suspend fun askPrashna(@Body body: PrashnaRequest): PrashnaResponse

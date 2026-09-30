@@ -1,5 +1,6 @@
 package com.sangeetmind.app.navigation
 
+import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -121,6 +122,7 @@ fun SangeetMindNavHost(
                 onOpenGochar = { navController.navigate("gochar") },
                 onOpenEclipses = { navController.navigate("eclipses") },
                 onOpenPrashna = { navController.navigate("prashna") },
+                onAskChatMind = { q -> navController.navigate("chatmind?q=${Uri.encode(q)}") },
                 onOpenHolistic = { navController.navigate("holistic") }
             )
         }
@@ -175,7 +177,10 @@ fun SangeetMindNavHost(
             ChartScreen(onNavigateBack = { navController.popBackStack() })
         }
 
-        composable("chatmind") {
+        composable(
+            "chatmind?q={q}",
+            arguments = listOf(navArgument("q") { type = NavType.StringType; nullable = true; defaultValue = null })
+        ) {
             ChatMindScreen(onNavigateBack = { navController.popBackStack() })
         }
 

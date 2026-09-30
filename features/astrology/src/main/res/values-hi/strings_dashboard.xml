@@ -37,4 +37,16 @@
     <string name="dashboard_error_load">डैशबोर्ड लोड नहीं हो पाया</string>
     <string name="dashboard_dest_eclipses">ग्रहण</string>
     <string name="dashboard_dest_prashna">प्रश्न (KP)</string>
+    <string name="dashboard_scores_title">आपका दिन</string>
+    <string name="dashboard_scores_yesterday">बीता कल</string>
+    <string name="dashboard_scores_today">आज</string>
+    <string name="dashboard_scores_tomorrow">आने वाला कल</string>
+    <string name="dashboard_scores_ask">पूछें →</string>
+    <string name="dashboard_scores_week">अगले 7 दिन</string>
+    <string name="dashboard_area_self">आप</string>
+    <string name="dashboard_area_wealth">धन</string>
+    <string name="dashboard_area_love">प्रेम</string>
+    <string name="dashboard_area_career">करियर</string>
+    <string name="dashboard_lucky_number">शुभ अंक</string>
+    <string name="dashboard_lucky_time">शुभ समय</string>
 </resources>

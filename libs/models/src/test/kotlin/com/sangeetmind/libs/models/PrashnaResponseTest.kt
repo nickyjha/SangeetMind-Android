@@ -21,7 +21,7 @@ class PrashnaResponseTest {
         assertEquals("yes", r.verdict)
         assertEquals("Mercury", r.cuspSubLord)
         assertEquals("Mars", r.significations.starLord)
-        assertTrue(r.reason.forLanguage("hi").startsWith("आपके 7वें भाव"))
+        assertTrue(r.reason.forLanguage("hi").startsWith("आपके सातवें भाव"))
         assertTrue(r.rulingPlanets.isNotEmpty())
     }
 }

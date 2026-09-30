@@ -19,7 +19,7 @@
     <string name="muhurat_error_find_failed">मुहूर्त नहीं मिल पाया</string>
     <string name="muhurat_vivah_couple">वर-वधू के लिए जाँचें (वैकल्पिक)</string>
     <string name="muhurat_vivah_couple_hint">चंद्र बल और तारा बल के लिए दो सेव की हुई कुंडलियाँ चुनें। समय आपकी मुख्य कुंडली की जगह का है।</string>
-    <string name="muhurat_vivah_results_fmt">%1$d दिन विवाह मुहूर्त वाले</string>
+    <string name="muhurat_vivah_results_fmt">विवाह मुहूर्त वाले %1$d दिन</string>
     <string name="muhurat_vivah_couple_checked">दोनों कुंडलियों से जाँचा गया (चंद्र बल और तारा बल)।</string>
     <string name="muhurat_vivah_window_fmt">%1$s → %2$s</string>
     <string name="muhurat_vivah_blocked">इन समयों में मुहूर्त नहीं</string>

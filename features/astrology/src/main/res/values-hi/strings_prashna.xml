@@ -2,7 +2,7 @@
 <resources>
     <string name="prashna_title">प्रश्न कुंडली (KP)</string>
     <string name="prashna_ruling_title">अभी के शासक ग्रह</string>
-    <string name="prashna_ruling_hint">KP में इस पल के शासक ग्रहों से जवाब और समय की पुष्टि की जाती है।</string>
+    <string name="prashna_ruling_hint">KP में इस पल के शासक ग्रहों से जवाब और समय पक्का किया जाता है।</string>
     <string name="prashna_pick_question">आपका सवाल</string>
     <string name="prashna_q_marriage">शादी</string>
     <string name="prashna_q_job">नौकरी</string>
@@ -20,7 +20,7 @@
     <string name="prashna_verdict_no">अभी योग नहीं दिखता</string>
     <string name="prashna_number_chip_fmt">अंक %1$d</string>
     <string name="prashna_lagna_fmt">लग्न %1$s</string>
-    <string name="prashna_csl_fmt">%1$dवें भाव का उप-स्वामी: %2$s</string>
+    <string name="prashna_csl_fmt">भाव %1$d का उप-स्वामी: %2$s</string>
     <string name="prashna_fruitful">साथ देने वाले शासक ग्रह (संभावित समय)</string>
     <string name="prashna_note">एक बार में एक ही सच्चा सवाल पूछें और उसी दिन दोबारा न पूछें। प्रश्न का जवाब इस पल की राह दिखाता है, पक्की बात नहीं।</string>
 </resources>

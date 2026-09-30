@@ -14,4 +14,9 @@
     <string name="panchang_error_enter_date">तारीख़ डालें</string>
     <string name="panchang_error_pick_place">सुझावों में से कोई जगह चुनें</string>
     <string name="panchang_error_load_failed">पंचांग लोड नहीं हो पाया</string>
+    <string name="panchang_sunrise">सूर्योदय</string>
+    <string name="panchang_sunset">सूर्यास्त</string>
+    <string name="panchang_rahu_kalam">राहु काल</string>
+    <string name="panchang_abhijit">अभिजीत मुहूर्त</string>
+    <string name="panchang_choghadiya">दिन का चौघड़िया</string>
 </resources>

@@ -145,6 +145,14 @@ private val TERMS: Map<String, Int> = terms(
     "Krishna" to R.string.astro_paksha_krishna,
     "Shukla Paksha" to R.string.astro_paksha_shukla_full,
     "Krishna Paksha" to R.string.astro_paksha_krishna_full,
+    // Choghadiya
+    "Udveg" to R.string.astro_chog_udveg,
+    "Chal" to R.string.astro_chog_chal,
+    "Labh" to R.string.astro_chog_labh,
+    "Amrit" to R.string.astro_chog_amrit,
+    "Kaal" to R.string.astro_chog_kaal,
+    "Shubh" to R.string.astro_chog_shubh,
+    "Rog" to R.string.astro_chog_rog,
     // Yogas (panchang)
     "Vishkambha" to R.string.astro_yoga_vishkambha,
     "Vishkumbha" to R.string.astro_yoga_vishkambha,

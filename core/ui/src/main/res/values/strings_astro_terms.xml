@@ -308,4 +308,11 @@
     <string name="astro_raga_suddha_saveri">Suddha Saveri</string>
     <string name="astro_raga_shankarabharanam">Shankarabharanam</string>
     <string name="astro_raga_kambhoji">Kambhoji</string>
+    <string name="astro_chog_udveg">Udveg</string>
+    <string name="astro_chog_chal">Chal</string>
+    <string name="astro_chog_labh">Labh</string>
+    <string name="astro_chog_amrit">Amrit</string>
+    <string name="astro_chog_kaal">Kaal</string>
+    <string name="astro_chog_shubh">Shubh</string>
+    <string name="astro_chog_rog">Rog</string>
 </resources>

@@ -298,4 +298,11 @@
     <string name="astro_raga_suddha_saveri">शुद्ध सावेरी</string>
     <string name="astro_raga_shankarabharanam">शंकराभरणम</string>
     <string name="astro_raga_kambhoji">कांबोजी</string>
+    <string name="astro_chog_udveg">उद्वेग</string>
+    <string name="astro_chog_chal">चर</string>
+    <string name="astro_chog_labh">लाभ</string>
+    <string name="astro_chog_amrit">अमृत</string>
+    <string name="astro_chog_kaal">काल</string>
+    <string name="astro_chog_shubh">शुभ</string>
+    <string name="astro_chog_rog">रोग</string>
 </resources>

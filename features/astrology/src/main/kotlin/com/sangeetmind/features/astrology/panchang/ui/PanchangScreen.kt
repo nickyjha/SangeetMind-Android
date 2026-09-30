@@ -1,5 +1,9 @@
 package com.sangeetmind.features.astrology.panchang.ui
 
+import com.sangeetmind.libs.models.Choghadiya
+import com.sangeetmind.libs.models.PanchangSpan
+import com.sangeetmind.core.ui.theme.LocalGrahaColors
+import com.sangeetmind.features.astrology.chart.ui.Chip
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -141,13 +145,48 @@ private fun PanchangResultCard(result: PanchangResponse) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = result.date, style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(8.dp))
-            PanchangRow(stringResource(R.string.panchang_tithi), astroTerm(result.tithi.name))
+            PanchangRow(
+                stringResource(R.string.panchang_tithi),
+                listOfNotNull(result.tithi.paksha?.let { astroTerm(it) }, astroTerm(result.tithi.name)).joinToString(" ")
+            )
             PanchangRow(stringResource(R.string.panchang_nakshatra), astroTerm(result.nakshatra.name))
             PanchangRow(stringResource(R.string.panchang_yoga), astroTerm(result.yoga.name))
             PanchangRow(stringResource(R.string.panchang_karana), astroTerm(result.karana.name))
             PanchangRow(stringResource(R.string.panchang_vara), astroTerm(result.vara.name))
             PanchangRow(stringResource(R.string.panchang_moon_sign), astroTerm(result.moonSign))
             PanchangRow(stringResource(R.string.panchang_sun_sign), astroTerm(result.sunSign))
+            result.sunrise?.let { PanchangRow(stringResource(R.string.panchang_sunrise), it) }
+            result.sunset?.let { PanchangRow(stringResource(R.string.panchang_sunset), it) }
+            result.rahuKalam?.span()?.let { PanchangRow(stringResource(R.string.panchang_rahu_kalam), it) }
+            result.abhijitMuhurat?.span()?.let { PanchangRow(stringResource(R.string.panchang_abhijit), it) }
+            if (result.choghadiya.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(stringResource(R.string.panchang_choghadiya), style = MaterialTheme.typography.titleSmall)
+                ChoghadiyaChips(result.choghadiya)
+            }
+        }
+    }
+}
+
+private fun PanchangSpan.span(): String? = if (start != null && end != null) "$start – $end" else null
+
+/** Day choghadiya as chips, green for auspicious, red for inauspicious. */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun ChoghadiyaChips(slots: List<Choghadiya>) {
+    val graha = LocalGrahaColors.current
+    FlowRow(
+        modifier = Modifier.padding(top = 6.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        slots.forEach { c ->
+            val color = when (c.quality) {
+                "auspicious" -> graha.budha
+                "inauspicious" -> graha.mangala
+                else -> MaterialTheme.colorScheme.onSurfaceVariant
+            }
+            Chip("${astroTerm(c.name)} ${c.start.orEmpty()}–${c.end.orEmpty()}", color)
         }
     }
 }

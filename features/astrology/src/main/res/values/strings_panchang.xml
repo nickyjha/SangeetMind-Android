@@ -14,4 +14,9 @@
     <string name="panchang_error_enter_date">Please enter a date</string>
     <string name="panchang_error_pick_place">Please pick a place from the suggestions</string>
     <string name="panchang_error_load_failed">Failed to load panchang</string>
+    <string name="panchang_sunrise">Sunrise</string>
+    <string name="panchang_sunset">Sunset</string>
+    <string name="panchang_rahu_kalam">Rahu Kalam</string>
+    <string name="panchang_abhijit">Abhijit muhurat</string>
+    <string name="panchang_choghadiya">Day choghadiya</string>
 </resources>

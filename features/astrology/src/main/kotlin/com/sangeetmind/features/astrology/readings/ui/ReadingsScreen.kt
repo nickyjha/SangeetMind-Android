@@ -17,6 +17,8 @@ import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.flattenToReadableText
 import com.sangeetmind.features.astrology.readings.CAREER_QUESTIONS
+import com.sangeetmind.features.astrology.readings.SMALL_TOPICS
+import com.sangeetmind.libs.models.SmallReading
 import com.sangeetmind.features.astrology.readings.ReadingTab
 import com.sangeetmind.features.astrology.readings.ReadingsViewModel
 import com.sangeetmind.core.ui.language.LocalAppLanguage
@@ -60,6 +62,7 @@ fun ReadingsScreen(
                 ReadingTab.CAREER to R.string.readings_tab_career,
                 ReadingTab.STRENGTHS to R.string.readings_tab_strengths,
                 ReadingTab.MARRIAGE to R.string.readings_tab_marriage,
+                ReadingTab.SMALL to R.string.readings_tab_small,
                 ReadingTab.CHILDREN to R.string.readings_tab_children,
                 ReadingTab.FOREIGN to R.string.readings_tab_foreign,
                 ReadingTab.WEALTH to R.string.readings_tab_wealth,
@@ -118,6 +121,13 @@ fun ReadingsScreen(
                         readingIsForMarried = uiState.marriage?.maritalStatus == "married",
                         onMarriedChange = viewModel::setMarried,
                         onGenerate = viewModel::generateMarriageReading
+                    )
+                    ReadingTab.SMALL -> SmallTab(
+                        topic = uiState.smallTopic,
+                        onTopicChange = viewModel::setSmallTopic,
+                        isLoading = uiState.isLoading,
+                        reading = uiState.small[uiState.smallTopic]?.reading,
+                        onGenerate = viewModel::generateSmallReading
                     )
                     ReadingTab.CHILDREN -> LifeReadingTab(
                         descRes = R.string.readings_children_desc,
@@ -812,4 +822,80 @@ private fun PreviewCard(preview: ReadingPreview?) {
             }
         }
     }
+}
+
+@StringRes
+private fun smallTopicLabel(topic: String): Int = when (topic) {
+    "love_style" -> R.string.readings_small_love_style
+    "ideal_partner" -> R.string.readings_small_ideal_partner
+    else -> R.string.readings_small_in_laws
+}
+
+/** Short ₹49 readings on one question each: love style, ideal partner, in-laws. */
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
+@Composable
+private fun SmallTab(
+    topic: String,
+    onTopicChange: (String) -> Unit,
+    isLoading: Boolean,
+    reading: SmallReading?,
+    onGenerate: () -> Unit
+) {
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        SMALL_TOPICS.forEach { t ->
+            FilterChip(
+                selected = topic == t,
+                onClick = { onTopicChange(t) },
+                label = { Text(stringResource(smallTopicLabel(t))) }
+            )
+        }
+    }
+    Spacer(modifier = Modifier.height(12.dp))
+    Text(
+        stringResource(
+            when (topic) {
+                "love_style" -> R.string.readings_small_love_style_desc
+                "ideal_partner" -> R.string.readings_small_ideal_partner_desc
+                else -> R.string.readings_small_in_laws_desc
+            }
+        ),
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+    Spacer(modifier = Modifier.height(16.dp))
+    Button(onClick = onGenerate, enabled = !isLoading, modifier = Modifier.fillMaxWidth()) {
+        if (isLoading) CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+        else Text(stringResource(R.string.readings_small_generate_fmt, stringResource(smallTopicLabel(topic))))
+    }
+    if (reading == null) return
+
+    Spacer(modifier = Modifier.height(16.dp))
+    TextCard(stringResource(R.string.readings_marriage_summary), reading.summary)
+    reading.points.forEach { p ->
+        Spacer(modifier = Modifier.height(12.dp))
+        TextCard(p.title, p.text)
+    }
+    if (reading.tip.isNotBlank()) {
+        Spacer(modifier = Modifier.height(12.dp))
+        TextCard(stringResource(R.string.readings_small_tip), reading.tip)
+    }
+    if (reading.remedies.isNotEmpty()) {
+        Spacer(modifier = Modifier.height(12.dp))
+        SectionCard(
+            stringResource(R.string.readings_marriage_remedies),
+            reading.remedies.map { rem ->
+                if (rem.forPlanet.isBlank()) rem.remedy
+                else stringResource(R.string.readings_marriage_remedy_fmt, rem.remedy, astroTerm(rem.forPlanet))
+            }
+        )
+    }
+    Spacer(modifier = Modifier.height(12.dp))
+    Text(
+        stringResource(R.string.readings_small_disclaimer),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
 }

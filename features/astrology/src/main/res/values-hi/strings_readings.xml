@@ -155,4 +155,15 @@
     <string name="readings_preview_inc_care">किन बातों का ध्यान रखें</string>
     <string name="readings_preview_inc_advice">सलाह</string>
     <string name="readings_preview_inc_remedies">उपाय</string>
+    <string name="readings_tab_small">छोटी रीडिंग</string>
+    <string name="readings_err_small">यह रीडिंग नहीं बन पाई। आपके पैसे नहीं कटे।</string>
+    <string name="readings_small_love_style">आपका प्यार का अंदाज़</string>
+    <string name="readings_small_ideal_partner">आपके लिए सही जीवनसाथी</string>
+    <string name="readings_small_in_laws">आप और आपका ससुराल</string>
+    <string name="readings_small_love_style_desc">₹49, या प्रीमियम में मुफ़्त। आपके शुक्र, चंद्र, पाँचवें भाव और मंगल से: आप प्यार कैसे महसूस करते और जताते हैं, जीवनसाथी से आपको क्या चाहिए, और क्या रुकावट बन सकता है। पैसे तभी कटेंगे जब रीडिंग तैयार हो।</string>
+    <string name="readings_small_ideal_partner_desc">₹49, या प्रीमियम में मुफ़्त। आपके सातवें भाव, उसके स्वामी, उपपद, दाराकारक और D9 से: आपके लिए सही जीवनसाथी का स्वभाव और सोच। पैसे तभी कटेंगे जब रीडिंग तैयार हो।</string>
+    <string name="readings_small_in_laws_desc">₹49, या प्रीमियम में मुफ़्त। जीवनसाथी के परिवार के भावों और आपके सातवें भाव के स्वामी से: ससुराल से आपका रिश्ता कैसा रह सकता है और उसमें अपनापन कैसे बनाए रखें। पैसे तभी कटेंगे जब रीडिंग तैयार हो।</string>
+    <string name="readings_small_generate_fmt">पढ़ें: %1$s</string>
+    <string name="readings_small_tip">आपके लिए एक सलाह</string>
+    <string name="readings_small_disclaimer">ज्योतिष झुकाव बताता है, तय नतीजे नहीं। रिश्ते दोनों तरफ़ की देखभाल से बढ़ते हैं।</string>
 </resources>

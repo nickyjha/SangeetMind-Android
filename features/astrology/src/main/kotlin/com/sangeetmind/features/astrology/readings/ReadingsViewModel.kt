@@ -15,6 +15,7 @@ import com.sangeetmind.libs.models.EducationReadingResponse
 import com.sangeetmind.libs.models.HealthReadingResponse
 import com.sangeetmind.libs.models.PropertyReadingResponse
 import com.sangeetmind.libs.models.ReadingPreview
+import com.sangeetmind.libs.models.SmallReadingResponse
 import com.sangeetmind.libs.models.WealthReadingResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,8 +26,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 val CAREER_QUESTIONS = listOf("job_change", "promotion", "govt_private", "job_business")
+val SMALL_TOPICS = listOf("love_style", "ideal_partner", "in_laws")
 
-enum class ReadingTab { CAREER, STRENGTHS, MARRIAGE, CHILDREN, FOREIGN, WEALTH, PROPERTY, EDUCATION, DEBT, RELATIONSHIP, HEALTH }
+enum class ReadingTab { CAREER, STRENGTHS, MARRIAGE, SMALL, CHILDREN, FOREIGN, WEALTH, PROPERTY, EDUCATION, DEBT, RELATIONSHIP, HEALTH }
 
 data class ReadingsUiState(
     val tab: ReadingTab = ReadingTab.CAREER,
@@ -54,6 +56,9 @@ data class ReadingsUiState(
     val aboutRemarriage: Boolean = false,
     val debt: DebtReadingResponse? = null,
     val aboutDispute: Boolean = false,
+    val smallTopic: String = SMALL_TOPICS.first(),
+    // Small readings made this session, by topic.
+    val small: Map<String, SmallReadingResponse> = emptyMap(),
     // Free previews by "topic|status" (see previewKey); a missing key is not loaded (yet).
     val previews: Map<String, ReadingPreview> = emptyMap(),
     val error: String? = null
@@ -62,7 +67,7 @@ data class ReadingsUiState(
     val previewKey: String?
         get() = when (tab) {
             ReadingTab.CAREER -> careerQuestion?.let { "career_question|$it" }
-            ReadingTab.STRENGTHS -> null
+            ReadingTab.STRENGTHS, ReadingTab.SMALL -> null
             ReadingTab.MARRIAGE -> "marriage|" + if (married) "married" else "single"
             ReadingTab.CHILDREN -> "children|" + if (isParent) "parent" else "planning"
             ReadingTab.FOREIGN -> "foreign|" + if (livesAbroad) "abroad" else "planning"
@@ -79,6 +84,7 @@ data class ReadingsUiState(
         get() = when (tab) {
             ReadingTab.CAREER -> if (careerQuestion == null) career != null else careerAnswer?.question == careerQuestion
             ReadingTab.STRENGTHS -> strengths != null
+            ReadingTab.SMALL -> smallTopic in small
             ReadingTab.MARRIAGE -> marriage?.reading != null
             ReadingTab.CHILDREN -> children?.reading != null
             ReadingTab.FOREIGN -> foreign?.reading != null
@@ -289,6 +295,24 @@ class ReadingsViewModel @Inject constructor(
             val status = if (_uiState.value.aboutRemarriage) "remarriage" else "strain"
             when (val result = repository.getRelationshipReading(status)) {
                 is Result.Success -> _uiState.update { it.copy(isLoading = false, relationship = result.data) }
+                is Result.Error -> _uiState.update { it.copy(isLoading = false, error = result.message) }
+                is Result.Loading -> Unit
+            }
+        }
+    }
+
+    fun setSmallTopic(topic: String) {
+        _uiState.update { it.copy(smallTopic = topic, error = null) }
+    }
+
+    fun generateSmallReading() {
+        val topic = _uiState.value.smallTopic
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            when (val result = repository.getSmallReading(topic)) {
+                is Result.Success -> _uiState.update {
+                    it.copy(isLoading = false, small = it.small + (topic to result.data))
+                }
                 is Result.Error -> _uiState.update { it.copy(isLoading = false, error = result.message) }
                 is Result.Loading -> Unit
             }

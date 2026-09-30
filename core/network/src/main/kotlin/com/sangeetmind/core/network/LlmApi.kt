@@ -1,6 +1,8 @@
 package com.sangeetmind.core.network
 
 import com.sangeetmind.libs.models.ReadingPreview
+import com.sangeetmind.libs.models.SmallReadingRequest
+import com.sangeetmind.libs.models.SmallReadingResponse
 import com.sangeetmind.libs.models.ReadingPreviewRequest
 import com.sangeetmind.libs.models.CareerReadingRequest
 import com.sangeetmind.libs.models.CareerReadingResponse
@@ -59,6 +61,9 @@ interface LlmApi {
 
     @POST("llm/relationship")
     suspend fun getRelationshipReading(@Body body: RelationshipReadingRequest): RelationshipReadingResponse
+
+    @POST("llm/small")
+    suspend fun getSmallReading(@Body body: SmallReadingRequest): SmallReadingResponse
 
     @POST("llm/preview")
     suspend fun getReadingPreview(@Body body: ReadingPreviewRequest): ReadingPreview

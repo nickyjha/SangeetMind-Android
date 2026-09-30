@@ -155,4 +155,15 @@
     <string name="readings_preview_inc_care">What to watch</string>
     <string name="readings_preview_inc_advice">Advice</string>
     <string name="readings_preview_inc_remedies">Remedies</string>
+    <string name="readings_tab_small">Quick readings</string>
+    <string name="readings_err_small">Could not make this reading. You were not charged.</string>
+    <string name="readings_small_love_style">Your love style</string>
+    <string name="readings_small_ideal_partner">Your ideal partner</string>
+    <string name="readings_small_in_laws">You and your in-laws</string>
+    <string name="readings_small_love_style_desc">₹49, or free with Premium. From your Venus, Moon, 5th house and Mars: how you feel and show love, what you need from a partner, and what can get in the way. Charged only if the reading is made.</string>
+    <string name="readings_small_ideal_partner_desc">₹49, or free with Premium. From your 7th house, its lord, the Upapada, Darakaraka and D9: the nature and values of a partner who suits you. Charged only if the reading is made.</string>
+    <string name="readings_small_in_laws_desc">₹49, or free with Premium. From the houses of your spouse\'s family and your 7th lord: how your bond with your in-laws can go and how to keep it warm. Charged only if the reading is made.</string>
+    <string name="readings_small_generate_fmt">Read: %1$s</string>
+    <string name="readings_small_tip">A tip for you</string>
+    <string name="readings_small_disclaimer">Astrology shows tendencies, not fixed outcomes. Relationships grow with care from both sides.</string>
 </resources>

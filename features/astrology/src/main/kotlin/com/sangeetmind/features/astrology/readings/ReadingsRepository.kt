@@ -37,6 +37,8 @@ import com.sangeetmind.libs.models.EducationReadingResponse
 import com.sangeetmind.libs.models.PropertyReadingRequest
 import com.sangeetmind.libs.models.ReadingPreview
 import com.sangeetmind.libs.models.ReadingPreviewRequest
+import com.sangeetmind.libs.models.SmallReadingRequest
+import com.sangeetmind.libs.models.SmallReadingResponse
 import com.sangeetmind.libs.models.PropertyReadingResponse
 import com.sangeetmind.libs.models.WealthReadingRequest
 import com.sangeetmind.libs.models.WealthReadingResponse
@@ -71,6 +73,8 @@ private const val DEBT_PRICE_PAISE = 9900L
 private const val EDUCATION_PRICE_PAISE = 9900L
 private const val PROPERTY_PRICE_PAISE = 9900L
 private const val CAREER_QUESTION_PRICE_PAISE = 9900L
+// Small readings: SKU is "llm_" + topic (llm_love_style, llm_ideal_partner, llm_in_laws).
+private const val SMALL_PRICE_PAISE = 4900L
 
 @Singleton
 class ReadingsRepository @Inject constructor(
@@ -281,6 +285,17 @@ class ReadingsRepository @Inject constructor(
                     status = status,
                     lang = languageManager.current.code
                 )
+            )
+        }
+
+    /** A short reading on one question; [topic] is one of SMALL_TOPICS. */
+    suspend fun getSmallReading(topic: String): Result<SmallReadingResponse> =
+        payAfterSuccess(
+            "llm_$topic", SMALL_PRICE_PAISE, R.string.readings_err_small,
+            succeeded = { it.ok && it.reading != null }
+        ) { kundli ->
+            llmApi.getSmallReading(
+                SmallReadingRequest(birthDetails(kundli), topic = topic, lang = languageManager.current.code)
             )
         }
 

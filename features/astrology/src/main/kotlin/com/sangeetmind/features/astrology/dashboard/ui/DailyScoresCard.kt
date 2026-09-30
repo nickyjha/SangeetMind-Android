@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.LinearProgressIndicator
@@ -36,6 +38,7 @@ import com.sangeetmind.core.ui.language.LocalAppLanguage
 import com.sangeetmind.core.ui.language.astroTerm
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.features.astrology.R
+import com.sangeetmind.libs.models.DailyAction
 import com.sangeetmind.libs.models.DailyScoresResponse
 import java.time.LocalDate
 import java.time.format.TextStyle
@@ -183,3 +186,42 @@ private fun areaLabel(key: String): Int = when (key) {
     else -> R.string.dashboard_area_self
 }
 
+
+/** Action of the day: one small step for today's weakest area, with a commit button and
+ * the on-device streak (ActionStreakStore). */
+@Composable
+internal fun ActionCard(action: DailyAction, done: Boolean, streak: Int, onDone: () -> Unit) {
+    val graha = LocalGrahaColors.current
+    val languageCode = LocalAppLanguage.current.code
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(stringResource(R.string.dashboard_action_title), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+                Text(stringResource(areaLabel(action.area)), style = MaterialTheme.typography.labelMedium, color = graha.guru)
+            }
+            Text(
+                action.text.forLanguage(languageCode),
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            if (done) {
+                OutlinedButton(onClick = {}, enabled = false, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.dashboard_action_done))
+                }
+            } else {
+                Button(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.dashboard_action_commit))
+                }
+            }
+            if (streak > 0) {
+                Text(
+                    stringResource(R.string.dashboard_action_streak_fmt, streak),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = graha.budha,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+        }
+    }
+}

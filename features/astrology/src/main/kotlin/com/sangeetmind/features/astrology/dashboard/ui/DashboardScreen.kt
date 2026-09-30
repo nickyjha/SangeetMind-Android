@@ -185,6 +185,15 @@ fun DashboardScreen(
                             uiState.dailyScores?.let {
                                 Spacer(modifier = Modifier.height(16.dp))
                                 DailyScoresCard(it, onAsk = onAskChatMind)
+                                it.days.firstOrNull { d -> d.label == "today" }?.action?.let { action ->
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    ActionCard(
+                                        action = action,
+                                        done = uiState.actionDoneToday,
+                                        streak = uiState.actionStreak,
+                                        onDone = viewModel::markActionDone
+                                    )
+                                }
                             }
                         }
                     }

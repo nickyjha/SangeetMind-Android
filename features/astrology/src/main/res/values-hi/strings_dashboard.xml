@@ -49,4 +49,8 @@
     <string name="dashboard_area_career">करियर</string>
     <string name="dashboard_lucky_number">शुभ अंक</string>
     <string name="dashboard_lucky_time">शुभ समय</string>
+    <string name="dashboard_action_title">आज का काम</string>
+    <string name="dashboard_action_commit">पक्का, आज यह करना है</string>
+    <string name="dashboard_action_done">✓ आज के लिए तय</string>
+    <string name="dashboard_action_streak_fmt">🔥 लगातार %1$d दिन</string>
 </resources>

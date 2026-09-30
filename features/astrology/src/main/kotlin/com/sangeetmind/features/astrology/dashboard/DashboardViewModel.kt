@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.dashboard
 
+import java.time.LocalDate
 import com.sangeetmind.core.network.PanchangApi
 import com.sangeetmind.libs.models.CareerBirthDetails
 import com.sangeetmind.libs.models.DailyScoresRequest
@@ -42,6 +43,8 @@ data class DashboardUiState(
     val todayHoroscope: DailyHoroscope? = null,
     val todayPanchang: PanchangResponse? = null,
     val dailyScores: DailyScoresResponse? = null,
+    val actionDoneToday: Boolean = false,
+    val actionStreak: Int = 0,
     val error: String? = null
 )
 
@@ -55,6 +58,7 @@ class DashboardViewModel @Inject constructor(
     private val horoscopeRepository: HoroscopeRepository,
     private val panchangRepository: PanchangRepository,
     private val panchangApi: PanchangApi,
+    private val actionStreakStore: ActionStreakStore,
     private val languageManager: LanguageManager
 ) : ViewModel() {
 
@@ -142,6 +146,23 @@ class DashboardViewModel @Inject constructor(
                 )
             }.getOrNull()
             _uiState.update { it.copy(dailyScores = scores) }
+            refreshActionState()
         }
+    }
+
+    private fun refreshActionState() {
+        val today = LocalDate.now()
+        _uiState.update {
+            it.copy(
+                actionDoneToday = actionStreakStore.isDone(today),
+                actionStreak = actionStreakStore.streak(today)
+            )
+        }
+    }
+
+    /** "I'll do this today" on the Action of the day. */
+    fun markActionDone() {
+        actionStreakStore.markDone(LocalDate.now())
+        refreshActionState()
     }
 }

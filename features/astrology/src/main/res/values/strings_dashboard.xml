@@ -49,4 +49,8 @@
     <string name="dashboard_area_career">Career</string>
     <string name="dashboard_lucky_number">Lucky number</string>
     <string name="dashboard_lucky_time">Lucky time</string>
+    <string name="dashboard_action_title">Action of the day</string>
+    <string name="dashboard_action_commit">I\'ll do this today</string>
+    <string name="dashboard_action_done">✓ Planned for today</string>
+    <string name="dashboard_action_streak_fmt">🔥 %1$d-day streak</string>
 </resources>

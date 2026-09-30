@@ -35,7 +35,15 @@ data class DayScores(
     val overall: Int,
     val areas: Map<String, AreaScore> = emptyMap(),
     @Json(name = "lucky_number") val luckyNumber: Int? = null,
-    @Json(name = "lucky_time") val luckyTime: LuckyTime? = null
+    @Json(name = "lucky_time") val luckyTime: LuckyTime? = null,
+    val action: DailyAction? = null
+)
+
+/** A small practical step for the day's weakest area (area: self | wealth | love | career). */
+@JsonClass(generateAdapter = true)
+data class DailyAction(
+    val area: String,
+    val text: LocalizedText = LocalizedText()
 )
 
 @JsonClass(generateAdapter = true)

@@ -102,6 +102,8 @@
     <string name="chart_status_active">चल रही है</string>
     <string name="chart_status_not_active">नहीं चल रही</string>
     <string name="chart_no_kalsarpa">इस कुंडली में कालसर्प योग नहीं है।</string>
+    <string name="chart_dosha_not_formed">इस कुंडली में यह दोष नहीं बनता।</string>
+    <string name="chart_dosha_remedy_fmt">उपाय: %1$s</string>
     <string name="chart_sadesati_until">%1$s · %2$s तक</string>
     <string name="chart_sadesati_next">अगला: %1$s %2$s से शुरू</string>
     <string name="chart_sadesati_none">आगे साढ़े साती या छोटी पनौती का कोई समय नहीं मिला।</string>

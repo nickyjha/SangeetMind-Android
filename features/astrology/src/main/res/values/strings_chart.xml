@@ -104,6 +104,8 @@
     <string name="chart_status_active">Active</string>
     <string name="chart_status_not_active">Not active</string>
     <string name="chart_no_kalsarpa">No Kalsarpa Yoga in this chart.</string>
+    <string name="chart_dosha_not_formed">Not formed in this chart.</string>
+    <string name="chart_dosha_remedy_fmt">Remedy: %1$s</string>
     <string name="chart_sadesati_until">%1$s · until %2$s</string>
     <string name="chart_sadesati_next">Next: %1$s starts %2$s</string>
     <string name="chart_sadesati_none">No upcoming Sade Sati or Small Panoti period found.</string>

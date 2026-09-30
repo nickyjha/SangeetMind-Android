@@ -182,8 +182,32 @@ data class SadesatiDosha(
 data class ChartDoshas(
     val manglik: ManglikDosha = ManglikDosha(),
     val kalsarpa: KalsarpaDosha = KalsarpaDosha(),
-    val sadesati: SadesatiDosha = SadesatiDosha()
+    val sadesati: SadesatiDosha = SadesatiDosha(),
+    // Null on charts cached before these were added (backend extra_doshas.py, cache v17).
+    val pitra: ExtraDosha? = null,
+    val grahan: ExtraDosha? = null,
+    val gandanta: ExtraDosha? = null
 )
+
+/** Pitra/Grahan/Gandanta: why this chart has it (one factor per rule that fired), what it
+ * classically means and a remedy. meaning/remedy are null when not present. */
+@JsonClass(generateAdapter = true)
+data class ExtraDosha(
+    val present: Boolean = false,
+    val name: LocalizedText = LocalizedText(),
+    val factors: List<DoshaFactor> = emptyList(),
+    val meaning: LocalizedText? = null,
+    val remedy: LocalizedText? = null
+)
+
+@JsonClass(generateAdapter = true)
+data class DoshaFactor(
+    val planets: List<String> = emptyList(),
+    val en: String = "",
+    val hi: String = ""
+) {
+    val text: LocalizedText get() = LocalizedText(en, hi)
+}
 
 /** Sarva Ashtakvarga — bindu (strength) score per sign, summing to 337 across the chart. */
 @JsonClass(generateAdapter = true)

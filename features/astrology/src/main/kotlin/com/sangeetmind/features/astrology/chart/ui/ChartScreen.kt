@@ -77,6 +77,7 @@ import com.sangeetmind.libs.models.ChartNarratives
 import com.sangeetmind.libs.models.ChartShadbala
 import com.sangeetmind.libs.models.ChartSummaryResponse
 import com.sangeetmind.libs.models.ChartYoga
+import com.sangeetmind.libs.models.ExtraDosha
 import com.sangeetmind.libs.models.ShadbalaRanking
 import com.sangeetmind.libs.models.DashaPeriod
 import com.sangeetmind.libs.models.DivisionalChart
@@ -826,7 +827,60 @@ private fun DoshaCard(doshas: ChartDoshas) {
                 flaggedColor = graha.mangala,
                 clearColor = graha.budha
             )
+
+            listOfNotNull(doshas.pitra, doshas.grahan, doshas.gandanta).forEach { ExtraDoshaRow(it) }
         }
+    }
+}
+
+/** Pitra/Grahan/Gandanta: the status row, then planet chips and each factor that fired,
+ * what it classically means and a remedy. Clear doshas get a one-line "not formed". */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun ExtraDoshaRow(dosha: ExtraDosha) {
+    val graha = LocalGrahaColors.current
+    val languageCode = LocalAppLanguage.current.code
+    val muted = MaterialTheme.colorScheme.onSurfaceVariant
+    DoshaRow(
+        label = dosha.name.forLanguage(languageCode),
+        isFlagged = dosha.present,
+        statusText = if (dosha.present) stringResource(R.string.chart_status_present) else stringResource(R.string.chart_status_not_present),
+        detail = if (dosha.present) null else stringResource(R.string.chart_dosha_not_formed),
+        flaggedColor = graha.mangala,
+        clearColor = graha.budha
+    )
+    if (!dosha.present) return
+    val planets = dosha.factors.flatMap { it.planets }.distinct()
+    if (planets.isNotEmpty()) {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            planets.forEach { Chip(astroTerm(it), grahaColorFor(it, graha)) }
+        }
+    }
+    dosha.factors.forEach {
+        Text(
+            it.text.forLanguage(languageCode),
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(top = 4.dp)
+        )
+    }
+    dosha.meaning?.let {
+        Text(
+            it.forLanguage(languageCode),
+            style = MaterialTheme.typography.bodySmall,
+            color = muted,
+            modifier = Modifier.padding(top = 4.dp)
+        )
+    }
+    dosha.remedy?.let {
+        Text(
+            stringResource(R.string.chart_dosha_remedy_fmt, it.forLanguage(languageCode)),
+            style = MaterialTheme.typography.bodySmall,
+            color = muted,
+            modifier = Modifier.padding(top = 4.dp, bottom = 8.dp)
+        )
     }
 }
 

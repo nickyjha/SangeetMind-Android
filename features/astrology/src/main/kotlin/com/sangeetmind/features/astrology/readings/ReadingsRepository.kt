@@ -26,6 +26,8 @@ import com.sangeetmind.libs.models.StrengthsReadingRequest
 import com.sangeetmind.libs.models.StrengthsReadingResponse
 import com.sangeetmind.libs.models.CareerQuestionRequest
 import com.sangeetmind.libs.models.CareerQuestionResponse
+import com.sangeetmind.libs.models.EducationReadingRequest
+import com.sangeetmind.libs.models.EducationReadingResponse
 import com.sangeetmind.libs.models.PropertyReadingRequest
 import com.sangeetmind.libs.models.PropertyReadingResponse
 import com.sangeetmind.libs.models.WealthReadingRequest
@@ -51,6 +53,8 @@ private const val WEALTH_SKU = "llm_wealth"
 private const val WEALTH_PRICE_PAISE = 9900L
 private const val CAREER_QUESTION_SKU = "llm_career_question"
 private const val PROPERTY_SKU = "llm_property"
+private const val EDUCATION_SKU = "llm_education"
+private const val EDUCATION_PRICE_PAISE = 9900L
 private const val PROPERTY_PRICE_PAISE = 9900L
 private const val CAREER_QUESTION_PRICE_PAISE = 9900L
 
@@ -214,6 +218,21 @@ class ReadingsRepository @Inject constructor(
         ) { kundli ->
             llmApi.getWealthReading(
                 WealthReadingRequest(
+                    birthDetails(kundli),
+                    status = status,
+                    lang = languageManager.current.code
+                )
+            )
+        }
+
+    /** Education reading; [status] is "student" or "higher". */
+    suspend fun getEducationReading(status: String): Result<EducationReadingResponse> =
+        payAfterSuccess(
+            EDUCATION_SKU, EDUCATION_PRICE_PAISE, R.string.readings_err_education,
+            succeeded = { it.ok && it.reading != null }
+        ) { kundli ->
+            llmApi.getEducationReading(
+                EducationReadingRequest(
                     birthDetails(kundli),
                     status = status,
                     lang = languageManager.current.code

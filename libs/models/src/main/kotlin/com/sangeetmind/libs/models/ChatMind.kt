@@ -338,3 +338,34 @@ data class PropertyReadingResponse(
     val windows: List<MarriageTiming> = emptyList(),
     val error: String? = null
 )
+
+// ---- Education reading: POST /llm/education ----
+// status "student" (4th/5th) or "higher" (5th/9th); Mercury, Jupiter, D24.
+// Timing `kind` is always "education".
+
+@JsonClass(generateAdapter = true)
+data class EducationReadingRequest(
+    @Json(name = "birth_details") val birthDetails: CareerBirthDetails,
+    val status: String, // "student" | "higher"
+    val lang: String = "en"
+)
+
+@JsonClass(generateAdapter = true)
+data class EducationReading(
+    val summary: String = "",
+    val outlook: String = "",
+    val strengths: List<String> = emptyList(),
+    @Json(name = "care_points") val carePoints: List<String> = emptyList(),
+    val timing: List<MarriageTiming> = emptyList(),
+    val advice: List<String> = emptyList(),
+    val remedies: List<MarriageRemedy> = emptyList()
+)
+
+@JsonClass(generateAdapter = true)
+data class EducationReadingResponse(
+    val ok: Boolean,
+    val status: String = "student",
+    val reading: EducationReading? = null,
+    val windows: List<MarriageTiming> = emptyList(),
+    val error: String? = null
+)

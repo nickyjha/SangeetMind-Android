@@ -104,4 +104,14 @@
     <string name="readings_property_kind_home">घर-ज़मीन के लिए अच्छा</string>
     <string name="readings_property_kind_vehicle">वाहन के लिए अच्छा</string>
     <string name="readings_property_disclaimer">ज्योतिष सिर्फ़ राह दिखाता है। बड़ी ख़रीद से पहले कागज़ ध्यान से जाँचें और क़ानूनी या वित्तीय सलाह लें।</string>
+    <string name="readings_tab_education">पढ़ाई</string>
+    <string name="readings_err_education">पढ़ाई की रीडिंग नहीं बन पाई। आपके पैसे नहीं कटे।</string>
+    <string name="readings_education_desc">₹99, या प्रीमियम में मुफ़्त। आपके चौथे, पाँचवें और नौवें भाव, बुध, गुरु, D24 चार्ट और दशा से आप कैसे सीखते हैं, कौन-से विषय आपको सूट करते हैं और पढ़ाई का अच्छा समय। पैसे तभी कटेंगे जब रीडिंग तैयार हो।</string>
+    <string name="readings_education_student">छात्र</string>
+    <string name="readings_education_higher">उच्च शिक्षा</string>
+    <string name="readings_education_generate">पढ़ाई की रीडिंग बनाएँ</string>
+    <string name="readings_education_outlook">आप कैसे सीखते हैं</string>
+    <string name="readings_education_timing">पढ़ाई का अच्छा समय</string>
+    <string name="readings_education_kind">पढ़ाई के लिए अच्छा</string>
+    <string name="readings_education_disclaimer">ज्योतिष रुझान बताता है, नंबर या नतीजे नहीं। मेहनत, अच्छी पढ़ाई और बच्चे की अपनी रुचि सबसे ज़्यादा मायने रखती है।</string>
 </resources>

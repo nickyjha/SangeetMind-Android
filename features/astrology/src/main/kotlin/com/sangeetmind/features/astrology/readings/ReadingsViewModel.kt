@@ -9,6 +9,7 @@ import com.sangeetmind.libs.models.ForeignReadingResponse
 import com.sangeetmind.libs.models.MarriageReadingResponse
 import com.sangeetmind.libs.models.StrengthsReadingResponse
 import com.sangeetmind.libs.models.CareerQuestionResponse
+import com.sangeetmind.libs.models.EducationReadingResponse
 import com.sangeetmind.libs.models.PropertyReadingResponse
 import com.sangeetmind.libs.models.WealthReadingResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +22,7 @@ import javax.inject.Inject
 
 val CAREER_QUESTIONS = listOf("job_change", "promotion", "govt_private", "job_business")
 
-enum class ReadingTab { CAREER, STRENGTHS, MARRIAGE, CHILDREN, FOREIGN, WEALTH, PROPERTY }
+enum class ReadingTab { CAREER, STRENGTHS, MARRIAGE, CHILDREN, FOREIGN, WEALTH, PROPERTY, EDUCATION }
 
 data class ReadingsUiState(
     val tab: ReadingTab = ReadingTab.CAREER,
@@ -41,6 +42,8 @@ data class ReadingsUiState(
     val ownsBusiness: Boolean = false,
     val property: PropertyReadingResponse? = null,
     val aboutVehicle: Boolean = false,
+    val education: EducationReadingResponse? = null,
+    val higherStudies: Boolean = false,
     val error: String? = null
 )
 
@@ -169,6 +172,22 @@ class ReadingsViewModel @Inject constructor(
             val status = if (_uiState.value.aboutVehicle) "vehicle" else "property"
             when (val result = repository.getPropertyReading(status)) {
                 is Result.Success -> _uiState.update { it.copy(isLoading = false, property = result.data) }
+                is Result.Error -> _uiState.update { it.copy(isLoading = false, error = result.message) }
+                is Result.Loading -> Unit
+            }
+        }
+    }
+
+    fun setHigherStudies(higherStudies: Boolean) {
+        _uiState.update { it.copy(higherStudies = higherStudies) }
+    }
+
+    fun generateEducationReading() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            val status = if (_uiState.value.higherStudies) "higher" else "student"
+            when (val result = repository.getEducationReading(status)) {
+                is Result.Success -> _uiState.update { it.copy(isLoading = false, education = result.data) }
                 is Result.Error -> _uiState.update { it.copy(isLoading = false, error = result.message) }
                 is Result.Loading -> Unit
             }

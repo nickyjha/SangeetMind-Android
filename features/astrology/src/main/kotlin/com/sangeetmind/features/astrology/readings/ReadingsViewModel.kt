@@ -9,6 +9,7 @@ import com.sangeetmind.libs.models.ForeignReadingResponse
 import com.sangeetmind.libs.models.MarriageReadingResponse
 import com.sangeetmind.libs.models.StrengthsReadingResponse
 import com.sangeetmind.libs.models.CareerQuestionResponse
+import com.sangeetmind.libs.models.DebtReadingResponse
 import com.sangeetmind.libs.models.EducationReadingResponse
 import com.sangeetmind.libs.models.PropertyReadingResponse
 import com.sangeetmind.libs.models.WealthReadingResponse
@@ -22,7 +23,7 @@ import javax.inject.Inject
 
 val CAREER_QUESTIONS = listOf("job_change", "promotion", "govt_private", "job_business")
 
-enum class ReadingTab { CAREER, STRENGTHS, MARRIAGE, CHILDREN, FOREIGN, WEALTH, PROPERTY, EDUCATION }
+enum class ReadingTab { CAREER, STRENGTHS, MARRIAGE, CHILDREN, FOREIGN, WEALTH, PROPERTY, EDUCATION, DEBT }
 
 data class ReadingsUiState(
     val tab: ReadingTab = ReadingTab.CAREER,
@@ -44,6 +45,8 @@ data class ReadingsUiState(
     val aboutVehicle: Boolean = false,
     val education: EducationReadingResponse? = null,
     val higherStudies: Boolean = false,
+    val debt: DebtReadingResponse? = null,
+    val aboutDispute: Boolean = false,
     val error: String? = null
 )
 
@@ -188,6 +191,22 @@ class ReadingsViewModel @Inject constructor(
             val status = if (_uiState.value.higherStudies) "higher" else "student"
             when (val result = repository.getEducationReading(status)) {
                 is Result.Success -> _uiState.update { it.copy(isLoading = false, education = result.data) }
+                is Result.Error -> _uiState.update { it.copy(isLoading = false, error = result.message) }
+                is Result.Loading -> Unit
+            }
+        }
+    }
+
+    fun setAboutDispute(aboutDispute: Boolean) {
+        _uiState.update { it.copy(aboutDispute = aboutDispute) }
+    }
+
+    fun generateDebtReading() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            val status = if (_uiState.value.aboutDispute) "dispute" else "debt"
+            when (val result = repository.getDebtReading(status)) {
+                is Result.Success -> _uiState.update { it.copy(isLoading = false, debt = result.data) }
                 is Result.Error -> _uiState.update { it.copy(isLoading = false, error = result.message) }
                 is Result.Loading -> Unit
             }

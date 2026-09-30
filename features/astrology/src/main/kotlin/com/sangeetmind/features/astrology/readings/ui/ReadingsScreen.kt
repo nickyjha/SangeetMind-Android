@@ -62,7 +62,8 @@ fun ReadingsScreen(
                 ReadingTab.FOREIGN to R.string.readings_tab_foreign,
                 ReadingTab.WEALTH to R.string.readings_tab_wealth,
                 ReadingTab.PROPERTY to R.string.readings_tab_property,
-                ReadingTab.EDUCATION to R.string.readings_tab_education
+                ReadingTab.EDUCATION to R.string.readings_tab_education,
+                ReadingTab.DEBT to R.string.readings_tab_debt
             )
             ScrollableTabRow(selectedTabIndex = uiState.tab.ordinal, edgePadding = 8.dp) {
                 ReadingTab.values().forEach { tab ->
@@ -249,6 +250,32 @@ fun ReadingsScreen(
                                 advice = r.advice,
                                 remedies = r.remedies,
                                 disclaimer = stringResource(R.string.readings_education_disclaimer)
+                            )
+                        }
+                    )
+                    ReadingTab.DEBT -> LifeReadingTab(
+                        descRes = R.string.readings_debt_desc,
+                        firstOptionRes = R.string.readings_debt_debt,
+                        secondOptionRes = R.string.readings_debt_dispute,
+                        secondSelected = uiState.aboutDispute,
+                        onSecondSelectedChange = viewModel::setAboutDispute,
+                        generateRes = R.string.readings_debt_generate,
+                        isLoading = uiState.isLoading,
+                        onGenerate = viewModel::generateDebtReading,
+                        content = uiState.debt?.reading?.let { r ->
+                            LifeReadingContent(
+                                summary = r.summary,
+                                natureTitle = stringResource(R.string.readings_debt_outlook),
+                                nature = r.outlook,
+                                timingTitle = stringResource(R.string.readings_debt_timing),
+                                timing = r.timing,
+                                strengthsTitle = stringResource(R.string.readings_children_strengths),
+                                strengths = r.strengths,
+                                careTitle = stringResource(R.string.readings_children_care),
+                                care = r.carePoints,
+                                advice = r.advice,
+                                remedies = r.remedies,
+                                disclaimer = stringResource(R.string.readings_debt_disclaimer)
                             )
                         }
                     )
@@ -644,6 +671,8 @@ private fun TimingCard(title: String, timing: List<MarriageTiming>) {
                             "property" -> Chip(stringResource(R.string.readings_property_kind_home), graha.mangala)
                             "vehicle" -> Chip(stringResource(R.string.readings_property_kind_vehicle), graha.shukra)
                             "education" -> Chip(stringResource(R.string.readings_education_kind), graha.guru)
+                            "debt" -> Chip(stringResource(R.string.readings_debt_kind_debt), graha.shani)
+                            "dispute" -> Chip(stringResource(R.string.readings_debt_kind_dispute), graha.mangala)
                             "supportive" -> Chip(stringResource(R.string.readings_marriage_kind_supportive), graha.budha)
                             "sensitive" -> Chip(stringResource(R.string.readings_marriage_kind_sensitive), graha.mangala)
                         }

@@ -114,4 +114,15 @@
     <string name="readings_education_timing">Good periods for study</string>
     <string name="readings_education_kind">Good for study</string>
     <string name="readings_education_disclaimer">Astrology shows aptitude and tendencies, not marks or results. Hard work, good teaching and the student\'s own interest matter most.</string>
+    <string name="readings_tab_debt">Debt / Disputes</string>
+    <string name="readings_err_debt">Could not generate debt / disputes reading. You have not been charged.</string>
+    <string name="readings_debt_desc">₹99, or free with Premium. How you handle debts or disputes, what helps you settle them and good periods for it, from your 6th house and its lord, Mars, Saturn, Rahu, Jupiter and dashas. You\'re only charged if the reading is ready.</string>
+    <string name="readings_debt_debt">Debt</string>
+    <string name="readings_debt_dispute">Court / disputes</string>
+    <string name="readings_debt_generate">Generate reading</string>
+    <string name="readings_debt_outlook">Your pattern</string>
+    <string name="readings_debt_timing">Good periods to settle</string>
+    <string name="readings_debt_kind_debt">Good to repay</string>
+    <string name="readings_debt_kind_dispute">Good to settle</string>
+    <string name="readings_debt_disclaimer">Astrology cannot predict how a case will end. For loans, talk to a financial counsellor; for legal matters, a lawyer.</string>
 </resources>

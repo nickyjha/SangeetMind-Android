@@ -114,4 +114,15 @@
     <string name="readings_education_timing">पढ़ाई का अच्छा समय</string>
     <string name="readings_education_kind">पढ़ाई के लिए अच्छा</string>
     <string name="readings_education_disclaimer">ज्योतिष रुझान बताता है, नंबर या नतीजे नहीं। मेहनत, अच्छी पढ़ाई और बच्चे की अपनी रुचि सबसे ज़्यादा मायने रखती है।</string>
+    <string name="readings_tab_debt">कर्ज़-विवाद</string>
+    <string name="readings_err_debt">कर्ज़-विवाद की रीडिंग नहीं बन पाई। आपके पैसे नहीं कटे।</string>
+    <string name="readings_debt_desc">₹99, या प्रीमियम में मुफ़्त। आपके छठे भाव और उसके स्वामी, मंगल, शनि, राहु, गुरु और दशा से कर्ज़ या विवाद को आप कैसे संभालते हैं, क्या मदद करता है और सुलझाने का अच्छा समय। पैसे तभी कटेंगे जब रीडिंग तैयार हो।</string>
+    <string name="readings_debt_debt">कर्ज़</string>
+    <string name="readings_debt_dispute">कोर्ट / विवाद</string>
+    <string name="readings_debt_generate">रीडिंग बनाएँ</string>
+    <string name="readings_debt_outlook">आपका स्वभाव</string>
+    <string name="readings_debt_timing">सुलझाने का अच्छा समय</string>
+    <string name="readings_debt_kind_debt">कर्ज़ चुकाने के लिए अच्छा</string>
+    <string name="readings_debt_kind_dispute">विवाद सुलझाने के लिए अच्छा</string>
+    <string name="readings_debt_disclaimer">ज्योतिष किसी केस का फ़ैसला नहीं बता सकता। कर्ज़ के लिए किसी वित्तीय सलाहकार से और क़ानूनी मामलों के लिए वकील से बात करें।</string>
 </resources>

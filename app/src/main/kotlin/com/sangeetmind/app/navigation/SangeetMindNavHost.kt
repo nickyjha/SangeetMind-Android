@@ -28,6 +28,7 @@ import com.sangeetmind.features.astrology.referrals.ui.ReferralScreen
 import com.sangeetmind.features.astrology.reports.ui.ReportsScreen
 import com.sangeetmind.features.astrology.sangeet.ui.SangeetScreen
 import com.sangeetmind.features.astrology.holistic.ui.HolisticScreen
+import com.sangeetmind.features.astrology.eclipse.ui.EclipseScreen
 import com.sangeetmind.features.astrology.gochar.ui.GocharScreen
 import com.sangeetmind.features.astrology.varshaphal.ui.VarshaphalScreen
 import com.sangeetmind.features.auth.ui.AuthScreen
@@ -117,6 +118,7 @@ fun SangeetMindNavHost(
                 onOpenSangeet = { navController.navigate("sangeet") },
                 onOpenVarshaphal = { navController.navigate("varshaphal") },
                 onOpenGochar = { navController.navigate("gochar") },
+                onOpenEclipses = { navController.navigate("eclipses") },
                 onOpenHolistic = { navController.navigate("holistic") }
             )
         }
@@ -221,6 +223,9 @@ fun SangeetMindNavHost(
 
         composable("gochar") {
             GocharScreen(onNavigateBack = { navController.popBackStack() })
+        }
+        composable("eclipses") {
+            EclipseScreen(onNavigateBack = { navController.popBackStack() })
         }
         composable("varshaphal") {
             VarshaphalScreen(onNavigateBack = { navController.popBackStack() })

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="eclipse_title">Eclipses</string>
+    <string name="eclipse_error_load">Could not load the eclipse calendar.</string>
+    <string name="eclipse_no_kundli">Add your kundli first; eclipse times are shown for your place.</string>
+    <string name="eclipse_place_fmt">Times for %1$s</string>
+    <string name="eclipse_none">No eclipses this year.</string>
+    <string name="eclipse_peak_fmt">%1$s · peak %2$s</string>
+    <string name="eclipse_visible">Visible here</string>
+    <string name="eclipse_not_visible">Not visible here</string>
+    <string name="eclipse_local_fmt">Seen here from %1$s to %2$s</string>
+    <string name="eclipse_sutak_fmt">Sutak: %1$s – %2$s</string>
+    <string name="eclipse_no_sutak_penumbral">Penumbral eclipse: no sutak is observed.</string>
+    <string name="eclipse_no_sutak_not_visible">Not visible here, so no sutak.</string>
+    <string name="eclipse_your_sign_fmt">For your Moon sign (%1$s):</string>
+    <string name="eclipse_favourable">Favourable</string>
+    <string name="eclipse_mixed">Mixed</string>
+    <string name="eclipse_careful">Take care</string>
+    <string name="eclipse_note">Sutak is 12 hours before a solar eclipse and 9 hours before a lunar one, and applies only where the eclipse is visible. The effect by Moon sign follows the panchang tradition.</string>
+</resources>

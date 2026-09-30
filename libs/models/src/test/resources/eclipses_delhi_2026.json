@@ -1,0 +1,86 @@
+{
+ "year": 2026,
+ "lat": 28.61,
+ "lon": 77.21,
+ "tz": "Asia/Kolkata",
+ "eclipses": [
+  {
+   "kind": "solar",
+   "type": "annular",
+   "name": {
+    "en": "Annular solar eclipse",
+    "hi": "वलयाकार सूर्य ग्रहण"
+   },
+   "peak": "2026-02-17T17:41:53+05:30",
+   "sign": "Aquarius",
+   "nakshatra": "Dhanishta",
+   "visible": false,
+   "local": null,
+   "sutak": null,
+   "rashi_effects": {
+    "favourable": [
+     "Aries",
+     "Taurus",
+     "Virgo",
+     "Sagittarius"
+    ],
+    "mixed": [
+     "Gemini",
+     "Leo",
+     "Libra",
+     "Capricorn"
+    ],
+    "careful": [
+     "Cancer",
+     "Scorpio",
+     "Aquarius",
+     "Pisces"
+    ]
+   }
+  },
+  {
+   "kind": "lunar",
+   "type": "total",
+   "name": {
+    "en": "Total lunar eclipse",
+    "hi": "पूर्ण चंद्र ग्रहण"
+   },
+   "peak": "2026-03-03T17:03:41+05:30",
+   "sign": "Leo",
+   "nakshatra": "Purva Phalguni",
+   "visible": true,
+   "local": {
+    "begin": "2026-03-03T18:24:17+05:30",
+    "max": "2026-03-03T18:24:17+05:30",
+    "end": "2026-03-03T18:47:17+05:30",
+    "magnitude": 1.151
+   },
+   "sutak": {
+    "begin": "2026-03-03T06:20:05+05:30",
+    "end": "2026-03-03T18:47:17+05:30",
+    "hours_before": 9,
+    "eclipse_starts": "2026-03-03T15:20:05+05:30"
+   },
+   "rashi_effects": {
+    "favourable": [
+     "Gemini",
+     "Libra",
+     "Scorpio",
+     "Pisces"
+    ],
+    "mixed": [
+     "Aries",
+     "Cancer",
+     "Sagittarius",
+     "Aquarius"
+    ],
+    "careful": [
+     "Taurus",
+     "Leo",
+     "Virgo",
+     "Capricorn"
+    ]
+   }
+  }
+ ]
+}

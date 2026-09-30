@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="eclipse_title">ग्रहण</string>
+    <string name="eclipse_error_load">ग्रहण की जानकारी लोड नहीं हो पाई।</string>
+    <string name="eclipse_no_kundli">पहले अपनी कुंडली जोड़ें; ग्रहण का समय आपकी जगह के हिसाब से दिखता है।</string>
+    <string name="eclipse_place_fmt">%1$s का समय</string>
+    <string name="eclipse_none">इस साल कोई ग्रहण नहीं है।</string>
+    <string name="eclipse_peak_fmt">%1$s · चरम %2$s</string>
+    <string name="eclipse_visible">यहाँ दिखेगा</string>
+    <string name="eclipse_not_visible">यहाँ नहीं दिखेगा</string>
+    <string name="eclipse_local_fmt">यहाँ %1$s से %2$s तक दिखेगा</string>
+    <string name="eclipse_sutak_fmt">सूतक: %1$s – %2$s</string>
+    <string name="eclipse_no_sutak_penumbral">उपछाया ग्रहण: सूतक नहीं माना जाता।</string>
+    <string name="eclipse_no_sutak_not_visible">यहाँ नहीं दिखेगा, इसलिए सूतक नहीं।</string>
+    <string name="eclipse_your_sign_fmt">आपकी चंद्र राशि (%1$s) के लिए:</string>
+    <string name="eclipse_favourable">शुभ</string>
+    <string name="eclipse_mixed">मिला-जुला</string>
+    <string name="eclipse_careful">सावधानी रखें</string>
+    <string name="eclipse_note">सूर्य ग्रहण से 12 घंटे और चंद्र ग्रहण से 9 घंटे पहले सूतक लगता है, और यह वहीं माना जाता है जहाँ ग्रहण दिखे। राशि के अनुसार फल पंचांग की परंपरा से है।</string>
+</resources>

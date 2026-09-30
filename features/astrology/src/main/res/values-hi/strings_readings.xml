@@ -136,4 +136,15 @@
     <string name="readings_rel_kind_harmony">रिश्ता सुधारने के लिए अच्छा</string>
     <string name="readings_rel_kind_remarriage">शादी के लिए अच्छा</string>
     <string name="readings_rel_disclaimer">ज्योतिष राह दिखाता है, आपकी शादी के फ़ैसले नहीं करता; किसी मैरिज काउंसलर से मदद ले सकते हैं। अगर घर में कभी असुरक्षित महसूस करें, तो 112 या महिला हेल्पलाइन 181 पर कॉल करें।</string>
+    <string name="readings_tab_health">सेहत</string>
+    <string name="readings_err_health">सेहत की रीडिंग नहीं बन पाई। आपके पैसे नहीं कटे।</string>
+    <string name="readings_health_desc">₹99, या प्रीमियम में मुफ़्त। आपके लग्न, सूर्य, चंद्र, गुरु और दशा से आपकी ऊर्जा या मन और तनाव, क्या आपकी सेहत को सहारा देता है और अच्छा समय। पैसे तभी कटेंगे जब रीडिंग तैयार हो।</string>
+    <string name="readings_health_body">शरीर और ऊर्जा</string>
+    <string name="readings_health_mind">मन और तनाव</string>
+    <string name="readings_health_generate">रीडिंग बनाएँ</string>
+    <string name="readings_health_outlook">आपका स्वभाव</string>
+    <string name="readings_health_timing">अच्छा समय</string>
+    <string name="readings_health_kind_vitality">ऊर्जा के लिए अच्छा</string>
+    <string name="readings_health_kind_calm">मन की शांति के लिए अच्छा</string>
+    <string name="readings_health_disclaimer">यह डॉक्टरी सलाह नहीं है। सेहत की किसी भी चिंता के लिए डॉक्टर से मिलें। तनाव या उदासी हो तो किसी भरोसेमंद से बात करें या टेली-मानस 14416 पर कॉल करें (मुफ़्त, 24x7)।</string>
 </resources>

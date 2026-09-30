@@ -31,6 +31,8 @@ import com.sangeetmind.libs.models.DebtReadingResponse
 import com.sangeetmind.libs.models.RelationshipReadingRequest
 import com.sangeetmind.libs.models.RelationshipReadingResponse
 import com.sangeetmind.libs.models.EducationReadingRequest
+import com.sangeetmind.libs.models.HealthReadingRequest
+import com.sangeetmind.libs.models.HealthReadingResponse
 import com.sangeetmind.libs.models.EducationReadingResponse
 import com.sangeetmind.libs.models.PropertyReadingRequest
 import com.sangeetmind.libs.models.PropertyReadingResponse
@@ -58,6 +60,8 @@ private const val WEALTH_PRICE_PAISE = 9900L
 private const val CAREER_QUESTION_SKU = "llm_career_question"
 private const val PROPERTY_SKU = "llm_property"
 private const val EDUCATION_SKU = "llm_education"
+private const val HEALTH_SKU = "llm_health"
+private const val HEALTH_PRICE_PAISE = 9900L
 private const val RELATIONSHIP_SKU = "llm_relationship"
 private const val RELATIONSHIP_PRICE_PAISE = 9900L
 private const val DEBT_SKU = "llm_debt"
@@ -256,6 +260,21 @@ class ReadingsRepository @Inject constructor(
         ) { kundli ->
             llmApi.getRelationshipReading(
                 RelationshipReadingRequest(
+                    birthDetails(kundli),
+                    status = status,
+                    lang = languageManager.current.code
+                )
+            )
+        }
+
+    /** Health / wellbeing reading; [status] is "body" or "mind". */
+    suspend fun getHealthReading(status: String): Result<HealthReadingResponse> =
+        payAfterSuccess(
+            HEALTH_SKU, HEALTH_PRICE_PAISE, R.string.readings_err_health,
+            succeeded = { it.ok && it.reading != null }
+        ) { kundli ->
+            llmApi.getHealthReading(
+                HealthReadingRequest(
                     birthDetails(kundli),
                     status = status,
                     lang = languageManager.current.code

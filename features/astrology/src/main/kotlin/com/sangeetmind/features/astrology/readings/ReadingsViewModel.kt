@@ -12,6 +12,7 @@ import com.sangeetmind.libs.models.CareerQuestionResponse
 import com.sangeetmind.libs.models.DebtReadingResponse
 import com.sangeetmind.libs.models.RelationshipReadingResponse
 import com.sangeetmind.libs.models.EducationReadingResponse
+import com.sangeetmind.libs.models.HealthReadingResponse
 import com.sangeetmind.libs.models.PropertyReadingResponse
 import com.sangeetmind.libs.models.WealthReadingResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +25,7 @@ import javax.inject.Inject
 
 val CAREER_QUESTIONS = listOf("job_change", "promotion", "govt_private", "job_business")
 
-enum class ReadingTab { CAREER, STRENGTHS, MARRIAGE, CHILDREN, FOREIGN, WEALTH, PROPERTY, EDUCATION, DEBT, RELATIONSHIP }
+enum class ReadingTab { CAREER, STRENGTHS, MARRIAGE, CHILDREN, FOREIGN, WEALTH, PROPERTY, EDUCATION, DEBT, RELATIONSHIP, HEALTH }
 
 data class ReadingsUiState(
     val tab: ReadingTab = ReadingTab.CAREER,
@@ -46,6 +47,8 @@ data class ReadingsUiState(
     val aboutVehicle: Boolean = false,
     val education: EducationReadingResponse? = null,
     val higherStudies: Boolean = false,
+    val health: HealthReadingResponse? = null,
+    val aboutMind: Boolean = false,
     val relationship: RelationshipReadingResponse? = null,
     val aboutRemarriage: Boolean = false,
     val debt: DebtReadingResponse? = null,
@@ -226,6 +229,22 @@ class ReadingsViewModel @Inject constructor(
             val status = if (_uiState.value.aboutRemarriage) "remarriage" else "strain"
             when (val result = repository.getRelationshipReading(status)) {
                 is Result.Success -> _uiState.update { it.copy(isLoading = false, relationship = result.data) }
+                is Result.Error -> _uiState.update { it.copy(isLoading = false, error = result.message) }
+                is Result.Loading -> Unit
+            }
+        }
+    }
+
+    fun setAboutMind(aboutMind: Boolean) {
+        _uiState.update { it.copy(aboutMind = aboutMind) }
+    }
+
+    fun generateHealthReading() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            val status = if (_uiState.value.aboutMind) "mind" else "body"
+            when (val result = repository.getHealthReading(status)) {
+                is Result.Success -> _uiState.update { it.copy(isLoading = false, health = result.data) }
                 is Result.Error -> _uiState.update { it.copy(isLoading = false, error = result.message) }
                 is Result.Loading -> Unit
             }

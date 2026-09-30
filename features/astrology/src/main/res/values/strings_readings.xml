@@ -136,4 +136,15 @@
     <string name="readings_rel_kind_harmony">Good to reconnect</string>
     <string name="readings_rel_kind_remarriage">Good for marriage</string>
     <string name="readings_rel_disclaimer">Astrology offers guidance, not decisions about your marriage; a marriage counsellor can help. If you ever feel unsafe at home, call 112 or the women helpline 181.</string>
+    <string name="readings_tab_health">Health</string>
+    <string name="readings_err_health">Could not generate health reading. You have not been charged.</string>
+    <string name="readings_health_desc">₹99, or free with Premium. Your energy, or your mind and stress, as the chart shows them, what supports your wellbeing and good periods for it, from your lagna, Sun, Moon, Jupiter and dashas. You\'re only charged if the reading is ready.</string>
+    <string name="readings_health_body">Body &amp; energy</string>
+    <string name="readings_health_mind">Mind &amp; stress</string>
+    <string name="readings_health_generate">Generate reading</string>
+    <string name="readings_health_outlook">Your nature</string>
+    <string name="readings_health_timing">Good periods</string>
+    <string name="readings_health_kind_vitality">Good for energy</string>
+    <string name="readings_health_kind_calm">Good for calm</string>
+    <string name="readings_health_disclaimer">This is not medical advice. For any health concern, please see a doctor. For stress or low mood, talk to someone you trust or call Tele-MANAS 14416 (free, 24x7).</string>
 </resources>

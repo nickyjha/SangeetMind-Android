@@ -10,6 +10,7 @@ import com.sangeetmind.libs.models.MarriageReadingResponse
 import com.sangeetmind.libs.models.StrengthsReadingResponse
 import com.sangeetmind.libs.models.CareerQuestionResponse
 import com.sangeetmind.libs.models.DebtReadingResponse
+import com.sangeetmind.libs.models.RelationshipReadingResponse
 import com.sangeetmind.libs.models.EducationReadingResponse
 import com.sangeetmind.libs.models.PropertyReadingResponse
 import com.sangeetmind.libs.models.WealthReadingResponse
@@ -23,7 +24,7 @@ import javax.inject.Inject
 
 val CAREER_QUESTIONS = listOf("job_change", "promotion", "govt_private", "job_business")
 
-enum class ReadingTab { CAREER, STRENGTHS, MARRIAGE, CHILDREN, FOREIGN, WEALTH, PROPERTY, EDUCATION, DEBT }
+enum class ReadingTab { CAREER, STRENGTHS, MARRIAGE, CHILDREN, FOREIGN, WEALTH, PROPERTY, EDUCATION, DEBT, RELATIONSHIP }
 
 data class ReadingsUiState(
     val tab: ReadingTab = ReadingTab.CAREER,
@@ -45,6 +46,8 @@ data class ReadingsUiState(
     val aboutVehicle: Boolean = false,
     val education: EducationReadingResponse? = null,
     val higherStudies: Boolean = false,
+    val relationship: RelationshipReadingResponse? = null,
+    val aboutRemarriage: Boolean = false,
     val debt: DebtReadingResponse? = null,
     val aboutDispute: Boolean = false,
     val error: String? = null
@@ -207,6 +210,22 @@ class ReadingsViewModel @Inject constructor(
             val status = if (_uiState.value.aboutDispute) "dispute" else "debt"
             when (val result = repository.getDebtReading(status)) {
                 is Result.Success -> _uiState.update { it.copy(isLoading = false, debt = result.data) }
+                is Result.Error -> _uiState.update { it.copy(isLoading = false, error = result.message) }
+                is Result.Loading -> Unit
+            }
+        }
+    }
+
+    fun setAboutRemarriage(aboutRemarriage: Boolean) {
+        _uiState.update { it.copy(aboutRemarriage = aboutRemarriage) }
+    }
+
+    fun generateRelationshipReading() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            val status = if (_uiState.value.aboutRemarriage) "remarriage" else "strain"
+            when (val result = repository.getRelationshipReading(status)) {
+                is Result.Success -> _uiState.update { it.copy(isLoading = false, relationship = result.data) }
                 is Result.Error -> _uiState.update { it.copy(isLoading = false, error = result.message) }
                 is Result.Loading -> Unit
             }

@@ -125,4 +125,15 @@
     <string name="readings_debt_kind_debt">Good to repay</string>
     <string name="readings_debt_kind_dispute">Good to settle</string>
     <string name="readings_debt_disclaimer">Astrology cannot predict how a case will end. For loans, talk to a financial counsellor; for legal matters, a lawyer.</string>
+    <string name="readings_tab_relationship">Relationship</string>
+    <string name="readings_err_relationship">Could not generate relationship reading. You have not been charged.</string>
+    <string name="readings_rel_desc">₹99, or free with Premium. For a marriage going through a hard patch, or for marrying again after divorce or loss: what supports the bond and good periods, from your 7th house, Venus, Jupiter, the Upapada and dashas. You\'re only charged if the reading is ready.</string>
+    <string name="readings_rel_strain">Going through strain</string>
+    <string name="readings_rel_remarriage">Second marriage</string>
+    <string name="readings_rel_generate">Generate reading</string>
+    <string name="readings_rel_outlook">The relationship</string>
+    <string name="readings_rel_timing">Good periods</string>
+    <string name="readings_rel_kind_harmony">Good to reconnect</string>
+    <string name="readings_rel_kind_remarriage">Good for marriage</string>
+    <string name="readings_rel_disclaimer">Astrology offers guidance, not decisions about your marriage; a marriage counsellor can help. If you ever feel unsafe at home, call 112 or the women helpline 181.</string>
 </resources>

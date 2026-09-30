@@ -125,4 +125,15 @@
     <string name="readings_debt_kind_debt">कर्ज़ चुकाने के लिए अच्छा</string>
     <string name="readings_debt_kind_dispute">विवाद सुलझाने के लिए अच्छा</string>
     <string name="readings_debt_disclaimer">ज्योतिष किसी केस का फ़ैसला नहीं बता सकता। कर्ज़ के लिए किसी वित्तीय सलाहकार से और क़ानूनी मामलों के लिए वकील से बात करें।</string>
+    <string name="readings_tab_relationship">रिश्ते</string>
+    <string name="readings_err_relationship">रिश्तों की रीडिंग नहीं बन पाई। आपके पैसे नहीं कटे।</string>
+    <string name="readings_rel_desc">₹99, या प्रीमियम में मुफ़्त। मुश्किल दौर से गुज़र रही शादी के लिए, या तलाक या जीवनसाथी को खोने के बाद दोबारा शादी के लिए: आपके सातवें भाव, शुक्र, गुरु, उपपद और दशा से क्या रिश्ते को सहारा देता है और अच्छा समय। पैसे तभी कटेंगे जब रीडिंग तैयार हो।</string>
+    <string name="readings_rel_strain">रिश्ते में तनाव</string>
+    <string name="readings_rel_remarriage">दूसरी शादी</string>
+    <string name="readings_rel_generate">रीडिंग बनाएँ</string>
+    <string name="readings_rel_outlook">आपका रिश्ता</string>
+    <string name="readings_rel_timing">अच्छा समय</string>
+    <string name="readings_rel_kind_harmony">रिश्ता सुधारने के लिए अच्छा</string>
+    <string name="readings_rel_kind_remarriage">शादी के लिए अच्छा</string>
+    <string name="readings_rel_disclaimer">ज्योतिष राह दिखाता है, आपकी शादी के फ़ैसले नहीं करता; किसी मैरिज काउंसलर से मदद ले सकते हैं। अगर घर में कभी असुरक्षित महसूस करें, तो 112 या महिला हेल्पलाइन 181 पर कॉल करें।</string>
 </resources>

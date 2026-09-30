@@ -28,6 +28,8 @@ import com.sangeetmind.libs.models.CareerQuestionRequest
 import com.sangeetmind.libs.models.CareerQuestionResponse
 import com.sangeetmind.libs.models.DebtReadingRequest
 import com.sangeetmind.libs.models.DebtReadingResponse
+import com.sangeetmind.libs.models.RelationshipReadingRequest
+import com.sangeetmind.libs.models.RelationshipReadingResponse
 import com.sangeetmind.libs.models.EducationReadingRequest
 import com.sangeetmind.libs.models.EducationReadingResponse
 import com.sangeetmind.libs.models.PropertyReadingRequest
@@ -56,6 +58,8 @@ private const val WEALTH_PRICE_PAISE = 9900L
 private const val CAREER_QUESTION_SKU = "llm_career_question"
 private const val PROPERTY_SKU = "llm_property"
 private const val EDUCATION_SKU = "llm_education"
+private const val RELATIONSHIP_SKU = "llm_relationship"
+private const val RELATIONSHIP_PRICE_PAISE = 9900L
 private const val DEBT_SKU = "llm_debt"
 private const val DEBT_PRICE_PAISE = 9900L
 private const val EDUCATION_PRICE_PAISE = 9900L
@@ -237,6 +241,21 @@ class ReadingsRepository @Inject constructor(
         ) { kundli ->
             llmApi.getDebtReading(
                 DebtReadingRequest(
+                    birthDetails(kundli),
+                    status = status,
+                    lang = languageManager.current.code
+                )
+            )
+        }
+
+    /** Relationship reading; [status] is "strain" or "remarriage". */
+    suspend fun getRelationshipReading(status: String): Result<RelationshipReadingResponse> =
+        payAfterSuccess(
+            RELATIONSHIP_SKU, RELATIONSHIP_PRICE_PAISE, R.string.readings_err_relationship,
+            succeeded = { it.ok && it.reading != null }
+        ) { kundli ->
+            llmApi.getRelationshipReading(
+                RelationshipReadingRequest(
                     birthDetails(kundli),
                     status = status,
                     lang = languageManager.current.code

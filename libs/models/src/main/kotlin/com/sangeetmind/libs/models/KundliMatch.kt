@@ -48,8 +48,11 @@ data class ManglikStatus(
     val present: Boolean,
     @Json(name = "effective_present") val effectivePresent: Boolean,
     val cancelled: Boolean,
-    val summary: String
-)
+    val summary: String,
+    @Json(name = "summary_hi") val summaryHi: String = ""
+) {
+    val summaryText: LocalizedText get() = LocalizedText(summary, summaryHi)
+}
 
 @JsonClass(generateAdapter = true)
 data class ManglikPair(
@@ -64,5 +67,21 @@ data class KundliMatchResult(
     @Json(name = "maxGunas") val maxGunas: Double,
     val manglik: ManglikPair,
     val verdict: String,
-    @Json(name = "remedyHint") val remedyHint: String? = null
+    @Json(name = "remedyHint") val remedyHint: String? = null,
+    // Null from backends older than the Nadi/Bhakoot cancellation rules.
+    @Json(name = "doshaExceptions") val doshaExceptions: MatchDoshaExceptions? = null
+)
+
+/** Nadi/Bhakoot dosha and whether a classical exception cancels it. Points stay as scored. */
+@JsonClass(generateAdapter = true)
+data class MatchDosha(
+    val present: Boolean = false,
+    val cancelled: Boolean = false,
+    val reasons: List<LocalizedText> = emptyList()
+)
+
+@JsonClass(generateAdapter = true)
+data class MatchDoshaExceptions(
+    val nadi: MatchDosha = MatchDosha(),
+    val bhakoot: MatchDosha = MatchDosha()
 )

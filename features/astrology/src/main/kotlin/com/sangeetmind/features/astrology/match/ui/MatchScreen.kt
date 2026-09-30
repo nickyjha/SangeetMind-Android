@@ -15,11 +15,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.core.ui.language.LocalAppLanguage
 import com.sangeetmind.core.ui.language.astroTerm
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.match.MatchViewModel
 import com.sangeetmind.libs.models.Kundli
 import com.sangeetmind.libs.models.KundliMatchResult
+import com.sangeetmind.libs.models.MatchDosha
 import com.sangeetmind.libs.models.toTitleCase
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -180,14 +182,51 @@ private fun MatchResultCard(result: KundliMatchResult) {
 
             Spacer(modifier = Modifier.height(12.dp))
             Text(stringResource(R.string.match_status_fmt, astroTerm("Manglik")), style = MaterialTheme.typography.titleSmall)
-            Text(stringResource(R.string.match_person_a_fmt, result.manglik.personA.summary), style = MaterialTheme.typography.bodySmall)
-            Text(stringResource(R.string.match_person_b_fmt, result.manglik.personB.summary), style = MaterialTheme.typography.bodySmall)
+            val languageCode = LocalAppLanguage.current.code
+            Text(stringResource(R.string.match_person_a_fmt, result.manglik.personA.summaryText.forLanguage(languageCode)), style = MaterialTheme.typography.bodySmall)
+            Text(stringResource(R.string.match_person_b_fmt, result.manglik.personB.summaryText.forLanguage(languageCode)), style = MaterialTheme.typography.bodySmall)
 
-            result.remedyHint?.let {
+            result.doshaExceptions?.let { exceptions ->
+                val shown = listOf(
+                    R.string.match_dosha_nadi to exceptions.nadi,
+                    R.string.match_dosha_bhakoot to exceptions.bhakoot
+                ).filter { it.second.present }
+                if (shown.isNotEmpty()) {
+                    shown.forEach { (label, dosha) -> MatchDoshaRow(stringResource(label), dosha, languageCode) }
+                    Text(
+                        stringResource(R.string.match_dosha_points_note),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
+            }
+
+            if (result.remedyHint != null) {
                 Spacer(modifier = Modifier.height(12.dp))
-                Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
+                Text(stringResource(R.string.match_remedy_hint), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
             }
         }
+    }
+}
+
+/** A Nadi/Bhakoot dosha that is present: its status, then the exceptions that cancel it. */
+@Composable
+private fun MatchDoshaRow(label: String, dosha: MatchDosha, languageCode: String) {
+    Spacer(modifier = Modifier.height(12.dp))
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Text(label, modifier = Modifier.weight(1f), style = MaterialTheme.typography.titleSmall)
+        Text(
+            if (dosha.cancelled) stringResource(R.string.match_dosha_cancelled) else stringResource(R.string.match_dosha_present),
+            style = MaterialTheme.typography.labelLarge,
+            color = if (dosha.cancelled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+        )
+    }
+    if (dosha.reasons.isEmpty()) {
+        Text(stringResource(R.string.match_dosha_no_exception), style = MaterialTheme.typography.bodySmall)
+    }
+    dosha.reasons.forEach {
+        Text(it.forLanguage(languageCode), style = MaterialTheme.typography.bodySmall)
     }
 }
 

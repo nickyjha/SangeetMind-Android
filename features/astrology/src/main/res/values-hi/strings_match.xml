@@ -21,4 +21,11 @@
     <string name="match_error_load_kundlis">कुंडलियाँ लोड नहीं हो पाईं</string>
     <string name="match_error_pick_both">दोनों लोगों को चुनें</string>
     <string name="match_error_compute">मिलान नहीं हो पाया</string>
+    <string name="match_dosha_nadi">नाड़ी दोष</string>
+    <string name="match_dosha_bhakoot">भकूट दोष</string>
+    <string name="match_dosha_present">है</string>
+    <string name="match_dosha_cancelled">भंग</string>
+    <string name="match_dosha_no_exception">कोई शास्त्रीय अपवाद लागू नहीं होता।</string>
+    <string name="match_dosha_points_note">गुण अंक वैसे ही दिखाए गए हैं; अपवाद होने पर यह दोष नहीं माना जाता।</string>
+    <string name="match_remedy_hint">इस मिलान के उपायों के लिए किसी ज्योतिषी से बात कर लें।</string>
 </resources>

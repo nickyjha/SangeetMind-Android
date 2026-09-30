@@ -783,7 +783,7 @@ private fun DoshaCard(doshas: ChartDoshas) {
                     manglik.cancelled -> stringResource(R.string.chart_status_cancelled)
                     else -> stringResource(R.string.chart_status_not_present)
                 },
-                detail = manglik.summary.ifBlank { null },
+                detail = manglik.summaryText.forLanguage(LocalAppLanguage.current.code).ifBlank { null },
                 flaggedColor = graha.mangala,
                 clearColor = graha.budha
             )

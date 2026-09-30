@@ -153,8 +153,11 @@ data class ManglikDosha(
     val present: Boolean = false,
     @Json(name = "effective_present") val effectivePresent: Boolean = false,
     val cancelled: Boolean = false,
-    val summary: String = ""
-)
+    val summary: String = "",
+    @Json(name = "summary_hi") val summaryHi: String = ""
+) {
+    val summaryText: LocalizedText get() = LocalizedText(summary, summaryHi)
+}
 
 @JsonClass(generateAdapter = true)
 data class KalsarpaDosha(

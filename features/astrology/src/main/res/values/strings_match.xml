@@ -21,4 +21,11 @@
     <string name="match_error_load_kundlis">Failed to load kundlis</string>
     <string name="match_error_pick_both">Please pick both people</string>
     <string name="match_error_compute">Failed to compute compatibility</string>
+    <string name="match_dosha_nadi">Nadi dosha</string>
+    <string name="match_dosha_bhakoot">Bhakoot dosha</string>
+    <string name="match_dosha_present">Present</string>
+    <string name="match_dosha_cancelled">Cancelled</string>
+    <string name="match_dosha_no_exception">No classical exception applies.</string>
+    <string name="match_dosha_points_note">Guna points are shown as scored; an exception means the dosha is not counted.</string>
+    <string name="match_remedy_hint">Consider talking to an astrologer about remedies for this match.</string>
 </resources>

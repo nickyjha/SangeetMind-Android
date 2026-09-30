@@ -250,8 +250,10 @@ private fun VivahResults(vivah: VivahResponse) {
         Spacer(modifier = Modifier.height(16.dp))
         Text(stringResource(R.string.muhurat_vivah_blocked), style = MaterialTheme.typography.titleMedium)
         vivah.blocked.forEach { b ->
+            val range = if (b.start == b.end) date(b.start, shortDate)
+            else "${date(b.start, shortDate)} – ${date(b.end, shortDate)}"
             Text(
-                "${date(b.start, shortDate)} – ${date(b.end, shortDate)}: ${b.text.forLanguage(languageCode)}",
+                "$range: ${b.text.forLanguage(languageCode)}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 4.dp)

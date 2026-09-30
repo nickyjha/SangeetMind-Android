@@ -147,4 +147,14 @@
     <string name="readings_health_kind_vitality">Good for energy</string>
     <string name="readings_health_kind_calm">Good for calm</string>
     <string name="readings_health_disclaimer">This is not medical advice. For any health concern, please see a doctor. For stress or low mood, talk to someone you trust or call Tele-MANAS 14416 (free, 24x7).</string>
+    <string name="readings_preview_title">Free preview from your chart</string>
+    <string name="readings_preview_planet_fmt">%1$s in %2$s, house %3$d</string>
+    <string name="readings_preview_includes">The full reading includes</string>
+    <string name="readings_preview_inc_timing">Month-wise timing</string>
+    <string name="readings_preview_inc_strengths">Your strengths</string>
+    <string name="readings_preview_inc_care">What to watch</string>
+    <string name="readings_preview_inc_advice">Advice</string>
+    <string name="readings_preview_inc_remedies">Remedies</string>
+    <string name="readings_preview_price_fmt">₹%1$d · charged only if the reading is made</string>
+    <string name="readings_preview_premium">Included in your Premium</string>
 </resources>

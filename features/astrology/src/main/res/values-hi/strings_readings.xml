@@ -147,4 +147,14 @@
     <string name="readings_health_kind_vitality">ऊर्जा के लिए अच्छा</string>
     <string name="readings_health_kind_calm">मन की शांति के लिए अच्छा</string>
     <string name="readings_health_disclaimer">यह डॉक्टरी सलाह नहीं है। सेहत की किसी भी चिंता के लिए डॉक्टर से मिलें। तनाव या उदासी हो तो किसी भरोसेमंद से बात करें या टेली-मानस 14416 पर कॉल करें (मुफ़्त, 24x7)।</string>
+    <string name="readings_preview_title">आपकी कुंडली से मुफ़्त झलक</string>
+    <string name="readings_preview_planet_fmt">%1$s · %2$s · घर %3$d</string>
+    <string name="readings_preview_includes">पूरी रीडिंग में मिलेगा</string>
+    <string name="readings_preview_inc_timing">महीने-वार समय</string>
+    <string name="readings_preview_inc_strengths">आपकी ताक़त</string>
+    <string name="readings_preview_inc_care">किन बातों का ध्यान रखें</string>
+    <string name="readings_preview_inc_advice">सलाह</string>
+    <string name="readings_preview_inc_remedies">उपाय</string>
+    <string name="readings_preview_price_fmt">₹%1$d · पैसे तभी कटेंगे जब रीडिंग बन जाए</string>
+    <string name="readings_preview_premium">आपके प्रीमियम में शामिल</string>
 </resources>

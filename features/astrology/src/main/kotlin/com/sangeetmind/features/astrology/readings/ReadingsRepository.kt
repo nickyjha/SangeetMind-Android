@@ -35,6 +35,8 @@ import com.sangeetmind.libs.models.HealthReadingRequest
 import com.sangeetmind.libs.models.HealthReadingResponse
 import com.sangeetmind.libs.models.EducationReadingResponse
 import com.sangeetmind.libs.models.PropertyReadingRequest
+import com.sangeetmind.libs.models.ReadingPreview
+import com.sangeetmind.libs.models.ReadingPreviewRequest
 import com.sangeetmind.libs.models.PropertyReadingResponse
 import com.sangeetmind.libs.models.WealthReadingRequest
 import com.sangeetmind.libs.models.WealthReadingResponse
@@ -69,6 +71,9 @@ private const val DEBT_PRICE_PAISE = 9900L
 private const val EDUCATION_PRICE_PAISE = 9900L
 private const val PROPERTY_PRICE_PAISE = 9900L
 private const val CAREER_QUESTION_PRICE_PAISE = 9900L
+
+/** What every paid reading costs today (all SKUs above), shown on the preview card. */
+const val READING_PRICE_PAISE = 9900L
 
 @Singleton
 class ReadingsRepository @Inject constructor(
@@ -128,6 +133,25 @@ class ReadingsRepository @Inject constructor(
             is Result.Error -> Result.Error(balance.exception, balance.message)
             is Result.Loading -> Result.Loading
         }
+    }
+
+    /** Free chart-based preview of a paid reading ([topic] as in reading_preview_service.py). */
+    suspend fun getPreview(topic: String, status: String): Result<ReadingPreview> =
+        withContext(ioDispatcher) {
+            val kundli = when (val r = primaryKundli()) {
+                is Result.Success -> r.data
+                is Result.Error -> return@withContext Result.Error(r.exception, r.message)
+                is Result.Loading -> return@withContext Result.Loading
+            }
+            try {
+                Result.Success(llmApi.getReadingPreview(ReadingPreviewRequest(birthDetails(kundli), topic, status)))
+            } catch (e: Exception) {
+                Result.Error(e, e.message ?: "")
+            }
+        }
+
+    suspend fun isPremium(): Boolean = withContext(ioDispatcher) {
+        (paymentsRepository.getPremiumStatus() as? Result.Success)?.data?.premium == true
     }
 
     private fun birthDetails(kundli: Kundli) = CareerBirthDetails(

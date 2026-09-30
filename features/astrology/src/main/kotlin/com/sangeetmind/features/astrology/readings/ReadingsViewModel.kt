@@ -14,6 +14,7 @@ import com.sangeetmind.libs.models.RelationshipReadingResponse
 import com.sangeetmind.libs.models.EducationReadingResponse
 import com.sangeetmind.libs.models.HealthReadingResponse
 import com.sangeetmind.libs.models.PropertyReadingResponse
+import com.sangeetmind.libs.models.ReadingPreview
 import com.sangeetmind.libs.models.WealthReadingResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -53,8 +54,43 @@ data class ReadingsUiState(
     val aboutRemarriage: Boolean = false,
     val debt: DebtReadingResponse? = null,
     val aboutDispute: Boolean = false,
+    // Free previews by "topic|status" (see previewKey); a missing key is not loaded (yet).
+    val previews: Map<String, ReadingPreview> = emptyMap(),
+    val premium: Boolean = false,
     val error: String? = null
-)
+) {
+    /** The preview topic and status for the open tab, or null when it has no preview. */
+    val previewKey: String?
+        get() = when (tab) {
+            ReadingTab.CAREER -> careerQuestion?.let { "career_question|$it" }
+            ReadingTab.STRENGTHS -> null
+            ReadingTab.MARRIAGE -> "marriage|" + if (married) "married" else "single"
+            ReadingTab.CHILDREN -> "children|" + if (isParent) "parent" else "planning"
+            ReadingTab.FOREIGN -> "foreign|" + if (livesAbroad) "abroad" else "planning"
+            ReadingTab.WEALTH -> "wealth|" + if (ownsBusiness) "business" else "job"
+            ReadingTab.PROPERTY -> "property|" + if (aboutVehicle) "vehicle" else "property"
+            ReadingTab.EDUCATION -> "education|" + if (higherStudies) "higher" else "student"
+            ReadingTab.DEBT -> "debt|" + if (aboutDispute) "dispute" else "debt"
+            ReadingTab.RELATIONSHIP -> "relationship|" + if (aboutRemarriage) "remarriage" else "strain"
+            ReadingTab.HEALTH -> "health|" + if (aboutMind) "mind" else "body"
+        }
+
+    /** True once the open tab shows a paid reading, so the sales card can step aside. */
+    val tabHasReading: Boolean
+        get() = when (tab) {
+            ReadingTab.CAREER -> if (careerQuestion == null) career != null else careerAnswer?.question == careerQuestion
+            ReadingTab.STRENGTHS -> strengths != null
+            ReadingTab.MARRIAGE -> marriage?.reading != null
+            ReadingTab.CHILDREN -> children?.reading != null
+            ReadingTab.FOREIGN -> foreign?.reading != null
+            ReadingTab.WEALTH -> wealth?.reading != null
+            ReadingTab.PROPERTY -> property?.reading != null
+            ReadingTab.EDUCATION -> education?.reading != null
+            ReadingTab.DEBT -> debt?.reading != null
+            ReadingTab.RELATIONSHIP -> relationship?.reading != null
+            ReadingTab.HEALTH -> health?.reading != null
+        }
+}
 
 @HiltViewModel
 class ReadingsViewModel @Inject constructor(
@@ -64,12 +100,41 @@ class ReadingsViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ReadingsUiState())
     val uiState: StateFlow<ReadingsUiState> = _uiState.asStateFlow()
 
+    private val previewsLoading = mutableSetOf<String>()
+
+    init {
+        viewModelScope.launch {
+            val premium = repository.isPremium()
+            _uiState.update { it.copy(premium = premium) }
+        }
+        loadPreview()
+    }
+
+    /** Fetches the free preview for the open tab and status once; failures just hide it. */
+    private fun loadPreview() {
+        val key = _uiState.value.previewKey ?: return
+        if (key in _uiState.value.previews || !previewsLoading.add(key)) return
+        val (topic, status) = key.split("|", limit = 2)
+        viewModelScope.launch {
+            val result = repository.getPreview(topic, status)
+            previewsLoading.remove(key)
+            if (result is Result.Success) {
+                _uiState.update { it.copy(previews = it.previews + (key to result.data)) }
+            }
+        }
+    }
+
+    private fun updateAndPreview(change: (ReadingsUiState) -> ReadingsUiState) {
+        _uiState.update(change)
+        loadPreview()
+    }
+
     fun setTab(tab: ReadingTab) {
-        _uiState.update { it.copy(tab = tab, error = null) }
+        updateAndPreview { it.copy(tab = tab, error = null) }
     }
 
     fun setCareerQuestion(question: String?) {
-        _uiState.update { it.copy(careerQuestion = question, error = null) }
+        updateAndPreview { it.copy(careerQuestion = question, error = null) }
     }
 
     fun generateCareerReading() {
@@ -108,7 +173,7 @@ class ReadingsViewModel @Inject constructor(
     }
 
     fun setMarried(married: Boolean) {
-        _uiState.update { it.copy(married = married) }
+        updateAndPreview { it.copy(married = married) }
     }
 
     fun generateMarriageReading() {
@@ -124,7 +189,7 @@ class ReadingsViewModel @Inject constructor(
     }
 
     fun setParent(isParent: Boolean) {
-        _uiState.update { it.copy(isParent = isParent) }
+        updateAndPreview { it.copy(isParent = isParent) }
     }
 
     fun generateChildrenReading() {
@@ -140,7 +205,7 @@ class ReadingsViewModel @Inject constructor(
     }
 
     fun setLivesAbroad(livesAbroad: Boolean) {
-        _uiState.update { it.copy(livesAbroad = livesAbroad) }
+        updateAndPreview { it.copy(livesAbroad = livesAbroad) }
     }
 
     fun generateForeignReading() {
@@ -156,7 +221,7 @@ class ReadingsViewModel @Inject constructor(
     }
 
     fun setOwnsBusiness(ownsBusiness: Boolean) {
-        _uiState.update { it.copy(ownsBusiness = ownsBusiness) }
+        updateAndPreview { it.copy(ownsBusiness = ownsBusiness) }
     }
 
     fun generateWealthReading() {
@@ -172,7 +237,7 @@ class ReadingsViewModel @Inject constructor(
     }
 
     fun setAboutVehicle(aboutVehicle: Boolean) {
-        _uiState.update { it.copy(aboutVehicle = aboutVehicle) }
+        updateAndPreview { it.copy(aboutVehicle = aboutVehicle) }
     }
 
     fun generatePropertyReading() {
@@ -188,7 +253,7 @@ class ReadingsViewModel @Inject constructor(
     }
 
     fun setHigherStudies(higherStudies: Boolean) {
-        _uiState.update { it.copy(higherStudies = higherStudies) }
+        updateAndPreview { it.copy(higherStudies = higherStudies) }
     }
 
     fun generateEducationReading() {
@@ -204,7 +269,7 @@ class ReadingsViewModel @Inject constructor(
     }
 
     fun setAboutDispute(aboutDispute: Boolean) {
-        _uiState.update { it.copy(aboutDispute = aboutDispute) }
+        updateAndPreview { it.copy(aboutDispute = aboutDispute) }
     }
 
     fun generateDebtReading() {
@@ -220,7 +285,7 @@ class ReadingsViewModel @Inject constructor(
     }
 
     fun setAboutRemarriage(aboutRemarriage: Boolean) {
-        _uiState.update { it.copy(aboutRemarriage = aboutRemarriage) }
+        updateAndPreview { it.copy(aboutRemarriage = aboutRemarriage) }
     }
 
     fun generateRelationshipReading() {
@@ -236,7 +301,7 @@ class ReadingsViewModel @Inject constructor(
     }
 
     fun setAboutMind(aboutMind: Boolean) {
-        _uiState.update { it.copy(aboutMind = aboutMind) }
+        updateAndPreview { it.copy(aboutMind = aboutMind) }
     }
 
     fun generateHealthReading() {

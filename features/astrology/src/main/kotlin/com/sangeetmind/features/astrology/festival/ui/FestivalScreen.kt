@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ChevronLeft
@@ -29,6 +30,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -97,7 +99,15 @@ fun FestivalScreen(
                 else -> {
                     val today = LocalDate.now()
                     val festivals = uiState.calendar?.festivals.orEmpty()
+                    val listState = rememberLazyListState()
+                    // Open at the next festival (item 0 is the year header), keeping one past
+                    // festival above it for context.
+                    LaunchedEffect(festivals) {
+                        val next = festivals.indexOfFirst { it.date >= today.toString() }
+                        if (next > 0) listState.scrollToItem(next)
+                    }
                     LazyColumn(
+                        state = listState,
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(10.dp)

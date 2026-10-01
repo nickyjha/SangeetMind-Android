@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="onboarding_page1_title">रागों के साथ ध्यान करें</string>
-    <string name="onboarding_page1_desc">शास्त्रीय रागों और ध्यान से मन को सुकून दें</string>
-    <string name="onboarding_page2_title">आपके लिए सुझाव</string>
-    <string name="onboarding_page2_desc">अपनी कुंडली के हिसाब से राग और ध्यान के सुझाव पाएँ</string>
-    <string name="onboarding_page3_title">कभी भी, कहीं भी सुनें</string>
-    <string name="onboarding_page3_desc">राग डाउनलोड करके ऑफ़लाइन सुनें, बैकग्राउंड में भी</string>
+    <string name="onboarding_page1_title">आपकी कुंडली, आसान शब्दों में</string>
+    <string name="onboarding_page1_desc">जन्म की जानकारी एक बार डालें — कुंडली, दशा, दोष और योग सीधी-सादी हिंदी या English में समझें</string>
+    <string name="onboarding_page2_title">हर दिन, आपका दिन</string>
+    <string name="onboarding_page2_desc">आप, धन, प्यार और करियर के रोज़ के अंक, आज का पंचांग, त्योहार और दिन का एक छोटा काम</string>
+    <string name="onboarding_page3_title">रीडिंग, और पूछने के लिए पंडित जी</string>
+    <string name="onboarding_page3_desc">शादी, करियर, धन और ज़िंदगी की रीडिंग आपकी कुंडली से, और ChatMind से कुछ भी पूछें। पैसे तभी कटते हैं जब रीडिंग तैयार हो</string>
     <string name="onboarding_get_started">शुरू करें</string>
     <string name="onboarding_before_continue">आगे बढ़ने से पहले</string>
     <string name="onboarding_agree_terms">मैं सेवा की शर्तों से सहमत हूँ</string>

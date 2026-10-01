@@ -36,17 +36,17 @@ val onboardingPages = listOf(
     OnboardingPage(
         title = R.string.onboarding_page1_title,
         description = R.string.onboarding_page1_desc,
-        icon = Icons.Default.MusicNote
+        icon = Icons.Default.AutoAwesome
     ),
     OnboardingPage(
         title = R.string.onboarding_page2_title,
         description = R.string.onboarding_page2_desc,
-        icon = Icons.Default.Star
+        icon = Icons.Default.WbSunny
     ),
     OnboardingPage(
         title = R.string.onboarding_page3_title,
         description = R.string.onboarding_page3_desc,
-        icon = Icons.Default.CloudDownload
+        icon = Icons.Default.Chat
     )
 )
 

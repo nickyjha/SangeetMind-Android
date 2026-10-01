@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="onboarding_page1_title">Discover Raag-Based Meditation</string>
-    <string name="onboarding_page1_desc">Experience the healing power of classical Indian raags combined with meditation</string>
-    <string name="onboarding_page2_title">Personalized Recommendations</string>
-    <string name="onboarding_page2_desc">Get raag and meditation suggestions based on your astrological profile</string>
-    <string name="onboarding_page3_title">Listen Anytime, Anywhere</string>
-    <string name="onboarding_page3_desc">Download raags for offline listening and enjoy background playback</string>
+    <string name="onboarding_page1_title">Your kundli, in plain words</string>
+    <string name="onboarding_page1_desc">Enter your birth details once and get your birth chart, dashas, doshas and yogas explained simply, in Hindi or English</string>
+    <string name="onboarding_page2_title">Your day, every day</string>
+    <string name="onboarding_page2_desc">Daily scores for self, wealth, love and career, today’s panchang, festivals and one small action for the day</string>
+    <string name="onboarding_page3_title">Readings, and a pandit to ask</string>
+    <string name="onboarding_page3_desc">Marriage, career, wealth and life readings from your chart, plus ChatMind for any question. You pay only when a reading is ready</string>
     <string name="onboarding_get_started">Get Started</string>
     <string name="onboarding_before_continue">Before you continue</string>
     <string name="onboarding_agree_terms">I agree to the Terms of Service</string>

@@ -2,6 +2,8 @@ package com.sangeetmind.features.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sangeetmind.core.common.theme.ThemeManager
+import com.sangeetmind.core.common.theme.ThemePreference
 import com.sangeetmind.libs.models.PlaybackQuality
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,21 +17,38 @@ data class SettingsUiState(
     val playbackQuality: PlaybackQuality = PlaybackQuality.HIGH,
     val downloadOnWifiOnly: Boolean = true,
     val notificationsEnabled: Boolean = true,
-    val darkMode: DarkModePreference = DarkModePreference.SYSTEM,
+    val darkMode: DarkModePreference = DarkModePreference.LIGHT,
     val autoPlayNext: Boolean = true,
     val showLyrics: Boolean = true
 )
 
 enum class DarkModePreference {
-    LIGHT, DARK, SYSTEM
+    LIGHT, DARK, SYSTEM;
+
+    fun toTheme(): ThemePreference = when (this) {
+        LIGHT -> ThemePreference.LIGHT
+        DARK -> ThemePreference.DARK
+        SYSTEM -> ThemePreference.SYSTEM
+    }
+
+    companion object {
+        fun from(theme: ThemePreference): DarkModePreference = when (theme) {
+            ThemePreference.LIGHT -> LIGHT
+            ThemePreference.DARK -> DARK
+            ThemePreference.SYSTEM -> SYSTEM
+        }
+    }
 }
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    // TODO: Inject DataStore or PreferencesRepository
+    private val themeManager: ThemeManager
+    // TODO: the other settings still need a DataStore
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(SettingsUiState())
+    private val _uiState = MutableStateFlow(
+        SettingsUiState(darkMode = DarkModePreference.from(themeManager.preference.value))
+    )
     val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
 
     init {
@@ -60,7 +79,7 @@ class SettingsViewModel @Inject constructor(
 
     fun setDarkMode(preference: DarkModePreference) {
         _uiState.update { it.copy(darkMode = preference) }
-        saveSettings()
+        themeManager.setPreference(preference.toTheme())
     }
 
     fun setAutoPlayNext(enabled: Boolean) {

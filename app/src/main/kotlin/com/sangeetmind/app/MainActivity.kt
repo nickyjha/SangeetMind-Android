@@ -26,6 +26,9 @@ import com.razorpay.PaymentResultWithDataListener
 import com.sangeetmind.app.navigation.SangeetMindNavHost
 import com.sangeetmind.core.common.chart.ChartStyleManager
 import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.core.common.theme.ThemeManager
+import com.sangeetmind.core.common.theme.ThemePreference
+import androidx.compose.foundation.isSystemInDarkTheme
 import com.sangeetmind.core.common.language.withAppLanguage
 import com.sangeetmind.core.database.PreferencesRepository
 import com.sangeetmind.core.ui.chart.LocalChartStyle
@@ -53,6 +56,9 @@ class MainActivity : ComponentActivity(), PaymentResultWithDataListener {
     @Inject
     lateinit var chartStyleManager: ChartStyleManager
 
+    @Inject
+    lateinit var themeManager: ThemeManager
+
     // The activity's own resources start in the saved language too, so the first frame
     // never flashes English. Read synchronously — Hilt hasn't injected anything yet here.
     override fun attachBaseContext(newBase: Context) {
@@ -67,6 +73,12 @@ class MainActivity : ComponentActivity(), PaymentResultWithDataListener {
             // no activity recreate, navigation state preserved.
             val language by languageManager.language.collectAsStateWithLifecycle()
             val chartStyle by chartStyleManager.style.collectAsStateWithLifecycle()
+            val themePreference by themeManager.preference.collectAsStateWithLifecycle()
+            val darkTheme = when (themePreference) {
+                ThemePreference.LIGHT -> false
+                ThemePreference.DARK -> true
+                ThemePreference.SYSTEM -> isSystemInDarkTheme()
+            }
             val activityContext = LocalContext.current
             val localizedContext = remember(language) { activityContext.withAppLanguage(language) }
 
@@ -78,7 +90,7 @@ class MainActivity : ComponentActivity(), PaymentResultWithDataListener {
                 LocalChartStyle provides chartStyle,
                 LocalChartStyleSwitcher provides chartStyleManager::setStyle
             ) {
-                SangeetMindTheme {
+                SangeetMindTheme(darkTheme = darkTheme) {
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background

@@ -115,112 +115,112 @@ private fun AuthContent(
                 onSubmit = viewModel::sendPasswordReset,
                 onBackToLogin = { viewModel.setMode(AuthMode.LOGIN) }
             )
-            return@Column
-        }
+        } else {
 
-        val isSignupMode = uiState.mode == AuthMode.SIGNUP
+            val isSignupMode = uiState.mode == AuthMode.SIGNUP
 
-        if (isSignupMode) {
+            if (isSignupMode) {
+                OutlinedTextField(
+                    value = uiState.name,
+                    onValueChange = viewModel::onNameChange,
+                    label = { Text(stringResource(R.string.auth_name)) },
+                    leadingIcon = { Icon(Icons.Default.Person, null) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    )
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
             OutlinedTextField(
-                value = uiState.name,
-                onValueChange = viewModel::onNameChange,
-                label = { Text(stringResource(R.string.auth_name)) },
-                leadingIcon = { Icon(Icons.Default.Person, null) },
+                value = uiState.email,
+                onValueChange = viewModel::onEmailChange,
+                label = { Text(stringResource(R.string.auth_email)) },
+                leadingIcon = { Icon(Icons.Default.Email, null) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
+                    keyboardType = KeyboardType.Email,
                     imeAction = ImeAction.Next
                 )
             )
+
             Spacer(modifier = Modifier.height(16.dp))
-        }
 
-        OutlinedTextField(
-            value = uiState.email,
-            onValueChange = viewModel::onEmailChange,
-            label = { Text(stringResource(R.string.auth_email)) },
-            leadingIcon = { Icon(Icons.Default.Email, null) },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Next
-            )
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        var passwordVisible by remember { mutableStateOf(false) }
-        OutlinedTextField(
-            value = uiState.password,
-            onValueChange = viewModel::onPasswordChange,
-            label = { Text(stringResource(R.string.auth_password)) },
-            leadingIcon = { Icon(Icons.Default.Lock, null) },
-            trailingIcon = {
-                IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                    Icon(
-                        imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                        contentDescription = stringResource(
-                            if (passwordVisible) R.string.auth_hide_password else R.string.auth_show_password
+            var passwordVisible by remember { mutableStateOf(false) }
+            OutlinedTextField(
+                value = uiState.password,
+                onValueChange = viewModel::onPasswordChange,
+                label = { Text(stringResource(R.string.auth_password)) },
+                leadingIcon = { Icon(Icons.Default.Lock, null) },
+                trailingIcon = {
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(
+                            imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                            contentDescription = stringResource(
+                                if (passwordVisible) R.string.auth_hide_password else R.string.auth_show_password
+                            )
                         )
-                    )
+                    }
+                },
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = { if (isSignupMode) viewModel.signup() else viewModel.login() }
+                )
+            )
+
+            if (!isSignupMode) {
+                Spacer(modifier = Modifier.height(8.dp))
+                TextButton(
+                    onClick = { viewModel.setMode(AuthMode.FORGOT_PASSWORD) },
+                    modifier = Modifier.align(Alignment.End)
+                ) {
+                    Text(stringResource(R.string.auth_forgot_password))
                 }
-            },
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = { if (isSignupMode) viewModel.signup() else viewModel.login() }
-            )
-        )
+            }
 
-        if (!isSignupMode) {
-            Spacer(modifier = Modifier.height(8.dp))
-            TextButton(
-                onClick = { viewModel.setMode(AuthMode.FORGOT_PASSWORD) },
-                modifier = Modifier.align(Alignment.End)
+            if (uiState.error != null) {
+                Spacer(modifier = Modifier.height(16.dp))
+                ErrorCard(uiState.error!!)
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = { if (isSignupMode) viewModel.signup() else viewModel.login() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                enabled = !uiState.isLoading
             ) {
-                Text(stringResource(R.string.auth_forgot_password))
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                } else {
+                    Text(stringResource(if (isSignupMode) R.string.auth_sign_up else R.string.auth_log_in))
+                }
             }
-        }
 
-        if (uiState.error != null) {
-            Spacer(modifier = Modifier.height(16.dp))
-            ErrorCard(uiState.error!!)
-        }
+            Spacer(modifier = Modifier.height(24.dp))
 
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Button(
-            onClick = { if (isSignupMode) viewModel.signup() else viewModel.login() },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            enabled = !uiState.isLoading
-        ) {
-            if (uiState.isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(24.dp),
-                    color = MaterialTheme.colorScheme.onPrimary
+            TextButton(onClick = onToggleMode) {
+                Text(
+                    text = stringResource(
+                        if (isSignupMode) R.string.auth_have_account else R.string.auth_no_account
+                    )
                 )
-            } else {
-                Text(stringResource(if (isSignupMode) R.string.auth_sign_up else R.string.auth_log_in))
             }
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        TextButton(onClick = onToggleMode) {
-            Text(
-                text = stringResource(
-                    if (isSignupMode) R.string.auth_have_account else R.string.auth_no_account
-                )
-            )
         }
     }
 }
@@ -250,49 +250,48 @@ private fun ForgotPasswordContent(
         )
         Spacer(modifier = Modifier.height(24.dp))
         TextButton(onClick = onBackToLogin) { Text(stringResource(R.string.auth_back_to_login)) }
-        return
-    }
+    } else {
+        OutlinedTextField(
+            value = email,
+            onValueChange = onEmailChange,
+            label = { Text(stringResource(R.string.auth_email)) },
+            leadingIcon = { Icon(Icons.Default.Email, null) },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(onDone = { onSubmit() })
+        )
 
-    OutlinedTextField(
-        value = email,
-        onValueChange = onEmailChange,
-        label = { Text(stringResource(R.string.auth_email)) },
-        leadingIcon = { Icon(Icons.Default.Email, null) },
-        modifier = Modifier.fillMaxWidth(),
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Email,
-            imeAction = ImeAction.Done
-        ),
-        keyboardActions = KeyboardActions(onDone = { onSubmit() })
-    )
-
-    if (error != null) {
-        Spacer(modifier = Modifier.height(16.dp))
-        ErrorCard(error)
-    }
-
-    Spacer(modifier = Modifier.height(24.dp))
-
-    Button(
-        onClick = onSubmit,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp),
-        enabled = !isLoading
-    ) {
-        if (isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(24.dp),
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-        } else {
-            Text(stringResource(R.string.auth_send_reset))
+        if (error != null) {
+            Spacer(modifier = Modifier.height(16.dp))
+            ErrorCard(error)
         }
-    }
 
-    Spacer(modifier = Modifier.height(16.dp))
-    TextButton(onClick = onBackToLogin) { Text(stringResource(R.string.auth_back_to_login)) }
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Button(
+            onClick = onSubmit,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            enabled = !isLoading
+        ) {
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            } else {
+                Text(stringResource(R.string.auth_send_reset))
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+        TextButton(onClick = onBackToLogin) { Text(stringResource(R.string.auth_back_to_login)) }
+    }
 }
 
 @Composable

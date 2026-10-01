@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlinKapt) apply false
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.googleServices) apply false
+    alias(libs.plugins.firebaseCrashlytics) apply false
 }
 
 tasks.register("clean", Delete::class) {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">संगीतमाइंड</string>
+    <string name="app_name">AstroGeet</string>
     
     <!-- Home Screen -->
     <string name="home_title">संगीतमाइंड</string>

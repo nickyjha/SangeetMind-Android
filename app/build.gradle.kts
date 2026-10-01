@@ -1,14 +1,35 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.kotlinKapt)
     alias(libs.plugins.hilt)
     alias(libs.plugins.googleServices)
+    alias(libs.plugins.firebaseCrashlytics)
+}
+
+// Release signing: keystore.properties (gitignored) next to settings.gradle.kts holds the
+// upload key's path and passwords. Without it, release builds are unsigned (CI / fresh clone).
+val keystoreProps = Properties().apply {
+    val f = rootProject.file("keystore.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
 }
 
 android {
     namespace = "com.sangeetmind.app"
     compileSdk = 34
+
+    signingConfigs {
+        if (keystoreProps.containsKey("storeFile")) {
+            create("release") {
+                storeFile = file(keystoreProps.getProperty("storeFile"))
+                storePassword = keystoreProps.getProperty("storePassword")
+                keyAlias = keystoreProps.getProperty("keyAlias")
+                keyPassword = keystoreProps.getProperty("keyPassword")
+            }
+        }
+    }
 
     defaultConfig {
         applicationId = "com.sangeetmind.app"
@@ -34,6 +55,7 @@ android {
             isDebuggable = true
         }
         release {
+            signingConfigs.findByName("release")?.let { signingConfig = it }
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
@@ -96,6 +118,7 @@ dependencies {
     // resolution touches a Firebase library — an upstream module's `api platform(...)`
     // does not propagate the BOM's version constraints across project boundaries.
     implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.crashlytics)
 
     // MainActivity implements Razorpay's PaymentResultWithDataListener directly.
     implementation(libs.razorpay.checkout)

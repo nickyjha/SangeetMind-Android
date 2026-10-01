@@ -84,3 +84,7 @@ lint-results*.xml
 # Secrets
 secrets.properties
 
+
+# Release signing (never commit)
+keystore.properties
+app/upload-keystore.jks

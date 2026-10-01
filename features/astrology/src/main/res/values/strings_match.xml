@@ -28,4 +28,25 @@
     <string name="match_dosha_no_exception">No classical exception applies.</string>
     <string name="match_dosha_points_note">Guna points are shown as scored; an exception means the dosha is not counted.</string>
     <string name="match_remedy_hint">Consider talking to an astrologer about remedies for this match.</string>
+
+    <!-- Non-marital relations -->
+    <string name="match_rel_marriage">Marriage</string>
+    <string name="match_rel_parent_child">Parent–child</string>
+    <string name="match_rel_siblings">Siblings</string>
+    <string name="match_rel_business">Business</string>
+    <string name="match_rel_friends">Friends</string>
+    <string name="match_intro_relation">Pick two saved kundlis. For parent–child and siblings, pick the elder first.</string>
+    <string name="match_role_parent">Parent</string>
+    <string name="match_role_child">Child</string>
+    <string name="match_role_elder">Elder</string>
+    <string name="match_role_younger">Younger</string>
+    <string name="match_role_person1">Person 1</string>
+    <string name="match_role_person2">Person 2</string>
+    <string name="match_points_fmt">%1$s / %2$d points</string>
+    <string name="match_level_strong">Strong bond</string>
+    <string name="match_level_good">Good bond</string>
+    <string name="match_level_mixed">Mixed</string>
+    <string name="match_level_careful">Needs care</string>
+    <string name="match_tips">Tips</string>
+    <string name="match_relation_note">Marriage uses the classical Ashtakoot; other relations are scored on Moon harmony, the lords, tara and how the two charts sit on each other.</string>
 </resources>

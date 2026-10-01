@@ -18,10 +18,13 @@ import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.core.ui.language.LocalAppLanguage
 import com.sangeetmind.core.ui.language.astroTerm
 import com.sangeetmind.features.astrology.R
+import com.sangeetmind.features.astrology.match.MATCH_RELATIONS
 import com.sangeetmind.features.astrology.match.MatchViewModel
 import com.sangeetmind.libs.models.Kundli
 import com.sangeetmind.libs.models.KundliMatchResult
 import com.sangeetmind.libs.models.MatchDosha
+import com.sangeetmind.libs.models.RelationMatchResult
+import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.libs.models.toTitleCase
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,12 +59,26 @@ fun MatchScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp)
         ) {
+            // Marriage keeps the classical Ashtakoot; the other relations use /v1/match/relation.
+            @OptIn(ExperimentalLayoutApi::class)
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                MATCH_RELATIONS.forEach { relation ->
+                    FilterChip(
+                        selected = uiState.relation == relation,
+                        onClick = { viewModel.setRelation(relation) },
+                        label = { Text(stringResource(relationLabelRes(relation))) }
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            val marriage = uiState.relation == "marriage"
             Text(
-                text = stringResource(R.string.match_intro),
+                text = stringResource(if (marriage) R.string.match_intro else R.string.match_intro_relation),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(20.dp))
+            val (labelA, labelB) = roleLabelRes(uiState.relation)
 
             if (uiState.isLoadingKundlis) {
                 Box(modifier = Modifier.fillMaxWidth().height(80.dp), contentAlignment = Alignment.Center) {
@@ -74,14 +91,14 @@ fun MatchScreen(
                 )
             } else {
                 KundliDropdown(
-                    label = stringResource(R.string.match_person_a),
+                    label = stringResource(labelA),
                     selected = uiState.personA,
                     options = uiState.kundlis,
                     onSelect = viewModel::selectPersonA
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 KundliDropdown(
-                    label = stringResource(R.string.match_person_b),
+                    label = stringResource(labelB),
                     selected = uiState.personB,
                     options = uiState.kundlis,
                     onSelect = viewModel::selectPersonB
@@ -116,6 +133,10 @@ fun MatchScreen(
             uiState.result?.let { result ->
                 Spacer(modifier = Modifier.height(24.dp))
                 MatchResultCard(result)
+            }
+            uiState.relationResult?.let { result ->
+                Spacer(modifier = Modifier.height(24.dp))
+                RelationResultCard(result)
             }
         }
     }
@@ -235,5 +256,82 @@ private fun KootaRow(label: String, koota: com.sangeetmind.libs.models.Koota) {
     Row(modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp)) {
         Text(label, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
         Text("${koota.points} / ${koota.max}", style = MaterialTheme.typography.bodyMedium)
+    }
+}
+
+private fun relationLabelRes(relation: String): Int = when (relation) {
+    "parent_child" -> R.string.match_rel_parent_child
+    "siblings" -> R.string.match_rel_siblings
+    "business" -> R.string.match_rel_business
+    "friends" -> R.string.match_rel_friends
+    else -> R.string.match_rel_marriage
+}
+
+/** Dropdown labels: Boy/Girl for marriage, the elder first for parent–child and siblings. */
+private fun roleLabelRes(relation: String): Pair<Int, Int> = when (relation) {
+    "parent_child" -> R.string.match_role_parent to R.string.match_role_child
+    "siblings" -> R.string.match_role_elder to R.string.match_role_younger
+    "business", "friends" -> R.string.match_role_person1 to R.string.match_role_person2
+    else -> R.string.match_person_a to R.string.match_person_b
+}
+
+/** Score out of 36, level, summary, one row per factor (points, status colour, reason), tips. */
+@Composable
+private fun RelationResultCard(result: RelationMatchResult) {
+    val languageCode = LocalAppLanguage.current.code
+    val graha = LocalGrahaColors.current
+    val total = if (result.total % 1.0 == 0.0) result.total.toInt().toString() else result.total.toString()
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = stringResource(R.string.match_points_fmt, total, result.max.toInt()),
+                style = MaterialTheme.typography.headlineSmall
+            )
+            Text(
+                text = stringResource(
+                    when (result.level) {
+                        "strong" -> R.string.match_level_strong
+                        "good" -> R.string.match_level_good
+                        "mixed" -> R.string.match_level_mixed
+                        else -> R.string.match_level_careful
+                    }
+                ),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(result.summary.forLanguage(languageCode), style = MaterialTheme.typography.bodyMedium)
+            Spacer(modifier = Modifier.height(12.dp))
+            result.factors.forEach { f ->
+                val color = when (f.status) {
+                    "good" -> graha.budha
+                    "caution" -> graha.mangala
+                    else -> MaterialTheme.colorScheme.onSurfaceVariant
+                }
+                Row(modifier = Modifier.fillMaxWidth().padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Text(f.label.forLanguage(languageCode), modifier = Modifier.weight(1f), style = MaterialTheme.typography.titleSmall)
+                    val pts = if (f.points % 1.0 == 0.0) f.points.toInt().toString() else f.points.toString()
+                    Text("$pts / ${f.max.toInt()}", style = MaterialTheme.typography.titleSmall, color = color)
+                }
+                Text(
+                    f.reason.forLanguage(languageCode),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            if (result.tips.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(stringResource(R.string.match_tips), style = MaterialTheme.typography.titleSmall)
+                result.tips.forEach { tip ->
+                    Text("\u2022 " + tip.forLanguage(languageCode), style = MaterialTheme.typography.bodySmall)
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                stringResource(R.string.match_relation_note),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }

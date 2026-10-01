@@ -28,4 +28,25 @@
     <string name="match_dosha_no_exception">इस दोष की कोई काट नहीं मिलती।</string>
     <string name="match_dosha_points_note">गुण अंक वैसे ही दिखाए गए हैं; काट होने पर यह दोष नहीं माना जाता।</string>
     <string name="match_remedy_hint">इस मिलान के उपायों के लिए किसी ज्योतिषी से बात कर लें।</string>
+
+    <!-- Non-marital relations -->
+    <string name="match_rel_marriage">विवाह</string>
+    <string name="match_rel_parent_child">माता-पिता और बच्चा</string>
+    <string name="match_rel_siblings">भाई-बहन</string>
+    <string name="match_rel_business">कारोबार</string>
+    <string name="match_rel_friends">दोस्ती</string>
+    <string name="match_intro_relation">दो सेव की हुई कुंडलियाँ चुनें। माता-पिता/बच्चे और भाई-बहन में पहले बड़े को चुनें।</string>
+    <string name="match_role_parent">माता-पिता</string>
+    <string name="match_role_child">बच्चा</string>
+    <string name="match_role_elder">बड़ा</string>
+    <string name="match_role_younger">छोटा</string>
+    <string name="match_role_person1">व्यक्ति 1</string>
+    <string name="match_role_person2">व्यक्ति 2</string>
+    <string name="match_points_fmt">%1$s / %2$d अंक</string>
+    <string name="match_level_strong">मज़बूत रिश्ता</string>
+    <string name="match_level_good">अच्छा रिश्ता</string>
+    <string name="match_level_mixed">मिला-जुला</string>
+    <string name="match_level_careful">ध्यान चाहिए</string>
+    <string name="match_tips">सुझाव</string>
+    <string name="match_relation_note">विवाह के लिए अष्टकूट; बाकी रिश्तों के लिए चंद्र मेल, स्वामी, तारा और एक-दूसरे की कुंडली पर ग्रहों से अंक।</string>
 </resources>

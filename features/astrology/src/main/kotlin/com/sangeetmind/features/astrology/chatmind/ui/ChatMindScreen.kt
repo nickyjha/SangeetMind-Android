@@ -18,6 +18,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.features.astrology.R
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
+import com.sangeetmind.features.astrology.chatmind.CHAT_PERSONAS
 import com.sangeetmind.features.astrology.chatmind.ChatMessage
 import com.sangeetmind.features.astrology.chatmind.ChatMindViewModel
 import com.sangeetmind.features.astrology.chatmind.ChatRole
@@ -56,6 +59,30 @@ fun ChatMindScreen(
         bottomBar = {
             Surface(tonalElevation = 3.dp) {
                 Column {
+                    // Who answers: the persona changes the tone, the tier changes the model.
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                            .horizontalScroll(rememberScrollState())
+                            .padding(horizontal = 16.dp, vertical = 4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            stringResource(R.string.chatmind_persona_label),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        CHAT_PERSONAS.forEach { persona ->
+                            FilterChip(
+                                selected = uiState.persona == persona,
+                                onClick = { viewModel.setPersona(persona) },
+                                enabled = !uiState.isSending,
+                                label = { Text(stringResource(personaNameRes(persona))) }
+                            )
+                        }
+                    }
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -144,9 +171,13 @@ private fun ChatBubble(message: ChatMessage) {
             modifier = Modifier.fillMaxWidth(0.85f)
         ) {
             Column(modifier = Modifier.padding(12.dp)) {
-                if (message.tier == "advanced") {
+                val badge = listOfNotNull(
+                    message.persona?.let { stringResource(personaNameRes(it)) },
+                    if (message.tier == "advanced") stringResource(R.string.chatmind_tier_badge_advanced) else null
+                ).joinToString(" · ")
+                if (badge.isNotEmpty()) {
                     Text(
-                        stringResource(R.string.chatmind_tier_badge_advanced),
+                        badge,
                         style = MaterialTheme.typography.labelSmall,
                         color = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.rahu,
                         modifier = Modifier.padding(bottom = 4.dp)
@@ -156,4 +187,11 @@ private fun ChatBubble(message: ChatMessage) {
             }
         }
     }
+}
+
+private fun personaNameRes(persona: String): Int = when (persona) {
+    "counsellor" -> R.string.chatmind_persona_counsellor
+    "analyst" -> R.string.chatmind_persona_analyst
+    "friend" -> R.string.chatmind_persona_friend
+    else -> R.string.chatmind_persona_pandit
 }

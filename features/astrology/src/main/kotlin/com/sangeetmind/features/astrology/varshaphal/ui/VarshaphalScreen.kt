@@ -42,7 +42,7 @@ import com.sangeetmind.core.ui.language.astroTerm
 import com.sangeetmind.core.ui.theme.GrahaColors
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.features.astrology.R
-import com.sangeetmind.features.astrology.chart.ui.NorthIndianHouseChart
+import com.sangeetmind.features.astrology.chart.ui.HouseChart
 import com.sangeetmind.features.astrology.chart.ui.PlanetListCard
 import com.sangeetmind.features.astrology.varshaphal.VarshaphalViewModel
 import com.sangeetmind.libs.models.VarshaphalResponse
@@ -175,7 +175,7 @@ private fun VarshaphalContent(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
-                    NorthIndianHouseChart(
+                    HouseChart(
                         lagna = varshaphal.chart.lagna,
                         planets = varshaphal.chart.planets,
                         title = stringResource(R.string.varshaphal_chart_title, year),

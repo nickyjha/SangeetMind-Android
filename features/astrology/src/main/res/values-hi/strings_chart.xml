@@ -212,4 +212,9 @@
     <string name="chart_severity_strong">तेज़</string>
     <string name="chart_severity_cancelled_suffix">%1$s · भंग</string>
     <string name="chart_dasha_story_cta">अपनी ज़िंदगी की दशा कहानी पढ़ें →</string>
+
+    <!-- Chart style -->
+    <string name="chart_style_north">उत्तर भारतीय</string>
+    <string name="chart_style_south">दक्षिण भारतीय</string>
+    <string name="chart_subtitle_south_indian">दक्षिण भारतीय कुंडली · राशियाँ तय, भाव लग्न के निशान से गिनें</string>
 </resources>

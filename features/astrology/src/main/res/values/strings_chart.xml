@@ -214,4 +214,9 @@
     <string name="chart_severity_strong">Strong</string>
     <string name="chart_severity_cancelled_suffix">%1$s · cancelled</string>
     <string name="chart_dasha_story_cta">Read your life\'s dasha story →</string>
+
+    <!-- Chart style -->
+    <string name="chart_style_north">North Indian</string>
+    <string name="chart_style_south">South Indian</string>
+    <string name="chart_subtitle_south_indian">South Indian chart · signs fixed, houses counted from the lagna mark</string>
 </resources>

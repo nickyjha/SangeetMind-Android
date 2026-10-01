@@ -26,14 +26,14 @@ import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.LagnaInfo
 import com.sangeetmind.libs.models.PlanetInfo
 
-private val ZODIAC_SIGNS = listOf(
+internal val ZODIAC_SIGNS = listOf(
     "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
     "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"
 )
 
 /** Resolves the wheel's short planet labels in the current display language (see strings_chart.xml chart_wheel_abbrev_*). */
 @Composable
-private fun planetAbbreviations(): Map<String, String> = mapOf(
+internal fun planetAbbreviations(): Map<String, String> = mapOf(
     "Sun" to stringResource(R.string.chart_wheel_abbrev_sun),
     "Moon" to stringResource(R.string.chart_wheel_abbrev_moon),
     "Mercury" to stringResource(R.string.chart_wheel_abbrev_mercury),
@@ -46,7 +46,7 @@ private fun planetAbbreviations(): Map<String, String> = mapOf(
     "Lagna" to stringResource(R.string.chart_wheel_abbrev_lagna)
 )
 
-private val DEFAULT_WHEEL_PLANET_ORDER = listOf(
+internal val DEFAULT_WHEEL_PLANET_ORDER = listOf(
     "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu"
 )
 

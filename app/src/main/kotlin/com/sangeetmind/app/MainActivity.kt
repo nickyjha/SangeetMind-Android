@@ -24,9 +24,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.razorpay.PaymentData
 import com.razorpay.PaymentResultWithDataListener
 import com.sangeetmind.app.navigation.SangeetMindNavHost
+import com.sangeetmind.core.common.chart.ChartStyleManager
 import com.sangeetmind.core.common.language.LanguageManager
 import com.sangeetmind.core.common.language.withAppLanguage
 import com.sangeetmind.core.database.PreferencesRepository
+import com.sangeetmind.core.ui.chart.LocalChartStyle
+import com.sangeetmind.core.ui.chart.LocalChartStyleSwitcher
 import com.sangeetmind.core.ui.language.LocalAppLanguage
 import com.sangeetmind.core.ui.language.LocalLanguageSwitcher
 import com.sangeetmind.core.ui.theme.SangeetMindTheme
@@ -47,6 +50,9 @@ class MainActivity : ComponentActivity(), PaymentResultWithDataListener {
     @Inject
     lateinit var languageManager: LanguageManager
 
+    @Inject
+    lateinit var chartStyleManager: ChartStyleManager
+
     // The activity's own resources start in the saved language too, so the first frame
     // never flashes English. Read synchronously — Hilt hasn't injected anything yet here.
     override fun attachBaseContext(newBase: Context) {
@@ -60,6 +66,7 @@ class MainActivity : ComponentActivity(), PaymentResultWithDataListener {
             // so swapping in a locale-overridden context re-resolves the whole tree in place —
             // no activity recreate, navigation state preserved.
             val language by languageManager.language.collectAsStateWithLifecycle()
+            val chartStyle by chartStyleManager.style.collectAsStateWithLifecycle()
             val activityContext = LocalContext.current
             val localizedContext = remember(language) { activityContext.withAppLanguage(language) }
 
@@ -67,7 +74,9 @@ class MainActivity : ComponentActivity(), PaymentResultWithDataListener {
                 LocalContext provides localizedContext,
                 LocalConfiguration provides localizedContext.resources.configuration,
                 LocalAppLanguage provides language,
-                LocalLanguageSwitcher provides languageManager::setLanguage
+                LocalLanguageSwitcher provides languageManager::setLanguage,
+                LocalChartStyle provides chartStyle,
+                LocalChartStyleSwitcher provides chartStyleManager::setStyle
             ) {
                 SangeetMindTheme {
                     Surface(

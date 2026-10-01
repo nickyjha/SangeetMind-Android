@@ -232,17 +232,18 @@ private fun ChartContent(
                 }
             }
         }
+        item { ChartStyleSelector() }
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
-                NorthIndianHouseChart(
+                HouseChart(
                     lagna = selected.second.lagna,
                     planets = selected.second.planets,
                     title = meta?.first ?: selected.first,
-                    subtitle = meta?.second ?: stringResource(R.string.chart_subtitle_north_indian),
+                    subtitle = meta?.second ?: chartStyleSubtitle(),
                     modifier = Modifier.padding(16.dp)
                 )
             }
@@ -344,7 +345,7 @@ private fun ChartContent(
                                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                             ) {
-                                NorthIndianHouseChart(
+                                HouseChart(
                                     lagna = chart.chalit.lagna,
                                     planets = chalitPlanets,
                                     title = stringResource(R.string.chart_chalit_title),
@@ -365,7 +366,7 @@ private fun ChartContent(
                                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                             ) {
-                                NorthIndianHouseChart(
+                                HouseChart(
                                     lagna = chart.moonChart.lagna,
                                     planets = moonChartPlanets,
                                     title = stringResource(R.string.chart_moon_chart_title),

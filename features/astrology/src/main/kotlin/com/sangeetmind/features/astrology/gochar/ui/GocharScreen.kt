@@ -55,7 +55,7 @@ import com.sangeetmind.core.ui.language.astroTerm
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.chart.ui.Chip
-import com.sangeetmind.features.astrology.chart.ui.NorthIndianHouseChart
+import com.sangeetmind.features.astrology.chart.ui.HouseChart
 import com.sangeetmind.features.astrology.chart.ui.grahaColorFor
 import com.sangeetmind.features.astrology.gochar.GocharUiState
 import com.sangeetmind.features.astrology.gochar.GocharViewModel
@@ -215,7 +215,7 @@ private fun GocharContent(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
-                    NorthIndianHouseChart(
+                    HouseChart(
                         lagna = transit.natal.lagna,
                         planets = transit.transit.planets.mapValues { (_, p) -> p.toPlanetInfo() },
                         title = chartTitle,

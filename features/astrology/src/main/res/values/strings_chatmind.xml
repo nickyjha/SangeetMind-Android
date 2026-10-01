@@ -10,4 +10,11 @@
     <string name="chatmind_tier_badge_advanced">ADVANCED</string>
     <string name="chatmind_no_answer">No answer returned</string>
     <string name="chatmind_err_could_not_answer">ChatMind could not answer that</string>
+
+    <!-- Personas -->
+    <string name="chatmind_persona_label">Answer as</string>
+    <string name="chatmind_persona_pandit">Pandit ji</string>
+    <string name="chatmind_persona_counsellor">Modern guide</string>
+    <string name="chatmind_persona_analyst">KP analyst</string>
+    <string name="chatmind_persona_friend">Astro friend</string>
 </resources>

@@ -25,7 +25,10 @@ import kotlin.math.roundToLong
 enum class ChatRole { USER, ASSISTANT }
 
 /** [tier] is the model tier that produced an ASSISTANT reply ("standard"/"advanced"); null for USER messages. */
-data class ChatMessage(val role: ChatRole, val text: String, val tier: String? = null)
+data class ChatMessage(val role: ChatRole, val text: String, val tier: String? = null, val persona: String? = null)
+
+/** ChatMind personas, in display order (backend PERSONAS in llm_chatmind_service.py). */
+val CHAT_PERSONAS = listOf("pandit", "counsellor", "analyst", "friend")
 
 data class ChatMindUiState(
     val messages: List<ChatMessage> = emptyList(),
@@ -34,7 +37,8 @@ data class ChatMindUiState(
     val error: String? = null,
     /** Mirrors the website's "Advanced analysis" toggle — off (standard/gemini-2.5-flash-lite)
      * by default, since advanced (gemini-2.5-pro) costs more per reply from the user's wallet. */
-    val advancedAnalysis: Boolean = false
+    val advancedAnalysis: Boolean = false,
+    val persona: String = CHAT_PERSONAS.first()
 )
 
 @HiltViewModel
@@ -63,10 +67,15 @@ class ChatMindViewModel @Inject constructor(
         _uiState.update { it.copy(advancedAnalysis = enabled) }
     }
 
+    fun setPersona(persona: String) {
+        _uiState.update { it.copy(persona = persona) }
+    }
+
     fun send() {
         val question = _uiState.value.input.trim()
         if (question.isBlank()) return
         val tier = if (_uiState.value.advancedAnalysis) "advanced" else "standard"
+        val persona = _uiState.value.persona
 
         _uiState.update {
             it.copy(
@@ -87,7 +96,7 @@ class ChatMindViewModel @Inject constructor(
                 is Result.Loading -> return@launch
             }
 
-            when (val result = repository.ask(details, question, analysisTier = tier)) {
+            when (val result = repository.ask(details, question, analysisTier = tier, persona = persona)) {
                 is Result.Success -> {
                     val response = result.data
                     _uiState.update {
@@ -96,7 +105,8 @@ class ChatMindViewModel @Inject constructor(
                             messages = it.messages + ChatMessage(
                                 ChatRole.ASSISTANT,
                                 response.answer ?: response.error ?: str(R.string.chatmind_no_answer),
-                                tier = tier
+                                tier = tier,
+                                persona = response.persona
                             )
                         )
                     }

@@ -10,4 +10,11 @@
     <string name="chatmind_tier_badge_advanced">एडवांस्ड</string>
     <string name="chatmind_no_answer">कोई जवाब नहीं मिला</string>
     <string name="chatmind_err_could_not_answer">ChatMind इसका जवाब नहीं दे पाया</string>
+
+    <!-- Personas -->
+    <string name="chatmind_persona_label">जवाब दे</string>
+    <string name="chatmind_persona_pandit">पंडित जी</string>
+    <string name="chatmind_persona_counsellor">मॉडर्न गाइड</string>
+    <string name="chatmind_persona_analyst">KP विश्लेषक</string>
+    <string name="chatmind_persona_friend">ज्योतिष दोस्त</string>
 </resources>

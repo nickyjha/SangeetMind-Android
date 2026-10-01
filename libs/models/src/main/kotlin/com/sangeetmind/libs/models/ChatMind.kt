@@ -22,7 +22,9 @@ data class ChatMindRequest(
     @Json(name = "birth_details") val birthDetails: LlmBirthDetails,
     val question: String,
     val lang: String = "en",
-    @Json(name = "analysis_tier") val analysisTier: String? = null
+    @Json(name = "analysis_tier") val analysisTier: String? = null,
+    // pandit (default) | counsellor | analyst | friend
+    val persona: String? = null
 )
 
 @JsonClass(generateAdapter = true)
@@ -41,6 +43,7 @@ data class ChatCostEstimate(
 @JsonClass(generateAdapter = true)
 data class ChatMindResponse(
     val answer: String? = null,
+    val persona: String = "pandit",
     @Json(name = "context_focus") val contextFocus: String = "general",
     @Json(name = "context_blocks") val contextBlocks: List<String> = emptyList(),
     @Json(name = "cost_estimate") val costEstimate: ChatCostEstimate,

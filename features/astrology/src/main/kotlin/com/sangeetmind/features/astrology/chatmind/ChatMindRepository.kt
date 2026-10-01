@@ -61,7 +61,8 @@ class ChatMindRepository @Inject constructor(
     suspend fun ask(
         birthDetails: LlmBirthDetails,
         question: String,
-        analysisTier: String? = null
+        analysisTier: String? = null,
+        persona: String? = null
     ): Result<ChatMindResponse> = withContext(ioDispatcher) {
         try {
             Result.Success(
@@ -70,6 +71,7 @@ class ChatMindRepository @Inject constructor(
                         birthDetails,
                         question,
                         analysisTier = analysisTier,
+                        persona = persona,
                         lang = languageManager.current.code
                     )
                 )

@@ -62,7 +62,27 @@ fun KundliOnboardingScreen(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Quick fill: paste a WhatsApp-style line and let BirthDetailsParser fill the fields.
+        OutlinedTextField(
+            value = uiState.pasteText,
+            onValueChange = viewModel::onPasteTextChange,
+            label = { Text(stringResource(R.string.kundli_paste_label)) },
+            placeholder = { Text(stringResource(R.string.kundli_paste_hint)) },
+            modifier = Modifier.fillMaxWidth(),
+            minLines = 2,
+            maxLines = 4,
+            supportingText = uiState.pasteNotice?.let { { Text(it, color = MaterialTheme.colorScheme.primary) } }
+        )
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+            TextButton(
+                onClick = viewModel::fillFromPaste,
+                enabled = uiState.pasteText.isNotBlank()
+            ) { Text(stringResource(R.string.kundli_paste_fill)) }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
             value = uiState.fullName,

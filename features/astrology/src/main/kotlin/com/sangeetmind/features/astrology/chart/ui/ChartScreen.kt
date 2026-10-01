@@ -57,6 +57,7 @@ import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.chart.ChartViewModel
 import com.sangeetmind.libs.models.ArudhaPada
+import com.sangeetmind.libs.models.Kundli
 import com.sangeetmind.libs.models.BhavabalaHouse
 import com.sangeetmind.libs.models.BhuktiPeriod
 import com.sangeetmind.libs.models.CharaAntardasha
@@ -157,6 +158,7 @@ fun ChartScreen(
                 uiState.chart != null -> {
                     ChartContent(
                         personName = uiState.kundli?.fullName?.toTitleCase(),
+                        kundli = uiState.kundli,
                         chart = uiState.chart!!,
                         showFullTimeline = uiState.showFullTimeline,
                         onToggleTimeline = viewModel::toggleFullTimeline
@@ -170,6 +172,7 @@ fun ChartScreen(
 @Composable
 private fun ChartContent(
     personName: String?,
+    kundli: Kundli?,
     chart: ChartSummaryResponse,
     showFullTimeline: Boolean,
     onToggleTimeline: () -> Unit
@@ -209,6 +212,7 @@ private fun ChartContent(
                 currentDasha = formatCurrentDasha(chart)
             )
         }
+        item { BirthDetailsCard(kundli = kundli, chart = chart) }
         if (availableCharts.size > 1) {
             item {
                 ScrollableTabRow(
@@ -490,6 +494,78 @@ private fun SummaryStrip(
         }
     }
 }
+
+/** The birth data the chart was cast from, plus the three lines a printed kundli puts under
+ * them: ayanamsa, Mangal dosha strength and the balance of dasha at birth. `chart.birth`,
+ * `ayanamsa`, `severity` and `balanceAtBirth` are null on charts cached before v19, so each
+ * chip is shown only when its data exists. */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun BirthDetailsCard(kundli: Kundli?, chart: ChartSummaryResponse) {
+    val birth = chart.birth
+    val dateIso = birth?.date?.takeIf { it.isNotBlank() } ?: kundli?.birthDate ?: return
+    val time = (birth?.time?.takeIf { it.isNotBlank() } ?: kundli?.birthTime)?.take(5)
+    val dateText = runCatching { java.time.LocalDate.parse(dateIso).format(BIRTH_DATE_FORMAT) }.getOrDefault(dateIso)
+    val manglik = chart.doshas.manglik
+    val balance = chart.vimshottari.balanceAtBirth
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(stringResource(R.string.chart_birth_details), style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.height(8.dp))
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                SummaryChip(
+                    stringResource(R.string.chart_birth_born_label),
+                    listOfNotNull(dateText, time?.takeIf { it.isNotBlank() }).joinToString(" · ")
+                )
+                kundli?.birthPlace?.takeIf { it.isNotBlank() }?.let {
+                    SummaryChip(stringResource(R.string.chart_birth_place_label), shortPlace(it))
+                }
+                birth?.takeIf { it.timezone.isNotBlank() }?.let {
+                    SummaryChip(stringResource(R.string.chart_birth_timezone_label), "${it.timezone} (${it.utcOffset})")
+                }
+                chart.ayanamsa?.takeIf { it.dms.isNotBlank() }?.let {
+                    SummaryChip(stringResource(R.string.chart_birth_ayanamsa_label), "${astroTerm(it.name)} ${it.dms}")
+                }
+                manglik.severity?.let { severity ->
+                    val label = severityLabel(severity)
+                    SummaryChip(
+                        stringResource(R.string.chart_birth_mangal_label),
+                        if (manglik.cancelled) stringResource(R.string.chart_severity_cancelled_suffix, label) else label,
+                        highlight = manglik.effectivePresent
+                    )
+                }
+                balance?.let {
+                    SummaryChip(
+                        stringResource(R.string.chart_birth_balance_label),
+                        stringResource(R.string.chart_birth_balance_fmt, astroTerm(it.lord), it.years, it.months, it.days)
+                    )
+                }
+            }
+        }
+    }
+}
+
+private val BIRTH_DATE_FORMAT = DateTimeFormatter.ofPattern("d MMM yyyy")
+
+/** Nominatim labels are long ("Patna, Patna District, Bihar, 800001, India"); keep the town
+ * and the state. */
+private fun shortPlace(label: String): String {
+    val parts = label.split(",").map { it.trim() }.filter { it.isNotEmpty() && !it.all { c -> c.isDigit() } }
+    return if (parts.size <= 2) parts.joinToString(", ") else "${parts.first()}, ${parts[parts.size - 2]}"
+}
+
+@Composable
+private fun severityLabel(severity: String): String = stringResource(
+    when (severity) {
+        "mild" -> R.string.chart_severity_mild
+        "moderate" -> R.string.chart_severity_moderate
+        "strong" -> R.string.chart_severity_strong
+        else -> R.string.chart_severity_none
+    }
+)
 
 @Composable
 private fun SummaryChip(label: String, value: String, highlight: Boolean = false) {
@@ -779,7 +855,9 @@ private fun DoshaCard(doshas: ChartDoshas) {
                 label = astroTerm("Manglik"),
                 isFlagged = manglik.effectivePresent,
                 statusText = when {
-                    manglik.effectivePresent -> stringResource(R.string.chart_status_present)
+                    manglik.effectivePresent -> manglik.severity
+                        ?.let { "${stringResource(R.string.chart_status_present)} · ${severityLabel(it)}" }
+                        ?: stringResource(R.string.chart_status_present)
                     manglik.cancelled -> stringResource(R.string.chart_status_cancelled)
                     else -> stringResource(R.string.chart_status_not_present)
                 },

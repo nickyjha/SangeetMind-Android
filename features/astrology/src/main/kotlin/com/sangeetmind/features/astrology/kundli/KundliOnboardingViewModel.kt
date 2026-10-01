@@ -10,6 +10,7 @@ import com.sangeetmind.core.common.language.withAppLanguage
 import com.sangeetmind.core.network.NominatimApi
 import com.sangeetmind.core.network.NominatimPlace
 import com.sangeetmind.features.astrology.R
+import com.sangeetmind.libs.models.BirthDetailsParser
 import com.sangeetmind.libs.models.toTitleCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -38,7 +39,9 @@ data class KundliOnboardingUiState(
     val isSearchingPlace: Boolean = false,
     val isSaving: Boolean = false,
     val error: String? = null,
-    val saved: Boolean = false
+    val saved: Boolean = false,
+    val pasteText: String = "",
+    val pasteNotice: String? = null
 )
 
 /**
@@ -59,8 +62,37 @@ class KundliOnboardingViewModel @Inject constructor(
 
     private var searchJob: Job? = null
 
+    // Set by fillFromPaste: pick the first Nominatim hit for the pasted place automatically.
+    private var autoPickPlace = false
+
     private fun str(@StringRes id: Int): String =
         context.withAppLanguage(languageManager.current).getString(id)
+
+    fun onPasteTextChange(value: String) {
+        _uiState.update { it.copy(pasteText = value, pasteNotice = null) }
+    }
+
+    /** Fill whatever [BirthDetailsParser] finds in the pasted text; untouched fields keep their values. */
+    fun fillFromPaste() {
+        val parsed = BirthDetailsParser.parse(_uiState.value.pasteText)
+        if (parsed.isEmpty) {
+            _uiState.update { it.copy(error = str(R.string.kundli_paste_nothing_found)) }
+            return
+        }
+        _uiState.update {
+            it.copy(
+                fullName = parsed.name ?: it.fullName,
+                birthDate = parsed.date ?: it.birthDate,
+                birthTime = parsed.time ?: it.birthTime,
+                error = null,
+                pasteNotice = str(R.string.kundli_paste_filled)
+            )
+        }
+        parsed.place?.let { place ->
+            onBirthPlaceQueryChange(place)
+            autoPickPlace = true
+        }
+    }
 
     fun onFullNameChange(value: String) {
         _uiState.update { it.copy(fullName = value, error = null) }
@@ -76,6 +108,7 @@ class KundliOnboardingViewModel @Inject constructor(
 
     fun onBirthPlaceQueryChange(query: String) {
         _uiState.update { it.copy(birthPlaceQuery = query, selectedPlace = null, error = null) }
+        autoPickPlace = false
         searchJob?.cancel()
         if (query.length < 3) {
             _uiState.update { it.copy(placeSuggestions = emptyList(), isSearchingPlace = false) }
@@ -85,11 +118,11 @@ class KundliOnboardingViewModel @Inject constructor(
             delay(400) // debounce, be gentle with Nominatim's public endpoint
             _uiState.update { it.copy(isSearchingPlace = true) }
             val results = runCatching { nominatimApi.search(query) }.getOrDefault(emptyList())
-            _uiState.update {
-                it.copy(
-                    isSearchingPlace = false,
-                    placeSuggestions = results.map { place -> place.toSuggestion() }
-                )
+            val suggestions = results.map { place -> place.toSuggestion() }
+            _uiState.update { it.copy(isSearchingPlace = false, placeSuggestions = suggestions) }
+            if (autoPickPlace) {
+                autoPickPlace = false
+                suggestions.firstOrNull()?.let { onPlaceSelected(it) }
             }
         }
     }

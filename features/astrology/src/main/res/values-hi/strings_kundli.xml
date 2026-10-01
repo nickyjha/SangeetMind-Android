@@ -31,4 +31,11 @@
     <string name="kundli_not_primary">मुख्य नहीं</string>
     <string name="kundli_set_primary">मुख्य बनाएँ</string>
     <string name="kundli_untitled">बिना नाम की कुंडली</string>
+
+    <!-- Paste birth details -->
+    <string name="kundli_paste_label">या जानकारी पेस्ट करें</string>
+    <string name="kundli_paste_hint">जैसे राहुल, 12 जनवरी 1990, शाम 4:30, पटना</string>
+    <string name="kundli_paste_fill">फ़ॉर्म भरें</string>
+    <string name="kundli_paste_nothing_found">इस टेक्स्ट में तारीख़, समय या जगह नहीं मिली</string>
+    <string name="kundli_paste_filled">भर दिया — नीचे के खाने जाँच लें</string>
 </resources>

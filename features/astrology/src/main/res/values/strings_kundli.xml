@@ -31,4 +31,11 @@
     <string name="kundli_not_primary">Not primary</string>
     <string name="kundli_set_primary">Set as primary</string>
     <string name="kundli_untitled">Untitled kundli</string>
+
+    <!-- Paste birth details -->
+    <string name="kundli_paste_label">Or paste the details</string>
+    <string name="kundli_paste_hint">e.g. Rahul, 12 Jan 1990, 4:30 pm, Patna</string>
+    <string name="kundli_paste_fill">Fill the form</string>
+    <string name="kundli_paste_nothing_found">Couldn\'t find a date, time or place in that text</string>
+    <string name="kundli_paste_filled">Filled in — check the fields below</string>
 </resources>

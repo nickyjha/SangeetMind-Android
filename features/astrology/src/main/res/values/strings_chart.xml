@@ -198,4 +198,19 @@
     <string name="chart_planet_in_nak_fmt">in %1$s · pada %2$d</string>
     <string name="chart_conjunctions_title">Conjunctions</string>
     <string name="chart_conjunction_where_fmt">in %1$s · H%2$d</string>
+
+    <!-- Birth details card -->
+    <string name="chart_birth_details">Birth details</string>
+    <string name="chart_birth_born_label">Born</string>
+    <string name="chart_birth_place_label">Place</string>
+    <string name="chart_birth_timezone_label">Time zone</string>
+    <string name="chart_birth_ayanamsa_label">Ayanamsa</string>
+    <string name="chart_birth_mangal_label">Mangal dosha</string>
+    <string name="chart_birth_balance_label">Dasha balance at birth</string>
+    <string name="chart_birth_balance_fmt">%1$s · %2$dy %3$dm %4$dd</string>
+    <string name="chart_severity_none">None</string>
+    <string name="chart_severity_mild">Mild</string>
+    <string name="chart_severity_moderate">Moderate</string>
+    <string name="chart_severity_strong">Strong</string>
+    <string name="chart_severity_cancelled_suffix">%1$s · cancelled</string>
 </resources>

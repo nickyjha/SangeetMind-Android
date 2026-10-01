@@ -196,4 +196,19 @@
     <string name="chart_planet_in_nak_fmt">%1$s में · पद %2$d</string>
     <string name="chart_conjunctions_title">युति (एक राशि में साथ बैठे ग्रह)</string>
     <string name="chart_conjunction_where_fmt">%1$s में · भाव %2$d</string>
+
+    <!-- Birth details card -->
+    <string name="chart_birth_details">जन्म की जानकारी</string>
+    <string name="chart_birth_born_label">जन्म</string>
+    <string name="chart_birth_place_label">जगह</string>
+    <string name="chart_birth_timezone_label">टाइम ज़ोन</string>
+    <string name="chart_birth_ayanamsa_label">अयनांश</string>
+    <string name="chart_birth_mangal_label">मंगल दोष</string>
+    <string name="chart_birth_balance_label">जन्म के समय बची दशा</string>
+    <string name="chart_birth_balance_fmt">%1$s · %2$d साल %3$d महीने %4$d दिन</string>
+    <string name="chart_severity_none">नहीं</string>
+    <string name="chart_severity_mild">हल्का</string>
+    <string name="chart_severity_moderate">मध्यम</string>
+    <string name="chart_severity_strong">तेज़</string>
+    <string name="chart_severity_cancelled_suffix">%1$s · भंग</string>
 </resources>

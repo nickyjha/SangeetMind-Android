@@ -134,10 +134,42 @@ data class MahadashaPeriod(
     val bhuktis: List<BhuktiPeriod> = emptyList()
 )
 
+/** `vimshottari.balance_at_birth`: the unexpired part of the birth mahadasha ("balance of
+ * dasha"), the classical line printed under birth details. Null on charts cached before v19. */
+@JsonClass(generateAdapter = true)
+data class DashaBalance(
+    val lord: String = "",
+    val years: Int = 0,
+    val months: Int = 0,
+    val days: Int = 0,
+    @Json(name = "total_years") val totalYears: Double = 0.0
+)
+
 @JsonClass(generateAdapter = true)
 data class VimshottariInfo(
     val current: VimshottariCurrent? = null,
-    val mahadashas: List<MahadashaPeriod> = emptyList()
+    val mahadashas: List<MahadashaPeriod> = emptyList(),
+    @Json(name = "balance_at_birth") val balanceAtBirth: DashaBalance? = null
+)
+
+/** `birth` in POST /v1/chart: the instant the chart was cast for, with the timezone the
+ * backend inferred from lat/lon (the app never sends one). Null on charts cached before v19. */
+@JsonClass(generateAdapter = true)
+data class ChartBirth(
+    val date: String = "",
+    val time: String = "",
+    val timezone: String = "",
+    @Json(name = "utc_offset") val utcOffset: String = "",
+    val utc: String = "",
+    @Json(name = "julian_day") val julianDay: Double = 0.0
+)
+
+/** Lahiri ayanamsa at birth; `kp.ayanamsa_*` carries the separate Krishnamurti value. */
+@JsonClass(generateAdapter = true)
+data class ChartAyanamsa(
+    val name: String = "",
+    val degrees: Double = 0.0,
+    val dms: String = ""
 )
 
 /** A divisional/varga chart (D2, D9, ...) — same shape as the D1 data on
@@ -153,6 +185,8 @@ data class ManglikDosha(
     val present: Boolean = false,
     @Json(name = "effective_present") val effectivePresent: Boolean = false,
     val cancelled: Boolean = false,
+    // none | mild | moderate | strong — raw strength before cancellations (cache v19+).
+    val severity: String? = null,
     val summary: String = "",
     @Json(name = "summary_hi") val summaryHi: String = ""
 ) {
@@ -621,6 +655,8 @@ data class CharaDashaInfo(
 
 @JsonClass(generateAdapter = true)
 data class ChartSummaryResponse(
+    val birth: ChartBirth? = null,
+    val ayanamsa: ChartAyanamsa? = null,
     val lagna: LagnaInfo,
     val planets: Map<String, PlanetInfo> = emptyMap(),
     @Json(name = "moon_nakshatra") val moonNakshatra: MoonNakshatraInfo = MoonNakshatraInfo(),

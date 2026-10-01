@@ -23,6 +23,15 @@
 -dontwarn kotlin.Unit
 -dontwarn retrofit2.KotlinExtensions
 -dontwarn retrofit2.KotlinExtensions$*
+# R8 full mode (AGP 8 default) strips the generic signatures Retrofit reads for suspend
+# functions and Response<T> ("Class cannot be cast to ParameterizedType" at runtime).
+-keep,allowobfuscation,allowshrinking interface retrofit2.Call
+-keep,allowobfuscation,allowshrinking class retrofit2.Response
+-keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
+# Keep the return types of every Retrofit API method (Retrofit 2.9 ships without this rule;
+# without it Moshi gets an erased type and returns a Map, which then fails the cast).
+-if interface * { @retrofit2.http.* public *** *(...); }
+-keep,allowoptimization,allowshrinking,allowobfuscation class <3>
 
 # Moshi
 -keepclasseswithmembers class * {
@@ -46,6 +55,15 @@
 # models live in libs/models but a few request/response classes sit in core/network and
 # the feature modules.
 -keep class kotlin.Metadata { *; }
+# KotlinJsonAdapterFactory resolves constructor parameter types through kotlin-reflect and
+# the Java generic signatures; keep the model classes whole (names, fields, constructors,
+# Signature) and kotlin-reflect's internals, otherwise List<DayScores> degrades to List<Map>.
+-keep class com.sangeetmind.libs.models.** { *; }
+-keep class com.sangeetmind.core.network.** { *; }
+-keep class kotlin.reflect.** { *; }
+-keep class kotlin.jvm.internal.** { *; }
+-dontwarn kotlin.reflect.jvm.internal.**
+-keepattributes Signature, InnerClasses, EnclosingMethod, *Annotation*, Exceptions
 -keepclassmembers class com.sangeetmind.** {
     @com.squareup.moshi.Json <fields>;
 }

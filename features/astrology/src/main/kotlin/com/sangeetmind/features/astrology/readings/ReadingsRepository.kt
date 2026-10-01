@@ -31,6 +31,8 @@ import com.sangeetmind.libs.models.DebtReadingResponse
 import com.sangeetmind.libs.models.RelationshipReadingRequest
 import com.sangeetmind.libs.models.RelationshipReadingResponse
 import com.sangeetmind.libs.models.EducationReadingRequest
+import com.sangeetmind.libs.models.DashaStoryRequest
+import com.sangeetmind.libs.models.DashaStoryResponse
 import com.sangeetmind.libs.models.HealthReadingRequest
 import com.sangeetmind.libs.models.HealthReadingResponse
 import com.sangeetmind.libs.models.EducationReadingResponse
@@ -65,6 +67,8 @@ private const val CAREER_QUESTION_SKU = "llm_career_question"
 private const val PROPERTY_SKU = "llm_property"
 private const val EDUCATION_SKU = "llm_education"
 private const val HEALTH_SKU = "llm_health"
+private const val DASHA_STORY_SKU = "llm_dasha_story"
+private const val DASHA_STORY_PRICE_PAISE = 9900L
 private const val HEALTH_PRICE_PAISE = 9900L
 private const val RELATIONSHIP_SKU = "llm_relationship"
 private const val RELATIONSHIP_PRICE_PAISE = 9900L
@@ -296,6 +300,17 @@ class ReadingsRepository @Inject constructor(
         ) { kundli ->
             llmApi.getSmallReading(
                 SmallReadingRequest(birthDetails(kundli), topic = topic, lang = languageManager.current.code)
+            )
+        }
+
+    /** Lifetime dasha story: one chapter per mahadasha from birth. */
+    suspend fun getDashaStoryReading(): Result<DashaStoryResponse> =
+        payAfterSuccess(
+            DASHA_STORY_SKU, DASHA_STORY_PRICE_PAISE, R.string.readings_err_dasha,
+            succeeded = { it.ok && it.reading != null }
+        ) { kundli ->
+            llmApi.getDashaStoryReading(
+                DashaStoryRequest(birthDetails(kundli), lang = languageManager.current.code)
             )
         }
 

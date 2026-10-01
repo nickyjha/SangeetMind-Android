@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.readings
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
@@ -12,6 +13,7 @@ import com.sangeetmind.libs.models.CareerQuestionResponse
 import com.sangeetmind.libs.models.DebtReadingResponse
 import com.sangeetmind.libs.models.RelationshipReadingResponse
 import com.sangeetmind.libs.models.EducationReadingResponse
+import com.sangeetmind.libs.models.DashaStoryResponse
 import com.sangeetmind.libs.models.HealthReadingResponse
 import com.sangeetmind.libs.models.PropertyReadingResponse
 import com.sangeetmind.libs.models.ReadingPreview
@@ -28,7 +30,7 @@ import javax.inject.Inject
 val CAREER_QUESTIONS = listOf("job_change", "promotion", "govt_private", "job_business")
 val SMALL_TOPICS = listOf("love_style", "ideal_partner", "in_laws")
 
-enum class ReadingTab { CAREER, STRENGTHS, MARRIAGE, SMALL, CHILDREN, FOREIGN, WEALTH, PROPERTY, EDUCATION, DEBT, RELATIONSHIP, HEALTH }
+enum class ReadingTab { CAREER, STRENGTHS, MARRIAGE, SMALL, CHILDREN, FOREIGN, WEALTH, PROPERTY, EDUCATION, DEBT, RELATIONSHIP, HEALTH, DASHA }
 
 data class ReadingsUiState(
     val tab: ReadingTab = ReadingTab.CAREER,
@@ -52,6 +54,7 @@ data class ReadingsUiState(
     val higherStudies: Boolean = false,
     val health: HealthReadingResponse? = null,
     val aboutMind: Boolean = false,
+    val dashaStory: DashaStoryResponse? = null,
     val relationship: RelationshipReadingResponse? = null,
     val aboutRemarriage: Boolean = false,
     val debt: DebtReadingResponse? = null,
@@ -77,6 +80,7 @@ data class ReadingsUiState(
             ReadingTab.DEBT -> "debt|" + if (aboutDispute) "dispute" else "debt"
             ReadingTab.RELATIONSHIP -> "relationship|" + if (aboutRemarriage) "remarriage" else "strain"
             ReadingTab.HEALTH -> "health|" + if (aboutMind) "mind" else "body"
+            ReadingTab.DASHA -> "dasha_story|life"
         }
 
     /** True once the open tab shows a paid reading, so the sales card can step aside. */
@@ -94,15 +98,22 @@ data class ReadingsUiState(
             ReadingTab.DEBT -> debt?.reading != null
             ReadingTab.RELATIONSHIP -> relationship?.reading != null
             ReadingTab.HEALTH -> health?.reading != null
+            ReadingTab.DASHA -> dashaStory?.reading != null
         }
 }
 
 @HiltViewModel
 class ReadingsViewModel @Inject constructor(
-    private val repository: ReadingsRepository
+    private val repository: ReadingsRepository,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ReadingsUiState())
+    // "readings?tab=DASHA" opens straight on that tab (the Chart screen's dasha story button).
+    private val initialTab = savedStateHandle.get<String>("tab")
+        ?.let { name -> ReadingTab.values().firstOrNull { it.name == name } }
+        ?: ReadingTab.CAREER
+
+    private val _uiState = MutableStateFlow(ReadingsUiState(tab = initialTab))
     val uiState: StateFlow<ReadingsUiState> = _uiState.asStateFlow()
 
     private val previewsLoading = mutableSetOf<String>()
@@ -321,6 +332,17 @@ class ReadingsViewModel @Inject constructor(
 
     fun setAboutMind(aboutMind: Boolean) {
         updateAndPreview { it.copy(aboutMind = aboutMind) }
+    }
+
+    fun generateDashaStoryReading() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            when (val result = repository.getDashaStoryReading()) {
+                is Result.Success -> _uiState.update { it.copy(isLoading = false, dashaStory = result.data) }
+                is Result.Error -> _uiState.update { it.copy(isLoading = false, error = result.message) }
+                is Result.Loading -> Unit
+            }
+        }
     }
 
     fun generateHealthReading() {

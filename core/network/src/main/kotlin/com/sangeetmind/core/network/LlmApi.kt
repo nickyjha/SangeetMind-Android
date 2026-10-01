@@ -23,6 +23,8 @@ import com.sangeetmind.libs.models.DebtReadingResponse
 import com.sangeetmind.libs.models.RelationshipReadingRequest
 import com.sangeetmind.libs.models.RelationshipReadingResponse
 import com.sangeetmind.libs.models.EducationReadingRequest
+import com.sangeetmind.libs.models.DashaStoryRequest
+import com.sangeetmind.libs.models.DashaStoryResponse
 import com.sangeetmind.libs.models.HealthReadingRequest
 import com.sangeetmind.libs.models.HealthReadingResponse
 import com.sangeetmind.libs.models.EducationReadingResponse
@@ -70,6 +72,9 @@ interface LlmApi {
 
     @POST("llm/health")
     suspend fun getHealthReading(@Body body: HealthReadingRequest): HealthReadingResponse
+
+    @POST("llm/dasha-story")
+    suspend fun getDashaStoryReading(@Body body: DashaStoryRequest): DashaStoryResponse
 
     @POST("llm/education")
     suspend fun getEducationReading(@Body body: EducationReadingRequest): EducationReadingResponse

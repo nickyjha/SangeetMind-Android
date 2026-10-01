@@ -31,6 +31,7 @@ import com.sangeetmind.features.astrology.chart.ui.Chip
 import com.sangeetmind.features.astrology.chart.ui.grahaColorFor
 import androidx.annotation.StringRes
 import com.sangeetmind.libs.models.CareerQuestionResponse
+import com.sangeetmind.libs.models.DashaStoryReading
 import com.sangeetmind.libs.models.MarriageRemedy
 import com.sangeetmind.libs.models.MarriageReading
 import com.sangeetmind.libs.models.MarriageTiming
@@ -70,7 +71,8 @@ fun ReadingsScreen(
                 ReadingTab.EDUCATION to R.string.readings_tab_education,
                 ReadingTab.DEBT to R.string.readings_tab_debt,
                 ReadingTab.RELATIONSHIP to R.string.readings_tab_relationship,
-                ReadingTab.HEALTH to R.string.readings_tab_health
+                ReadingTab.HEALTH to R.string.readings_tab_health,
+                ReadingTab.DASHA to R.string.readings_tab_dasha
             )
             ScrollableTabRow(selectedTabIndex = uiState.tab.ordinal, edgePadding = 8.dp) {
                 ReadingTab.values().forEach { tab ->
@@ -245,6 +247,11 @@ fun ReadingsScreen(
                                 disclaimer = stringResource(R.string.readings_property_disclaimer)
                             )
                         }
+                    )
+                    ReadingTab.DASHA -> DashaStoryTab(
+                        isLoading = uiState.isLoading,
+                        onGenerate = viewModel::generateDashaStoryReading,
+                        reading = uiState.dashaStory?.reading
                     )
                     ReadingTab.HEALTH -> LifeReadingTab(
                         descRes = R.string.readings_health_desc,
@@ -895,6 +902,100 @@ private fun SmallTab(
     Spacer(modifier = Modifier.height(12.dp))
     Text(
         stringResource(R.string.readings_small_disclaimer),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+}
+
+/** Lifetime dasha story: description, generate button, then summary, "right now" and one card
+ * per mahadasha chapter with its years and ages; the running period is highlighted. */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun DashaStoryTab(isLoading: Boolean, onGenerate: () -> Unit, reading: DashaStoryReading?) {
+    Text(
+        stringResource(R.string.readings_dasha_desc),
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+    Spacer(modifier = Modifier.height(12.dp))
+    Button(onClick = onGenerate, enabled = !isLoading, modifier = Modifier.fillMaxWidth()) {
+        if (isLoading) CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+        else Text(stringResource(R.string.readings_dasha_generate))
+    }
+    reading ?: return
+    val graha = LocalGrahaColors.current
+    val locale = LocalConfiguration.current.locales[0]
+    val fmt = DateTimeFormatter.ofPattern("MMM yyyy", locale)
+    fun month(iso: String) = runCatching { LocalDate.parse(iso).format(fmt) }.getOrDefault(iso)
+
+    Spacer(modifier = Modifier.height(16.dp))
+    TextCard(stringResource(R.string.readings_marriage_summary), reading.summary)
+    Spacer(modifier = Modifier.height(12.dp))
+    TextCard(stringResource(R.string.readings_dasha_now), reading.now)
+    if (reading.timing.isNotEmpty()) {
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(stringResource(R.string.readings_dasha_chapters), style = MaterialTheme.typography.titleMedium)
+    }
+    reading.timing.forEach { ch ->
+        Spacer(modifier = Modifier.height(12.dp))
+        val current = ch.phase == "current"
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = if (current) {
+                CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+            } else {
+                CardDefaults.cardColors()
+            }
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    stringResource(R.string.readings_dasha_chapter_title, astroTerm(ch.mahadasha), ch.title),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    stringResource(R.string.readings_dasha_chapter_span, month(ch.start), month(ch.end), ch.ageFrom, ch.ageTo),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                FlowRow(
+                    modifier = Modifier.padding(top = 6.dp),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    when (ch.phase) {
+                        "current" -> Chip(stringResource(R.string.readings_dasha_when_current), graha.surya)
+                        "past" -> Chip(stringResource(R.string.readings_dasha_when_past), MaterialTheme.colorScheme.onSurfaceVariant)
+                        "future" -> Chip(stringResource(R.string.readings_dasha_when_future), graha.budha)
+                    }
+                    when (ch.kind) {
+                        "growth" -> Chip(stringResource(R.string.readings_dasha_kind_growth), graha.guru)
+                        "steady" -> Chip(stringResource(R.string.readings_dasha_kind_steady), graha.chandra)
+                        "sensitive" -> Chip(stringResource(R.string.readings_dasha_kind_sensitive), graha.mangala)
+                    }
+                }
+                if (ch.why.isNotBlank()) {
+                    Text(ch.why, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(top = 8.dp))
+                }
+            }
+        }
+    }
+    if (reading.advice.isNotEmpty()) {
+        Spacer(modifier = Modifier.height(12.dp))
+        SectionCard(stringResource(R.string.readings_marriage_advice), reading.advice)
+    }
+    if (reading.remedies.isNotEmpty()) {
+        Spacer(modifier = Modifier.height(12.dp))
+        SectionCard(
+            stringResource(R.string.readings_marriage_remedies),
+            reading.remedies.map { rem ->
+                if (rem.forPlanet.isBlank()) rem.remedy
+                else stringResource(R.string.readings_marriage_remedy_fmt, rem.remedy, astroTerm(rem.forPlanet))
+            }
+        )
+    }
+    Spacer(modifier = Modifier.height(12.dp))
+    Text(
+        stringResource(R.string.readings_dasha_disclaimer),
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )

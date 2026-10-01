@@ -166,4 +166,21 @@
     <string name="readings_small_generate_fmt">Read: %1$s</string>
     <string name="readings_small_tip">A tip for you</string>
     <string name="readings_small_disclaimer">Astrology shows tendencies, not fixed outcomes. Relationships grow with care from both sides.</string>
+
+    <!-- Lifetime dasha story -->
+    <string name="readings_tab_dasha">Dasha story</string>
+    <string name="readings_err_dasha">Could not generate the dasha story. You have not been charged.</string>
+    <string name="readings_dasha_desc">₹99, or free with Premium. Your whole life told through its Vimshottari mahadashas: one chapter per period from birth to old age, what each is about in your chart, the running period marked, and what to focus on now. You\'re only charged if the reading is ready.</string>
+    <string name="readings_dasha_generate">Generate my dasha story</string>
+    <string name="readings_dasha_now">Right now</string>
+    <string name="readings_dasha_chapters">Your periods</string>
+    <string name="readings_dasha_chapter_title">%1$s period · %2$s</string>
+    <string name="readings_dasha_chapter_span">%1$s – %2$s · age %3$d–%4$d</string>
+    <string name="readings_dasha_when_current">Running now</string>
+    <string name="readings_dasha_when_past">Past</string>
+    <string name="readings_dasha_when_future">Ahead</string>
+    <string name="readings_dasha_kind_growth">Growth</string>
+    <string name="readings_dasha_kind_steady">Steady</string>
+    <string name="readings_dasha_kind_sensitive">Needs care</string>
+    <string name="readings_dasha_disclaimer">Dasha periods describe tendencies, not fixed events. Dates follow the Lahiri ayanamsa and can differ a little from other panchangs.</string>
 </resources>

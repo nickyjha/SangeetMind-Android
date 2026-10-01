@@ -102,6 +102,7 @@ import java.time.temporal.ChronoUnit
 @Composable
 fun ChartScreen(
     onNavigateBack: () -> Unit,
+    onOpenDashaStory: () -> Unit = {},
     viewModel: ChartViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -161,7 +162,8 @@ fun ChartScreen(
                         kundli = uiState.kundli,
                         chart = uiState.chart!!,
                         showFullTimeline = uiState.showFullTimeline,
-                        onToggleTimeline = viewModel::toggleFullTimeline
+                        onToggleTimeline = viewModel::toggleFullTimeline,
+                        onOpenDashaStory = onOpenDashaStory
                     )
                 }
             }
@@ -175,7 +177,8 @@ private fun ChartContent(
     kundli: Kundli?,
     chart: ChartSummaryResponse,
     showFullTimeline: Boolean,
-    onToggleTimeline: () -> Unit
+    onToggleTimeline: () -> Unit,
+    onOpenDashaStory: () -> Unit = {}
 ) {
     val moon = chart.planets["Moon"]
     val availableCharts = chart.availableCharts
@@ -297,6 +300,14 @@ private fun ChartContent(
                     }
                     item {
                         CurrentDashaCard(chart, dashaSystem)
+                    }
+                    if (dashaSystem == DashaSystem.VIMSHOTTARI) {
+                        item {
+                            // Paid lifetime reading, one chapter per mahadasha (Readings → Dasha story).
+                            TextButton(onClick = onOpenDashaStory) {
+                                Text(stringResource(R.string.chart_dasha_story_cta))
+                            }
+                        }
                     }
                     item {
                         TextButton(onClick = onToggleTimeline) {

@@ -166,4 +166,21 @@
     <string name="readings_small_generate_fmt">पढ़ें: %1$s</string>
     <string name="readings_small_tip">आपके लिए एक सलाह</string>
     <string name="readings_small_disclaimer">ज्योतिष झुकाव बताता है, तय नतीजे नहीं। रिश्ते दोनों तरफ़ की देखभाल से बढ़ते हैं।</string>
+
+    <!-- Lifetime dasha story -->
+    <string name="readings_tab_dasha">दशा कहानी</string>
+    <string name="readings_err_dasha">दशा कहानी नहीं बन पाई। आपके पैसे नहीं कटे।</string>
+    <string name="readings_dasha_desc">₹99, या प्रीमियम में मुफ़्त। आपकी पूरी ज़िंदगी विंशोत्तरी महादशाओं के ज़रिए: जन्म से बुढ़ापे तक हर दशा का एक अध्याय, आपकी कुंडली में वह किस बारे में है, अभी चल रही दशा और अभी किस पर ध्यान दें। पैसे तभी कटेंगे जब रीडिंग तैयार हो।</string>
+    <string name="readings_dasha_generate">मेरी दशा कहानी बनाएँ</string>
+    <string name="readings_dasha_now">अभी</string>
+    <string name="readings_dasha_chapters">आपकी दशाएँ</string>
+    <string name="readings_dasha_chapter_title">%1$s दशा · %2$s</string>
+    <string name="readings_dasha_chapter_span">%1$s – %2$s · उम्र %3$d–%4$d</string>
+    <string name="readings_dasha_when_current">अभी चल रही</string>
+    <string name="readings_dasha_when_past">बीत चुकी</string>
+    <string name="readings_dasha_when_future">आगे</string>
+    <string name="readings_dasha_kind_growth">बढ़त</string>
+    <string name="readings_dasha_kind_steady">सामान्य</string>
+    <string name="readings_dasha_kind_sensitive">संभल कर</string>
+    <string name="readings_dasha_disclaimer">दशा रुझान बताती है, पक्की घटनाएँ नहीं। तारीख़ें लाहिरी अयनांश से हैं, दूसरे पंचांगों से थोड़ी अलग हो सकती हैं।</string>
 </resources>

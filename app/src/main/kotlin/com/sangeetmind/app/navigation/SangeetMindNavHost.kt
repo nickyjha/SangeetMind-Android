@@ -176,7 +176,10 @@ fun SangeetMindNavHost(
         }
 
         composable("chart") {
-            ChartScreen(onNavigateBack = { navController.popBackStack() })
+            ChartScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onOpenDashaStory = { navController.navigate("readings?tab=DASHA") }
+            )
         }
 
         composable(
@@ -194,7 +197,10 @@ fun SangeetMindNavHost(
             ReportsScreen(onNavigateBack = { navController.popBackStack() })
         }
 
-        composable("readings") {
+        composable(
+            "readings?tab={tab}",
+            arguments = listOf(navArgument("tab") { type = NavType.StringType; nullable = true; defaultValue = null })
+        ) {
             ReadingsScreen(onNavigateBack = { navController.popBackStack() })
         }
 

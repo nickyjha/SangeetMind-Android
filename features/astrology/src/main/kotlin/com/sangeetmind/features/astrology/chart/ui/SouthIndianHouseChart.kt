@@ -69,7 +69,9 @@ fun SouthIndianHouseChart(
     }
 
     val planetAbbrev = planetAbbreviations()
-    val signLabels = ZODIAC_SIGNS.map { sign -> astroTerm(sign).let { if (it.length > 4) it.take(3) else it } }
+    // Long English names are shortened ("Sagittarius" → "Sag"); Hindi names are short and keep
+    // their matras intact.
+    val signLabels = ZODIAC_SIGNS.map { sign -> astroTerm(sign).let { if (it.length > 7) it.take(3) else it } }
     val fillColor = MaterialTheme.colorScheme.surfaceVariant
     val glowColor = MaterialTheme.colorScheme.primary
     val strokeColor = MaterialTheme.colorScheme.primary

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Sangeet: Daily Raag, Japa counter, Voice Horoscope, Sound Healing. -->
-    <string name="sangeet_title">Sangeet</string>
+    <string name="sangeet_title">Geet</string>
     <string name="sangeet_tab_daily_raag">Daily Raag</string>
     <string name="sangeet_tab_japa">Japa</string>
     <string name="sangeet_tab_voice_horoscope">Voice Horoscope</string>

@@ -70,4 +70,12 @@ object JapaMantras {
         "rahu" to "Rahu",
         "ketu" to "Ketu"
     )
+
+    /** The graha beej mantra for a dasha lord ("Saturn", "Shani", "शनि"...), or null. */
+    fun beejForLord(lord: String?): JapaMantra? {
+        if (lord.isNullOrBlank()) return null
+        all.firstOrNull { it.graha.equals(lord.trim(), ignoreCase = true) }?.let { return it }
+        val id = MantraAudio.idForMantraText(lord) ?: return null
+        return byId(id)?.takeIf { it.graha != null }
+    }
 }

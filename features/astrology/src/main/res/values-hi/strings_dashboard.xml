@@ -114,11 +114,18 @@
     <string name="dashboard_hub_section_app">ऐप</string>
     <string name="dashboard_hub_language_desc">हिंदी या English</string>
     <string name="dashboard_hub_settings_desc">नोटिफ़िकेशन, थीम, चार्ट स्टाइल और अकाउंट</string>
-    <string name="dashboard_hub_sangeet_title">संगीत: मंत्र और राग</string>
+    <string name="dashboard_hub_sangeet_title">गीत: मंत्र और राग</string>
     <string name="dashboard_hub_sangeet_desc">रिकॉर्ड किए मंत्रों के साथ जप करें (माला 108 तक गिनती है), और आपकी दशा के लिए राग।</string>
     <string name="dashboard_hub_section_help">मदद और नियम</string>
     <string name="dashboard_hub_help_title">मदद</string>
     <string name="dashboard_hub_help_desc">astrogeet.com पर जाएँ</string>
     <string name="dashboard_hub_privacy_title">प्राइवेसी पॉलिसी</string>
     <string name="dashboard_hub_terms_title">नियम और शर्तें</string>
+    <string name="dashboard_home_quick_geet">गीत</string>
+    <string name="dashboard_geet_title">आज का गीत</string>
+    <string name="dashboard_geet_for_dasha_fmt">आपकी %1$s दशा के लिए</string>
+    <string name="dashboard_geet_general">आज के लिए एक मंत्र</string>
+    <string name="dashboard_geet_hint">रिकॉर्डिंग के साथ जप करें, माला 108 तक खुद गिनेगी।</string>
+    <string name="dashboard_geet_chant">♪ साथ में जप करें</string>
+    <string name="dashboard_geet_open">गीत खोलें</string>
 </resources>

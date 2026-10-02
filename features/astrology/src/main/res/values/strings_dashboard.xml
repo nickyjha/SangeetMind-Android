@@ -114,11 +114,18 @@
     <string name="dashboard_hub_section_app">App</string>
     <string name="dashboard_hub_language_desc">English or Hindi</string>
     <string name="dashboard_hub_settings_desc">Notifications, theme, chart style and account</string>
-    <string name="dashboard_hub_sangeet_title">Sangeet: mantras and raag</string>
+    <string name="dashboard_hub_sangeet_title">Geet: mantras and raag</string>
     <string name="dashboard_hub_sangeet_desc">Chant along with recorded mantras (the mala counts to 108), plus raag for your dasha.</string>
     <string name="dashboard_hub_section_help">Help &amp; legal</string>
     <string name="dashboard_hub_help_title">Help &amp; support</string>
     <string name="dashboard_hub_help_desc">Visit astrogeet.com</string>
     <string name="dashboard_hub_privacy_title">Privacy policy</string>
     <string name="dashboard_hub_terms_title">Terms of service</string>
+    <string name="dashboard_home_quick_geet">Geet</string>
+    <string name="dashboard_geet_title">Today\'s Geet</string>
+    <string name="dashboard_geet_for_dasha_fmt">For your %1$s dasha</string>
+    <string name="dashboard_geet_general">A mantra for today</string>
+    <string name="dashboard_geet_hint">Chant along with the recording; the mala counts to 108 for you.</string>
+    <string name="dashboard_geet_chant">♪ Chant along</string>
+    <string name="dashboard_geet_open">Open Geet</string>
 </resources>

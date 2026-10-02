@@ -187,7 +187,10 @@ fun SangeetMindNavHost(
                 onOpenMatch = { navController.navigate("match") },
                 onOpenPanchang = { navController.navigate("panchang") },
                 onOpenChatMind = { navController.navigate("chatmind") },
-                onAskChatMind = { q -> navController.navigate("chatmind?q=${Uri.encode(q)}") }
+                onAskChatMind = { q -> navController.navigate("chatmind?q=${Uri.encode(q)}") },
+                onOpenGeet = { id ->
+                    navController.navigate(if (id != null) "sangeet?mantra=$id" else "sangeet")
+                }
             )
         }
 

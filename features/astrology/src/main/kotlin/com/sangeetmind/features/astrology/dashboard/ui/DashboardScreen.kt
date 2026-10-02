@@ -1,5 +1,7 @@
 package com.sangeetmind.features.astrology.dashboard.ui
 
+import com.sangeetmind.features.astrology.sangeet.MantraAudio
+import com.sangeetmind.features.astrology.sangeet.JapaMantras
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.WindowInsets
 import android.Manifest
@@ -63,6 +65,7 @@ fun DashboardScreen(
     onOpenMatch: () -> Unit,
     onOpenPanchang: () -> Unit,
     onOpenChatMind: () -> Unit,
+    onOpenGeet: (String?) -> Unit = {},
     onAskChatMind: (String) -> Unit,
     viewModel: DashboardViewModel = hiltViewModel()
 ) {
@@ -103,7 +106,7 @@ fun DashboardScreen(
         QuickAction(stringResource(R.string.dashboard_home_quick_kundli), Icons.Default.DonutLarge, Graha.SHANI, onOpenChart),
         QuickAction(stringResource(R.string.dashboard_home_quick_readings), Icons.Default.Psychology, Graha.SHUKRA, onOpenReadings),
         QuickAction(stringResource(R.string.dashboard_home_quick_match), Icons.Default.Favorite, Graha.MANGALA, onOpenMatch),
-        QuickAction(stringResource(R.string.dashboard_home_quick_panchang), Icons.Default.CalendarMonth, Graha.CHANDRA, onOpenPanchang)
+        QuickAction(stringResource(R.string.dashboard_home_quick_geet), Icons.Default.MusicNote, Graha.SURYA) { onOpenGeet(null) }
     )
 
     Scaffold(
@@ -162,6 +165,11 @@ fun DashboardScreen(
                                 nakshatra = uiState.profile!!.nakshatra,
                                 currentMahadasha = uiState.profile!!.currentMahadasha,
                                 astroMood = uiState.profile!!.astroMood
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            GeetCard(
+                                dashaLord = uiState.profile!!.currentMahadasha,
+                                onChant = onOpenGeet
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             TodayCard(
@@ -532,3 +540,56 @@ private fun NotificationNudgeCard(
         }
     }
 }
+
+/**
+ * Geet up front: the beej mantra for the running mahadasha, one tap to chant along.
+ * Falls back to the Gayatri mantra when the dasha lord is unknown.
+ */
+@Composable
+private fun GeetCard(dashaLord: String, onChant: (String?) -> Unit) {
+    val beej = JapaMantras.beejForLord(dashaLord)
+    val mantra = beej ?: JapaMantras.byId("gayatri")
+    val hasAudio = mantra != null && MantraAudio.forMantra(mantra.id) != null
+    val accent = LocalGrahaColors.current.surya
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+    ) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Default.MusicNote, contentDescription = null, tint = accent)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(stringResource(R.string.dashboard_geet_title), style = MaterialTheme.typography.titleMedium)
+            }
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                if (beej != null) stringResource(R.string.dashboard_geet_for_dasha_fmt, astroTerm(dashaLord))
+                else stringResource(R.string.dashboard_geet_general),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            if (mantra != null) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(stringResource(mantra.nameRes), style = MaterialTheme.typography.titleMedium)
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                stringResource(R.string.dashboard_geet_hint),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(14.dp))
+            Button(onClick = { onChant(mantra?.id) }, modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    stringResource(
+                        if (hasAudio) R.string.dashboard_geet_chant else R.string.dashboard_geet_open
+                    )
+                )
+            }
+        }
+    }
+}
+

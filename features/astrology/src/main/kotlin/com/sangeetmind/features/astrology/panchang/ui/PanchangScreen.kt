@@ -1,5 +1,8 @@
 package com.sangeetmind.features.astrology.panchang.ui
 
+import com.sangeetmind.core.ui.components.AstroTopBar
+import com.sangeetmind.core.ui.components.isoDateText
+import com.sangeetmind.core.ui.components.DateField
 import com.sangeetmind.core.ui.components.ErrorCard
 import com.sangeetmind.libs.models.Choghadiya
 import com.sangeetmind.libs.models.PanchangSpan
@@ -42,18 +45,10 @@ fun PanchangScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.panchang_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.chandra.copy(alpha = 0.14f),
-                    titleContentColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.chandra,
-                    navigationIconContentColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.chandra
-                )
+            AstroTopBar(
+                title = stringResource(R.string.panchang_title),
+                onBack = onNavigateBack,
+                accent = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.chandra
             )
         }
     ) { padding ->
@@ -64,13 +59,11 @@ fun PanchangScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(24.dp)
         ) {
-            OutlinedTextField(
-                value = uiState.date,
-                onValueChange = viewModel::onDateChange,
-                label = { Text(stringResource(R.string.panchang_date_label)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next)
+            DateField(
+                label = stringResource(R.string.panchang_date_label),
+                isoDate = uiState.date,
+                onDateChange = viewModel::onDateChange,
+                modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -135,7 +128,7 @@ fun PanchangScreen(
 private fun PanchangResultCard(result: PanchangResponse) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = result.date, style = MaterialTheme.typography.titleMedium)
+            Text(text = isoDateText(result.date), style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(8.dp))
             PanchangRow(
                 stringResource(R.string.panchang_tithi),

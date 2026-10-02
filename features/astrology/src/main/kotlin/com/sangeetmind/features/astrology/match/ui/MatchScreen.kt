@@ -1,5 +1,7 @@
 package com.sangeetmind.features.astrology.match.ui
 
+import com.sangeetmind.core.ui.components.AstroTopBar
+import com.sangeetmind.core.ui.components.isoDateText
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -38,18 +40,10 @@ fun MatchScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.match_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.mangala.copy(alpha = 0.14f),
-                    titleContentColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.mangala,
-                    navigationIconContentColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.mangala
-                )
+            AstroTopBar(
+                title = stringResource(R.string.match_title),
+                onBack = onNavigateBack,
+                accent = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.mangala
             )
         }
     ) { padding ->
@@ -160,7 +154,7 @@ private fun KundliDropdown(
             options.forEach { kundli ->
                 DropdownMenuItem(
                     text = {
-                        Text(kundli.fullName?.takeIf { it.isNotBlank() }?.toTitleCase() ?: "${kundli.birthDate} · ${kundli.birthPlace}")
+                        Text(kundli.fullName?.takeIf { it.isNotBlank() }?.toTitleCase() ?: "${isoDateText(kundli.birthDate)} · ${kundli.birthPlace}")
                     },
                     onClick = {
                         onSelect(kundli)

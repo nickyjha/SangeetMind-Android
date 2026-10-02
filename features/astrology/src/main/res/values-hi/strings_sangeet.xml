@@ -34,7 +34,24 @@
     <string name="sangeet_err_japa_stats">जप की जानकारी लोड नहीं हो सकी</string>
     <string name="sangeet_err_voice">वॉइस राशिफल के लिए प्रीमियम चाहिए</string>
     <string name="sangeet_err_sound">साउंड हीलिंग लाइब्रेरी लोड नहीं हो सकी</string>
-    <string name="sangeet_japa_mantra_generic">रोज़ का जप (कोई भी मंत्र)</string>
+    <!-- Japa mantra picker (ids in sangeet/JapaMantras.kt). -->
+    <string name="sangeet_japa_choose_mantra">अपना मंत्र चुनें</string>
+    <string name="sangeet_japa_recommended">आपकी दशा के लिए सही</string>
+    <string name="sangeet_japa_recommended_fmt">अभी %1$s की दशा चल रही है — यह मंत्र उसके लिए अच्छा है।</string>
+    <string name="sangeet_mantra_generic">कोई भी मंत्र</string>
+    <string name="sangeet_mantra_gayatri">गायत्री मंत्र</string>
+    <string name="sangeet_mantra_mahamrityunjaya">महामृत्युंजय मंत्र</string>
+    <string name="sangeet_mantra_om_namah_shivaya">ॐ नमः शिवाय</string>
+    <string name="sangeet_mantra_hanuman_chalisa">हनुमान चालीसा (हर पाठ गिनें)</string>
+    <string name="sangeet_mantra_surya">ॐ सूर्याय नमः (सूर्य)</string>
+    <string name="sangeet_mantra_chandra">ॐ चन्द्राय नमः (चंद्र)</string>
+    <string name="sangeet_mantra_mangal">ॐ भौमाय नमः (मंगल)</string>
+    <string name="sangeet_mantra_budh">ॐ बुधाय नमः (बुध)</string>
+    <string name="sangeet_mantra_guru">ॐ गुरवे नमः (गुरु)</string>
+    <string name="sangeet_mantra_shukra">ॐ शुक्राय नमः (शुक्र)</string>
+    <string name="sangeet_mantra_shani">ॐ शनैश्चराय नमः (शनि)</string>
+    <string name="sangeet_mantra_rahu">ॐ राहवे नमः (राहु)</string>
+    <string name="sangeet_mantra_ketu">ॐ केतवे नमः (केतु)</string>
 
     <!-- Traditional time + mood per raag (server sends one generic purpose for all). -->
     <string name="sangeet_raag_mood_bhairavi">सुबह · भक्ति भरा, कोमल</string>

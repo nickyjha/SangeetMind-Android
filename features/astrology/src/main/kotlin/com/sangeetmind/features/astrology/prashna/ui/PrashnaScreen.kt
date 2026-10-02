@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.prashna.ui
 
+import com.sangeetmind.core.ui.components.AstroTopBar
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -62,18 +63,10 @@ fun PrashnaScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.prashna_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = graha.budha.copy(alpha = 0.14f),
-                    titleContentColor = graha.budha,
-                    navigationIconContentColor = graha.budha
-                )
+            AstroTopBar(
+                title = stringResource(R.string.prashna_title),
+                onBack = onNavigateBack,
+                accent = graha.budha
             )
         }
     ) { padding ->

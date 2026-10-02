@@ -1,5 +1,6 @@
 package com.sangeetmind.features.settings.ui
 
+import com.sangeetmind.core.ui.components.AstroTopBar
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
@@ -124,21 +125,9 @@ fun SettingsScreen(
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.settings_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            Icons.Default.ArrowBack,
-                            contentDescription = stringResource(CoreR.string.common_back)
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+            AstroTopBar(
+                title = stringResource(R.string.settings_title),
+                onBack = onNavigateBack
             )
         }
     ) { paddingValues ->

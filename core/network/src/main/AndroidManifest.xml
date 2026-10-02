@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- SangeetMindMessagingService posts notifications from this module; declaring it here
+         (merged into the app manifest) lets lint see the permission for this module too. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+</manifest>

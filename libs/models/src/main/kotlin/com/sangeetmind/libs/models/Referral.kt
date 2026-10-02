@@ -3,6 +3,7 @@ package com.sangeetmind.libs.models
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
+/** [referrerUserId] carries the code the user typed: a short code (NICKY7K2) or a legacy uid. */
 @JsonClass(generateAdapter = true)
 data class ApplyReferralRequest(
     @Json(name = "referrerUserId") val referrerUserId: String
@@ -17,6 +18,8 @@ data class ApplyReferralResponse(
 
 @JsonClass(generateAdapter = true)
 data class ReferralStats(
+    /** The user's short shareable code; null from backends older than short codes. */
+    @Json(name = "referralCode") val referralCode: String? = null,
     @Json(name = "referralCount") val referralCount: Int,
     @Json(name = "rewardEligible") val rewardEligible: Boolean,
     @Json(name = "rewardDescription") val rewardDescription: String

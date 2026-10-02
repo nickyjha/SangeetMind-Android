@@ -29,9 +29,6 @@ import com.sangeetmind.features.astrology.horoscope.ui.HoroscopeScreen
 import com.sangeetmind.features.astrology.interpretation.ui.InterpretationScreen
 import com.sangeetmind.features.astrology.kundli.ui.KundliListScreen
 import com.sangeetmind.features.astrology.kundli.ui.KundliOnboardingScreen
-import com.sangeetmind.features.astrology.marketplace.ui.MarketplaceChatScreen
-import com.sangeetmind.features.astrology.marketplace.ui.MarketplaceDetailScreen
-import com.sangeetmind.features.astrology.marketplace.ui.MarketplaceListScreen
 import com.sangeetmind.features.astrology.match.ui.MatchScreen
 import com.sangeetmind.features.astrology.muhurat.ui.MuhuratScreen
 import com.sangeetmind.features.astrology.numerology.ui.NumerologyGlossaryScreen
@@ -54,10 +51,7 @@ import com.sangeetmind.features.astrology.prashna.ui.PrashnaScreen
 import com.sangeetmind.features.astrology.gochar.ui.GocharScreen
 import com.sangeetmind.features.astrology.varshaphal.ui.VarshaphalScreen
 import com.sangeetmind.features.auth.ui.AuthScreen
-import com.sangeetmind.features.meditation.ui.MeditationScreen
 import com.sangeetmind.features.onboarding.ui.OnboardingScreen
-import com.sangeetmind.features.player.ui.PlayerScreen
-import com.sangeetmind.features.raaglibrary.ui.RaagListScreen
 import com.sangeetmind.features.settings.ui.SettingsScreen
 
 /**
@@ -315,31 +309,6 @@ fun SangeetMindNavHost(
             ReadingsScreen(onNavigateBack = { navController.popFrom(it) })
         }
 
-        // Marketplace: no entry point any more (tile removed); routes kept for later.
-        composable("marketplace") {
-            MarketplaceListScreen(
-                onNavigateBack = { navController.popFrom(it) },
-                onOpenAstrologer = { id -> navController.navigate("marketplace/$id") }
-            )
-        }
-
-        composable(
-            route = "marketplace/{astrologerId}",
-            arguments = listOf(navArgument("astrologerId") { type = NavType.StringType })
-        ) {
-            MarketplaceDetailScreen(
-                onNavigateBack = { navController.popFrom(it) },
-                onStartChat = { id -> navController.navigate("marketplace/$id/chat") }
-            )
-        }
-
-        composable(
-            route = "marketplace/{astrologerId}/chat",
-            arguments = listOf(navArgument("astrologerId") { type = NavType.StringType })
-        ) {
-            MarketplaceChatScreen(onNavigateBack = { navController.popFrom(it) })
-        }
-
         composable("referrals") {
             ReferralScreen(onNavigateBack = { navController.popFrom(it) })
         }
@@ -366,22 +335,6 @@ fun SangeetMindNavHost(
 
         composable("holistic") {
             HolisticScreen(onNavigateBack = { navController.popFrom(it) })
-        }
-
-        // Legacy raag/player/meditation screens — kept for a later phase, not reachable
-        // from any UI. (The "sangeet" route above is the remedy-music screen, listed in Me.)
-        composable("raag_library") {
-            RaagListScreen(
-                onRaagClick = { navController.navigate("player") }
-            )
-        }
-
-        composable("player") {
-            PlayerScreen(onNavigateBack = { navController.popFrom(it) })
-        }
-
-        composable("meditation") {
-            MeditationScreen()
         }
 
         composable("settings") {

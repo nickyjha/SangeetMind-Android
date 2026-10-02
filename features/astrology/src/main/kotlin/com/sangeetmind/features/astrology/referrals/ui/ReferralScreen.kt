@@ -1,12 +1,14 @@
 package com.sangeetmind.features.astrology.referrals.ui
 
+import com.sangeetmind.core.ui.components.AstroTopBar
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
@@ -15,10 +17,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.referrals.ReferralViewModel
 
@@ -33,13 +37,9 @@ fun ReferralScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.referrals_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
-                    }
-                }
+            AstroTopBar(
+                title = stringResource(R.string.referrals_title),
+                onBack = onNavigateBack
             )
         }
     ) { padding ->
@@ -54,15 +54,35 @@ fun ReferralScreen(
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(stringResource(R.string.referrals_your_code), style = MaterialTheme.typography.labelLarge)
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(uiState.myCode, style = MaterialTheme.typography.titleMedium)
+                    if (uiState.myCode.isBlank()) {
+                        // The code arrives with the stats call; if that failed, the error card
+                        // below explains it and copy/share stay disabled.
+                        if (uiState.isLoading) CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                        else Text("—", style = MaterialTheme.typography.headlineSmall)
+                    } else {
+                        SelectionContainer {
+                            Text(
+                                uiState.myCode,
+                                style = MaterialTheme.typography.headlineSmall,
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = 2.sp
+                            )
+                        }
+                    }
                     Spacer(modifier = Modifier.height(12.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        OutlinedButton(onClick = { copyToClipboard(context, uiState.myCode) }) {
+                        OutlinedButton(
+                            onClick = { copyToClipboard(context, uiState.myCode) },
+                            enabled = uiState.myCode.isNotBlank()
+                        ) {
                             Icon(Icons.Default.ContentCopy, contentDescription = null)
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(stringResource(R.string.referrals_copy))
                         }
-                        Button(onClick = { shareCode(context, uiState.myCode) }) {
+                        Button(
+                            onClick = { shareCode(context, uiState.myCode) },
+                            enabled = uiState.myCode.isNotBlank()
+                        ) {
                             Icon(Icons.Default.Share, contentDescription = null)
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(stringResource(R.string.referrals_share))
@@ -101,8 +121,10 @@ fun ReferralScreen(
                 value = uiState.codeInput,
                 onValueChange = viewModel::onCodeInputChange,
                 label = { Text(stringResource(R.string.referrals_code_label)) },
+                placeholder = { Text(stringResource(R.string.referrals_code_placeholder)) },
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Characters)
             )
 
             if (uiState.error != null) {

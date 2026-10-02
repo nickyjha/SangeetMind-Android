@@ -1,5 +1,7 @@
 package com.sangeetmind.features.astrology.kundli.ui
 
+import com.sangeetmind.core.ui.components.AstroTopBar
+import com.sangeetmind.core.ui.components.isoDateText
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -35,13 +37,9 @@ fun KundliListScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.kundli_list_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
-                    }
-                }
+            AstroTopBar(
+                title = stringResource(R.string.kundli_list_title),
+                onBack = onNavigateBack
             )
         },
         floatingActionButton = {
@@ -111,7 +109,7 @@ private fun KundliCard(
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    text = "${kundli.birthDate} · ${kundli.birthTime} · ${kundli.birthPlace}",
+                    text = "${isoDateText(kundli.birthDate)} · ${kundli.birthTime} · ${kundli.birthPlace}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

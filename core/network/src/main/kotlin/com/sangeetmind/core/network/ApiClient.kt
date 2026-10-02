@@ -243,11 +243,6 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideMarketplaceApi(retrofit: Retrofit): MarketplaceApi =
-        retrofit.create(MarketplaceApi::class.java)
-
-    @Provides
-    @Singleton
     fun provideReferralApi(retrofit: Retrofit): ReferralApi = retrofit.create(ReferralApi::class.java)
 
     @Provides

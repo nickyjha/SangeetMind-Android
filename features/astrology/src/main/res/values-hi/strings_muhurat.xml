@@ -7,8 +7,8 @@
     <string name="muhurat_intent_business">व्यापार</string>
     <string name="muhurat_intent_travel">यात्रा</string>
     <string name="muhurat_intent_griha_pravesh">गृह प्रवेश</string>
-    <string name="muhurat_start_date">शुरू की तारीख़ (YYYY-MM-DD)</string>
-    <string name="muhurat_end_date">आख़िरी तारीख़ (YYYY-MM-DD)</string>
+    <string name="muhurat_start_date">शुरू की तारीख़</string>
+    <string name="muhurat_end_date">आख़िरी तारीख़</string>
     <string name="muhurat_find">मुहूर्त खोजें</string>
     <string name="muhurat_results">नतीजे</string>
     <string name="muhurat_verdict_auspicious">शुभ</string>

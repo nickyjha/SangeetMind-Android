@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.LagnaInfo
@@ -66,12 +67,6 @@ private val HOUSE_POLYGONS: Map<Int, List<Offset>> = mapOf(
     12 to listOf(Offset(200f, 0f), Offset(300f, 100f), Offset(400f, 0f))
 )
 
-private val HOUSE_CENTROIDS: Map<Int, Offset> = mapOf(
-    1 to Offset(200f, 100f), 2 to Offset(100f, 33f), 3 to Offset(33f, 100f), 4 to Offset(100f, 200f),
-    5 to Offset(33f, 300f), 6 to Offset(100f, 367f), 7 to Offset(200f, 300f), 8 to Offset(300f, 367f),
-    9 to Offset(367f, 300f), 10 to Offset(300f, 200f), 11 to Offset(367f, 100f), 12 to Offset(300f, 33f)
-)
-
 internal fun signToHouseNumber(lagnaSign: String, planetSign: String): Int {
     val lagnaIdx = ZODIAC_SIGNS.indexOfFirst { it.equals(lagnaSign, ignoreCase = true) }
     val planetIdx = ZODIAC_SIGNS.indexOfFirst { it.equals(planetSign, ignoreCase = true) }
@@ -85,6 +80,26 @@ internal fun dignitySuffix(planet: PlanetInfo): String = buildString {
     if (planet.exalted) append('↑')
     if (planet.debilitated) append('↓')
     if (planet.vargottama) append('□')
+}
+
+/** Smallest text the chart draws, in sp. */
+internal const val MIN_CHART_TEXT_SP = 8f
+
+/** "Su* 29°" — abbreviation, dignity marks, degree. */
+internal fun planetLabel(name: String, data: PlanetInfo, abbrevs: Map<String, String>): String {
+    val abbrev = abbrevs[name] ?: name.take(2)
+    val dign = dignitySuffix(data)
+    val deg = degreeDisplay(data)
+    return if (deg != null) "$abbrev$dign $deg" else "$abbrev$dign"
+}
+
+/** Width of [text] at font size 1, measured at a large size for accuracy. */
+internal fun measurePerUnitFont(paint: android.graphics.Paint, text: String): Float {
+    val saved = paint.textSize
+    paint.textSize = 100f
+    val w = paint.measureText(text) / 100f
+    paint.textSize = saved
+    return w
 }
 
 internal fun degreeDisplay(planet: PlanetInfo): String? {
@@ -177,11 +192,16 @@ fun NorthIndianHouseChart(
                 drawPath(path, color = lineColor, style = Stroke(width = 1.4f * scale))
             }
 
+            // Text never drops below 8sp, however small the chart is drawn.
+            val minFont = MIN_CHART_TEXT_SP.sp.toPx() / scale
+            val headerFont = maxOf(11f, minFont)
+            val baseFont = maxOf(9f, minFont)
+
             val rashiPaint = android.graphics.Paint().apply {
                 isAntiAlias = true
                 color = rashiArgb
                 textAlign = android.graphics.Paint.Align.CENTER
-                textSize = 11f * scale
+                textSize = headerFont * scale
                 isFakeBoldText = true
             }
 
@@ -189,30 +209,30 @@ fun NorthIndianHouseChart(
                 isAntiAlias = true
                 color = planetArgb
                 textAlign = android.graphics.Paint.Align.CENTER
-                textSize = 9f * scale
             }
 
             for (houseNum in 1..12) {
-                val centroid = HOUSE_CENTROIDS.getValue(houseNum).scaled()
                 val items = houseToPlanets.getValue(houseNum)
-                val rashiY = centroid.y - if (items.isNotEmpty()) 18f * scale else 0f
-                drawContext.canvas.nativeCanvas.drawText(
-                    houseToRashi.getValue(houseNum).toString(),
-                    centroid.x,
-                    rashiY,
-                    rashiPaint
+                val lines = items.map { (name, data) -> planetLabel(name, data, planetAbbrev) }
+                val layout = layoutHouseLabels(
+                    rect = NORTH_SAFE_RECTS.getValue(houseNum),
+                    labelWidthsPerUnitFont = lines.map { measurePerUnitFont(planetPaint, it) },
+                    baseFont = baseFont,
+                    minFont = minFont,
+                    headerFont = headerFont
                 )
-                items.forEachIndexed { i, (name, data) ->
-                    val abbrev = planetAbbrev[name] ?: name.take(2)
-                    val dign = dignitySuffix(data)
-                    val deg = degreeDisplay(data)
-                    val line = if (deg != null) "$abbrev$dign $deg" else "$abbrev$dign"
+                layout.header?.let { pos ->
                     drawContext.canvas.nativeCanvas.drawText(
-                        line,
-                        centroid.x,
-                        centroid.y + 4f * scale + i * 12f * scale,
-                        planetPaint
+                        houseToRashi.getValue(houseNum).toString(),
+                        pos.x * scale,
+                        pos.y * scale,
+                        rashiPaint
                     )
+                }
+                planetPaint.textSize = layout.fontSize * scale
+                lines.forEachIndexed { i, line ->
+                    val pos = layout.labels[i]
+                    drawContext.canvas.nativeCanvas.drawText(line, pos.x * scale, pos.y * scale, planetPaint)
                 }
             }
         }

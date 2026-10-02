@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.readings.ui
 
+import com.sangeetmind.core.ui.components.AstroTopBar
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -51,13 +52,9 @@ fun ReadingsScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.readings_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
-                    }
-                }
+            AstroTopBar(
+                title = stringResource(R.string.readings_title),
+                onBack = onNavigateBack
             )
         }
     ) { padding ->

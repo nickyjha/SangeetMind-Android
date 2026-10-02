@@ -19,14 +19,28 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
+
+internal const val DEFAULT_WINDOW_DAYS = 30L
+
+/**
+ * New start date for the window; if the current end would fall before it, the end moves
+ * to start + [DEFAULT_WINDOW_DAYS] so the window is never inverted.
+ */
+internal fun adjustWindowForStart(start: String, end: String): Pair<String, String> {
+    val s = runCatching { LocalDate.parse(start) }.getOrNull() ?: return start to end
+    val e = runCatching { LocalDate.parse(end) }.getOrNull()
+    return if (e == null || e.isBefore(s)) start to s.plusDays(DEFAULT_WINDOW_DAYS).toString() else start to end
+}
 
 val MUHURAT_INTENTS = listOf("general", "marriage", "business", "travel", "griha pravesh")
 
 data class MuhuratUiState(
     val intent: String = "general",
-    val windowStart: String = "",
-    val windowEnd: String = "",
+    // ISO yyyy-MM-dd. Defaults to the next 30 days so the search works without picking dates.
+    val windowStart: String = LocalDate.now().toString(),
+    val windowEnd: String = LocalDate.now().plusDays(DEFAULT_WINDOW_DAYS).toString(),
     val isSearching: Boolean = false,
     val results: List<MuhuratSlot> = emptyList(),
     // Marriage uses the vivah endpoint: windows, blocked periods, optional couple check.
@@ -72,7 +86,10 @@ class MuhuratViewModel @Inject constructor(
     }
 
     fun onWindowStartChange(value: String) {
-        _uiState.update { it.copy(windowStart = value, error = null) }
+        _uiState.update {
+            val (start, end) = adjustWindowForStart(value, it.windowEnd)
+            it.copy(windowStart = start, windowEnd = end, error = null)
+        }
     }
 
     fun onWindowEndChange(value: String) {

@@ -2,18 +2,6 @@
 <resources>
     <string name="app_name">AstroGeet</string>
 
-    <!-- Player -->
-    <string name="player_play">चलाएं</string>
-    <string name="player_pause">रोकें</string>
-    <string name="player_shuffle">शफ़ल</string>
-    <string name="player_repeat">दोहराएं</string>
-    <string name="player_queue">कतार</string>
-
-    <!-- Meditation -->
-    <string name="meditation_title">ध्यान</string>
-    <string name="meditation_pause">रोकें</string>
-    <string name="meditation_resume">फिर से शुरू करें</string>
-
     <!-- Settings -->
     <string name="settings_title">सेटिंग्स</string>
 

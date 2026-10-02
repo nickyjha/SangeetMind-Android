@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.chart.ui
 
+import com.sangeetmind.core.ui.components.AstroTopBar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,7 +35,6 @@ import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -110,24 +110,15 @@ fun ChartScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.chart_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
-                    }
-                },
+            AstroTopBar(
+                title = stringResource(R.string.chart_title),
+                onBack = onNavigateBack,
+                accent = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.shani,
                 actions = {
                     IconButton(onClick = viewModel::refresh) {
                         Icon(Icons.Default.Refresh, contentDescription = stringResource(CoreR.string.common_refresh))
                     }
-                },
-                colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
-                    containerColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.shani.copy(alpha = 0.14f),
-                    titleContentColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.shani,
-                    navigationIconContentColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.shani,
-                    actionIconContentColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.shani
-                )
+                }
             )
         }
     ) { padding ->

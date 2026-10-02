@@ -1,5 +1,7 @@
 package com.sangeetmind.features.astrology.payments.ui
 
+import com.sangeetmind.core.ui.components.AstroTopBar
+import com.sangeetmind.core.ui.components.timestampDateText
 import android.app.Activity
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -56,13 +58,9 @@ fun PaymentsScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.payments_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
-                    }
-                }
+            AstroTopBar(
+                title = stringResource(R.string.payments_title),
+                onBack = onNavigateBack
             )
         }
     ) { padding ->
@@ -274,7 +272,7 @@ private fun WalletTab(
             items(transactions) { tx ->
                 ListItem(
                     headlineContent = { Text(formatPaise(tx.amountPaise)) },
-                    supportingContent = { Text(tx.createdAt ?: "") }
+                    supportingContent = { Text(tx.createdAt?.let { timestampDateText(it) } ?: "") }
                 )
             }
         }

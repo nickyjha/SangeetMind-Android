@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="panchang_title">Panchang</string>
-    <string name="panchang_date_label">Date (YYYY-MM-DD)</string>
+    <string name="panchang_date_label">Date</string>
     <string name="panchang_place_label">Place</string>
     <string name="panchang_get">Get Panchang</string>
     <string name="panchang_tithi">Tithi</string>

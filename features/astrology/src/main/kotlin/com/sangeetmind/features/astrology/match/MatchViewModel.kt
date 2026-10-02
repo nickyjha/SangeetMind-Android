@@ -36,6 +36,24 @@ data class MatchUiState(
     val error: String? = null
 )
 
+/**
+ * Default selection once kundlis load: A = the primary kundli (or the first), B = the first
+ * other kundli. Fewer than two kundlis → nothing pre-selected. Selections the user already
+ * made are kept as long as those kundlis still exist.
+ */
+internal fun defaultMatchPair(
+    kundlis: List<Kundli>,
+    currentA: Kundli? = null,
+    currentB: Kundli? = null
+): Pair<Kundli?, Kundli?> {
+    val a = currentA?.let { cur -> kundlis.firstOrNull { it.id == cur.id } }
+    val b = currentB?.let { cur -> kundlis.firstOrNull { it.id == cur.id } }
+    if (kundlis.size < 2) return a to b
+    val pickA = a ?: kundlis.firstOrNull { it.isPrimary && it.id != b?.id } ?: kundlis.first { it.id != b?.id }
+    val pickB = b ?: kundlis.first { it.id != pickA.id }
+    return pickA to pickB
+}
+
 @HiltViewModel
 class MatchViewModel @Inject constructor(
     @ApplicationContext private val appContext: Context,
@@ -59,7 +77,8 @@ class MatchViewModel @Inject constructor(
             _uiState.update { it.copy(isLoadingKundlis = true, error = null) }
             when (val result = kundliRepository.listKundlis()) {
                 is Result.Success -> _uiState.update {
-                    it.copy(isLoadingKundlis = false, kundlis = result.data)
+                    val (a, b) = defaultMatchPair(result.data, it.personA, it.personB)
+                    it.copy(isLoadingKundlis = false, kundlis = result.data, personA = a, personB = b)
                 }
                 is Result.Error -> _uiState.update {
                     it.copy(isLoadingKundlis = false, error = result.message ?: str(R.string.match_error_load_kundlis))

@@ -8,7 +8,7 @@
     <string name="numerology_system_chaldean">कैल्डियन</string>
     <string name="numerology_system_vedic">वैदिक</string>
     <string name="numerology_field_full_name">पूरा नाम (जन्म के समय रखा गया)</string>
-    <string name="numerology_field_dob">जन्म की तारीख़ (YYYY-MM-DD)</string>
+    <string name="numerology_field_dob">जन्म की तारीख़</string>
     <string name="numerology_field_current_name">अभी का नाम (अगर अलग हो, ज़रूरी नहीं)</string>
     <string name="numerology_gender_label">लिंग (कुआ अंक के लिए)</string>
     <string name="numerology_gender_male">पुरुष</string>

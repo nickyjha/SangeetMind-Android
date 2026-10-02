@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.interpretation.ui
 
+import com.sangeetmind.core.ui.components.AstroTopBar
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -32,18 +33,10 @@ fun InterpretationScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.interpretation_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.shukra.copy(alpha = 0.14f),
-                    titleContentColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.shukra,
-                    navigationIconContentColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.shukra
-                )
+            AstroTopBar(
+                title = stringResource(R.string.interpretation_title),
+                onBack = onNavigateBack,
+                accent = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.shukra
             )
         }
     ) { padding ->

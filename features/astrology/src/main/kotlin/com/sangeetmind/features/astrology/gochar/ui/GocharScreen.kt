@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.gochar.ui
 
+import com.sangeetmind.core.ui.components.AstroTopBar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -34,8 +35,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -90,24 +89,15 @@ fun GocharScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.gochar_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
-                    }
-                },
+            AstroTopBar(
+                title = stringResource(R.string.gochar_title),
+                onBack = onNavigateBack,
+                accent = graha.shani,
                 actions = {
                     IconButton(onClick = viewModel::refresh) {
                         Icon(Icons.Default.Refresh, contentDescription = stringResource(CoreR.string.common_refresh))
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = graha.shani.copy(alpha = 0.14f),
-                    titleContentColor = graha.shani,
-                    navigationIconContentColor = graha.shani,
-                    actionIconContentColor = graha.shani
-                )
+                }
             )
         }
     ) { padding ->

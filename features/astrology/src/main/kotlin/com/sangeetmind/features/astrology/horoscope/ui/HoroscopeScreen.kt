@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.horoscope.ui
 
+import com.sangeetmind.core.ui.components.AstroTopBar
 import com.sangeetmind.features.astrology.dashboard.ui.luckySwatch
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -42,18 +43,10 @@ fun HoroscopeScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.horoscope_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.surya.copy(alpha = 0.14f),
-                    titleContentColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.surya,
-                    navigationIconContentColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.surya
-                )
+            AstroTopBar(
+                title = stringResource(R.string.horoscope_title),
+                onBack = onNavigateBack,
+                accent = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.surya
             )
         }
     ) { padding ->

@@ -8,7 +8,7 @@
     <string name="numerology_system_chaldean">Chaldean</string>
     <string name="numerology_system_vedic">Vedic</string>
     <string name="numerology_field_full_name">Full name (as given at birth)</string>
-    <string name="numerology_field_dob">Date of birth (YYYY-MM-DD)</string>
+    <string name="numerology_field_dob">Date of birth</string>
     <string name="numerology_field_current_name">Current/known name (optional, if different)</string>
     <string name="numerology_gender_label">Gender (for Kua number)</string>
     <string name="numerology_gender_male">Male</string>

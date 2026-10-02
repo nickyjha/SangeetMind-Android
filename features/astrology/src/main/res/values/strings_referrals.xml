@@ -10,6 +10,7 @@
     <string name="referrals_have_code">Have a friend\'s code?</string>
     <string name="referrals_code_label">Referral code</string>
     <string name="referrals_apply">Apply</string>
+    <string name="referrals_code_placeholder">e.g. NICKY7K2</string>
     <string name="referrals_share_text_fmt">Join me on AstroGeet! Use my referral code: %1$s</string>
     <string name="referrals_share_chooser_title">Share your referral code</string>
 
@@ -21,4 +22,6 @@
     <string name="referrals_error_enter_code">Enter a referral code</string>
     <string name="referrals_error_load_stats">Failed to load referral stats</string>
     <string name="referrals_error_apply_code">Failed to apply referral code</string>
+    <string name="referrals_error_invalid_code">This referral code doesn\'t exist. Check it and try again.</string>
+    <string name="referrals_error_own_code">You can\'t use your own referral code</string>
 </resources>

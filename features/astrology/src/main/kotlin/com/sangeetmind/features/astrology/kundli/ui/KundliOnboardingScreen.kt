@@ -1,5 +1,7 @@
 package com.sangeetmind.features.astrology.kundli.ui
 
+import com.sangeetmind.core.ui.components.AstroTopBar
+import com.sangeetmind.core.ui.components.DateField
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -11,7 +13,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Warning
@@ -29,9 +30,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.kundli.KundliOnboardingViewModel
-import java.time.Instant
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,7 +39,6 @@ fun KundliOnboardingScreen(
     viewModel: KundliOnboardingViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
 
     LaunchedEffect(uiState.saved) {
@@ -52,13 +49,9 @@ fun KundliOnboardingScreen(
     val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.kundli_onboarding_title)) },
-                navigationIcon = {
-                    IconButton(onClick = { onNavigateBack?.invoke() ?: backDispatcher?.onBackPressed() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
-                    }
-                }
+            AstroTopBar(
+                title = stringResource(R.string.kundli_onboarding_title),
+                onBack = { onNavigateBack?.invoke() ?: backDispatcher?.onBackPressed() }
             )
         }
     ) { padding ->
@@ -109,25 +102,13 @@ fun KundliOnboardingScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Box(modifier = Modifier.fillMaxWidth()) {
-                OutlinedTextField(
-                    value = uiState.birthDate,
-                    onValueChange = {},
-                    readOnly = true,
-                    label = { Text(stringResource(R.string.kundli_field_dob)) },
-                    trailingIcon = { Icon(Icons.Default.DateRange, null) },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
-                Box(
-                    modifier = Modifier
-                        .matchParentSize()
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) { showDatePicker = true }
-                )
-            }
+            DateField(
+                label = stringResource(R.string.kundli_field_dob),
+                isoDate = uiState.birthDate,
+                onDateChange = viewModel::onBirthDateChange,
+                modifier = Modifier.fillMaxWidth(),
+                maxDate = java.time.LocalDate.now()
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -208,33 +189,6 @@ fun KundliOnboardingScreen(
                     Text(stringResource(R.string.kundli_generate))
                 }
             }
-        }
-    }
-
-    if (showDatePicker) {
-        val initialMillis = runCatching {
-            java.time.LocalDate.parse(uiState.birthDate, DateTimeFormatter.ISO_LOCAL_DATE)
-                .atStartOfDay(ZoneOffset.UTC)
-                .toInstant()
-                .toEpochMilli()
-        }.getOrNull()
-        val datePickerState = rememberDatePickerState(initialSelectedDateMillis = initialMillis)
-        DatePickerDialog(
-            onDismissRequest = { showDatePicker = false },
-            confirmButton = {
-                TextButton(onClick = {
-                    datePickerState.selectedDateMillis?.let { millis ->
-                        val date = Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC).toLocalDate()
-                        viewModel.onBirthDateChange(date.format(DateTimeFormatter.ISO_LOCAL_DATE))
-                    }
-                    showDatePicker = false
-                }) { Text(stringResource(CoreR.string.common_ok)) }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDatePicker = false }) { Text(stringResource(CoreR.string.common_cancel)) }
-            }
-        ) {
-            DatePicker(state = datePickerState)
         }
     }
 

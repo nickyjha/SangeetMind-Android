@@ -13,7 +13,7 @@
     <string name="sangeet_raag_preview_only">Preview only — unlock the full playlist with Premium.</string>
     <string name="sangeet_raag_track_purpose_fmt">Balance %1$s dasha</string>
 
-    <string name="sangeet_japa_stats_fmt">Streak: %1$d days • Lifetime japa: %2$d</string>
+    <string name="sangeet_japa_stats_fmt">Day streak: %1$d • Lifetime japa: %2$d</string>
     <string name="sangeet_japa_tap">Tap</string>
     <string name="sangeet_japa_reset">Reset</string>
     <string name="sangeet_japa_log_session">Log session</string>
@@ -34,7 +34,24 @@
     <string name="sangeet_err_japa_stats">Could not load japa stats</string>
     <string name="sangeet_err_voice">Voice horoscope needs Premium</string>
     <string name="sangeet_err_sound">Could not load sound healing library</string>
-    <string name="sangeet_japa_mantra_generic">Daily japa (any mantra)</string>
+    <!-- Japa mantra picker (ids in sangeet/JapaMantras.kt). -->
+    <string name="sangeet_japa_choose_mantra">Choose your mantra</string>
+    <string name="sangeet_japa_recommended">Recommended for your dasha</string>
+    <string name="sangeet_japa_recommended_fmt">%1$s dasha is running — this mantra suits it.</string>
+    <string name="sangeet_mantra_generic">Any mantra</string>
+    <string name="sangeet_mantra_gayatri">Gayatri Mantra</string>
+    <string name="sangeet_mantra_mahamrityunjaya">Mahamrityunjaya Mantra</string>
+    <string name="sangeet_mantra_om_namah_shivaya">Om Namah Shivaya</string>
+    <string name="sangeet_mantra_hanuman_chalisa">Hanuman Chalisa (count each path)</string>
+    <string name="sangeet_mantra_surya">Om Suryaya Namah (Surya)</string>
+    <string name="sangeet_mantra_chandra">Om Chandraya Namah (Chandra)</string>
+    <string name="sangeet_mantra_mangal">Om Bhaumaya Namah (Mangal)</string>
+    <string name="sangeet_mantra_budh">Om Budhaya Namah (Budh)</string>
+    <string name="sangeet_mantra_guru">Om Gurave Namah (Guru)</string>
+    <string name="sangeet_mantra_shukra">Om Shukraya Namah (Shukra)</string>
+    <string name="sangeet_mantra_shani">Om Shanaishcharaya Namah (Shani)</string>
+    <string name="sangeet_mantra_rahu">Om Rahave Namah (Rahu)</string>
+    <string name="sangeet_mantra_ketu">Om Ketave Namah (Ketu)</string>
 
     <!-- Traditional time + mood per raag (server sends one generic purpose for all). -->
     <string name="sangeet_raag_mood_bhairavi">Morning · devotional, gentle</string>

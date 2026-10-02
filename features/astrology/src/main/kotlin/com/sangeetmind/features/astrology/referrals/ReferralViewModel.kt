@@ -36,9 +36,10 @@ class ReferralViewModel @Inject constructor(
     firebaseAuth: FirebaseAuth
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(
-        ReferralUiState(myCode = firebaseAuth.currentUser?.uid.orEmpty())
-    )
+    // The short code comes from /stats; the raw uid is only a fallback for an older backend.
+    private val legacyCode = firebaseAuth.currentUser?.uid.orEmpty()
+
+    private val _uiState = MutableStateFlow(ReferralUiState())
     val uiState: StateFlow<ReferralUiState> = _uiState.asStateFlow()
 
     private fun str(@StringRes id: Int): String =
@@ -56,7 +57,13 @@ class ReferralViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
             when (val result = repository.getStats()) {
-                is Result.Success -> _uiState.update { it.copy(isLoading = false, stats = result.data) }
+                is Result.Success -> _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        stats = result.data,
+                        myCode = result.data.referralCode?.takeIf { c -> c.isNotBlank() } ?: legacyCode
+                    )
+                }
                 is Result.Error -> _uiState.update {
                     it.copy(
                         isLoading = false,
@@ -69,7 +76,7 @@ class ReferralViewModel @Inject constructor(
     }
 
     fun applyCode() {
-        val code = _uiState.value.codeInput.trim()
+        val code = ReferralCodes.normalizeInput(_uiState.value.codeInput)
         if (code.isBlank()) {
             _uiState.update { it.copy(error = str(R.string.referrals_error_enter_code)) }
             return

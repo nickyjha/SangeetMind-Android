@@ -4,12 +4,9 @@
 
     <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     
     <!-- Optional: Request at runtime -->
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
@@ -34,19 +31,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- Audio Player Service -->
-        <!-- Instantiatable: lint cannot see media3's MediaSessionService (a Service) from the
-             app module, so it flags this as a false positive. -->
-        <service
-            android:name="com.sangeetmind.core.audio.PlayerService"
-            android:exported="false"
-            android:foregroundServiceType="mediaPlayback"
-            tools:ignore="Instantiatable">
-            <intent-filter>
-                <action android:name="androidx.media3.session.MediaSessionService" />
-            </intent-filter>
-        </service>
 
         <!-- Push notifications. Channels "daily" (Your day) and "alerts" (festivals/dasha)
              are created by SangeetMindMessagingService.ensureChannels(); the meta-data

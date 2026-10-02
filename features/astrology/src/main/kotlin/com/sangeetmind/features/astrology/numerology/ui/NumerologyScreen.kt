@@ -1,5 +1,7 @@
 package com.sangeetmind.features.astrology.numerology.ui
 
+import com.sangeetmind.core.ui.components.AstroTopBar
+import com.sangeetmind.core.ui.components.DateField
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -52,24 +54,15 @@ fun NumerologyScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.numerology_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
-                    }
-                },
+            AstroTopBar(
+                title = stringResource(R.string.numerology_title),
+                onBack = onNavigateBack,
+                accent = budha,
                 actions = {
                     IconButton(onClick = onOpenGlossary) {
                         Icon(Icons.Default.MenuBook, contentDescription = stringResource(R.string.numerology_number_meanings))
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = budha.copy(alpha = 0.14f),
-                    titleContentColor = budha,
-                    navigationIconContentColor = budha,
-                    actionIconContentColor = budha
-                )
+                }
             )
         }
     ) { padding ->
@@ -105,13 +98,12 @@ fun NumerologyScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            OutlinedTextField(
-                value = uiState.dateOfBirth,
-                onValueChange = viewModel::onDateOfBirthChange,
-                label = { Text(stringResource(R.string.numerology_field_dob)) },
+            DateField(
+                label = stringResource(R.string.numerology_field_dob),
+                isoDate = uiState.dateOfBirth,
+                onDateChange = viewModel::onDateOfBirthChange,
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done)
+                maxDate = java.time.LocalDate.now()
             )
 
             if (uiState.system == NumerologySystemUi.CHALDEAN) {

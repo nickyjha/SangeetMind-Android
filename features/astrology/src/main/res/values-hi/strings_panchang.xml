@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="panchang_title">पंचांग</string>
-    <string name="panchang_date_label">तारीख़ (YYYY-MM-DD)</string>
+    <string name="panchang_date_label">तारीख़</string>
     <string name="panchang_place_label">जगह</string>
     <string name="panchang_get">पंचांग देखें</string>
     <string name="panchang_tithi">तिथि</string>

@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.sangeetmind.core.ui.language.astroTerm
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.features.astrology.R
@@ -126,8 +127,10 @@ fun SouthIndianHouseChart(
                 isAntiAlias = true
                 color = planetArgb
                 textAlign = android.graphics.Paint.Align.CENTER
-                textSize = 9f * scale
             }
+            val minFont = MIN_CHART_TEXT_SP.sp.toPx() / scale
+            val baseFont = maxOf(9f, minFont)
+            signPaint.textSize = maxOf(8f, minFont) * scale
 
             for ((signIdx, pos) in SOUTH_CELLS) {
                 val (col, row) = pos
@@ -152,17 +155,18 @@ fun SouthIndianHouseChart(
                 val house = ((signIdx - lagnaIdx + 12) % 12) + 1
                 drawContext.canvas.nativeCanvas.drawText(signLabels[signIdx], left + 4f * scale, top + 11f * scale, signPaint)
                 drawContext.canvas.nativeCanvas.drawText(house.toString(), left + cell - 4f * scale, top + 12f * scale, housePaint)
-                signToPlanets.getValue(signIdx).forEachIndexed { i, (name, data) ->
-                    val abbrev = planetAbbrev[name] ?: name.take(2)
-                    val dign = dignitySuffix(data)
-                    val deg = degreeDisplay(data)
-                    val line = if (deg != null) "$abbrev$dign $deg" else "$abbrev$dign"
-                    drawContext.canvas.nativeCanvas.drawText(
-                        line,
-                        left + cell / 2f,
-                        top + 28f * scale + i * 12f * scale,
-                        planetPaint
-                    )
+                val lines = signToPlanets.getValue(signIdx).map { (name, data) -> planetLabel(name, data, planetAbbrev) }
+                // Below the sign/house header row; 2 columns or a smaller font when crowded.
+                val layout = layoutHouseLabels(
+                    rect = SafeRect(cx = col * 100f + 50f, cy = row * 100f + 57f, width = 92f, height = 80f),
+                    labelWidthsPerUnitFont = lines.map { measurePerUnitFont(planetPaint, it) },
+                    baseFont = baseFont,
+                    minFont = minFont
+                )
+                planetPaint.textSize = layout.fontSize * scale
+                lines.forEachIndexed { i, line ->
+                    val p = layout.labels[i]
+                    drawContext.canvas.nativeCanvas.drawText(line, p.x * scale, p.y * scale, planetPaint)
                 }
             }
         }

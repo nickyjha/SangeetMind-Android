@@ -27,6 +27,12 @@ data class SangeetUiState(
     val japaCount: Int = 0,
     val japaStats: JapaStats? = null,
     val japaLogged: Boolean = false,
+    /** Mantra the counter logs against (a [JapaMantras] id). */
+    val selectedMantraId: String = JapaMantras.GENERIC_ID,
+    /** Beej mantra for the user's current mahadasha lord (from the daily raag playlist). */
+    val recommendedMantraId: String? = null,
+    /** The mahadasha lord behind [recommendedMantraId], e.g. "Saturn". */
+    val recommendedForLord: String? = null,
     val voiceHoroscope: VoiceHoroscopeResponse? = null,
     val soundHealingSessions: List<SoundHealingSession> = emptyList(),
     val soundHealingPremiumRequired: Boolean = false
@@ -35,10 +41,16 @@ data class SangeetUiState(
 @HiltViewModel
 class SangeetViewModel @Inject constructor(
     private val repository: SangeetRepository,
+    private val mantraStore: JapaMantraStore,
     languageManager: LanguageManager
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(SangeetUiState())
+    private val _uiState = MutableStateFlow(
+        SangeetUiState(
+            selectedMantraId = mantraStore.lastMantraId
+                ?.takeIf { JapaMantras.byId(it) != null } ?: JapaMantras.GENERIC_ID
+        )
+    )
     val uiState: StateFlow<SangeetUiState> = _uiState.asStateFlow()
 
     /** Sign of the last generated voice horoscope, so a language switch can re-fetch it. */
@@ -70,11 +82,30 @@ class SangeetViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
             when (val result = repository.getDailyRaag()) {
-                is Result.Success -> _uiState.update { it.copy(isLoading = false, dailyRaag = result.data) }
+                is Result.Success -> {
+                    val lord = result.data.mahadashaLord
+                    val recommended = JapaMantras.forDashaLord(lord)
+                    // Pre-select the dasha mantra only until the user has made a choice.
+                    val keepChoice = mantraStore.lastMantraId != null
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            dailyRaag = result.data,
+                            recommendedMantraId = recommended?.id,
+                            recommendedForLord = lord.takeIf { recommended != null },
+                            selectedMantraId = if (!keepChoice && recommended != null) recommended.id else it.selectedMantraId
+                        )
+                    }
+                }
                 is Result.Error -> _uiState.update { it.copy(isLoading = false, error = result.message) }
                 is Result.Loading -> Unit
             }
         }
+    }
+
+    fun selectMantra(mantraId: String) {
+        mantraStore.lastMantraId = mantraId
+        _uiState.update { it.copy(selectedMantraId = mantraId, japaLogged = false) }
     }
 
     fun incrementJapa() {
@@ -87,10 +118,11 @@ class SangeetViewModel @Inject constructor(
 
     fun logJapaSession() {
         val count = _uiState.value.japaCount
+        val mantraId = _uiState.value.selectedMantraId
         if (count <= 0) return
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
-            when (val result = repository.logJapa("generic", count)) {
+            when (val result = repository.logJapa(mantraId, count)) {
                 is Result.Success -> {
                     _uiState.update { it.copy(isLoading = false, japaCount = 0, japaLogged = true) }
                     loadJapaStats()

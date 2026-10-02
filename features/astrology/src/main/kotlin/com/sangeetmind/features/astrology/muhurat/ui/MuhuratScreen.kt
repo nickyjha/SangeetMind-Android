@@ -1,5 +1,8 @@
 package com.sangeetmind.features.astrology.muhurat.ui
 
+import com.sangeetmind.core.ui.components.AstroTopBar
+import com.sangeetmind.core.ui.components.isoDateText
+import com.sangeetmind.core.ui.components.DateField
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -46,18 +49,10 @@ fun MuhuratScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.muhurat_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.guru.copy(alpha = 0.14f),
-                    titleContentColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.guru,
-                    navigationIconContentColor = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.guru
-                )
+            AstroTopBar(
+                title = stringResource(R.string.muhurat_title),
+                onBack = onNavigateBack,
+                accent = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.guru
             )
         }
     ) { padding ->
@@ -95,7 +90,7 @@ fun MuhuratScreen(
                         FilterChip(
                             selected = k.id in uiState.coupleIds,
                             onClick = { viewModel.toggleCouple(k.id) },
-                            label = { Text(k.fullName?.takeIf { it.isNotBlank() }?.toTitleCase() ?: k.birthDate) }
+                            label = { Text(k.fullName?.takeIf { it.isNotBlank() }?.toTitleCase() ?: isoDateText(k.birthDate)) }
                         )
                     }
                 }
@@ -103,24 +98,21 @@ fun MuhuratScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            OutlinedTextField(
-                value = uiState.windowStart,
-                onValueChange = viewModel::onWindowStartChange,
-                label = { Text(stringResource(R.string.muhurat_start_date)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next)
+            DateField(
+                label = stringResource(R.string.muhurat_start_date),
+                isoDate = uiState.windowStart,
+                onDateChange = viewModel::onWindowStartChange,
+                modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            OutlinedTextField(
-                value = uiState.windowEnd,
-                onValueChange = viewModel::onWindowEndChange,
-                label = { Text(stringResource(R.string.muhurat_end_date)) },
+            DateField(
+                label = stringResource(R.string.muhurat_end_date),
+                isoDate = uiState.windowEnd,
+                onDateChange = viewModel::onWindowEndChange,
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done)
+                minDate = runCatching { java.time.LocalDate.parse(uiState.windowStart) }.getOrNull()
             )
 
             if (uiState.error != null) {
@@ -174,7 +166,7 @@ private fun MuhuratSlotCard(slot: MuhuratSlot) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(slot.date, style = MaterialTheme.typography.titleMedium)
+                Text(isoDateText(slot.date), style = MaterialTheme.typography.titleMedium)
                 Text(
                     text = "${astroTerm(slot.vara)} · ${astroTerm(slot.tithi)} · ${astroTerm(slot.nakshatra)}",
                     style = MaterialTheme.typography.bodySmall,

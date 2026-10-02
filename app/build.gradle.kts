@@ -71,6 +71,7 @@ android {
     }
 
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -96,19 +97,16 @@ android {
 }
 
 dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
     // Core modules
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
     implementation(project(":core:network"))
     implementation(project(":core:database"))
-    implementation(project(":core:audio"))
 
     // Feature modules
     implementation(project(":features:onboarding"))
     implementation(project(":features:auth"))
-    implementation(project(":features:raaglibrary"))
-    implementation(project(":features:player"))
-    implementation(project(":features:meditation"))
     implementation(project(":features:astrology"))
     implementation(project(":features:settings"))
 

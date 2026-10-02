@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.festival.ui
 
+import com.sangeetmind.core.ui.components.AstroTopBar
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,8 +28,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -65,24 +64,15 @@ fun FestivalScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.festival_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
-                    }
-                },
+            AstroTopBar(
+                title = stringResource(R.string.festival_title),
+                onBack = onNavigateBack,
+                accent = graha.shukra,
                 actions = {
                     IconButton(onClick = viewModel::refresh) {
                         Icon(Icons.Default.Refresh, contentDescription = stringResource(CoreR.string.common_refresh))
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = graha.shukra.copy(alpha = 0.14f),
-                    titleContentColor = graha.shukra,
-                    navigationIconContentColor = graha.shukra,
-                    actionIconContentColor = graha.shukra
-                )
+                }
             )
         }
     ) { padding ->

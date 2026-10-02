@@ -141,9 +141,13 @@ class SangeetMindMessagingService : FirebaseMessagingService() {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(contentIntent)
                 .build()
-            runCatching {
+            // notificationsAllowed() above already checked POST_NOTIFICATIONS; the permission
+            // can still be revoked in between, so catch the SecurityException explicitly.
+            try {
                 // One slot per kind: a second "daily" push the same day replaces the first.
                 NotificationManagerCompat.from(context).notify(type.hashCode(), notification)
+            } catch (_: SecurityException) {
+                // Permission revoked between the check and the post: drop this notification.
             }
         }
     }

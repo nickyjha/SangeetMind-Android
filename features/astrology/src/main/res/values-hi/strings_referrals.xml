@@ -10,6 +10,7 @@
     <string name="referrals_have_code">किसी दोस्त का कोड है?</string>
     <string name="referrals_code_label">रेफ़रल कोड</string>
     <string name="referrals_apply">लागू करें</string>
+    <string name="referrals_code_placeholder">जैसे NICKY7K2</string>
     <string name="referrals_share_text_fmt">AstroGeet पर मेरे साथ जुड़ें! मेरा रेफ़रल कोड डालें: %1$s</string>
     <string name="referrals_share_chooser_title">अपना रेफ़रल कोड शेयर करें</string>
 
@@ -21,4 +22,6 @@
     <string name="referrals_error_enter_code">रेफ़रल कोड डालें</string>
     <string name="referrals_error_load_stats">रेफ़रल की जानकारी लोड नहीं हो सकी</string>
     <string name="referrals_error_apply_code">रेफ़रल कोड लागू नहीं हो सका</string>
+    <string name="referrals_error_invalid_code">यह रेफ़रल कोड सही नहीं है। एक बार जाँचकर फिर डालें।</string>
+    <string name="referrals_error_own_code">आप अपना ही रेफ़रल कोड नहीं डाल सकते</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.holistic.ui
 
+import com.sangeetmind.core.ui.components.AstroTopBar
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
@@ -93,24 +94,15 @@ fun HolisticScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.holistic_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
-                    }
-                },
+            AstroTopBar(
+                title = stringResource(R.string.holistic_title),
+                onBack = onNavigateBack,
+                accent = graha.guru,
                 actions = {
                     IconButton(onClick = viewModel::refresh) {
                         Icon(Icons.Default.Refresh, contentDescription = stringResource(CoreR.string.common_refresh))
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = graha.guru.copy(alpha = 0.14f),
-                    titleContentColor = graha.guru,
-                    navigationIconContentColor = graha.guru,
-                    actionIconContentColor = graha.guru
-                )
+                }
             )
         }
     ) { padding ->

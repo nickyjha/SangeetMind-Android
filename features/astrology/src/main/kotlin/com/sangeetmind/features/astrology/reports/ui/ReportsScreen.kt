@@ -1,5 +1,7 @@
 package com.sangeetmind.features.astrology.reports.ui
 
+import com.sangeetmind.core.ui.components.AstroTopBar
+import com.sangeetmind.core.ui.components.timestampDateText
 import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -44,13 +46,9 @@ fun ReportsScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.reports_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
-                    }
-                }
+            AstroTopBar(
+                title = stringResource(R.string.reports_title),
+                onBack = onNavigateBack
             )
         }
     ) { padding ->
@@ -160,7 +158,7 @@ private fun MyReportCard(
                 )
                 report.createdAt?.takeIf { it.isNotBlank() }?.let { createdAt ->
                     Text(
-                        text = createdAt,
+                        text = timestampDateText(createdAt),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

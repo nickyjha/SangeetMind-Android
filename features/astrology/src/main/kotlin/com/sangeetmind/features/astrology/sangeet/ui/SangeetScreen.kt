@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.sangeet.ui
 
+import com.sangeetmind.core.ui.components.AstroTopBar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -24,6 +25,7 @@ import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.core.ui.language.astroTerm
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.features.astrology.R
+import com.sangeetmind.features.astrology.sangeet.JapaMantras
 import com.sangeetmind.features.astrology.sangeet.SangeetTab
 import com.sangeetmind.features.astrology.sangeet.SangeetViewModel
 import com.sangeetmind.libs.models.MantraTally
@@ -99,18 +101,10 @@ fun SangeetScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.sangeet_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = chandra.copy(alpha = 0.14f),
-                    titleContentColor = chandra,
-                    navigationIconContentColor = chandra
-                )
+            AstroTopBar(
+                title = stringResource(R.string.sangeet_title),
+                onBack = onNavigateBack,
+                accent = chandra
             )
         }
     ) { padding ->
@@ -167,6 +161,10 @@ fun SangeetScreen(
                         totalJapa = uiState.japaStats?.totalJapa ?: 0,
                         streakDays = uiState.japaStats?.streakDays ?: 0,
                         byMantra = uiState.japaStats?.byMantra ?: emptyList(),
+                        selectedMantraId = uiState.selectedMantraId,
+                        recommendedMantraId = uiState.recommendedMantraId,
+                        recommendedForLord = uiState.recommendedForLord,
+                        onSelectMantra = viewModel::selectMantra,
                         onTap = viewModel::incrementJapa,
                         onReset = viewModel::resetJapaCount,
                         onLog = viewModel::logJapaSession
@@ -244,11 +242,22 @@ private fun JapaTab(
     totalJapa: Int,
     streakDays: Int,
     byMantra: List<MantraTally>,
+    selectedMantraId: String,
+    recommendedMantraId: String?,
+    recommendedForLord: String?,
+    onSelectMantra: (String) -> Unit,
     onTap: () -> Unit,
     onReset: () -> Unit,
     onLog: () -> Unit
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+        MantraPicker(
+            selectedMantraId = selectedMantraId,
+            recommendedMantraId = recommendedMantraId,
+            recommendedForLord = recommendedForLord,
+            onSelect = onSelectMantra
+        )
+        Spacer(modifier = Modifier.height(16.dp))
         Text(stringResource(R.string.sangeet_japa_stats_fmt, streakDays, totalJapa), style = MaterialTheme.typography.bodyMedium)
         Spacer(modifier = Modifier.height(24.dp))
         Text("$count", style = MaterialTheme.typography.displayLarge)
@@ -295,17 +304,68 @@ private fun JapaTab(
     }
 }
 
-/** Server mantra ids are slugs ("generic", "gayatri_mantra") — show a readable name. */
+/** Dropdown of [JapaMantras.all]; the beej mantra for the running dasha is tagged. */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun mantraDisplayName(mantraId: String): String =
-    if (mantraId.isBlank() || mantraId.equals("generic", ignoreCase = true)) {
-        stringResource(R.string.sangeet_japa_mantra_generic)
-    } else {
-        astroTerm(
-            mantraId.replace('_', ' ').replace('-', ' ').trim()
-                .split(' ').filter { it.isNotEmpty() }.joinToString(" ") { w -> w.replaceFirstChar { it.uppercase() } }
+private fun MantraPicker(
+    selectedMantraId: String,
+    recommendedMantraId: String?,
+    recommendedForLord: String?,
+    onSelect: (String) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val selectedIsRecommended = recommendedMantraId != null && selectedMantraId == recommendedMantraId
+    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
+        OutlinedTextField(
+            value = mantraDisplayName(selectedMantraId),
+            onValueChange = {},
+            readOnly = true,
+            label = { Text(stringResource(R.string.sangeet_japa_choose_mantra)) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            supportingText = if (selectedIsRecommended && recommendedForLord != null) {
+                {
+                    Text(
+                        stringResource(R.string.sangeet_japa_recommended_fmt, astroTerm(recommendedForLord)),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            } else {
+                null
+            },
+            modifier = Modifier.menuAnchor().fillMaxWidth()
         )
+        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            JapaMantras.all.forEach { mantra ->
+                DropdownMenuItem(
+                    text = {
+                        Column {
+                            Text(stringResource(mantra.nameRes))
+                            if (mantra.id == recommendedMantraId) {
+                                Text(
+                                    stringResource(R.string.sangeet_japa_recommended),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+                    },
+                    onClick = {
+                        onSelect(mantra.id)
+                        expanded = false
+                    }
+                )
+            }
+        }
     }
+}
+
+/** Server mantra ids are slugs ("generic", "shani_beej") — show the readable name;
+ * an id this app version doesn't know falls back to title case. */
+@Composable
+private fun mantraDisplayName(mantraId: String): String {
+    val known = JapaMantras.byId(mantraId)
+    return if (known != null) stringResource(known.nameRes) else astroTerm(JapaMantras.titleCase(mantraId))
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

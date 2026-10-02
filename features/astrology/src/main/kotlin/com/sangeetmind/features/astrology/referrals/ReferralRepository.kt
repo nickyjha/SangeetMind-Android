@@ -12,6 +12,7 @@ import com.sangeetmind.libs.models.ApplyReferralRequest
 import com.sangeetmind.libs.models.ApplyReferralResponse
 import com.sangeetmind.libs.models.ReferralStats
 import dagger.hilt.android.qualifiers.ApplicationContext
+import retrofit2.HttpException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -29,7 +30,13 @@ class ReferralRepository @Inject constructor(
             try {
                 Result.Success(referralApi.applyReferral(ApplyReferralRequest(referrerUserId)))
             } catch (e: Exception) {
-                Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), context.withAppLanguage(languageManager.current).getString(R.string.referrals_error_apply_code)))
+                val ctx = context.withAppLanguage(languageManager.current)
+                val message = when ((e as? HttpException)?.code()) {
+                    404 -> ctx.getString(R.string.referrals_error_invalid_code)
+                    400 -> ctx.getString(R.string.referrals_error_own_code)
+                    else -> friendlyErrorMessage(e, ctx, ctx.getString(R.string.referrals_error_apply_code))
+                }
+                Result.Error(e, message)
             }
         }
 

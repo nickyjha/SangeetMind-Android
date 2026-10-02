@@ -2,18 +2,6 @@
 <resources>
     <string name="app_name">AstroGeet</string>
 
-    <!-- Player -->
-    <string name="player_play">Play</string>
-    <string name="player_pause">Pause</string>
-    <string name="player_shuffle">Shuffle</string>
-    <string name="player_repeat">Repeat</string>
-    <string name="player_queue">Queue</string>
-
-    <!-- Meditation -->
-    <string name="meditation_title">Meditation</string>
-    <string name="meditation_pause">Pause</string>
-    <string name="meditation_resume">Resume</string>
-
     <!-- Settings -->
     <string name="settings_title">Settings</string>
 

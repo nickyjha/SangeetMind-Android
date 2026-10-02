@@ -191,14 +191,30 @@ class SangeetViewModel @Inject constructor(
         val track = MantraAudio.forMantra(_uiState.value.selectedMantraId) ?: return
         val existing = player
         if (existing != null) {
-            existing.start()
+            runCatching { existing.start() }
             _uiState.update { it.copy(chantState = ChantState.PLAYING) }
             return
         }
         if (_uiState.value.japaCount >= MantraAudio.MALA) {
             _uiState.update { it.copy(japaCount = 0) }
         }
-        val mp = MediaPlayer.create(appContext, track.rawRes) ?: return
+        // Prepare asynchronously: loading and decoding audio must never block the UI thread.
+        val afd = runCatching { appContext.resources.openRawResourceFd(track.rawRes) }.getOrNull() ?: return
+        val mp = MediaPlayer()
+        val opened = runCatching {
+            afd.use { mp.setDataSource(it.fileDescriptor, it.startOffset, it.length) }
+        }.isSuccess
+        if (!opened) {
+            mp.release()
+            return
+        }
+        mp.setOnPreparedListener { prepared ->
+            if (player === prepared && _uiState.value.chantState == ChantState.PLAYING) prepared.start()
+        }
+        mp.setOnErrorListener { _, _, _ ->
+            stopChant()
+            true
+        }
         mp.setOnCompletionListener { finished ->
             val count = MantraAudio.afterPlay(_uiState.value.japaCount, track)
             _uiState.update { it.copy(japaCount = count, japaLogged = false) }
@@ -212,12 +228,12 @@ class SangeetViewModel @Inject constructor(
             }
         }
         player = mp
-        mp.start()
         _uiState.update { it.copy(chantState = ChantState.PLAYING, malaCompleted = null, japaLogged = false) }
+        mp.prepareAsync()
     }
 
     fun pauseChant() {
-        player?.takeIf { it.isPlaying }?.pause()
+        player?.let { mp -> runCatching { if (mp.isPlaying) mp.pause() } }
         if (player != null) _uiState.update { it.copy(chantState = ChantState.PAUSED) }
     }
 

@@ -15,7 +15,12 @@ object MantraAudio {
     const val MALA = 108
 
     private val tracks: Map<String, MantraTrack> = mapOf(
-        "surya_beej" to MantraTrack(R.raw.surya_beej, chantsPerPlay = 1)
+        "surya_beej" to MantraTrack(R.raw.surya_beej, chantsPerPlay = 1),
+        "chandra_beej" to MantraTrack(R.raw.chandra_beej, chantsPerPlay = 1),
+        "mangal_beej" to MantraTrack(R.raw.mangal_beej, chantsPerPlay = 1),
+        "budh_beej" to MantraTrack(R.raw.budh_beej, chantsPerPlay = 1),
+        "guru_beej" to MantraTrack(R.raw.guru_beej, chantsPerPlay = 1),
+        "shukra_beej" to MantraTrack(R.raw.shukra_beej, chantsPerPlay = 1)
     )
 
     fun forMantra(mantraId: String): MantraTrack? = tracks[mantraId]

@@ -36,6 +36,8 @@ annotation class GeocodingRetrofit
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
+    private const val CONNECT_TIMEOUT_SECONDS = 10L
+
 
     @Provides
     @Singleton
@@ -71,7 +73,10 @@ object NetworkModule {
         loggingInterceptor: HttpLoggingInterceptor,
         languageManager: LanguageManager
     ): OkHttpClient = OkHttpClient.Builder()
-        .connectTimeout(Constants.API_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+        // IPv4 first, short connect timeout: a dead IPv6 route falls back in seconds
+        // instead of eating the whole request budget. Read/write stay long for AI replies.
+        .dns(Ipv4FirstDns())
+        .connectTimeout(CONNECT_TIMEOUT_SECONDS, TimeUnit.SECONDS)
         .readTimeout(Constants.API_TIMEOUT_SECONDS, TimeUnit.SECONDS)
         .writeTimeout(Constants.API_TIMEOUT_SECONDS, TimeUnit.SECONDS)
         // First in the chain so it sees every transport failure from the interceptors below.

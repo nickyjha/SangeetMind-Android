@@ -58,6 +58,9 @@ dependencies {
     // Razorpay Checkout (Payments screen) — Activity-callback based, see MainActivity.
     implementation(libs.razorpay.checkout)
 
+    // Google Play Billing (wallet packs + Premium inside the app) — see payments/PlayBillingManager.
+    implementation(libs.android.billing)
+
     // Testing
     testImplementation(libs.junit)
 }

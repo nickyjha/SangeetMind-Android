@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="push_channel_daily_name">आपका दिन</string>
+    <string name="push_channel_daily_desc">हर सुबह आपके दिन के स्कोर और आज का काम</string>
+    <string name="push_channel_alerts_name">त्योहार और दशा</string>
+    <string name="push_channel_alerts_desc">त्योहार से एक शाम पहले याद दिलाना, और दशा बदलने की सूचना</string>
+</resources>

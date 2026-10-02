@@ -54,4 +54,12 @@
     <string name="dashboard_action_done">✓ Planned for today</string>
     <string name="dashboard_action_streak_fmt">🔥 %1$d-day streak</string>
     <string name="dashboard_dest_festivals">Festivals</string>
+
+    <!-- Daily push: notification permission nudge -->
+    <string name="dashboard_notif_title">Your day, every morning</string>
+    <string name="dashboard_notif_body">Turn on notifications to get your day\'s scores every morning.</string>
+    <string name="dashboard_notif_turn_on">Turn on</string>
+    <string name="dashboard_notif_open_settings">Open settings</string>
+    <string name="dashboard_notif_not_now">Not now</string>
+    <string name="dashboard_settings">Settings</string>
 </resources>

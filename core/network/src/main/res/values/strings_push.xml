@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Notification channels (shown in the system's notification settings) -->
+    <string name="push_channel_daily_name">Your day</string>
+    <string name="push_channel_daily_desc">Your day\'s scores and action, every morning</string>
+    <string name="push_channel_alerts_name">Festivals &amp; dasha</string>
+    <string name="push_channel_alerts_desc">Festival reminders the evening before, and dasha changes</string>
+</resources>

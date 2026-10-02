@@ -34,4 +34,17 @@
     <string name="settings_terms_desc">नियम और शर्तें देखें</string>
     <string name="settings_licenses_title">ओपन सोर्स लाइसेंस</string>
     <string name="settings_licenses_desc">थर्ड-पार्टी लाइसेंस देखें</string>
+    <string name="settings_section_danger">ख़तरे वाला हिस्सा</string>
+    <string name="settings_delete_account_title">अकाउंट हटाएँ</string>
+    <string name="settings_delete_account_desc">अकाउंट और सारा डेटा हमेशा के लिए हटाएँ</string>
+    <string name="settings_delete_account_intro">इससे आपका AstroGeet अकाउंट और उसका सारा डेटा हमेशा के लिए हट जाएगा:</string>
+    <string name="settings_delete_account_point_kundlis">आपकी सभी कुंडलियाँ और जन्म की जानकारी</string>
+    <string name="settings_delete_account_point_readings">सभी रीडिंग, रिपोर्ट और चैट</string>
+    <string name="settings_delete_account_point_wallet">वॉलेट का बचा पैसा वापस नहीं मिलेगा</string>
+    <string name="settings_delete_account_point_premium">Premium तुरंत बंद हो जाएगा</string>
+    <string name="settings_delete_account_irreversible">इसे वापस नहीं किया जा सकता।</string>
+    <string name="settings_delete_account_type_prompt">पक्का करने के लिए %1$s लिखें</string>
+    <string name="settings_delete_account_confirm">मेरा अकाउंट हटाएँ</string>
+    <string name="settings_delete_account_failed">अकाउंट नहीं हट पाया। इंटरनेट देखें और फिर से कोशिश करें।</string>
+    <string name="settings_delete_account_sign_in_again">आपका डेटा हट गया है। कृपया फिर से साइन इन करें और अकाउंट हटाएँ।</string>
 </resources>

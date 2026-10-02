@@ -10,4 +10,6 @@
     <string name="onboarding_before_continue">आगे बढ़ने से पहले</string>
     <string name="onboarding_agree_terms">मैं सेवा की शर्तों से सहमत हूँ</string>
     <string name="onboarding_agree_privacy">मैं प्राइवेसी पॉलिसी से सहमत हूँ</string>
+    <string name="onboarding_terms_link">सेवा की शर्तों</string>
+    <string name="onboarding_privacy_link">प्राइवेसी पॉलिसी</string>
 </resources>

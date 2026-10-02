@@ -11,6 +11,21 @@
     <string name="payments_add">Add</string>
     <string name="payments_recent_recharges">Recent Recharges</string>
 
+    <!-- Payments: Google Play products -->
+    <string name="payments_wallet_pack">Wallet %1$s</string>
+    <string name="payments_premium_monthly">Premium (Monthly)</string>
+    <string name="payments_premium_yearly">Premium (Yearly)</string>
+    <string name="payments_per_month">/ month</string>
+    <string name="payments_per_year">/ year</string>
+    <string name="payments_price_loading">Loading price…</string>
+    <string name="payments_premium_until">Active until %1$s</string>
+    <string name="payments_play_footnote">Billed through Google Play. Subscriptions renew automatically; manage or cancel any time in the Play Store.</string>
+    <string name="payments_msg_purchase_pending">Your purchase is pending. It will be added once Google Play confirms the payment.</string>
+    <string name="payments_msg_purchase_already_applied">This purchase was already added to your account.</string>
+    <string name="payments_error_play_unavailable">Google Play billing is not available on this device</string>
+    <string name="payments_error_play_connection">Could not reach Google Play. Check your connection and try again.</string>
+    <string name="payments_error_product_unavailable">This item is not available right now</string>
+
     <!-- Payments: messages -->
     <string name="payments_msg_payment_received">Payment received — wallet updated</string>
     <string name="payments_msg_now_premium">You\'re now Premium!</string>

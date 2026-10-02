@@ -36,6 +36,10 @@ import com.sangeetmind.core.ui.chart.LocalChartStyleSwitcher
 import com.sangeetmind.core.ui.language.LocalAppLanguage
 import com.sangeetmind.core.ui.language.LocalLanguageSwitcher
 import com.sangeetmind.core.ui.theme.SangeetMindTheme
+import android.content.Intent
+import androidx.compose.runtime.mutableStateOf
+import com.sangeetmind.core.network.SangeetMindMessagingService
+import com.sangeetmind.features.astrology.payments.PlayBillingManager
 import com.sangeetmind.features.astrology.payments.RazorpayResult
 import com.sangeetmind.features.astrology.payments.RazorpayResultBus
 import dagger.hilt.android.AndroidEntryPoint
@@ -59,14 +63,30 @@ class MainActivity : ComponentActivity(), PaymentResultWithDataListener {
     @Inject
     lateinit var themeManager: ThemeManager
 
+    @Inject
+    lateinit var playBilling: PlayBillingManager
+
+    // Screen a tapped push notification asks for (SangeetMindMessagingService.EXTRA_SCREEN);
+    // consumed by the NavHost once it has navigated.
+    private val deepLinkScreen = mutableStateOf<String?>(null)
+
     // The activity's own resources start in the saved language too, so the first frame
     // never flashes English. Read synchronously — Hilt hasn't injected anything yet here.
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(newBase.withAppLanguage(LanguageManager.readSync(newBase)))
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        intent.getStringExtra(SangeetMindMessagingService.EXTRA_SCREEN)?.let { deepLinkScreen.value = it }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        deepLinkScreen.value = intent?.getStringExtra(SangeetMindMessagingService.EXTRA_SCREEN)
+        // Recover any Play purchase that was paid but not yet credited (app killed mid-flow).
+        playBilling.start()
         setContent {
             // Language layer: every stringResource() below reads LocalContext/LocalConfiguration,
             // so swapping in a locale-overridden context re-resolves the whole tree in place —
@@ -114,7 +134,11 @@ class MainActivity : ComponentActivity(), PaymentResultWithDataListener {
                                 CircularProgressIndicator()
                             }
                         } else {
-                            SangeetMindNavHost(startDestination = destination)
+                            SangeetMindNavHost(
+                                startDestination = destination,
+                                deepLinkScreen = deepLinkScreen.value,
+                                onDeepLinkConsumed = { deepLinkScreen.value = null }
+                            )
                         }
                     }
                 }

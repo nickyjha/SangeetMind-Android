@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.payments
 
+import android.app.Activity
 import android.content.Context
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
@@ -14,7 +15,6 @@ import com.sangeetmind.libs.models.Sku
 import com.sangeetmind.libs.models.WalletTransaction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -35,6 +35,10 @@ data class PaymentsUiState(
     val walletTransactions: List<WalletTransaction> = emptyList(),
     val pendingOrder: RazorpayOrder? = null,
     val pendingIsWalletRecharge: Boolean = false,
+    /** Google Play prices by product id (PlayProducts), as formatted by the store. */
+    val playPrices: Map<String, String> = emptyMap(),
+    /** false once Play reported billing unavailable on this device; null while unknown. */
+    val billingAvailable: Boolean? = null,
     val message: String? = null,
     val error: String? = null
 )
@@ -43,6 +47,7 @@ data class PaymentsUiState(
 class PaymentsViewModel @Inject constructor(
     private val repository: PaymentsRepository,
     private val resultBus: RazorpayResultBus,
+    private val playBilling: PlayBillingManager,
     private val languageManager: LanguageManager,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
@@ -55,6 +60,28 @@ class PaymentsViewModel @Inject constructor(
 
     init {
         refresh()
+        // Google Play path: prices, availability and purchase outcomes (incl. ones recovered
+        // on start that were bought earlier but never verified).
+        playBilling.start()
+        viewModelScope.launch {
+            playBilling.prices.collect { prices ->
+                _uiState.update { it.copy(playPrices = prices.mapValues { (_, p) -> p.formattedPrice }) }
+            }
+        }
+        viewModelScope.launch {
+            playBilling.available.collect { available ->
+                _uiState.update {
+                    it.copy(
+                        billingAvailable = available,
+                        error = if (available == false) str(R.string.payments_error_play_unavailable) else it.error
+                    )
+                }
+            }
+        }
+        viewModelScope.launch {
+            playBilling.events.collect { onPlayEvent(it) }
+        }
+        // Razorpay path (website flow) is kept behind the Play path; MainActivity still forwards here.
         viewModelScope.launch {
             resultBus.results.collect { result ->
                 when (result) {
@@ -99,6 +126,47 @@ class PaymentsViewModel @Inject constructor(
             }
         }
     }
+
+    // ── Google Play Billing ──────────────────────────────────────────────────────────────
+
+    /** Buys a wallet pack ([PlayProducts.walletPacks]) through Google Play. */
+    fun buyWalletPack(activity: Activity, productId: String) = launchPlayPurchase(activity, productId)
+
+    /** Subscribes to a Premium plan ([PlayProducts.premiumPlans]) through Google Play. */
+    fun buyPremiumPlan(activity: Activity, productId: String) = launchPlayPurchase(activity, productId)
+
+    private fun launchPlayPurchase(activity: Activity, productId: String) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(error = null, message = null) }
+            // The outcome comes back through PlayBillingManager.events (or silently on cancel).
+            playBilling.launchPurchase(activity, productId)
+        }
+    }
+
+    private fun onPlayEvent(event: PlayBillingEvent) {
+        when (event) {
+            is PlayBillingEvent.Applied -> {
+                refresh()
+                val message = when {
+                    event.premiumUntil != null -> str(R.string.payments_msg_now_premium)
+                    event.duplicate -> str(R.string.payments_msg_purchase_already_applied)
+                    else -> str(R.string.payments_msg_payment_received)
+                }
+                _uiState.update { it.copy(message = message, error = null) }
+            }
+            is PlayBillingEvent.Pending -> _uiState.update {
+                it.copy(message = str(R.string.payments_msg_purchase_pending), error = null)
+            }
+            is PlayBillingEvent.Unavailable -> _uiState.update {
+                it.copy(billingAvailable = false, error = str(R.string.payments_error_play_unavailable))
+            }
+            is PlayBillingEvent.Error -> _uiState.update {
+                it.copy(error = event.message ?: str(event.fallbackRes))
+            }
+        }
+    }
+
+    // ── Razorpay (kept for the website flow / fallback; not used by the Play screen) ─────
 
     fun buyPremium(sku: Sku) {
         viewModelScope.launch {

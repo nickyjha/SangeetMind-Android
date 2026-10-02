@@ -10,4 +10,6 @@
     <string name="onboarding_before_continue">Before you continue</string>
     <string name="onboarding_agree_terms">I agree to the Terms of Service</string>
     <string name="onboarding_agree_privacy">I agree to the Privacy Policy</string>
+    <string name="onboarding_terms_link">Terms of Service</string>
+    <string name="onboarding_privacy_link">Privacy Policy</string>
 </resources>

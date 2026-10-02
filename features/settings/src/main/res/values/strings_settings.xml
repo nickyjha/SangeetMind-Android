@@ -34,4 +34,17 @@
     <string name="settings_terms_desc">View terms and conditions</string>
     <string name="settings_licenses_title">Open Source Licenses</string>
     <string name="settings_licenses_desc">View third-party licenses</string>
+    <string name="settings_section_danger">Danger zone</string>
+    <string name="settings_delete_account_title">Delete account</string>
+    <string name="settings_delete_account_desc">Permanently remove your account and all data</string>
+    <string name="settings_delete_account_intro">This will permanently delete your AstroGeet account and everything in it:</string>
+    <string name="settings_delete_account_point_kundlis">All your kundlis and birth details</string>
+    <string name="settings_delete_account_point_readings">All readings, reports and chat history</string>
+    <string name="settings_delete_account_point_wallet">Your wallet balance is forfeited (no refund)</string>
+    <string name="settings_delete_account_point_premium">Premium ends immediately</string>
+    <string name="settings_delete_account_irreversible">This cannot be undone.</string>
+    <string name="settings_delete_account_type_prompt">Type %1$s to confirm</string>
+    <string name="settings_delete_account_confirm">Delete my account</string>
+    <string name="settings_delete_account_failed">Could not delete your account. Please check your connection and try again.</string>
+    <string name="settings_delete_account_sign_in_again">Your data was deleted. Please sign in again, then delete the account to finish.</string>
 </resources>

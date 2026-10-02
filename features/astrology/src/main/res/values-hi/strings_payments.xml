@@ -11,6 +11,21 @@
     <string name="payments_add">जोड़ें</string>
     <string name="payments_recent_recharges">हाल के रिचार्ज</string>
 
+    <!-- Payments: Google Play products -->
+    <string name="payments_wallet_pack">वॉलेट %1$s</string>
+    <string name="payments_premium_monthly">प्रीमियम (मासिक)</string>
+    <string name="payments_premium_yearly">प्रीमियम (सालाना)</string>
+    <string name="payments_per_month">/ महीना</string>
+    <string name="payments_per_year">/ साल</string>
+    <string name="payments_price_loading">कीमत लोड हो रही है…</string>
+    <string name="payments_premium_until">%1$s तक चालू</string>
+    <string name="payments_play_footnote">पेमेंट Google Play से होता है। सब्सक्रिप्शन अपने आप रिन्यू होता है; Play Store में कभी भी बदलें या बंद करें।</string>
+    <string name="payments_msg_purchase_pending">आपकी खरीद अभी पेंडिंग है। Google Play से पेमेंट की पुष्टि होते ही जुड़ जाएगी।</string>
+    <string name="payments_msg_purchase_already_applied">यह खरीद पहले ही आपके खाते में जुड़ चुकी है।</string>
+    <string name="payments_error_play_unavailable">इस डिवाइस पर Google Play बिलिंग उपलब्ध नहीं है</string>
+    <string name="payments_error_play_connection">Google Play से संपर्क नहीं हो पाया। इंटरनेट देखकर फिर कोशिश करें।</string>
+    <string name="payments_error_product_unavailable">यह आइटम अभी उपलब्ध नहीं है</string>
+
     <!-- Payments: messages -->
     <string name="payments_msg_payment_received">पेमेंट मिल गया — वॉलेट में जुड़ गया</string>
     <string name="payments_msg_now_premium">अब आप प्रीमियम हैं!</string>

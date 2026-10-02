@@ -2,6 +2,7 @@ package com.sangeetmind.app.navigation
 
 import android.net.Uri
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -47,8 +48,22 @@ import com.sangeetmind.features.settings.ui.SettingsScreen
 @Composable
 fun SangeetMindNavHost(
     navController: NavHostController = rememberNavController(),
-    startDestination: String = "onboarding"
+    startDestination: String = "onboarding",
+    // From a push notification tap: dashboard | readings | festivals | eclipses.
+    deepLinkScreen: String? = null,
+    onDeepLinkConsumed: () -> Unit = {}
 ) {
+    LaunchedEffect(deepLinkScreen) {
+        val route = when (deepLinkScreen) {
+            "readings", "festivals", "eclipses" -> deepLinkScreen
+            else -> null
+        }
+        // Only once signed in: the graph starts at onboarding/auth otherwise.
+        if (route != null && startDestination == "dashboard") {
+            runCatching { navController.navigate(route) }
+        }
+        if (deepLinkScreen != null) onDeepLinkConsumed()
+    }
     // Re-navigating to "dashboard" with popUpTo(inclusive=true) recreates a fresh
     // Dashboard (and its Hilt ViewModel), so it always reflects the latest primary
     // kundli after returning from onboarding/list/etc.
@@ -116,6 +131,7 @@ fun SangeetMindNavHost(
                 onOpenPayments = { navController.navigate("payments") },
                 onOpenReports = { navController.navigate("reports") },
                 onOpenReadings = { navController.navigate("readings") },
+                onOpenSettings = { navController.navigate("settings") },
                 onOpenMarketplace = { navController.navigate("marketplace") },
                 onOpenReferrals = { navController.navigate("referrals") },
                 onOpenSangeet = { navController.navigate("sangeet") },
@@ -273,7 +289,9 @@ fun SangeetMindNavHost(
         }
 
         composable("settings") {
-            SettingsScreen()
+            SettingsScreen(
+                onAccountDeleted = { navController.navigate("auth") { popUpTo(0) { inclusive = true } } }
+            )
         }
     }
 }

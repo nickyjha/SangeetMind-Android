@@ -47,7 +47,11 @@
             </intent-filter>
         </service>
 
-        <!-- Push notifications -->
+        <!-- Push notifications. Channels "daily" (Your day) and "alerts" (festivals/dasha)
+             are created by SangeetMindMessagingService.ensureChannels(); the meta-data
+             below is what FCM uses for background (tray) delivery when the message names
+             no channel/icon. Tapping a notification opens MainActivity with the extras
+             documented on SangeetMindMessagingService (screen, type, date, festival_id). -->
         <service
             android:name="com.sangeetmind.core.network.SangeetMindMessagingService"
             android:exported="false">
@@ -55,6 +59,12 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="daily" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_push_small" />
 
         <!-- Reports: shares downloaded PDFs with the user's PDF viewer app -->
         <provider

@@ -1,5 +1,12 @@
 package com.sangeetmind.features.astrology.dashboard.ui
 
+import android.Manifest
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,9 +25,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.common.language.findActivity
+import com.sangeetmind.core.network.SangeetMindMessagingService
 import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.core.ui.language.LanguagePickerAction
 import com.sangeetmind.core.ui.language.astroTerm
@@ -43,6 +54,7 @@ import com.sangeetmind.core.ui.theme.GrahaSuryaDeep
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.dashboard.DashboardViewModel
+import com.sangeetmind.features.astrology.dashboard.NotificationNudge
 import com.sangeetmind.libs.models.DailyHoroscope
 import com.sangeetmind.libs.models.PanchangResponse
 import com.sangeetmind.libs.models.toTitleCase
@@ -104,6 +116,7 @@ fun DashboardScreen(
     onOpenPayments: () -> Unit,
     onOpenReports: () -> Unit,
     onOpenReadings: () -> Unit,
+    onOpenSettings: () -> Unit = {},
     onOpenMarketplace: () -> Unit,
     onOpenReferrals: () -> Unit,
     onOpenSangeet: () -> Unit,
@@ -117,6 +130,35 @@ fun DashboardScreen(
     viewModel: DashboardViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    // Daily push: ask for POST_NOTIFICATIONS once, after the first successful load (never on
+    // the login screen), then register the device so the server knows the timezone/hour.
+    val context = LocalContext.current
+    val canAskAgain = {
+        context.findActivity()?.let {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                ActivityCompat.shouldShowRequestPermissionRationale(it, Manifest.permission.POST_NOTIFICATIONS)
+        } ?: false
+    }
+    val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (granted) viewModel.onNotificationsAllowed() else viewModel.onNotificationsDenied(canAskAgain())
+    }
+    val requestPermission = {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            viewModel.onSystemNotificationDialogShown()
+            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+    val loaded = uiState.profile != null
+    LaunchedEffect(loaded) {
+        if (!loaded) return@LaunchedEffect
+        when {
+            SangeetMindMessagingService.notificationsAllowed(context) -> viewModel.onNotificationsAllowed()
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU -> viewModel.onNotificationsDenied(canAskAgain = false)
+            viewModel.shouldShowSystemNotificationDialog() -> requestPermission()
+            else -> viewModel.onNotificationsDenied(canAskAgain())
+        }
+    }
 
     // Resolved here (composable scope) rather than inside the LazyColumn builder, which
     // is a LazyListScope lambda where stringResource() can't be called.
@@ -148,6 +190,9 @@ fun DashboardScreen(
                 title = { Text(stringResource(CoreR.string.common_app_name)) },
                 actions = {
                     LanguagePickerAction()
+                    IconButton(onClick = onOpenSettings) {
+                        Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.dashboard_settings))
+                    }
                     IconButton(onClick = onOpenKundliList) {
                         Icon(Icons.Default.People, contentDescription = stringResource(R.string.dashboard_my_kundlis))
                     }
@@ -170,6 +215,23 @@ fun DashboardScreen(
                     }
                     uiState.profile != null && uiState.primaryKundli != null -> {
                         Column {
+                            if (uiState.notificationNudge != NotificationNudge.NONE) {
+                                NotificationNudgeCard(
+                                    nudge = uiState.notificationNudge,
+                                    onTurnOn = requestPermission,
+                                    onOpenSettings = {
+                                        val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                            Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                                                .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                                        } else {
+                                            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", context.packageName, null))
+                                        }
+                                        runCatching { context.startActivity(intent) }
+                                    },
+                                    onDismiss = viewModel::dismissNotificationNudge
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                            }
                             ProfileSummaryCard(
                                 name = uiState.primaryKundli!!.fullName?.toTitleCase(),
                                 moonSign = uiState.profile!!.moonSign,
@@ -471,6 +533,62 @@ private fun DestinationCard(destination: DashboardDestination) {
                     }
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(destination.label, style = MaterialTheme.typography.labelLarge)
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Short rationale shown after the notification permission was denied. [NotificationNudge.ASK_AGAIN]
+ * re-opens the system dialog; [NotificationNudge.OPEN_SETTINGS] deep-links to the app's
+ * notification settings (the system won't show the dialog again).
+ */
+@Composable
+private fun NotificationNudgeCard(
+    nudge: NotificationNudge,
+    onTurnOn: () -> Unit,
+    onOpenSettings: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    Icons.Default.NotificationsActive,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = stringResource(R.string.dashboard_notif_title),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+            }
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = stringResource(R.string.dashboard_notif_body),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSecondaryContainer
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()) {
+                TextButton(onClick = onDismiss) {
+                    Text(stringResource(R.string.dashboard_notif_not_now))
+                }
+                Spacer(modifier = Modifier.width(4.dp))
+                if (nudge == NotificationNudge.OPEN_SETTINGS) {
+                    Button(onClick = onOpenSettings) {
+                        Text(stringResource(R.string.dashboard_notif_open_settings))
+                    }
+                } else {
+                    Button(onClick = onTurnOn) {
+                        Text(stringResource(R.string.dashboard_notif_turn_on))
+                    }
                 }
             }
         }

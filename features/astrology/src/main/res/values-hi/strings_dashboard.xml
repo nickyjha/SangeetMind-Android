@@ -54,4 +54,12 @@
     <string name="dashboard_action_done">✓ आज के लिए तय</string>
     <string name="dashboard_action_streak_fmt">🔥 लगातार %1$d दिन</string>
     <string name="dashboard_dest_festivals">त्योहार</string>
+
+    <!-- Daily push: notification permission nudge -->
+    <string name="dashboard_notif_title">हर सुबह आपका दिन</string>
+    <string name="dashboard_notif_body">हर सुबह अपने दिन के स्कोर पाने के लिए नोटिफ़िकेशन चालू करें।</string>
+    <string name="dashboard_notif_turn_on">चालू करें</string>
+    <string name="dashboard_notif_open_settings">सेटिंग्स खोलें</string>
+    <string name="dashboard_notif_not_now">अभी नहीं</string>
+    <string name="dashboard_settings">सेटिंग</string>
 </resources>

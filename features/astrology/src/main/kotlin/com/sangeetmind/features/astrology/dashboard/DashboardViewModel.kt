@@ -2,6 +2,8 @@ package com.sangeetmind.features.astrology.dashboard
 
 import java.time.LocalDate
 import com.sangeetmind.core.network.PanchangApi
+import com.sangeetmind.core.network.PushTokenRegistrar
+import com.sangeetmind.core.network.SangeetMindMessagingService
 import com.sangeetmind.libs.models.CareerBirthDetails
 import com.sangeetmind.libs.models.DailyScoresRequest
 import com.sangeetmind.libs.models.DailyScoresResponse
@@ -35,6 +37,18 @@ import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
+/** What the dashboard shows about notifications after the first successful load. */
+enum class NotificationNudge {
+    /** Nothing to show: granted, dismissed, or pre-Android-13. */
+    NONE,
+
+    /** Denied once; the card's button re-opens the system dialog. */
+    ASK_AGAIN,
+
+    /** Denied for good ("don't ask again" / twice); the card's button opens app settings. */
+    OPEN_SETTINGS
+}
+
 data class DashboardUiState(
     val isLoading: Boolean = false,
     val primaryKundli: Kundli? = null,
@@ -45,6 +59,7 @@ data class DashboardUiState(
     val dailyScores: DailyScoresResponse? = null,
     val actionDoneToday: Boolean = false,
     val actionStreak: Int = 0,
+    val notificationNudge: NotificationNudge = NotificationNudge.NONE,
     val error: String? = null
 )
 
@@ -59,11 +74,16 @@ class DashboardViewModel @Inject constructor(
     private val panchangRepository: PanchangRepository,
     private val panchangApi: PanchangApi,
     private val actionStreakStore: ActionStreakStore,
-    private val languageManager: LanguageManager
+    private val languageManager: LanguageManager,
+    private val pushTokenRegistrar: PushTokenRegistrar,
+    private val notificationPromptStore: NotificationPromptStore
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DashboardUiState())
     val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
+
+    /** The device is registered once per app session (the token rarely changes). */
+    private var pushDeviceRegistered = false
 
     private fun str(@StringRes id: Int): String =
         context.withAppLanguage(languageManager.current).getString(id)
@@ -73,7 +93,11 @@ class DashboardViewModel @Inject constructor(
         // The daily horoscope's Gemini-written fields come back in the requested language,
         // so re-fetch the Today card when the user switches language (skip the initial value).
         viewModelScope.launch {
-            languageManager.language.drop(1).collect { refresh() }
+            languageManager.language.drop(1).collect {
+                refresh()
+                // The server picks en/hi for the push from the registered locale.
+                pushDeviceRegistered = false
+            }
         }
     }
 
@@ -164,5 +188,48 @@ class DashboardViewModel @Inject constructor(
     fun markActionDone() {
         actionStreakStore.markDone(LocalDate.now())
         refreshActionState()
+    }
+
+    // --- Daily push: permission nudge + device registration ---------------------------
+
+    /** True exactly once per device: the system dialog has not been shown from here yet. */
+    fun shouldShowSystemNotificationDialog(): Boolean = !notificationPromptStore.systemDialogShown
+
+    fun onSystemNotificationDialogShown() {
+        notificationPromptStore.systemDialogShown = true
+    }
+
+    /**
+     * Notifications are allowed (granted now, or pre-Android-13): make sure the channels
+     * exist and the token is registered with the timezone/hour the daily push needs.
+     */
+    fun onNotificationsAllowed() {
+        _uiState.update { it.copy(notificationNudge = NotificationNudge.NONE) }
+        if (pushDeviceRegistered) return
+        pushDeviceRegistered = true
+        SangeetMindMessagingService.ensureChannels(context)
+        viewModelScope.launch {
+            if (pushTokenRegistrar.registerCurrentToken().isFailure) pushDeviceRegistered = false
+        }
+    }
+
+    /**
+     * Permission is not granted. [canAskAgain] is the system's
+     * shouldShowRequestPermissionRationale: true after a single denial, false once the
+     * user has denied for good (then only Settings can turn it on).
+     */
+    fun onNotificationsDenied(canAskAgain: Boolean) {
+        if (notificationPromptStore.rationaleDismissed) {
+            _uiState.update { it.copy(notificationNudge = NotificationNudge.NONE) }
+            return
+        }
+        val nudge = if (canAskAgain) NotificationNudge.ASK_AGAIN else NotificationNudge.OPEN_SETTINGS
+        _uiState.update { it.copy(notificationNudge = nudge) }
+    }
+
+    /** "Not now" on the rationale card: never show it again on this device. */
+    fun dismissNotificationNudge() {
+        notificationPromptStore.rationaleDismissed = true
+        _uiState.update { it.copy(notificationNudge = NotificationNudge.NONE) }
     }
 }

@@ -4,11 +4,14 @@ import android.content.Context
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.di.IoDispatcher
 import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.core.network.PlayBillingApi
 import com.sangeetmind.core.network.PricingApi
 import com.sangeetmind.core.network.RazorpayApi
 import com.sangeetmind.core.network.WalletApi
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.CreateOrderRequest
+import com.sangeetmind.libs.models.PlayVerifyRequest
+import com.sangeetmind.libs.models.PlayVerifyResponse
 import com.sangeetmind.libs.models.PremiumStatus
 import com.sangeetmind.libs.models.RazorpayOrder
 import com.sangeetmind.libs.models.Sku
@@ -29,6 +32,7 @@ class PaymentsRepository @Inject constructor(
     private val pricingApi: PricingApi,
     private val razorpayApi: RazorpayApi,
     private val walletApi: WalletApi,
+    private val playBillingApi: PlayBillingApi,
     private val languageManager: LanguageManager,
     @ApplicationContext private val context: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
@@ -65,6 +69,40 @@ class PaymentsRepository @Inject constructor(
         } catch (e: Exception) {
             Result.Error(e, e.message ?: context.getString(R.string.payments_error_verify_payment))
         }
+    }
+
+    /**
+     * Google Play path (POST /v1/play/verify): the backend confirms the purchase token with
+     * Google and credits the wallet / activates Premium idempotently. The caller must only
+     * consume/acknowledge the purchase on [Result.Success] so a failed verify retries later.
+     */
+    suspend fun verifyPlayPurchase(
+        productId: String,
+        purchaseToken: String,
+        type: String
+    ): Result<PlayVerifyResponse> = withContext(ioDispatcher) {
+        try {
+            Result.Success(
+                playBillingApi.verify(
+                    PlayVerifyRequest(
+                        productId = productId,
+                        purchaseToken = purchaseToken,
+                        packageName = context.packageName,
+                        type = type
+                    )
+                )
+            )
+        } catch (e: Exception) {
+            Result.Error(e, serverDetail(e) ?: context.getString(R.string.payments_error_verify_payment))
+        }
+    }
+
+    /** The backend's `detail` for a 4xx (e.g. "Purchase is still pending"), if any. */
+    private fun serverDetail(e: Exception): String? {
+        val http = e as? retrofit2.HttpException ?: return null
+        val body = runCatching { http.response()?.errorBody()?.string() }.getOrNull() ?: return null
+        return runCatching { org.json.JSONObject(body).optString("detail").takeIf { it.isNotBlank() } }
+            .getOrNull()
     }
 
     suspend fun getPremiumStatus(): Result<PremiumStatus> = withContext(ioDispatcher) {

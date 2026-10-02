@@ -48,6 +48,11 @@ dependencies {
     api(platform(libs.firebase.bom))
     api(libs.firebase.auth)
 
+    // Google sign-in via Credential Manager (Sign in with Google → Firebase credential)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services)
+    implementation(libs.google.identity.googleid)
+
     // Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)

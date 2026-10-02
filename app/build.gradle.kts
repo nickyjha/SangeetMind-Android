@@ -119,6 +119,8 @@ dependencies {
     // does not propagate the BOM's version constraints across project boundaries.
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.crashlytics)
+    // MainActivity injects PlayBillingManager, whose supertype lives in the billing library.
+    implementation(libs.android.billing)
 
     // MainActivity implements Razorpay's PaymentResultWithDataListener directly.
     implementation(libs.razorpay.checkout)

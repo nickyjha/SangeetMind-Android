@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -15,11 +16,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.common.Constants
 import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.core.ui.language.LanguagePickerAction
 import com.sangeetmind.features.onboarding.OnboardingViewModel
@@ -249,9 +256,10 @@ fun ConsentSection(
                     checked = hasAcceptedTerms,
                     onCheckedChange = onAcceptTerms
                 )
-                Text(
-                    text = stringResource(R.string.onboarding_agree_terms),
-                    style = MaterialTheme.typography.bodyMedium,
+                LegalConsentLabel(
+                    label = stringResource(R.string.onboarding_agree_terms),
+                    linkText = stringResource(R.string.onboarding_terms_link),
+                    url = Constants.TERMS_URL,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -264,13 +272,52 @@ fun ConsentSection(
                     checked = hasAcceptedPrivacy,
                     onCheckedChange = onAcceptPrivacy
                 )
-                Text(
-                    text = stringResource(R.string.onboarding_agree_privacy),
-                    style = MaterialTheme.typography.bodyMedium,
+                LegalConsentLabel(
+                    label = stringResource(R.string.onboarding_agree_privacy),
+                    linkText = stringResource(R.string.onboarding_privacy_link),
+                    url = Constants.PRIVACY_URL,
                     modifier = Modifier.weight(1f)
                 )
             }
         }
     }
+}
+
+/**
+ * Checkbox label where the document name ([linkText], found inside [label]) is an
+ * underlined link that opens [url] in the browser. If the translation does not contain
+ * [linkText] verbatim, the whole label becomes the link so the policy is always reachable.
+ */
+@Composable
+fun LegalConsentLabel(
+    label: String,
+    linkText: String,
+    url: String,
+    modifier: Modifier = Modifier
+) {
+    val uriHandler = LocalUriHandler.current
+    val linkColor = MaterialTheme.colorScheme.primary
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val start = label.indexOf(linkText).let { if (it < 0) 0 else it }
+    val end = if (label.indexOf(linkText) < 0) label.length else start + linkText.length
+    val annotated = buildAnnotatedString {
+        withStyle(SpanStyle(color = textColor)) { append(label.substring(0, start)) }
+        pushStringAnnotation(tag = "URL", annotation = url)
+        withStyle(SpanStyle(color = linkColor, textDecoration = TextDecoration.Underline)) {
+            append(label.substring(start, end))
+        }
+        pop()
+        withStyle(SpanStyle(color = textColor)) { append(label.substring(end)) }
+    }
+    ClickableText(
+        text = annotated,
+        style = MaterialTheme.typography.bodyMedium,
+        modifier = modifier,
+        onClick = { offset ->
+            annotated.getStringAnnotations("URL", offset, offset).firstOrNull()?.let {
+                runCatching { uriHandler.openUri(it.item) }
+            }
+        }
+    )
 }
 

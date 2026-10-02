@@ -1,5 +1,8 @@
 package com.sangeetmind.features.settings.ui
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -10,26 +13,78 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.common.Constants
 import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.core.ui.language.LanguagePickerDialog
 import com.sangeetmind.core.ui.language.LocalAppLanguage
 import com.sangeetmind.features.settings.DarkModePreference
+import com.sangeetmind.features.settings.DeleteAccountState
 import com.sangeetmind.features.settings.R
 import com.sangeetmind.features.settings.SettingsViewModel
 import com.sangeetmind.libs.models.PlaybackQuality
 
+/**
+ * @param onAccountDeleted Called once the account is gone and the user is signed out;
+ *   the host should navigate to the auth screen and clear the back stack. When null
+ *   (the nav graph has not been wired yet) the activity is recreated, which lands on
+ *   the auth screen because `MainActivity` picks its start destination from
+ *   `FirebaseAuth.currentUser`.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
+    onAccountDeleted: (() -> Unit)? = null,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uriHandler = LocalUriHandler.current
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
+    val deleteFailedMessage = stringResource(R.string.settings_delete_account_failed)
+    val signInAgainMessage = stringResource(R.string.settings_delete_account_sign_in_again)
+    val deleteState = uiState.deleteAccount
+    LaunchedEffect(deleteState) {
+        when (deleteState) {
+            DeleteAccountState.Done, DeleteAccountState.SignInAgain -> {
+                showDeleteDialog = false
+                if (deleteState == DeleteAccountState.SignInAgain) {
+                    snackbarHostState.showSnackbar(signInAgainMessage)
+                }
+                if (onAccountDeleted != null) {
+                    onAccountDeleted()
+                } else {
+                    context.findActivity()?.recreate()
+                }
+            }
+            DeleteAccountState.Failed -> {
+                showDeleteDialog = false
+                snackbarHostState.showSnackbar(deleteFailedMessage)
+                viewModel.dismissDeleteAccountError()
+            }
+            DeleteAccountState.Idle, DeleteAccountState.Deleting -> Unit
+        }
+    }
+
+    if (showDeleteDialog) {
+        DeleteAccountDialog(
+            deleting = deleteState == DeleteAccountState.Deleting,
+            onConfirm = viewModel::deleteAccount,
+            onDismiss = { if (deleteState != DeleteAccountState.Deleting) showDeleteDialog = false }
+        )
+    }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.settings_title)) },
@@ -142,14 +197,14 @@ fun SettingsScreen(
                     title = stringResource(R.string.settings_privacy_title),
                     description = stringResource(R.string.settings_privacy_desc),
                     icon = Icons.Default.PrivacyTip,
-                    onClick = { /* TODO: Open privacy policy */ }
+                    onClick = { runCatching { uriHandler.openUri(Constants.PRIVACY_URL) } }
                 )
 
                 ActionSettingItem(
                     title = stringResource(R.string.settings_terms_title),
                     description = stringResource(R.string.settings_terms_desc),
                     icon = Icons.Default.Description,
-                    onClick = { /* TODO: Open terms */ }
+                    onClick = { runCatching { uriHandler.openUri(Constants.TERMS_URL) } }
                 )
 
                 ActionSettingItem(
@@ -159,20 +214,141 @@ fun SettingsScreen(
                     onClick = { /* TODO: Show licenses */ }
                 )
             }
+
+            Divider()
+
+            // Danger zone - Google Play requires an in-app account deletion path.
+            SettingsSection(
+                title = stringResource(R.string.settings_section_danger),
+                titleColor = MaterialTheme.colorScheme.error
+            ) {
+                ActionSettingItem(
+                    title = stringResource(R.string.settings_delete_account_title),
+                    description = stringResource(R.string.settings_delete_account_desc),
+                    icon = Icons.Default.DeleteForever,
+                    onClick = { showDeleteDialog = true },
+                    tint = MaterialTheme.colorScheme.error
+                )
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
+}
+
+private tailrec fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
+}
+
+/** Confirmation word the user has to type. Deliberately not localised: it is a safety latch. */
+private const val DELETE_CONFIRMATION_WORD = "DELETE"
+
+/**
+ * Explains what account deletion removes and requires typing [DELETE_CONFIRMATION_WORD]
+ * before the destructive button enables.
+ */
+@Composable
+fun DeleteAccountDialog(
+    deleting: Boolean,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    var typed by remember { mutableStateOf("") }
+    val confirmed = typed.trim() == DELETE_CONFIRMATION_WORD
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = {
+            Icon(
+                imageVector = Icons.Default.DeleteForever,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.error
+            )
+        },
+        title = { Text(stringResource(R.string.settings_delete_account_title)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = stringResource(R.string.settings_delete_account_intro),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                listOf(
+                    R.string.settings_delete_account_point_kundlis,
+                    R.string.settings_delete_account_point_readings,
+                    R.string.settings_delete_account_point_wallet,
+                    R.string.settings_delete_account_point_premium
+                ).forEach { res ->
+                    Text(
+                        text = "\u2022  " + stringResource(res),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+                Text(
+                    text = stringResource(R.string.settings_delete_account_irreversible),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.error
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = stringResource(
+                        R.string.settings_delete_account_type_prompt,
+                        DELETE_CONFIRMATION_WORD
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                OutlinedTextField(
+                    value = typed,
+                    onValueChange = { typed = it },
+                    singleLine = true,
+                    enabled = !deleting,
+                    placeholder = { Text(DELETE_CONFIRMATION_WORD) },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = onConfirm,
+                enabled = confirmed && !deleting,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.onError
+                )
+            ) {
+                if (deleting) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(18.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.onError
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
+                Text(stringResource(R.string.settings_delete_account_confirm))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss, enabled = !deleting) {
+                Text(stringResource(CoreR.string.common_cancel))
+            }
+        }
+    )
 }
 
 @Composable
 fun SettingsSection(
     title: String,
+    titleColor: Color = MaterialTheme.colorScheme.primary,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = title,
             style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.primary,
+            color = titleColor,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
         )
         content()
@@ -368,8 +544,10 @@ fun ActionSettingItem(
     title: String,
     description: String,
     icon: androidx.compose.ui.graphics.vector.ImageVector,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    tint: Color = Color.Unspecified
 ) {
+    val iconTint = if (tint == Color.Unspecified) MaterialTheme.colorScheme.onSurfaceVariant else tint
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -381,13 +559,14 @@ fun ActionSettingItem(
             imageVector = icon,
             contentDescription = null,
             modifier = Modifier.size(24.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant
+            tint = iconTint
         )
         Spacer(modifier = Modifier.width(16.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
+                color = tint
             )
             Text(
                 text = description,

@@ -22,4 +22,36 @@
     <string name="auth_error_sign_in_failed">साइन इन नहीं हो पाया</string>
     <string name="auth_error_sign_up_failed">साइन अप नहीं हो पाया</string>
     <string name="auth_error_reset_failed">रीसेट ईमेल नहीं भेजा जा सका</string>
+
+    <!-- Sign-in method chooser -->
+    <string name="auth_continue_phone">फ़ोन नंबर से आगे बढ़ें</string>
+    <string name="auth_continue_google">Google से आगे बढ़ें</string>
+    <string name="auth_or_use_email">या ईमेल से करें</string>
+    <string name="auth_hide_email_form">ईमेल फ़ॉर्म छिपाएँ</string>
+
+    <!-- Phone OTP flow -->
+    <string name="auth_subtitle_phone">अपने मोबाइल नंबर से साइन इन करें</string>
+    <string name="auth_subtitle_otp">OTP डालें</string>
+    <string name="auth_subtitle_name">हम आपको किस नाम से बुलाएँ?</string>
+    <string name="auth_country_code">कोड</string>
+    <string name="auth_phone_number">मोबाइल नंबर</string>
+    <string name="auth_send_otp">OTP भेजें</string>
+    <string name="auth_otp">6 अंकों का OTP</string>
+    <string name="auth_otp_sent_to">OTP %1$s पर भेजा गया</string>
+    <string name="auth_verify_otp">जाँचें</string>
+    <string name="auth_resend_otp">OTP फिर से भेजें</string>
+    <string name="auth_resend_in">%1$d सेकंड में फिर से भेजें</string>
+    <string name="auth_change_number">नंबर बदलें</string>
+    <string name="auth_continue">आगे बढ़ें</string>
+    <string name="auth_other_ways">साइन इन के दूसरे तरीके</string>
+    <string name="auth_error_invalid_phone">सही मोबाइल नंबर डालें</string>
+    <string name="auth_error_too_many_requests">बहुत बार कोशिश हो गई। थोड़ी देर बाद फिर से कोशिश करें।</string>
+    <string name="auth_error_invalid_otp">OTP गलत है। 6 अंक देखकर फिर से डालें।</string>
+    <string name="auth_error_otp_expired">OTP का समय खत्म हो गया। नया OTP मँगाएँ।</string>
+    <string name="auth_error_phone_failed">फ़ोन नंबर की जाँच नहीं हो पाई</string>
+    <string name="auth_error_name_save_failed">आपका नाम सेव नहीं हो पाया</string>
+
+    <!-- Google -->
+    <string name="auth_error_google_failed">Google से साइन इन नहीं हो पाया</string>
+    <string name="auth_error_google_not_configured">इस बिल्ड में Google साइन इन सेट नहीं है</string>
 </resources>

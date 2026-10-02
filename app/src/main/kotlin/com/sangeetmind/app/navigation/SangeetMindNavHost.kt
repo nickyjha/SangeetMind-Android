@@ -1,5 +1,8 @@
 package com.sangeetmind.app.navigation
 
+import com.sangeetmind.features.astrology.dashboard.DashboardViewModel
+import androidx.compose.runtime.collectAsState
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.foundation.layout.consumeWindowInsets
 import android.net.Uri
 import androidx.compose.foundation.layout.WindowInsets
@@ -168,8 +171,20 @@ fun SangeetMindNavHost(
         }
 
         // Home tab (route kept as "dashboard": post-auth start + push deep links).
-        composable(MainTab.HOME.route) {
+        composable(MainTab.HOME.route) { homeEntry ->
+            val homeViewModel: DashboardViewModel = hiltViewModel()
+            // Set by "My kundlis" so Home reloads after a kundli switch without
+            // forcing the user back to Home.
+            val kundliChanged by homeEntry.savedStateHandle
+                .getStateFlow(KUNDLI_CHANGED_KEY, false).collectAsState()
+            LaunchedEffect(kundliChanged) {
+                if (kundliChanged) {
+                    homeViewModel.refresh()
+                    homeEntry.savedStateHandle[KUNDLI_CHANGED_KEY] = false
+                }
+            }
             DashboardScreen(
+                viewModel = homeViewModel,
                 onOpenKundliList = { navController.navigate("kundli_list") },
                 onOpenKundliOnboarding = { navController.navigate("kundli_onboarding") },
                 onOpenHoroscope = { navController.navigate("horoscope") },
@@ -231,7 +246,11 @@ fun SangeetMindNavHost(
         // Kundli list / switcher
         composable("kundli_list") {
             KundliListScreen(
-                onNavigateBack = { navController.returnToFreshDashboard() },
+                onNavigateBack = {
+                    navController.getBackStackEntry(MainTab.HOME.route)
+                        .savedStateHandle[KUNDLI_CHANGED_KEY] = true
+                    navController.popFrom(it)
+                },
                 onAddKundli = { navController.navigate("kundli_onboarding") }
             )
         }
@@ -380,6 +399,8 @@ fun SangeetMindNavHost(
  * double-tap on a top-bar back arrow (or back arrow + system back) otherwise pops twice
  * and can skip the tab root / exit the app.
  */
+private const val KUNDLI_CHANGED_KEY = "kundli_changed"
+
 private fun NavHostController.popFrom(entry: NavBackStackEntry) {
     if (entry.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) popBackStack()
 }

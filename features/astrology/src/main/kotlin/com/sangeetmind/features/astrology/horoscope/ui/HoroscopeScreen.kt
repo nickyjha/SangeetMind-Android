@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.horoscope.ui
 
+import com.sangeetmind.features.astrology.dashboard.ui.luckySwatch
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -179,38 +180,23 @@ private fun DailyContent(horoscope: DailyHoroscope) {
     }
 }
 
-/** Best-effort English color name → swatch, for the LLM's free-text `lucky_color`. */
-private val COLOR_NAME_MAP: Map<String, androidx.compose.ui.graphics.Color> = mapOf(
-    "red" to androidx.compose.ui.graphics.Color(0xFFD64545),
-    "yellow" to androidx.compose.ui.graphics.Color(0xFFE0B23C),
-    "green" to androidx.compose.ui.graphics.Color(0xFF3FBF8F),
-    "white" to androidx.compose.ui.graphics.Color(0xFFE8E6F5),
-    "orange" to androidx.compose.ui.graphics.Color(0xFFE08A3C),
-    "blue" to androidx.compose.ui.graphics.Color(0xFF5B7FE0),
-    "pink" to androidx.compose.ui.graphics.Color(0xFFE07FA8),
-    "purple" to androidx.compose.ui.graphics.Color(0xFF9B6FE0),
-    "violet" to androidx.compose.ui.graphics.Color(0xFF9B6FE0),
-    "gold" to androidx.compose.ui.graphics.Color(0xFFD4AF37),
-    "silver" to androidx.compose.ui.graphics.Color(0xFFB8B8C4),
-    "brown" to androidx.compose.ui.graphics.Color(0xFF9E6B4A),
-    "black" to androidx.compose.ui.graphics.Color(0xFF3A3550),
-    "maroon" to androidx.compose.ui.graphics.Color(0xFF8B3A4A),
-    "cream" to androidx.compose.ui.graphics.Color(0xFFE8DCC0)
-)
 
 @Composable
 private fun LuckyColorCard(color: String, reason: String?, modifier: Modifier = Modifier) {
-    val swatch = COLOR_NAME_MAP[color.trim().lowercase()] ?: LocalGrahaColors.current.surya
+    // Same matching as Home: "Light Blue" -> blue; unknown colours get no dot.
+    val swatch = luckySwatch(color)
     Card(modifier = modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(14.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier
-                        .size(16.dp)
-                        .clip(androidx.compose.foundation.shape.CircleShape)
-                        .background(swatch)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
+                if (swatch != null) {
+                    Box(
+                        modifier = Modifier
+                            .size(16.dp)
+                            .clip(androidx.compose.foundation.shape.CircleShape)
+                            .background(swatch)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
                 Text(stringResource(R.string.horoscope_lucky_color), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             Spacer(modifier = Modifier.height(6.dp))

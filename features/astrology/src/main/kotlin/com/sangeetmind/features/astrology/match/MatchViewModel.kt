@@ -69,6 +69,16 @@ class MatchViewModel @Inject constructor(
         }
     }
 
+    /** Retry from the error card: reload kundlis if that failed, otherwise re-run the match. */
+    fun retry() {
+        val state = _uiState.value
+        when {
+            state.kundlis.isEmpty() -> loadKundlis()
+            state.personA != null && state.personB != null -> checkCompatibility()
+            else -> _uiState.update { it.copy(error = null) }
+        }
+    }
+
     fun selectPersonA(kundli: Kundli) {
         _uiState.update { it.copy(personA = kundli, result = null, relationResult = null, error = null) }
     }

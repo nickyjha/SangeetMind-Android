@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.festival
 
+import com.sangeetmind.core.network.friendlyErrorMessage
 import android.content.Context
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.di.IoDispatcher
@@ -37,8 +38,11 @@ class FestivalRepository @Inject constructor(
             } catch (e: Exception) {
                 Result.Error(
                     e,
-                    e.message ?: appContext.withAppLanguage(languageManager.current)
-                        .getString(R.string.festival_error_load)
+                    friendlyErrorMessage(
+                        e,
+                        appContext.withAppLanguage(languageManager.current),
+                        appContext.withAppLanguage(languageManager.current).getString(R.string.festival_error_load)
+                    )
                 )
             }
         }

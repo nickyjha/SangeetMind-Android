@@ -53,6 +53,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.core.ui.components.ErrorCard
+import com.sangeetmind.core.ui.text.MarkdownText
 import com.sangeetmind.core.ui.language.astroTerm
 import com.sangeetmind.core.ui.theme.GrahaColors
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
@@ -144,18 +146,11 @@ fun HolisticScreen(
                     )
                 }
                 uiState.error != null -> {
-                    Column(
-                        modifier = Modifier.align(Alignment.Center).padding(24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = uiState.error!!,
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        TextButton(onClick = viewModel::refresh) { Text(stringResource(CoreR.string.common_retry)) }
-                    }
+                    ErrorCard(
+                        message = uiState.error,
+                        onRetry = viewModel::refresh,
+                        modifier = Modifier.align(Alignment.Center).padding(16.dp)
+                    )
                 }
                 uiState.analysis != null -> {
                     HolisticContent(
@@ -231,18 +226,19 @@ private fun AtAGlanceChips(numerology: HolisticNumerology?, astro: AstroProfileS
             }
         }
     }
-    if (chips.isEmpty()) return
-    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        items(chips.size) { i ->
-            val (label, color) = chips[i]
-            AssistChip(
-                onClick = {},
-                label = { Text(label) },
-                colors = AssistChipDefaults.assistChipColors(
-                    containerColor = color.copy(alpha = 0.12f),
-                    labelColor = color
+    if (chips.isNotEmpty()) {
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            items(chips.size) { i ->
+                val (label, color) = chips[i]
+                AssistChip(
+                    onClick = {},
+                    label = { Text(label) },
+                    colors = AssistChipDefaults.assistChipColors(
+                        containerColor = color.copy(alpha = 0.12f),
+                        labelColor = color
+                    )
                 )
-            )
+            }
         }
     }
 }
@@ -307,7 +303,7 @@ private fun LazyListScope.readingTab(
     }
 }
 
-/** The narrative is the feature's headline. Its provenance matters: Gemini-written and
+/** The narrative is the feature's headline. Its provenance matters: AI-written and
  * template-assembled readings look alike but are not — the badge says which one this is. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -340,7 +336,7 @@ private fun NarrativeCard(
             }
             Spacer(modifier = Modifier.height(8.dp))
             // The narrative follows the app-wide language (Settings / globe action), so there is
-            // no per-card language toggle here; Regenerate re-asks Gemini in that language.
+            // no per-card language toggle here; Regenerate re-asks the model in that language.
             Row(horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                 TextButton(onClick = onRegenerate) { Text(stringResource(R.string.holistic_regenerate)) }
             }
@@ -353,7 +349,7 @@ private fun NarrativeCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             } else {
-                Text(text, style = MaterialTheme.typography.bodyMedium)
+                MarkdownText(text, style = MaterialTheme.typography.bodyMedium)
             }
             if (narrative != null && !narrative.isLlm) {
                 Spacer(modifier = Modifier.height(8.dp))
@@ -400,7 +396,7 @@ private fun InsightListCard(title: String, insights: List<HolisticInsight>, grah
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(insight.label, style = MaterialTheme.typography.labelLarge)
             }
-            Text(insight.text, style = MaterialTheme.typography.bodyMedium)
+            MarkdownText(insight.text, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }

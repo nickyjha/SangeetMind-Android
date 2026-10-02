@@ -19,6 +19,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.razorpay.Checkout
 import com.sangeetmind.core.common.language.findActivity
 import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.core.ui.components.ErrorCard
+import kotlinx.coroutines.delay
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.payments.PaymentsTab
 import com.sangeetmind.features.astrology.payments.PaymentsViewModel
@@ -79,12 +81,11 @@ fun PaymentsScreen(
             }
 
             if (uiState.error != null) {
-                Card(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
-                ) {
-                    Text(uiState.error!!, modifier = Modifier.padding(12.dp))
-                }
+                ErrorCard(
+                    message = uiState.error,
+                    onRetry = viewModel::refresh,
+                    modifier = Modifier.padding(16.dp)
+                )
             }
             if (uiState.message != null) {
                 Card(
@@ -102,12 +103,22 @@ fun PaymentsScreen(
             }
 
             val canBuy = activity != null && uiState.billingAvailable != false
+            val billingUnavailable = uiState.billingAvailable == false
+            // Play can be slow (or silent) to return prices; after 5 s fall back to the
+            // catalogue rupee price instead of "Loading price..." forever.
+            var priceTimedOut by remember { mutableStateOf(false) }
+            LaunchedEffect(Unit) {
+                delay(5_000)
+                priceTimedOut = true
+            }
             when (uiState.tab) {
                 PaymentsTab.PREMIUM -> PremiumTab(
                     isPremium = uiState.premiumStatus?.premium == true,
                     premiumEndsAt = uiState.premiumStatus?.endsAt,
                     plans = PlayProducts.premiumPlans,
                     playPrices = uiState.playPrices,
+                    priceTimedOut = priceTimedOut,
+                    billingUnavailable = billingUnavailable,
                     canBuy = canBuy,
                     onBuy = { plan -> activity?.let { viewModel.buyPremiumPlan(it, plan.productId) } }
                 )
@@ -115,6 +126,8 @@ fun PaymentsScreen(
                     balancePaise = uiState.walletBalancePaise,
                     packs = PlayProducts.walletPacks,
                     playPrices = uiState.playPrices,
+                    priceTimedOut = priceTimedOut,
+                    billingUnavailable = billingUnavailable,
                     canBuy = canBuy,
                     transactions = uiState.walletTransactions,
                     onRecharge = { pack -> activity?.let { viewModel.buyWalletPack(it, pack.productId) } }
@@ -130,6 +143,8 @@ private fun PremiumTab(
     premiumEndsAt: String?,
     plans: List<PremiumPlan>,
     playPrices: Map<String, String>,
+    priceTimedOut: Boolean,
+    billingUnavailable: Boolean,
     canBuy: Boolean,
     onBuy: (PremiumPlan) -> Unit
 ) {
@@ -138,14 +153,18 @@ private fun PremiumTab(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        item {
-            if (isPremium) {
-                Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)) {
+        if (isPremium) {
+            // Already Premium: only the active state, no subscribe buttons.
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                ) {
                     Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Default.Star, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
                         Column {
-                            Text(stringResource(R.string.payments_premium_member))
+                            Text(stringResource(R.string.payments_premium_member), style = MaterialTheme.typography.titleMedium)
                             val until = premiumEndsAt?.take(10)
                             if (!until.isNullOrBlank()) {
                                 Text(
@@ -157,24 +176,28 @@ private fun PremiumTab(
                     }
                 }
             }
-        }
-        items(plans) { plan ->
-            val label = when (plan.basePlanId) {
-                "yearly" -> stringResource(R.string.payments_premium_yearly)
-                else -> stringResource(R.string.payments_premium_monthly)
+        } else if (billingUnavailable) {
+            item { BillingUnavailableCard() }
+        } else {
+            items(plans) { plan ->
+                val label = when (plan.basePlanId) {
+                    "yearly" -> stringResource(R.string.payments_premium_yearly)
+                    else -> stringResource(R.string.payments_premium_monthly)
+                }
+                val period = when (plan.basePlanId) {
+                    "yearly" -> stringResource(R.string.payments_per_year)
+                    else -> stringResource(R.string.payments_per_month)
+                }
+                val price = playPrices[plan.productId]
+                    ?: if (priceTimedOut && plan.listPricePaise > 0) formatPaise(plan.listPricePaise) else null
+                PlayProductCard(
+                    title = label,
+                    price = price?.let { "$it $period" } ?: stringResource(R.string.payments_price_loading),
+                    buttonLabel = stringResource(R.string.payments_subscribe),
+                    enabled = canBuy,
+                    onClick = { onBuy(plan) }
+                )
             }
-            val period = when (plan.basePlanId) {
-                "yearly" -> stringResource(R.string.payments_per_year)
-                else -> stringResource(R.string.payments_per_month)
-            }
-            PlayProductCard(
-                title = label,
-                price = playPrices[plan.productId]?.let { "$it $period" }
-                    ?: stringResource(R.string.payments_price_loading),
-                buttonLabel = stringResource(R.string.payments_subscribe),
-                enabled = canBuy,
-                onClick = { onBuy(plan) }
-            )
         }
         item {
             Text(
@@ -186,11 +209,28 @@ private fun PremiumTab(
     }
 }
 
+/** Shown once, in place of the buy buttons, when Google Play billing can't be used. */
+@Composable
+private fun BillingUnavailableCard() {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+    ) {
+        Text(
+            stringResource(R.string.payments_error_play_unavailable),
+            modifier = Modifier.padding(16.dp),
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
+}
+
 @Composable
 private fun WalletTab(
     balancePaise: Long?,
     packs: List<WalletPack>,
     playPrices: Map<String, String>,
+    priceTimedOut: Boolean,
+    billingUnavailable: Boolean,
     canBuy: Boolean,
     transactions: List<com.sangeetmind.libs.models.WalletTransaction>,
     onRecharge: (WalletPack) -> Unit
@@ -212,14 +252,19 @@ private fun WalletTab(
             }
         }
         item { Text(stringResource(R.string.payments_top_up), style = MaterialTheme.typography.titleMedium) }
-        items(packs) { pack ->
-            PlayProductCard(
-                title = stringResource(R.string.payments_wallet_pack, formatPaise(pack.paise)),
-                price = playPrices[pack.productId] ?: stringResource(R.string.payments_price_loading),
-                buttonLabel = stringResource(R.string.payments_add),
-                enabled = canBuy,
-                onClick = { onRecharge(pack) }
-            )
+        if (billingUnavailable) {
+            item { BillingUnavailableCard() }
+        } else {
+            items(packs) { pack ->
+                PlayProductCard(
+                    title = stringResource(R.string.payments_wallet_pack, formatPaise(pack.paise)),
+                    price = playPrices[pack.productId]
+                        ?: if (priceTimedOut) formatPaise(pack.paise) else stringResource(R.string.payments_price_loading),
+                    buttonLabel = stringResource(R.string.payments_add),
+                    enabled = canBuy,
+                    onClick = { onRecharge(pack) }
+                )
+            }
         }
         if (transactions.isNotEmpty()) {
             item {

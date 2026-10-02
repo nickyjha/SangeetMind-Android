@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Media playback notification channel (PlayerService). -->
+    <string name="audio_channel_name">Audio playback</string>
+    <string name="audio_channel_desc">Media playback controls</string>
+</resources>

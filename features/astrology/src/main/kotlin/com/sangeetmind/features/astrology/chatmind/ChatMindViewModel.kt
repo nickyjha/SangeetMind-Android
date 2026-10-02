@@ -35,8 +35,10 @@ data class ChatMindUiState(
     val input: String = "",
     val isSending: Boolean = false,
     val error: String? = null,
-    /** Mirrors the website's "Advanced analysis" toggle — off (standard/gemini-2.5-flash-lite)
-     * by default, since advanced (gemini-2.5-pro) costs more per reply from the user's wallet. */
+    /** The question whose answer failed — "Try again" re-asks it without duplicating the bubble. */
+    val failedQuestion: String? = null,
+    /** Mirrors the website's "Advanced analysis" toggle — off (standard model tier) by
+     * default, since the advanced tier costs more per reply from the user's wallet. */
     val advancedAnalysis: Boolean = false,
     val persona: String = CHAT_PERSONAS.first()
 )
@@ -74,15 +76,30 @@ class ChatMindViewModel @Inject constructor(
     fun send() {
         val question = _uiState.value.input.trim()
         if (question.isBlank()) return
+        ask(question, appendUserMessage = true)
+    }
+
+    /** Re-asks the last question that failed (the user bubble is already in the list). */
+    fun retry() {
+        val question = _uiState.value.failedQuestion
+        if (question.isNullOrBlank() || _uiState.value.isSending) {
+            _uiState.update { it.copy(error = null) }
+        } else {
+            ask(question, appendUserMessage = false)
+        }
+    }
+
+    private fun ask(question: String, appendUserMessage: Boolean) {
         val tier = if (_uiState.value.advancedAnalysis) "advanced" else "standard"
         val persona = _uiState.value.persona
 
         _uiState.update {
             it.copy(
-                messages = it.messages + ChatMessage(ChatRole.USER, question),
-                input = "",
+                messages = if (appendUserMessage) it.messages + ChatMessage(ChatRole.USER, question) else it.messages,
+                input = if (appendUserMessage) "" else it.input,
                 isSending = true,
-                error = null
+                error = null,
+                failedQuestion = null
             )
         }
 
@@ -90,7 +107,7 @@ class ChatMindViewModel @Inject constructor(
             val details = birthDetails ?: when (val result = repository.getPrimaryBirthDetails()) {
                 is Result.Success -> result.data.also { birthDetails = it }
                 is Result.Error -> {
-                    _uiState.update { it.copy(isSending = false, error = result.message) }
+                    _uiState.update { it.copy(isSending = false, error = result.message, failedQuestion = question) }
                     return@launch
                 }
                 is Result.Loading -> return@launch
@@ -120,7 +137,7 @@ class ChatMindViewModel @Inject constructor(
                     }
                 }
                 is Result.Error -> _uiState.update {
-                    it.copy(isSending = false, error = result.message)
+                    it.copy(isSending = false, error = result.message, failedQuestion = question)
                 }
                 is Result.Loading -> Unit
             }

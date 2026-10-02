@@ -70,12 +70,9 @@ class PaymentsViewModel @Inject constructor(
         }
         viewModelScope.launch {
             playBilling.available.collect { available ->
-                _uiState.update {
-                    it.copy(
-                        billingAvailable = available,
-                        error = if (available == false) str(R.string.payments_error_play_unavailable) else it.error
-                    )
-                }
+                // The screen shows the "billing unavailable" notice once, in place of the
+                // buy buttons, not also as an error banner.
+                _uiState.update { it.copy(billingAvailable = available) }
             }
         }
         viewModelScope.launch {
@@ -158,7 +155,7 @@ class PaymentsViewModel @Inject constructor(
                 it.copy(message = str(R.string.payments_msg_purchase_pending), error = null)
             }
             is PlayBillingEvent.Unavailable -> _uiState.update {
-                it.copy(billingAvailable = false, error = str(R.string.payments_error_play_unavailable))
+                it.copy(billingAvailable = false)
             }
             is PlayBillingEvent.Error -> _uiState.update {
                 it.copy(error = event.message ?: str(event.fallbackRes))

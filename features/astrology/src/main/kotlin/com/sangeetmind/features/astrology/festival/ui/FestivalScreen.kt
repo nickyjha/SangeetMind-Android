@@ -40,6 +40,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.components.ErrorCard
 import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.core.ui.language.LocalAppLanguage
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
@@ -88,14 +89,11 @@ fun FestivalScreen(
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
             when {
                 uiState.isLoading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                uiState.error != null -> Column(
-                    modifier = Modifier.align(Alignment.Center).padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(uiState.error!!, color = MaterialTheme.colorScheme.error)
-                    Spacer(modifier = Modifier.height(12.dp))
-                    TextButton(onClick = viewModel::refresh) { Text(stringResource(CoreR.string.common_retry)) }
-                }
+                uiState.error != null -> ErrorCard(
+                    message = uiState.error,
+                    onRetry = { viewModel.refresh() },
+                    modifier = Modifier.align(Alignment.Center).padding(24.dp)
+                )
                 else -> {
                     val today = LocalDate.now()
                     val festivals = uiState.calendar?.festivals.orEmpty()
@@ -161,26 +159,28 @@ private fun FestivalRow(festival: Festival, today: LocalDate) {
     val graha = LocalGrahaColors.current
     val languageCode = LocalAppLanguage.current.code
     val locale = LocalConfiguration.current.locales[0]
-    val date = runCatching { LocalDate.parse(festival.date) }.getOrNull() ?: return
-    val days = ChronoUnit.DAYS.between(today, date)
+    val date = runCatching { LocalDate.parse(festival.date) }.getOrNull()
+    if (date != null) {
+        val days = ChronoUnit.DAYS.between(today, date)
 
-    Card(modifier = Modifier.fillMaxWidth().alpha(if (days < 0) 0.55f else 1f)) {
-        Row(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(festival.nameFor(languageCode), style = MaterialTheme.typography.titleMedium)
-                Text(
-                    date.format(DateTimeFormatter.ofPattern("d MMM, EEEE", locale)),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            when (days) {
-                0L -> Chip(stringResource(R.string.festival_today), graha.budha)
-                1L -> Chip(stringResource(R.string.festival_tomorrow), graha.shukra)
-                in 2L..60L -> Chip(stringResource(R.string.festival_in_days_fmt, days.toInt()), graha.shukra)
+        Card(modifier = Modifier.fillMaxWidth().alpha(if (days < 0) 0.55f else 1f)) {
+            Row(
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(festival.nameFor(languageCode), style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        date.format(DateTimeFormatter.ofPattern("d MMM, EEEE", locale)),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                when (days) {
+                    0L -> Chip(stringResource(R.string.festival_today), graha.budha)
+                    1L -> Chip(stringResource(R.string.festival_tomorrow), graha.shukra)
+                    in 2L..60L -> Chip(stringResource(R.string.festival_in_days_fmt, days.toInt()), graha.shukra)
+                }
             }
         }
     }

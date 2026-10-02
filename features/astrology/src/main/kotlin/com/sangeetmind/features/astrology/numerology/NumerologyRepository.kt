@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.numerology
 
+import com.sangeetmind.core.network.friendlyErrorMessage
 import android.content.Context
 import androidx.annotation.StringRes
 import com.sangeetmind.core.common.Result
@@ -43,7 +44,7 @@ class NumerologyRepository @Inject constructor(
                 )
                 Result.Success(response)
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: str(R.string.numerology_error_calc_failed))
+                Result.Error(e, friendlyErrorMessage(e, appContext.withAppLanguage(languageManager.current), str(R.string.numerology_error_calc_failed)))
             }
         }
 
@@ -64,7 +65,7 @@ class NumerologyRepository @Inject constructor(
                 )
                 Result.Success(response)
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: str(R.string.numerology_error_calc_failed))
+                Result.Error(e, friendlyErrorMessage(e, appContext.withAppLanguage(languageManager.current), str(R.string.numerology_error_calc_failed)))
             }
         }
 
@@ -85,7 +86,7 @@ class NumerologyRepository @Inject constructor(
                 )
                 Result.Success(response)
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: str(R.string.numerology_error_calc_failed))
+                Result.Error(e, friendlyErrorMessage(e, appContext.withAppLanguage(languageManager.current), str(R.string.numerology_error_calc_failed)))
             }
         }
 
@@ -94,7 +95,7 @@ class NumerologyRepository @Inject constructor(
             try {
                 Result.Success(numerologyApi.getSystems())
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: str(R.string.numerology_error_load_systems))
+                Result.Error(e, friendlyErrorMessage(e, appContext.withAppLanguage(languageManager.current), str(R.string.numerology_error_load_systems)))
             }
         }
 
@@ -103,7 +104,7 @@ class NumerologyRepository @Inject constructor(
             try {
                 Result.Success(numerologyApi.getNumbers())
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: str(R.string.numerology_error_load_numbers))
+                Result.Error(e, friendlyErrorMessage(e, appContext.withAppLanguage(languageManager.current), str(R.string.numerology_error_load_numbers)))
             }
         }
 
@@ -112,7 +113,7 @@ class NumerologyRepository @Inject constructor(
             try {
                 Result.Success(numerologyApi.getNumberInterpretation(number))
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: str(R.string.numerology_error_load_interpretation_fmt, number))
+                Result.Error(e, friendlyErrorMessage(e, appContext.withAppLanguage(languageManager.current), str(R.string.numerology_error_load_interpretation_fmt, number)))
             }
         }
 }

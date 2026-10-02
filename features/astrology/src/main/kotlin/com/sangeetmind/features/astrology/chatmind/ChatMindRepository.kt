@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.chatmind
 
+import com.sangeetmind.core.network.friendlyErrorMessage
 import android.content.Context
 import androidx.annotation.StringRes
 import com.sangeetmind.core.common.Result
@@ -77,7 +78,7 @@ class ChatMindRepository @Inject constructor(
                 )
             )
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: str(R.string.chatmind_err_could_not_answer))
+            Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), str(R.string.chatmind_err_could_not_answer)))
         }
     }
 }

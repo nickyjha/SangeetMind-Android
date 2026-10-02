@@ -3,6 +3,7 @@
     <string name="common_app_name">AstroGeet</string>
     <string name="common_back">वापस</string>
     <string name="common_retry">फिर से कोशिश करें</string>
+    <string name="common_try_again">फिर से कोशिश करें</string>
     <string name="common_refresh">रीफ़्रेश करें</string>
     <string name="common_loading">लोड हो रहा है…</string>
     <string name="common_error_generic">कुछ गड़बड़ हो गई। फिर से कोशिश करें।</string>

@@ -34,4 +34,35 @@
     <string name="sangeet_err_japa_stats">जप की जानकारी लोड नहीं हो सकी</string>
     <string name="sangeet_err_voice">वॉइस राशिफल के लिए प्रीमियम चाहिए</string>
     <string name="sangeet_err_sound">साउंड हीलिंग लाइब्रेरी लोड नहीं हो सकी</string>
+    <string name="sangeet_japa_mantra_generic">रोज़ का जप (कोई भी मंत्र)</string>
+
+    <!-- Traditional time + mood per raag (server sends one generic purpose for all). -->
+    <string name="sangeet_raag_mood_bhairavi">सुबह · भक्ति भरा, कोमल</string>
+    <string name="sangeet_raag_mood_ramkali">सुबह-सुबह · शांत</string>
+    <string name="sangeet_raag_mood_yaman">शाम · शांत, मन हल्का करने वाला</string>
+    <string name="sangeet_raag_mood_darbari">देर रात · गहरा, मन को टिकाने वाला</string>
+    <string name="sangeet_raag_mood_darbari_kanada">देर रात · गहरा, मन को टिकाने वाला</string>
+    <string name="sangeet_raag_mood_bhairav">भोर · मज़बूत, ध्यान लगाने वाला</string>
+    <string name="sangeet_raag_mood_hindol">सुबह · उजला, जोश देने वाला</string>
+    <string name="sangeet_raag_mood_desh">रात · हल्का, उम्मीद भरा</string>
+    <string name="sangeet_raag_mood_bageshri">रात · कोमल, सुकून देने वाला</string>
+    <string name="sangeet_raag_mood_hansadhwani">शाम · खुशी भरा, शुभ</string>
+    <string name="sangeet_raag_mood_bihag">रात · मीठा, प्रेम भरा</string>
+    <string name="sangeet_raag_mood_miyan_ki_malhar">बारिश का मौसम · ठंडक और सुकून</string>
+    <string name="sangeet_raag_mood_charukeshi">किसी भी समय · कोमल, दिल को छूने वाला</string>
+    <string name="sangeet_raag_mood_malkauns">आधी रात · ध्यान वाला, स्थिर</string>
+    <string name="sangeet_raag_mood_todi">दिन चढ़े · सोच में डूबा</string>
+    <string name="sangeet_raag_mood_marwa">सूर्यास्त · बेचैनी को शांत करने वाला</string>
+    <string name="sangeet_raag_mood_multani">दोपहर · गंभीर, अंदर की ओर</string>
+    <string name="sangeet_raag_mood_puriya_dhanashri">सूर्यास्त · भक्ति और लगन</string>
+    <string name="sangeet_raag_mood_shanmukhapriya">किसी भी समय · हिम्मत और ताकत</string>
+    <string name="sangeet_raag_mood_natabhairavi">किसी भी समय · कोमल, दया भरा</string>
+    <string name="sangeet_raag_mood_kalyani">शाम · शुभ, उजला</string>
+    <string name="sangeet_raag_mood_hamsadhwani">किसी भी समय · खुशी भरा, शुभ</string>
+    <string name="sangeet_raag_mood_mohanam">शाम · खुश, मन भाने वाला</string>
+    <string name="sangeet_raag_mood_abheri">किसी भी समय · अपनापन, भक्ति</string>
+    <string name="sangeet_raag_mood_hindolam">रात · गहरा, भक्ति भरा</string>
+    <string name="sangeet_raag_mood_suddha_saveri">सुबह · ताज़गी भरा, शुभ</string>
+    <string name="sangeet_raag_mood_shankarabharanam">किसी भी समय · भरा-पूरा, शानदार</string>
+    <string name="sangeet_raag_mood_kambhoji">किसी भी समय · गहरा, भक्ति भरा</string>
 </resources>

@@ -83,13 +83,18 @@ fun OnboardingScreen(
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Skip button
+            // Skip jumps to the last page, where the Terms/Privacy consent lives — it must
+            // never complete onboarding without consent. Hidden on the last page itself.
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
                 horizontalArrangement = Arrangement.End
             ) {
-                TextButton(onClick = { viewModel.completeOnboarding(onComplete) }) {
-                    Text(stringResource(CoreR.string.common_skip))
+                if (pagerState.currentPage < onboardingPages.size - 1) {
+                    TextButton(onClick = {
+                        scope.launch { pagerState.animateScrollToPage(onboardingPages.size - 1) }
+                    }) {
+                        Text(stringResource(CoreR.string.common_skip))
+                    }
                 }
             }
 

@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.reports
 
+import com.sangeetmind.core.network.friendlyErrorMessage
 import android.content.Context
 import android.net.Uri
 import androidx.annotation.StringRes
@@ -48,7 +49,7 @@ class ReportsRepository @Inject constructor(
             )
             Result.Success(reportsApi.purchaseReport(request))
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: str(R.string.reports_error_purchase))
+            Result.Error(e, friendlyErrorMessage(e, appContext.withAppLanguage(languageManager.current), str(R.string.reports_error_purchase)))
         }
     }
 
@@ -56,7 +57,7 @@ class ReportsRepository @Inject constructor(
         try {
             Result.Success(reportsApi.getReportStatus(jobId))
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: str(R.string.reports_error_check_status))
+            Result.Error(e, friendlyErrorMessage(e, appContext.withAppLanguage(languageManager.current), str(R.string.reports_error_check_status)))
         }
     }
 
@@ -64,7 +65,7 @@ class ReportsRepository @Inject constructor(
         try {
             Result.Success(reportsApi.listMyReports().reports)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: str(R.string.reports_error_load_mine))
+            Result.Error(e, friendlyErrorMessage(e, appContext.withAppLanguage(languageManager.current), str(R.string.reports_error_load_mine)))
         }
     }
 
@@ -87,7 +88,7 @@ class ReportsRepository @Inject constructor(
                 )
                 Result.Success(uri)
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: str(R.string.reports_error_download))
+                Result.Error(e, friendlyErrorMessage(e, appContext.withAppLanguage(languageManager.current), str(R.string.reports_error_download)))
             }
         }
 }

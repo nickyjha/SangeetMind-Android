@@ -44,92 +44,91 @@ fun MarketplaceDetailScreen(
         }
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
-            if (uiState.isLoading && uiState.astrologer == null) {
+            val astrologer = uiState.astrologer
+            if (uiState.isLoading && astrologer == null) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                return@Box
-            }
-            val astrologer = uiState.astrologer ?: return@Box
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(16.dp)
-            ) {
-                Text(astrologer.displayName, style = MaterialTheme.typography.headlineSmall)
-                Spacer(modifier = Modifier.height(4.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.Star, contentDescription = null, modifier = Modifier.size(16.dp))
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text("%.1f".format(astrologer.ratingAvg))
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        stringResource(
-                            if (astrologer.online) R.string.marketplace_online else R.string.marketplace_offline
-                        )
-                    )
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(stringResource(R.string.marketplace_languages_fmt, astrologer.languages.joinToString(", ")))
-                Text(stringResource(R.string.marketplace_skills_fmt, astrologer.skills.joinToString(", ")))
-                if (!astrologer.bio.isNullOrBlank()) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(astrologer.bio.orEmpty())
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = stringResource(
-                        R.string.marketplace_rate_per_minute_fmt,
-                        "%.2f".format(astrologer.ratePaisePerMin / 100.0)
-                    ),
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Button(
-                    onClick = { onStartChat(astrologer.astrologerId) },
-                    modifier = Modifier.fillMaxWidth()
+            } else if (astrologer != null) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(16.dp)
                 ) {
-                    Text(stringResource(R.string.marketplace_start_chat))
-                }
-
-                Spacer(modifier = Modifier.height(24.dp))
-                Divider()
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(stringResource(R.string.marketplace_leave_review), style = MaterialTheme.typography.titleMedium)
-                Spacer(modifier = Modifier.height(8.dp))
-
-                if (uiState.reviewSubmitted) {
-                    Text(stringResource(R.string.marketplace_review_thanks))
-                } else {
+                    Text(astrologer.displayName, style = MaterialTheme.typography.headlineSmall)
+                    Spacer(modifier = Modifier.height(4.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        for (i in 1..5) {
-                            IconButton(onClick = { rating = i }) {
-                                Icon(
-                                    Icons.Default.Star,
-                                    contentDescription = stringResource(R.string.marketplace_stars_cd, i),
-                                    tint = if (i <= rating) MaterialTheme.colorScheme.primary
-                                    else MaterialTheme.colorScheme.outline
-                                )
+                        Icon(Icons.Default.Star, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("%.1f".format(astrologer.ratingAvg))
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            stringResource(
+                                if (astrologer.online) R.string.marketplace_online else R.string.marketplace_offline
+                            )
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(stringResource(R.string.marketplace_languages_fmt, astrologer.languages.joinToString(", ")))
+                    Text(stringResource(R.string.marketplace_skills_fmt, astrologer.skills.joinToString(", ")))
+                    if (!astrologer.bio.isNullOrBlank()) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(astrologer.bio.orEmpty())
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = stringResource(
+                            R.string.marketplace_rate_per_minute_fmt,
+                            "%.2f".format(astrologer.ratePaisePerMin / 100.0)
+                        ),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(
+                        onClick = { onStartChat(astrologer.astrologerId) },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(stringResource(R.string.marketplace_start_chat))
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Divider()
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(stringResource(R.string.marketplace_leave_review), style = MaterialTheme.typography.titleMedium)
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    if (uiState.reviewSubmitted) {
+                        Text(stringResource(R.string.marketplace_review_thanks))
+                    } else {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            for (i in 1..5) {
+                                IconButton(onClick = { rating = i }) {
+                                    Icon(
+                                        Icons.Default.Star,
+                                        contentDescription = stringResource(R.string.marketplace_stars_cd, i),
+                                        tint = if (i <= rating) MaterialTheme.colorScheme.primary
+                                        else MaterialTheme.colorScheme.outline
+                                    )
+                                }
                             }
                         }
+                        OutlinedTextField(
+                            value = comment,
+                            onValueChange = { comment = it },
+                            label = { Text(stringResource(R.string.marketplace_comment)) },
+                            modifier = Modifier.fillMaxWidth(),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Button(onClick = { viewModel.submitReview(rating, comment) }) {
+                            Text(stringResource(R.string.marketplace_submit_review))
+                        }
                     }
-                    OutlinedTextField(
-                        value = comment,
-                        onValueChange = { comment = it },
-                        label = { Text(stringResource(R.string.marketplace_comment)) },
-                        modifier = Modifier.fillMaxWidth(),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Button(onClick = { viewModel.submitReview(rating, comment) }) {
-                        Text(stringResource(R.string.marketplace_submit_review))
-                    }
-                }
 
-                if (uiState.error != null) {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(uiState.error!!, color = MaterialTheme.colorScheme.error)
+                    if (uiState.error != null) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(uiState.error!!, color = MaterialTheme.colorScheme.error)
+                    }
                 }
             }
         }

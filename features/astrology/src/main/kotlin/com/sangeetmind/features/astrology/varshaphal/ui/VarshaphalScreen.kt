@@ -47,9 +47,14 @@ import com.sangeetmind.features.astrology.chart.ui.PlanetListCard
 import com.sangeetmind.features.astrology.varshaphal.VarshaphalViewModel
 import com.sangeetmind.libs.models.VarshaphalResponse
 import com.sangeetmind.libs.models.toTitleCase
+import androidx.compose.ui.platform.LocalConfiguration
+import com.sangeetmind.core.ui.components.ErrorCard
 import java.time.Instant
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 /** Tajika annual/solar-return chart — a full new chart for the year (Muntha, Varshaphal
  * lagna/Moon, year lord), deliberately its own screen rather than a Birth Chart sub-tab
@@ -100,18 +105,11 @@ fun VarshaphalScreen(
                     )
                 }
                 uiState.error != null -> {
-                    Column(
-                        modifier = Modifier.align(Alignment.Center).padding(24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = uiState.error!!,
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        TextButton(onClick = viewModel::refresh) { Text(stringResource(CoreR.string.common_retry)) }
-                    }
+                    ErrorCard(
+                        message = uiState.error,
+                        onRetry = viewModel::refresh,
+                        modifier = Modifier.align(Alignment.Center).padding(16.dp)
+                    )
                 }
                 else -> {
                     VarshaphalContent(
@@ -191,11 +189,23 @@ private fun VarshaphalContent(
     }
 }
 
-private fun fmtSolarReturn(isoLocal: String): String =
-    runCatching {
-        val instant = Instant.parse(if (isoLocal.endsWith("Z")) isoLocal else "${isoLocal}Z")
-        DateTimeFormatter.ofPattern("d MMM yyyy, h:mm a").withZone(ZoneId.systemDefault()).format(instant)
-    }.getOrDefault(isoLocal)
+/**
+ * "2026-03-29T18:15:00+05:30" -> "29 Mar 2026, 06:15 PM" (or "29 मार्च 2026, 06:15 pm" in Hindi).
+ * The backend sends the birth-place wall-clock time with its offset, so the offset's local
+ * time is shown as-is (not converted to the phone's zone). Zone-less strings are treated
+ * the same way; a trailing "Z" (UTC) is converted to the device zone.
+ */
+internal fun formatSolarReturn(iso: String, locale: Locale, zone: ZoneId = ZoneId.systemDefault()): String {
+    val fmt = DateTimeFormatter.ofPattern("dd MMM yyyy, hh:mm a", locale)
+    val trimmed = iso.trim()
+    return runCatching {
+        when {
+            trimmed.endsWith("Z") -> Instant.parse(trimmed).atZone(zone).format(fmt)
+            Regex("""[+-]\d{2}:?\d{2}$""").containsMatchIn(trimmed) -> OffsetDateTime.parse(trimmed).format(fmt)
+            else -> LocalDateTime.parse(trimmed).format(fmt)
+        }
+    }.getOrDefault(iso)
+}
 
 @Composable
 private fun TajikaCard(varshaphal: VarshaphalResponse, graha: GrahaColors) {
@@ -206,7 +216,7 @@ private fun TajikaCard(varshaphal: VarshaphalResponse, graha: GrahaColors) {
             Text(
                 stringResource(
                     R.string.varshaphal_solar_return_fmt,
-                    fmtSolarReturn(varshaphal.solarReturnLocal),
+                    formatSolarReturn(varshaphal.solarReturnLocal, LocalConfiguration.current.locales[0]),
                     tajika.ageCompleted
                 ),
                 style = MaterialTheme.typography.labelSmall,

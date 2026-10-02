@@ -3,7 +3,7 @@
     <!-- ChatMind: AI chat screen. -->
     <string name="chatmind_title">ChatMind</string>
     <string name="chatmind_advanced_title">एडवांस्ड एनालिसिस</string>
-    <string name="chatmind_advanced_desc">बेहतर मॉडल, ज़्यादा गहरी जानकारी — आपके वॉलेट से ज़्यादा पैसे कटते हैं।</string>
+    <string name="chatmind_advanced_desc">ज़्यादा गहरा और पूरा जवाब — आपके वॉलेट से ज़्यादा पैसे कटते हैं।</string>
     <string name="chatmind_input_placeholder">अपनी कुंडली के बारे में पूछें…</string>
     <string name="chatmind_send">भेजें</string>
     <string name="chatmind_empty">अपनी कुंडली के बारे में कुछ भी पूछें — करियर, समय, रिश्ते।</string>

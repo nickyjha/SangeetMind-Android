@@ -9,7 +9,6 @@ import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException
 import com.sangeetmind.core.common.theme.ThemeManager
 import com.sangeetmind.core.common.theme.ThemePreference
 import com.sangeetmind.core.network.UsersApi
-import com.sangeetmind.libs.models.PlaybackQuality
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,13 +20,10 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 data class SettingsUiState(
-    val playbackQuality: PlaybackQuality = PlaybackQuality.HIGH,
-    val downloadOnWifiOnly: Boolean = true,
-    val notificationsEnabled: Boolean = true,
     val darkMode: DarkModePreference = DarkModePreference.LIGHT,
-    val autoPlayNext: Boolean = true,
-    val showLyrics: Boolean = true,
-    val deleteAccount: DeleteAccountState = DeleteAccountState.Idle
+    val deleteAccount: DeleteAccountState = DeleteAccountState.Idle,
+    /** True once [SettingsViewModel.signOut] has signed the user out. */
+    val signedOut: Boolean = false
 )
 
 /** Progress of the "Delete account" flow (Settings danger zone). */
@@ -71,7 +67,6 @@ class SettingsViewModel @Inject constructor(
     private val themeManager: ThemeManager,
     private val usersApi: UsersApi,
     private val firebaseAuth: FirebaseAuth
-    // TODO: the other settings still need a DataStore
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -79,63 +74,15 @@ class SettingsViewModel @Inject constructor(
     )
     val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
 
-    init {
-        loadSettings()
-    }
-
-    private fun loadSettings() {
-        viewModelScope.launch {
-            // TODO: Load from DataStore
-            // For now, using default values
-        }
-    }
-
-    fun setPlaybackQuality(quality: PlaybackQuality) {
-        _uiState.update { it.copy(playbackQuality = quality) }
-        saveSettings()
-    }
-
-    fun setDownloadOnWifiOnly(enabled: Boolean) {
-        _uiState.update { it.copy(downloadOnWifiOnly = enabled) }
-        saveSettings()
-    }
-
-    fun setNotificationsEnabled(enabled: Boolean) {
-        _uiState.update { it.copy(notificationsEnabled = enabled) }
-        saveSettings()
-    }
-
     fun setDarkMode(preference: DarkModePreference) {
         _uiState.update { it.copy(darkMode = preference) }
         themeManager.setPreference(preference.toTheme())
     }
 
-    fun setAutoPlayNext(enabled: Boolean) {
-        _uiState.update { it.copy(autoPlayNext = enabled) }
-        saveSettings()
-    }
-
-    fun setShowLyrics(enabled: Boolean) {
-        _uiState.update { it.copy(showLyrics = enabled) }
-        saveSettings()
-    }
-
-    private fun saveSettings() {
-        viewModelScope.launch {
-            // TODO: Save to DataStore
-        }
-    }
-
-    fun clearCache() {
-        viewModelScope.launch {
-            // TODO: Clear audio cache
-        }
-    }
-
-    fun clearDownloads() {
-        viewModelScope.launch {
-            // TODO: Clear downloaded files
-        }
+    /** Signs out of Firebase (same as AuthRepository.signOut); the screen then leaves. */
+    fun signOut() {
+        firebaseAuth.signOut()
+        _uiState.update { it.copy(signedOut = true) }
     }
 
     /**

@@ -21,8 +21,8 @@ object PlayProducts {
 
     /** Premium subscriptions: product id + base plan id as set up in the Play Console. */
     val premiumPlans: List<PremiumPlan> = listOf(
-        PremiumPlan("premium_monthly", basePlanId = "monthly", periodDays = 30),
-        PremiumPlan("premium_yearly", basePlanId = "yearly", periodDays = 365)
+        PremiumPlan("premium_monthly", basePlanId = "monthly", periodDays = 30, listPricePaise = 19_900),
+        PremiumPlan("premium_yearly", basePlanId = "yearly", periodDays = 365, listPricePaise = 149_900)
     )
 
     val walletProductIds: List<String> = walletPacks.map { it.productId }
@@ -47,9 +47,19 @@ object PlayProducts {
     fun knownProductIn(productIds: List<String>): String? = productIds.firstOrNull { typeFor(it) != null }
 }
 
+/** A wallet pack costs exactly what it credits, so [paise] doubles as its list price. */
 data class WalletPack(val productId: String, val paise: Long)
 
-data class PremiumPlan(val productId: String, val basePlanId: String, val periodDays: Int)
+/**
+ * [listPricePaise] is the catalogue price (backend pricing.py) shown only when Play has not
+ * returned its localized price in time; the Play price always wins once it arrives.
+ */
+data class PremiumPlan(
+    val productId: String,
+    val basePlanId: String,
+    val periodDays: Int,
+    val listPricePaise: Long = 0
+)
 
 /** What to do with a purchase the Billing Library hands us. Mirrors Purchase.PurchaseState ints. */
 enum class PurchaseAction {

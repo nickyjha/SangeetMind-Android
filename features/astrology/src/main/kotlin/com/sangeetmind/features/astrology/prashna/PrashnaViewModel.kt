@@ -1,6 +1,7 @@
 package com.sangeetmind.features.astrology.prashna
 
 import android.content.Context
+import com.sangeetmind.core.network.friendlyErrorMessage
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
@@ -31,7 +32,9 @@ data class PrashnaUiState(
     val number: String = "",
     val isAsking: Boolean = false,
     val answer: PrashnaResponse? = null,
-    val error: String? = null
+    val error: String? = null,
+    /** True when [error] came from the server (offer "Try again"), false for input errors. */
+    val errorRetryable: Boolean = false
 )
 
 /** KP horary. Times and houses use the primary kundli's place (Delhi when there is none). */
@@ -73,7 +76,7 @@ class PrashnaViewModel @Inject constructor(
         val state = _uiState.value
         val n = state.number.toIntOrNull()
         if (n == null || n !in 1..249) {
-            _uiState.update { it.copy(error = str(R.string.prashna_error_number)) }
+            _uiState.update { it.copy(error = str(R.string.prashna_error_number), errorRetryable = false) }
             return
         }
         viewModelScope.launch {
@@ -90,7 +93,14 @@ class PrashnaViewModel @Inject constructor(
                     )
                 )
             }.onSuccess { r -> _uiState.update { it.copy(isAsking = false, answer = r) } }
-                .onFailure { e -> _uiState.update { it.copy(isAsking = false, error = e.message ?: str(R.string.prashna_error_failed)) } }
+                .onFailure { e ->
+                    val message = friendlyErrorMessage(
+                        e,
+                        appContext.withAppLanguage(languageManager.current),
+                        str(R.string.prashna_error_failed)
+                    )
+                    _uiState.update { it.copy(isAsking = false, error = message, errorRetryable = true) }
+                }
         }
     }
 }

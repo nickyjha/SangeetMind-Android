@@ -40,6 +40,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.components.ErrorCard
 import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.core.ui.language.LocalAppLanguage
 import com.sangeetmind.core.ui.language.astroTerm
@@ -94,14 +95,11 @@ fun EclipseScreen(
                     modifier = Modifier.align(Alignment.Center).padding(24.dp),
                     style = MaterialTheme.typography.bodyLarge
                 )
-                uiState.error != null -> Column(
-                    modifier = Modifier.align(Alignment.Center).padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(uiState.error!!, color = MaterialTheme.colorScheme.error)
-                    Spacer(modifier = Modifier.height(12.dp))
-                    TextButton(onClick = viewModel::refresh) { Text(stringResource(CoreR.string.common_retry)) }
-                }
+                uiState.error != null -> ErrorCard(
+                    message = uiState.error,
+                    onRetry = { viewModel.refresh() },
+                    modifier = Modifier.align(Alignment.Center).padding(24.dp)
+                )
                 else -> LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(16.dp),
@@ -249,13 +247,14 @@ private fun effectLabel(effect: String, good: Color, mixed: Color, careful: Colo
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun RashiRow(label: String, signs: List<String>, color: Color) {
-    if (signs.isEmpty()) return
-    FlowRow(
-        modifier = Modifier.padding(top = 6.dp),
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        signs.forEach { Chip(astroTerm(it), color) }
+    if (signs.isNotEmpty()) {
+        FlowRow(
+            modifier = Modifier.padding(top = 6.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            signs.forEach { Chip(astroTerm(it), color) }
+        }
     }
 }

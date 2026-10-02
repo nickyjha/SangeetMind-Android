@@ -8,7 +8,7 @@
     <string name="sangeet_tab_sound_healing">Sound Healing</string>
 
     <string name="sangeet_raag_personalized">Personalized for today</string>
-    <string name="sangeet_raag_meta_fmt">%1$s • %2$s • dasha: %3$s</string>
+    <string name="sangeet_raag_meta_fmt">%1$s • %2$s • Dasha: %3$s</string>
     <string name="sangeet_raag_dasha_pair_fmt">%1$s / %2$s</string>
     <string name="sangeet_raag_preview_only">Preview only — unlock the full playlist with Premium.</string>
     <string name="sangeet_raag_track_purpose_fmt">Balance %1$s dasha</string>
@@ -34,4 +34,35 @@
     <string name="sangeet_err_japa_stats">Could not load japa stats</string>
     <string name="sangeet_err_voice">Voice horoscope needs Premium</string>
     <string name="sangeet_err_sound">Could not load sound healing library</string>
+    <string name="sangeet_japa_mantra_generic">Daily japa (any mantra)</string>
+
+    <!-- Traditional time + mood per raag (server sends one generic purpose for all). -->
+    <string name="sangeet_raag_mood_bhairavi">Morning · devotional, gentle</string>
+    <string name="sangeet_raag_mood_ramkali">Early morning · serene</string>
+    <string name="sangeet_raag_mood_yaman">Evening · peaceful, uplifting</string>
+    <string name="sangeet_raag_mood_darbari">Late night · deep, grounding</string>
+    <string name="sangeet_raag_mood_darbari_kanada">Late night · deep, grounding</string>
+    <string name="sangeet_raag_mood_bhairav">Dawn · strong, focused</string>
+    <string name="sangeet_raag_mood_hindol">Morning · bright, energising</string>
+    <string name="sangeet_raag_mood_desh">Night · light, hopeful</string>
+    <string name="sangeet_raag_mood_bageshri">Night · tender, calming</string>
+    <string name="sangeet_raag_mood_hansadhwani">Evening · joyful, auspicious</string>
+    <string name="sangeet_raag_mood_bihag">Night · sweet, romantic</string>
+    <string name="sangeet_raag_mood_miyan_ki_malhar">Monsoon · cooling, soothing</string>
+    <string name="sangeet_raag_mood_charukeshi">Any time · tender, heartfelt</string>
+    <string name="sangeet_raag_mood_malkauns">Midnight · meditative, steady</string>
+    <string name="sangeet_raag_mood_todi">Late morning · reflective</string>
+    <string name="sangeet_raag_mood_marwa">Sunset · intense, restless energy calmed</string>
+    <string name="sangeet_raag_mood_multani">Afternoon · serious, inward</string>
+    <string name="sangeet_raag_mood_puriya_dhanashri">Sunset · devotional, longing</string>
+    <string name="sangeet_raag_mood_shanmukhapriya">Any time · courage, strength</string>
+    <string name="sangeet_raag_mood_natabhairavi">Any time · gentle, compassionate</string>
+    <string name="sangeet_raag_mood_kalyani">Evening · auspicious, bright</string>
+    <string name="sangeet_raag_mood_hamsadhwani">Any time · joyful, auspicious</string>
+    <string name="sangeet_raag_mood_mohanam">Evening · happy, pleasing</string>
+    <string name="sangeet_raag_mood_abheri">Any time · warm, devotional</string>
+    <string name="sangeet_raag_mood_hindolam">Night · deep, devotional</string>
+    <string name="sangeet_raag_mood_suddha_saveri">Morning · fresh, auspicious</string>
+    <string name="sangeet_raag_mood_shankarabharanam">Any time · full, majestic</string>
+    <string name="sangeet_raag_mood_kambhoji">Any time · rich, devotional</string>
 </resources>

@@ -3,6 +3,10 @@ package com.sangeetmind.features.settings.ui
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -29,19 +33,20 @@ import com.sangeetmind.features.settings.DarkModePreference
 import com.sangeetmind.features.settings.DeleteAccountState
 import com.sangeetmind.features.settings.R
 import com.sangeetmind.features.settings.SettingsViewModel
-import com.sangeetmind.libs.models.PlaybackQuality
 
 /**
  * @param onAccountDeleted Called once the account is gone and the user is signed out;
  *   the host should navigate to the auth screen and clear the back stack. When null
  *   (the nav graph has not been wired yet) the activity is recreated, which lands on
  *   the auth screen because `MainActivity` picks its start destination from
- *   `FirebaseAuth.currentUser`.
+ *   `FirebaseAuth.currentUser`. Also used after "Sign out".
+ * @param onNavigateBack Top-bar back arrow. System back is handled by the NavHost.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     onAccountDeleted: (() -> Unit)? = null,
+    onNavigateBack: () -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -49,6 +54,8 @@ fun SettingsScreen(
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var showSignOutDialog by remember { mutableStateOf(false) }
+    val versionName = remember(context) { context.appVersionName() }
 
     val deleteFailedMessage = stringResource(R.string.settings_delete_account_failed)
     val signInAgainMessage = stringResource(R.string.settings_delete_account_sign_in_again)
@@ -75,6 +82,37 @@ fun SettingsScreen(
         }
     }
 
+    LaunchedEffect(uiState.signedOut) {
+        if (uiState.signedOut) {
+            if (onAccountDeleted != null) {
+                onAccountDeleted()
+            } else {
+                context.findActivity()?.recreate()
+            }
+        }
+    }
+
+    if (showSignOutDialog) {
+        AlertDialog(
+            onDismissRequest = { showSignOutDialog = false },
+            title = { Text(stringResource(R.string.settings_sign_out_title)) },
+            text = { Text(stringResource(R.string.settings_sign_out_confirm_text)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showSignOutDialog = false
+                    viewModel.signOut()
+                }) {
+                    Text(stringResource(R.string.settings_sign_out_title))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showSignOutDialog = false }) {
+                    Text(stringResource(CoreR.string.common_cancel))
+                }
+            }
+        )
+    }
+
     if (showDeleteDialog) {
         DeleteAccountDialog(
             deleting = deleteState == DeleteAccountState.Deleting,
@@ -88,9 +126,18 @@ fun SettingsScreen(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.settings_title)) },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = stringResource(CoreR.string.common_back)
+                        )
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             )
         }
@@ -113,72 +160,13 @@ fun SettingsScreen(
 
             Divider()
 
-            // Playback Section
-            SettingsSection(title = stringResource(R.string.settings_section_playback)) {
-                PlaybackQualitySettingItem(
-                    currentQuality = uiState.playbackQuality,
-                    onQualityChange = viewModel::setPlaybackQuality
-                )
-
-                SwitchSettingItem(
-                    title = stringResource(R.string.settings_autoplay_title),
-                    description = stringResource(R.string.settings_autoplay_desc),
-                    icon = Icons.Default.PlayArrow,
-                    checked = uiState.autoPlayNext,
-                    onCheckedChange = viewModel::setAutoPlayNext
-                )
-
-                SwitchSettingItem(
-                    title = stringResource(R.string.settings_lyrics_title),
-                    description = stringResource(R.string.settings_lyrics_desc),
-                    icon = Icons.Default.Subtitles,
-                    checked = uiState.showLyrics,
-                    onCheckedChange = viewModel::setShowLyrics
-                )
-            }
-
-            Divider()
-
-            // Downloads Section
-            SettingsSection(title = stringResource(R.string.settings_section_downloads)) {
-                SwitchSettingItem(
-                    title = stringResource(R.string.settings_wifi_only_title),
-                    description = stringResource(R.string.settings_wifi_only_desc),
-                    icon = Icons.Default.Wifi,
-                    checked = uiState.downloadOnWifiOnly,
-                    onCheckedChange = viewModel::setDownloadOnWifiOnly
-                )
-
-                ActionSettingItem(
-                    title = stringResource(R.string.settings_clear_downloads_title),
-                    description = stringResource(R.string.settings_clear_downloads_desc),
-                    icon = Icons.Default.Delete,
-                    onClick = viewModel::clearDownloads
-                )
-            }
-
-            Divider()
-
-            // Notifications Section
+            // Notifications Section - opens the system per-app notification settings.
             SettingsSection(title = stringResource(R.string.settings_section_notifications)) {
-                SwitchSettingItem(
+                ActionSettingItem(
                     title = stringResource(R.string.settings_notifications_title),
                     description = stringResource(R.string.settings_notifications_desc),
                     icon = Icons.Default.Notifications,
-                    checked = uiState.notificationsEnabled,
-                    onCheckedChange = viewModel::setNotificationsEnabled
-                )
-            }
-
-            Divider()
-
-            // Storage Section
-            SettingsSection(title = stringResource(R.string.settings_section_storage)) {
-                ActionSettingItem(
-                    title = stringResource(R.string.settings_clear_cache_title),
-                    description = stringResource(R.string.settings_clear_cache_desc),
-                    icon = Icons.Default.CleaningServices,
-                    onClick = viewModel::clearCache
+                    onClick = { context.openAppNotificationSettings() }
                 )
             }
 
@@ -188,7 +176,7 @@ fun SettingsScreen(
             SettingsSection(title = stringResource(R.string.settings_section_about)) {
                 ActionSettingItem(
                     title = stringResource(R.string.settings_version_title),
-                    description = "1.0.0",
+                    description = versionName,
                     icon = Icons.Default.Info,
                     onClick = {}
                 )
@@ -206,12 +194,17 @@ fun SettingsScreen(
                     icon = Icons.Default.Description,
                     onClick = { runCatching { uriHandler.openUri(Constants.TERMS_URL) } }
                 )
+            }
 
+            Divider()
+
+            // Account
+            SettingsSection(title = stringResource(R.string.settings_section_account)) {
                 ActionSettingItem(
-                    title = stringResource(R.string.settings_licenses_title),
-                    description = stringResource(R.string.settings_licenses_desc),
-                    icon = Icons.Default.Code,
-                    onClick = { /* TODO: Show licenses */ }
+                    title = stringResource(R.string.settings_sign_out_title),
+                    description = stringResource(R.string.settings_sign_out_desc),
+                    icon = Icons.Default.Logout,
+                    onClick = { showSignOutDialog = true }
                 )
             }
 
@@ -232,6 +225,31 @@ fun SettingsScreen(
             }
 
             Spacer(modifier = Modifier.height(24.dp))
+        }
+    }
+}
+
+/** The installed versionName (the settings module cannot see the app's BuildConfig). */
+private fun Context.appVersionName(): String = runCatching {
+    @Suppress("DEPRECATION")
+    packageManager.getPackageInfo(packageName, 0).versionName
+}.getOrNull().orEmpty()
+
+/** Opens Android's notification settings for this app (or app details on API < 26). */
+private fun Context.openAppNotificationSettings() {
+    val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+            .putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+    } else {
+        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", packageName, null))
+    }
+    if (findActivity() == null) intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    runCatching { startActivity(intent) }.onFailure {
+        runCatching {
+            startActivity(
+                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", packageName, null))
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            )
         }
     }
 }
@@ -424,67 +442,6 @@ fun DarkModeSettingItem(
                         selected = currentPreference == DarkModePreference.SYSTEM,
                         onClick = {
                             onPreferenceChange(DarkModePreference.SYSTEM)
-                            showDialog = false
-                        }
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showDialog = false }) {
-                    Text(stringResource(CoreR.string.common_cancel))
-                }
-            }
-        )
-    }
-}
-
-@Composable
-fun PlaybackQualitySettingItem(
-    currentQuality: PlaybackQuality,
-    onQualityChange: (PlaybackQuality) -> Unit
-) {
-    var showDialog by remember { mutableStateOf(false) }
-    
-    ActionSettingItem(
-        title = stringResource(R.string.settings_playback_quality),
-        description = stringResource(
-            when (currentQuality) {
-                PlaybackQuality.LOW -> R.string.settings_quality_low
-                PlaybackQuality.MEDIUM -> R.string.settings_quality_medium
-                PlaybackQuality.HIGH -> R.string.settings_quality_high
-            }
-        ),
-        icon = Icons.Default.HighQuality,
-        onClick = { showDialog = true }
-    )
-
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            title = { Text(stringResource(R.string.settings_playback_quality)) },
-            text = {
-                Column {
-                    RadioButtonItem(
-                        text = stringResource(R.string.settings_quality_low),
-                        selected = currentQuality == PlaybackQuality.LOW,
-                        onClick = {
-                            onQualityChange(PlaybackQuality.LOW)
-                            showDialog = false
-                        }
-                    )
-                    RadioButtonItem(
-                        text = stringResource(R.string.settings_quality_medium),
-                        selected = currentQuality == PlaybackQuality.MEDIUM,
-                        onClick = {
-                            onQualityChange(PlaybackQuality.MEDIUM)
-                            showDialog = false
-                        }
-                    )
-                    RadioButtonItem(
-                        text = stringResource(R.string.settings_quality_high),
-                        selected = currentQuality == PlaybackQuality.HIGH,
-                        onClick = {
-                            onQualityChange(PlaybackQuality.HIGH)
                             showDialog = false
                         }
                     )

@@ -54,4 +54,7 @@
     <!-- Google -->
     <string name="auth_error_google_failed">Google से साइन इन नहीं हो पाया</string>
     <string name="auth_error_google_not_configured">इस बिल्ड में Google साइन इन सेट नहीं है</string>
+    <string name="auth_error_wrong_credentials">ईमेल या पासवर्ड गलत है। देखकर फिर से कोशिश करें।</string>
+    <string name="auth_error_email_in_use">इस ईमेल से पहले से अकाउंट बना है। लॉग इन करें।</string>
+    <string name="auth_error_no_google_account">इस फ़ोन में कोई Google अकाउंट नहीं मिला</string>
 </resources>

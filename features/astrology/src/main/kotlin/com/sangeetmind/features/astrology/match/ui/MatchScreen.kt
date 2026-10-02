@@ -14,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.components.ErrorCard
 import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.core.ui.language.LocalAppLanguage
 import com.sangeetmind.core.ui.language.astroTerm
@@ -121,13 +122,7 @@ fun MatchScreen(
 
             if (uiState.error != null) {
                 Spacer(modifier = Modifier.height(16.dp))
-                Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)) {
-                    Text(
-                        text = uiState.error!!,
-                        modifier = Modifier.padding(12.dp),
-                        color = MaterialTheme.colorScheme.onErrorContainer
-                    )
-                }
+                ErrorCard(message = uiState.error, onRetry = { viewModel.retry() })
             }
 
             uiState.result?.let { result ->

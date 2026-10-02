@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.annotation.StringRes
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.components.ErrorCard
 import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.core.ui.language.LocalAppLanguage
 import com.sangeetmind.core.ui.language.astroTerm
@@ -142,20 +143,11 @@ fun ChartScreen(
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
-                uiState.error != null -> {
-                    Column(
-                        modifier = Modifier.align(Alignment.Center).padding(24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = uiState.error!!,
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        TextButton(onClick = viewModel::refresh) { Text(stringResource(CoreR.string.common_retry)) }
-                    }
-                }
+                uiState.error != null -> ErrorCard(
+                    message = uiState.error,
+                    onRetry = { viewModel.refresh() },
+                    modifier = Modifier.align(Alignment.Center).padding(24.dp)
+                )
                 uiState.chart != null -> {
                     ChartContent(
                         personName = uiState.kundli?.fullName?.toTitleCase(),
@@ -515,45 +507,47 @@ private fun SummaryStrip(
 @Composable
 private fun BirthDetailsCard(kundli: Kundli?, chart: ChartSummaryResponse) {
     val birth = chart.birth
-    val dateIso = birth?.date?.takeIf { it.isNotBlank() } ?: kundli?.birthDate ?: return
-    val time = (birth?.time?.takeIf { it.isNotBlank() } ?: kundli?.birthTime)?.take(5)
-    val dateText = runCatching { java.time.LocalDate.parse(dateIso).format(BIRTH_DATE_FORMAT) }.getOrDefault(dateIso)
-    val manglik = chart.doshas.manglik
-    val balance = chart.vimshottari.balanceAtBirth
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(stringResource(R.string.chart_birth_details), style = MaterialTheme.typography.titleMedium)
-            Spacer(modifier = Modifier.height(8.dp))
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                SummaryChip(
-                    stringResource(R.string.chart_birth_born_label),
-                    listOfNotNull(dateText, time?.takeIf { it.isNotBlank() }).joinToString(" · ")
-                )
-                kundli?.birthPlace?.takeIf { it.isNotBlank() }?.let {
-                    SummaryChip(stringResource(R.string.chart_birth_place_label), shortPlace(it))
-                }
-                birth?.takeIf { it.timezone.isNotBlank() }?.let {
-                    SummaryChip(stringResource(R.string.chart_birth_timezone_label), "${it.timezone} (${it.utcOffset})")
-                }
-                chart.ayanamsa?.takeIf { it.dms.isNotBlank() }?.let {
-                    SummaryChip(stringResource(R.string.chart_birth_ayanamsa_label), "${astroTerm(it.name)} ${it.dms}")
-                }
-                manglik.severity?.let { severity ->
-                    val label = severityLabel(severity)
+    val dateIso = birth?.date?.takeIf { it.isNotBlank() } ?: kundli?.birthDate
+    if (dateIso != null) {
+        val time = (birth?.time?.takeIf { it.isNotBlank() } ?: kundli?.birthTime)?.take(5)
+        val dateText = runCatching { java.time.LocalDate.parse(dateIso).format(BIRTH_DATE_FORMAT) }.getOrDefault(dateIso)
+        val manglik = chart.doshas.manglik
+        val balance = chart.vimshottari.balanceAtBirth
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(stringResource(R.string.chart_birth_details), style = MaterialTheme.typography.titleMedium)
+                Spacer(modifier = Modifier.height(8.dp))
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
                     SummaryChip(
-                        stringResource(R.string.chart_birth_mangal_label),
-                        if (manglik.cancelled) stringResource(R.string.chart_severity_cancelled_suffix, label) else label,
-                        highlight = manglik.effectivePresent
+                        stringResource(R.string.chart_birth_born_label),
+                        listOfNotNull(dateText, time?.takeIf { it.isNotBlank() }).joinToString(" · ")
                     )
-                }
-                balance?.let {
-                    SummaryChip(
-                        stringResource(R.string.chart_birth_balance_label),
-                        stringResource(R.string.chart_birth_balance_fmt, astroTerm(it.lord), it.years, it.months, it.days)
-                    )
+                    kundli?.birthPlace?.takeIf { it.isNotBlank() }?.let {
+                        SummaryChip(stringResource(R.string.chart_birth_place_label), shortPlace(it))
+                    }
+                    birth?.takeIf { it.timezone.isNotBlank() }?.let {
+                        SummaryChip(stringResource(R.string.chart_birth_timezone_label), "${it.timezone} (${it.utcOffset})")
+                    }
+                    chart.ayanamsa?.takeIf { it.dms.isNotBlank() }?.let {
+                        SummaryChip(stringResource(R.string.chart_birth_ayanamsa_label), "${astroTerm(it.name)} ${it.dms}")
+                    }
+                    manglik.severity?.let { severity ->
+                        val label = severityLabel(severity)
+                        SummaryChip(
+                            stringResource(R.string.chart_birth_mangal_label),
+                            if (manglik.cancelled) stringResource(R.string.chart_severity_cancelled_suffix, label) else label,
+                            highlight = manglik.effectivePresent
+                        )
+                    }
+                    balance?.let {
+                        SummaryChip(
+                            stringResource(R.string.chart_birth_balance_label),
+                            stringResource(R.string.chart_birth_balance_fmt, astroTerm(it.lord), it.years, it.months, it.days)
+                        )
+                    }
                 }
             }
         }
@@ -939,38 +933,39 @@ private fun ExtraDoshaRow(dosha: ExtraDosha) {
         flaggedColor = graha.mangala,
         clearColor = graha.budha
     )
-    if (!dosha.present) return
-    val planets = dosha.factors.flatMap { it.planets }.distinct()
-    if (planets.isNotEmpty()) {
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            planets.forEach { Chip(astroTerm(it), grahaColorFor(it, graha)) }
+    if (dosha.present) {
+        val planets = dosha.factors.flatMap { it.planets }.distinct()
+        if (planets.isNotEmpty()) {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                planets.forEach { Chip(astroTerm(it), grahaColorFor(it, graha)) }
+            }
         }
-    }
-    dosha.factors.forEach {
-        Text(
-            it.text.forLanguage(languageCode),
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.padding(top = 4.dp)
-        )
-    }
-    dosha.meaning?.let {
-        Text(
-            it.forLanguage(languageCode),
-            style = MaterialTheme.typography.bodySmall,
-            color = muted,
-            modifier = Modifier.padding(top = 4.dp)
-        )
-    }
-    dosha.remedy?.let {
-        Text(
-            stringResource(R.string.chart_dosha_remedy_fmt, it.forLanguage(languageCode)),
-            style = MaterialTheme.typography.bodySmall,
-            color = muted,
-            modifier = Modifier.padding(top = 4.dp, bottom = 8.dp)
-        )
+        dosha.factors.forEach {
+            Text(
+                it.text.forLanguage(languageCode),
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+        dosha.meaning?.let {
+            Text(
+                it.forLanguage(languageCode),
+                style = MaterialTheme.typography.bodySmall,
+                color = muted,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+        dosha.remedy?.let {
+            Text(
+                stringResource(R.string.chart_dosha_remedy_fmt, it.forLanguage(languageCode)),
+                style = MaterialTheme.typography.bodySmall,
+                color = muted,
+                modifier = Modifier.padding(top = 4.dp, bottom = 8.dp)
+            )
+        }
     }
 }
 
@@ -1061,63 +1056,64 @@ private fun PlanetMeaningsCard(planets: Map<String, PlanetInfo>, conjunctions: L
     val placed = GRAHA_ORDER.mapNotNull { name ->
         planets[name]?.takeIf { it.nakshatra != null && it.nakshatraMeaning != null }?.let { name to it }
     }
-    if (placed.isEmpty()) return
-    val graha = LocalGrahaColors.current
-    val languageCode = LocalAppLanguage.current.code
-    val muted = MaterialTheme.colorScheme.onSurfaceVariant
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(stringResource(R.string.chart_planet_meanings_title), style = MaterialTheme.typography.titleMedium)
-            placed.forEach { (name, info) ->
-                val nak = info.nakshatra!!
-                Spacer(modifier = Modifier.height(12.dp))
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Chip(astroTerm(name), grahaColorFor(name, graha))
-                    Text(
-                        stringResource(R.string.chart_planet_in_nak_fmt, astroTerm(nak.name), nak.pada),
-                        style = MaterialTheme.typography.titleSmall
-                    )
-                    if (info.retrogradeMeaning != null) Chip(astroTerm("Retrograde"), muted)
-                    if (info.combustMeaning != null) Chip(astroTerm("Combust"), graha.mangala)
-                }
-                Text(
-                    info.nakshatraMeaning!!.forLanguage(languageCode),
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-                listOfNotNull(info.retrogradeMeaning, info.combustMeaning).forEach { note ->
-                    Text(
-                        note.forLanguage(languageCode),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = muted,
-                        modifier = Modifier.padding(top = 2.dp)
-                    )
-                }
-            }
-            if (conjunctions.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(stringResource(R.string.chart_conjunctions_title), style = MaterialTheme.typography.titleSmall)
-                conjunctions.forEach { conj ->
-                    Spacer(modifier = Modifier.height(8.dp))
+    if (placed.isNotEmpty()) {
+        val graha = LocalGrahaColors.current
+        val languageCode = LocalAppLanguage.current.code
+        val muted = MaterialTheme.colorScheme.onSurfaceVariant
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(stringResource(R.string.chart_planet_meanings_title), style = MaterialTheme.typography.titleMedium)
+                placed.forEach { (name, info) ->
+                    val nak = info.nakshatra!!
+                    Spacer(modifier = Modifier.height(12.dp))
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        conj.planets.forEach { Chip(astroTerm(it), grahaColorFor(it, graha)) }
+                        Chip(astroTerm(name), grahaColorFor(name, graha))
                         Text(
-                            stringResource(R.string.chart_conjunction_where_fmt, astroTerm(conj.sign), conj.house ?: 0),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = muted
+                            stringResource(R.string.chart_planet_in_nak_fmt, astroTerm(nak.name), nak.pada),
+                            style = MaterialTheme.typography.titleSmall
                         )
+                        if (info.retrogradeMeaning != null) Chip(astroTerm("Retrograde"), muted)
+                        if (info.combustMeaning != null) Chip(astroTerm("Combust"), graha.mangala)
                     }
                     Text(
-                        conj.meaning.forLanguage(languageCode),
+                        info.nakshatraMeaning!!.forLanguage(languageCode),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.padding(top = 4.dp)
                     )
+                    listOfNotNull(info.retrogradeMeaning, info.combustMeaning).forEach { note ->
+                        Text(
+                            note.forLanguage(languageCode),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = muted,
+                            modifier = Modifier.padding(top = 2.dp)
+                        )
+                    }
+                }
+                if (conjunctions.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(stringResource(R.string.chart_conjunctions_title), style = MaterialTheme.typography.titleSmall)
+                    conjunctions.forEach { conj ->
+                        Spacer(modifier = Modifier.height(8.dp))
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            conj.planets.forEach { Chip(astroTerm(it), grahaColorFor(it, graha)) }
+                            Text(
+                                stringResource(R.string.chart_conjunction_where_fmt, astroTerm(conj.sign), conj.house ?: 0),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = muted
+                            )
+                        }
+                        Text(
+                            conj.meaning.forLanguage(languageCode),
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
                 }
             }
         }
@@ -1172,56 +1168,57 @@ private val ZODIAC_ORDER = listOf(
 @Composable
 private fun AshtakvargaCard(ashtakvarga: ChartAshtakvarga) {
     val sav = ashtakvarga.sav
-    if (sav.bindusBySign.isEmpty()) return
-    val graha = LocalGrahaColors.current
-    val maxBindu = (sav.bindusBySign.values.maxOrNull() ?: 1).coerceAtLeast(1)
+    if (sav.bindusBySign.isNotEmpty()) {
+        val graha = LocalGrahaColors.current
+        val maxBindu = (sav.bindusBySign.values.maxOrNull() ?: 1).coerceAtLeast(1)
 
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(stringResource(R.string.chart_ashtakvarga), style = MaterialTheme.typography.titleMedium)
-            Text(
-                stringResource(R.string.chart_ashtakvarga_subtitle, sav.totalBindus),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            ZODIAC_ORDER.forEach { sign ->
-                val bindus = sav.bindusBySign[sign] ?: return@forEach
-                val barColor = when {
-                    bindus >= 30 -> graha.budha
-                    bindus <= 24 -> graha.mangala
-                    else -> MaterialTheme.colorScheme.onSurfaceVariant
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        astroTerm(sign),
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.width(88.dp)
-                    )
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(8.dp)
-                            .clip(RoundedCornerShape(4.dp))
-                            .background(MaterialTheme.colorScheme.surfaceVariant)
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(stringResource(R.string.chart_ashtakvarga), style = MaterialTheme.typography.titleMedium)
+                Text(
+                    stringResource(R.string.chart_ashtakvarga_subtitle, sav.totalBindus),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                ZODIAC_ORDER.forEach { sign ->
+                    val bindus = sav.bindusBySign[sign] ?: return@forEach
+                    val barColor = when {
+                        bindus >= 30 -> graha.budha
+                        bindus <= 24 -> graha.mangala
+                        else -> MaterialTheme.colorScheme.onSurfaceVariant
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
+                        Text(
+                            astroTerm(sign),
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.width(88.dp)
+                        )
                         Box(
                             modifier = Modifier
-                                .fillMaxHeight()
-                                .fillMaxWidth(fraction = (bindus.toFloat() / maxBindu).coerceIn(0.05f, 1f))
+                                .weight(1f)
+                                .height(8.dp)
                                 .clip(RoundedCornerShape(4.dp))
-                                .background(barColor)
+                                .background(MaterialTheme.colorScheme.surfaceVariant)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .fillMaxWidth(fraction = (bindus.toFloat() / maxBindu).coerceIn(0.05f, 1f))
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .background(barColor)
+                            )
+                        }
+                        Text(
+                            "$bindus",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.width(28.dp).padding(start = 8.dp)
                         )
                     }
-                    Text(
-                        "$bindus",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.width(28.dp).padding(start = 8.dp)
-                    )
                 }
             }
         }
@@ -1234,44 +1231,45 @@ private fun AshtakvargaCard(ashtakvarga: ChartAshtakvarga) {
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun FriendshipCard(friendship: ChartFriendship) {
-    if (friendship.relations.isEmpty() || friendship.planets.isEmpty()) return
-    var selected by remember(friendship) { mutableStateOf(friendship.planets.first()) }
-    val row = friendship.relations[selected].orEmpty()
-    val graha = LocalGrahaColors.current
+    if (friendship.relations.isNotEmpty() && friendship.planets.isNotEmpty()) {
+        var selected by remember(friendship) { mutableStateOf(friendship.planets.first()) }
+        val row = friendship.relations[selected].orEmpty()
+        val graha = LocalGrahaColors.current
 
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(stringResource(R.string.chart_friendship), style = MaterialTheme.typography.titleMedium)
-            Text(
-                stringResource(R.string.chart_friendship_subtitle, astroTerm(selected)),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                friendship.planets.forEach { planet ->
-                    FilterChip(
-                        selected = planet == selected,
-                        onClick = { selected = planet },
-                        label = { Text(astroTerm(planet)) }
-                    )
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(stringResource(R.string.chart_friendship), style = MaterialTheme.typography.titleMedium)
+                Text(
+                    stringResource(R.string.chart_friendship_subtitle, astroTerm(selected)),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    friendship.planets.forEach { planet ->
+                        FilterChip(
+                            selected = planet == selected,
+                            onClick = { selected = planet },
+                            label = { Text(astroTerm(planet)) }
+                        )
+                    }
                 }
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            row.forEach { (other, relation) ->
-                if (other == selected) return@forEach
-                val color = when (relation) {
-                    "Intimate", "Friend" -> graha.budha
-                    "Enemy", "Bitter Enemy" -> graha.mangala
-                    else -> MaterialTheme.colorScheme.onSurfaceVariant
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(astroTerm(other), style = MaterialTheme.typography.bodyMedium)
-                    Chip(friendshipRelationLabel(relation), color)
+                Spacer(modifier = Modifier.height(8.dp))
+                row.forEach { (other, relation) ->
+                    if (other == selected) return@forEach
+                    val color = when (relation) {
+                        "Intimate", "Friend" -> graha.budha
+                        "Enemy", "Bitter Enemy" -> graha.mangala
+                        else -> MaterialTheme.colorScheme.onSurfaceVariant
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(astroTerm(other), style = MaterialTheme.typography.bodyMedium)
+                        Chip(friendshipRelationLabel(relation), color)
+                    }
                 }
             }
         }
@@ -1293,58 +1291,59 @@ private fun friendshipRelationLabel(relation: String): String = when (relation.t
  * arc-minute tables). */
 @Composable
 private fun ShadbalaCard(shadbala: ChartShadbala) {
-    if (shadbala.planets.isEmpty()) return
-    val graha = LocalGrahaColors.current
-    val ranked = shadbala.ranking.ifEmpty {
-        shadbala.planets.entries
-            .map { (planet, data) -> ShadbalaRanking(planet, data.totalVirupas) }
-            .sortedByDescending { it.totalVirupas }
-    }
-    val maxVirupas = (ranked.maxOfOrNull { it.totalVirupas } ?: 1.0).coerceAtLeast(1.0)
+    if (shadbala.planets.isNotEmpty()) {
+        val graha = LocalGrahaColors.current
+        val ranked = shadbala.ranking.ifEmpty {
+            shadbala.planets.entries
+                .map { (planet, data) -> ShadbalaRanking(planet, data.totalVirupas) }
+                .sortedByDescending { it.totalVirupas }
+        }
+        val maxVirupas = (ranked.maxOfOrNull { it.totalVirupas } ?: 1.0).coerceAtLeast(1.0)
 
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(stringResource(R.string.chart_shadbala), style = MaterialTheme.typography.titleMedium)
-            Text(
-                stringResource(R.string.chart_shadbala_subtitle),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            ranked.forEach { entry ->
-                val planet = shadbala.planets[entry.planet] ?: return@forEach
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        astroTerm(entry.planet),
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.width(72.dp)
-                    )
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(8.dp)
-                            .clip(RoundedCornerShape(4.dp))
-                            .background(MaterialTheme.colorScheme.surfaceVariant)
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(stringResource(R.string.chart_shadbala), style = MaterialTheme.typography.titleMedium)
+                Text(
+                    stringResource(R.string.chart_shadbala_subtitle),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                ranked.forEach { entry ->
+                    val planet = shadbala.planets[entry.planet] ?: return@forEach
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
+                        Text(
+                            astroTerm(entry.planet),
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.width(72.dp)
+                        )
                         Box(
                             modifier = Modifier
-                                .fillMaxHeight()
-                                .fillMaxWidth(
-                                    fraction = (entry.totalVirupas / maxVirupas).toFloat().coerceIn(0.05f, 1f)
-                                )
+                                .weight(1f)
+                                .height(8.dp)
                                 .clip(RoundedCornerShape(4.dp))
-                                .background(grahaColorFor(entry.planet, graha))
+                                .background(MaterialTheme.colorScheme.surfaceVariant)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .fillMaxWidth(
+                                        fraction = (entry.totalVirupas / maxVirupas).toFloat().coerceIn(0.05f, 1f)
+                                    )
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .background(grahaColorFor(entry.planet, graha))
+                            )
+                        }
+                        Text(
+                            stringResource(R.string.chart_rupas_fmt, planet.totalRupas.toString()),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.width(72.dp).padding(start = 8.dp)
                         )
                     }
-                    Text(
-                        stringResource(R.string.chart_rupas_fmt, planet.totalRupas.toString()),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.width(72.dp).padding(start = 8.dp)
-                    )
                 }
             }
         }
@@ -1356,58 +1355,59 @@ private fun ShadbalaCard(shadbala: ChartShadbala) {
  * (app/services/bhavabala.py: SAV-in-house-sign + house lord's Shadbala). */
 @Composable
 private fun BhavabalaCard(bhavabala: ChartBhavabala) {
-    if (bhavabala.houses.isEmpty()) return
-    val houses = bhavabala.houses.sortedBy { it.house }
-    val maxVirupas = (houses.maxOfOrNull { it.totalVirupas } ?: 1.0).coerceAtLeast(1.0)
-    val graha = LocalGrahaColors.current
+    if (bhavabala.houses.isNotEmpty()) {
+        val houses = bhavabala.houses.sortedBy { it.house }
+        val maxVirupas = (houses.maxOfOrNull { it.totalVirupas } ?: 1.0).coerceAtLeast(1.0)
+        val graha = LocalGrahaColors.current
 
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(stringResource(R.string.chart_bhavabala), style = MaterialTheme.typography.titleMedium)
-            Text(
-                stringResource(R.string.chart_bhavabala_subtitle, bhavabala.strongestHouse?.toString() ?: "-"),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            houses.forEach { house ->
-                val barColor = if (house.house == bhavabala.strongestHouse) {
-                    graha.budha
-                } else {
-                    MaterialTheme.colorScheme.onSurfaceVariant
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        "${stringResource(CoreR.string.common_house_short, house.house)} ${astroTerm(house.lord)}",
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.width(88.dp)
-                    )
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(8.dp)
-                            .clip(RoundedCornerShape(4.dp))
-                            .background(MaterialTheme.colorScheme.surfaceVariant)
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(stringResource(R.string.chart_bhavabala), style = MaterialTheme.typography.titleMedium)
+                Text(
+                    stringResource(R.string.chart_bhavabala_subtitle, bhavabala.strongestHouse?.toString() ?: "-"),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                houses.forEach { house ->
+                    val barColor = if (house.house == bhavabala.strongestHouse) {
+                        graha.budha
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
+                        Text(
+                            "${stringResource(CoreR.string.common_house_short, house.house)} ${astroTerm(house.lord)}",
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.width(88.dp)
+                        )
                         Box(
                             modifier = Modifier
-                                .fillMaxHeight()
-                                .fillMaxWidth(
-                                    fraction = (house.totalVirupas / maxVirupas).toFloat().coerceIn(0.05f, 1f)
-                                )
+                                .weight(1f)
+                                .height(8.dp)
                                 .clip(RoundedCornerShape(4.dp))
-                                .background(barColor)
+                                .background(MaterialTheme.colorScheme.surfaceVariant)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .fillMaxWidth(
+                                        fraction = (house.totalVirupas / maxVirupas).toFloat().coerceIn(0.05f, 1f)
+                                    )
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .background(barColor)
+                            )
+                        }
+                        Text(
+                            house.totalVirupas.toInt().toString(),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.width(36.dp).padding(start = 8.dp)
                         )
                     }
-                    Text(
-                        house.totalVirupas.toInt().toString(),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.width(36.dp).padding(start = 8.dp)
-                    )
                 }
             }
         }
@@ -1435,68 +1435,69 @@ private enum class KpView(@StringRes val labelRes: Int) {
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun KpCard(kp: ChartKp) {
-    if (kp.cusps.isEmpty()) return
-    var view by remember(kp) { mutableStateOf(KpView.CUSPS) }
-    val planetOrder = listOf("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu")
-        .filter { it in kp.significators }
-    var selectedPlanet by remember(kp) { mutableStateOf(planetOrder.firstOrNull().orEmpty()) }
-    val graha = LocalGrahaColors.current
+    if (kp.cusps.isNotEmpty()) {
+        var view by remember(kp) { mutableStateOf(KpView.CUSPS) }
+        val planetOrder = listOf("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu")
+            .filter { it in kp.significators }
+        var selectedPlanet by remember(kp) { mutableStateOf(planetOrder.firstOrNull().orEmpty()) }
+        val graha = LocalGrahaColors.current
 
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(stringResource(R.string.chart_kp_title), style = MaterialTheme.typography.titleMedium)
-            Text(
-                stringResource(R.string.chart_kp_ayanamsa_fmt, kp.ayanamsaName, "%.2f".format(kp.ayanamsaDeg)),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                KpView.entries.forEach { v ->
-                    FilterChip(selected = v == view, onClick = { view = v }, label = { Text(stringResource(v.labelRes)) })
-                }
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            when (view) {
-                KpView.CUSPS -> kp.cusps.sortedBy { it.house }.forEach { cusp ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            "${stringResource(CoreR.string.common_house_short, cusp.house)} ${astroTerm(cusp.sign)}",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                        Text(
-                            "${astroTerm(cusp.subLord)} / ${astroTerm(cusp.subSubLord)}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(stringResource(R.string.chart_kp_title), style = MaterialTheme.typography.titleMedium)
+                Text(
+                    stringResource(R.string.chart_kp_ayanamsa_fmt, kp.ayanamsaName, "%.2f".format(kp.ayanamsaDeg)),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    KpView.entries.forEach { v ->
+                        FilterChip(selected = v == view, onClick = { view = v }, label = { Text(stringResource(v.labelRes)) })
                     }
                 }
-                KpView.SIGNIFICATORS -> {
-                    FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                        planetOrder.forEach { planet ->
-                            FilterChip(
-                                selected = planet == selectedPlanet,
-                                onClick = { selectedPlanet = planet },
-                                label = { Text(astroTerm(planet)) }
+                Spacer(modifier = Modifier.height(8.dp))
+                when (view) {
+                    KpView.CUSPS -> kp.cusps.sortedBy { it.house }.forEach { cusp ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                "${stringResource(CoreR.string.common_house_short, cusp.house)} ${astroTerm(cusp.sign)}",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            Text(
+                                "${astroTerm(cusp.subLord)} / ${astroTerm(cusp.subSubLord)}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    val houses = kp.significators[selectedPlanet].orEmpty()
-                    if (houses.isEmpty()) {
-                        Text(
-                            stringResource(R.string.chart_kp_no_significators, astroTerm(selectedPlanet)),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    } else {
+                    KpView.SIGNIFICATORS -> {
                         FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                            houses.forEach { house ->
-                                Chip(stringResource(CoreR.string.common_house_short, house), grahaColorFor(selectedPlanet, graha))
+                            planetOrder.forEach { planet ->
+                                FilterChip(
+                                    selected = planet == selectedPlanet,
+                                    onClick = { selectedPlanet = planet },
+                                    label = { Text(astroTerm(planet)) }
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        val houses = kp.significators[selectedPlanet].orEmpty()
+                        if (houses.isEmpty()) {
+                            Text(
+                                stringResource(R.string.chart_kp_no_significators, astroTerm(selectedPlanet)),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        } else {
+                            FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                houses.forEach { house ->
+                                    Chip(stringResource(CoreR.string.common_house_short, house), grahaColorFor(selectedPlanet, graha))
+                                }
                             }
                         }
                     }
@@ -1511,44 +1512,45 @@ private fun KpCard(kp: ChartKp) {
  * (app/services/jaimini_charts.py). */
 @Composable
 private fun JaiminiCard(jaimini: ChartJaimini) {
-    if (jaimini.charaKarakas.isEmpty()) return
-    val graha = LocalGrahaColors.current
+    if (jaimini.charaKarakas.isNotEmpty()) {
+        val graha = LocalGrahaColors.current
 
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(stringResource(R.string.chart_jaimini), style = MaterialTheme.typography.titleMedium)
-            Text(
-                stringResource(
-                    R.string.chart_jaimini_subtitle,
-                    astroTerm(jaimini.karakamsa.lagnaSign),
-                    astroTerm(jaimini.swamsa.lagnaSign)
-                ),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            jaimini.charaKarakas.forEach { karaka ->
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(stringResource(R.string.chart_jaimini), style = MaterialTheme.typography.titleMedium)
+                Text(
+                    stringResource(
+                        R.string.chart_jaimini_subtitle,
+                        astroTerm(jaimini.karakamsa.lagnaSign),
+                        astroTerm(jaimini.swamsa.lagnaSign)
+                    ),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                jaimini.charaKarakas.forEach { karaka ->
                     Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            karaka.abbrev,
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.width(32.dp)
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(
+                                karaka.abbrev,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.width(32.dp)
+                            )
+                            Text(karaka.karaka, style = MaterialTheme.typography.bodyMedium)
+                        }
+                        Chip(
+                            "${astroTerm(karaka.planet)} ${"%.1f".format(karaka.degreeInSign)}°",
+                            grahaColorFor(karaka.planet, graha)
                         )
-                        Text(karaka.karaka, style = MaterialTheme.typography.bodyMedium)
                     }
-                    Chip(
-                        "${astroTerm(karaka.planet)} ${"%.1f".format(karaka.degreeInSign)}°",
-                        grahaColorFor(karaka.planet, graha)
-                    )
                 }
             }
         }
@@ -1560,46 +1562,47 @@ private fun JaiminiCard(jaimini: ChartJaimini) {
  * (app/services/jaimini_charts.py). */
 @Composable
 private fun ArudhaPadasCard(padas: List<ArudhaPada>) {
-    if (padas.isEmpty()) return
-    val graha = LocalGrahaColors.current
-    val byHouse = padas.associateBy { it.ofHouse }
-    val headline = listOfNotNull(
-        byHouse[1]?.let { it to R.string.chart_arudha_al_meaning },
-        byHouse[12]?.let { it to R.string.chart_arudha_ul_meaning }
-    )
-    val others = padas.filter { it.ofHouse in 2..11 }.sortedBy { it.ofHouse }
+    if (padas.isNotEmpty()) {
+        val graha = LocalGrahaColors.current
+        val byHouse = padas.associateBy { it.ofHouse }
+        val headline = listOfNotNull(
+            byHouse[1]?.let { it to R.string.chart_arudha_al_meaning },
+            byHouse[12]?.let { it to R.string.chart_arudha_ul_meaning }
+        )
+        val others = padas.filter { it.ofHouse in 2..11 }.sortedBy { it.ofHouse }
 
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(stringResource(R.string.chart_arudha_title), style = MaterialTheme.typography.titleMedium)
-            Text(
-                stringResource(R.string.chart_arudha_legend),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            headline.forEach { (pada, meaningRes) ->
-                Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
-                    PadaHeader(pada, highlight = true)
-                    Text(
-                        stringResource(meaningRes),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(start = 36.dp)
-                    )
-                    PadaOccupants(pada.occupants)
-                }
-            }
-            others.forEach { pada ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(stringResource(R.string.chart_arudha_title), style = MaterialTheme.typography.titleMedium)
+                Text(
+                    stringResource(R.string.chart_arudha_legend),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                Column(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
-                    PadaHeader(pada, highlight = false)
-                    PadaOccupants(pada.occupants)
+                Spacer(modifier = Modifier.height(4.dp))
+                headline.forEach { (pada, meaningRes) ->
+                    Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+                        PadaHeader(pada, highlight = true)
+                        Text(
+                            stringResource(meaningRes),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(start = 36.dp)
+                        )
+                        PadaOccupants(pada.occupants)
+                    }
+                }
+                others.forEach { pada ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    )
+                    Column(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
+                        PadaHeader(pada, highlight = false)
+                        PadaOccupants(pada.occupants)
+                    }
                 }
             }
         }
@@ -1639,14 +1642,15 @@ private fun PadaHeader(pada: ArudhaPada, highlight: Boolean) {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun PadaOccupants(occupants: List<String>) {
-    if (occupants.isEmpty()) return
-    val graha = LocalGrahaColors.current
-    FlowRow(
-        modifier = Modifier.padding(top = 6.dp, start = 36.dp),
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        occupants.forEach { Chip(astroTerm(it), grahaColorFor(it, graha)) }
+    if (occupants.isNotEmpty()) {
+        val graha = LocalGrahaColors.current
+        FlowRow(
+            modifier = Modifier.padding(top = 6.dp, start = 36.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            occupants.forEach { Chip(astroTerm(it), grahaColorFor(it, graha)) }
+        }
     }
 }
 
@@ -1671,74 +1675,75 @@ private fun padaLabelRes(ofHouse: Int): Int = when (ofHouse) {
  * (app/services/lal_kitab.py). */
 @Composable
 private fun LalKitabCard(lalKitab: ChartLalKitab) {
-    if (lalKitab.placements.isEmpty()) return
-    val graha = LocalGrahaColors.current
+    if (lalKitab.placements.isNotEmpty()) {
+        val graha = LocalGrahaColors.current
 
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(stringResource(R.string.chart_lal_kitab), style = MaterialTheme.typography.titleMedium)
-            if (lalKitab.systemNote.isNotBlank()) {
-                Text(
-                    lalKitab.systemNote,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            if (lalKitab.rinYogas.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(stringResource(R.string.chart_lk_rin), style = MaterialTheme.typography.titleSmall)
-                lalKitab.rinYogas.forEach { yoga ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Chip(astroTerm(yoga.planet), grahaColorFor(yoga.planet, graha))
-                        Text(
-                            stringResource(R.string.chart_lk_rin_row, yoga.rinType, yoga.house),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(stringResource(R.string.chart_lal_kitab), style = MaterialTheme.typography.titleMedium)
+                if (lalKitab.systemNote.isNotBlank()) {
+                    Text(
+                        lalKitab.systemNote,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                if (lalKitab.rinYogas.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(stringResource(R.string.chart_lk_rin), style = MaterialTheme.typography.titleSmall)
+                    lalKitab.rinYogas.forEach { yoga ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Chip(astroTerm(yoga.planet), grahaColorFor(yoga.planet, graha))
+                            Text(
+                                stringResource(R.string.chart_lk_rin_row, yoga.rinType, yoga.house),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
                 }
-            }
-            if (lalKitab.remedies.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(stringResource(R.string.chart_lk_remedies), style = MaterialTheme.typography.titleSmall)
-                lalKitab.remedies.forEach { remedy ->
-                    Row(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
-                        Text(
-                            astroTerm(remedy.planet),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = grahaColorFor(remedy.planet, graha),
-                            modifier = Modifier.width(72.dp)
-                        )
-                        Text(remedy.remedy, style = MaterialTheme.typography.bodyMedium)
+                if (lalKitab.remedies.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(stringResource(R.string.chart_lk_remedies), style = MaterialTheme.typography.titleSmall)
+                    lalKitab.remedies.forEach { remedy ->
+                        Row(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
+                            Text(
+                                astroTerm(remedy.planet),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = grahaColorFor(remedy.planet, graha),
+                                modifier = Modifier.width(72.dp)
+                            )
+                            Text(remedy.remedy, style = MaterialTheme.typography.bodyMedium)
+                        }
                     }
                 }
-            }
-            if (lalKitab.predictions.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(stringResource(R.string.chart_lk_placement_notes), style = MaterialTheme.typography.titleSmall)
-                lalKitab.predictions.forEach { prediction ->
-                    Row(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
-                        Text(
-                            stringResource(R.string.chart_lk_prediction_row, astroTerm(prediction.planet), prediction.house),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = grahaColorFor(prediction.planet, graha),
-                            modifier = Modifier.width(96.dp)
-                        )
-                        Text(prediction.text, style = MaterialTheme.typography.bodyMedium)
+                if (lalKitab.predictions.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(stringResource(R.string.chart_lk_placement_notes), style = MaterialTheme.typography.titleSmall)
+                    lalKitab.predictions.forEach { prediction ->
+                        Row(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
+                            Text(
+                                stringResource(R.string.chart_lk_prediction_row, astroTerm(prediction.planet), prediction.house),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = grahaColorFor(prediction.planet, graha),
+                                modifier = Modifier.width(96.dp)
+                            )
+                            Text(prediction.text, style = MaterialTheme.typography.bodyMedium)
+                        }
                     }
                 }
-            }
-            if (lalKitab.rinYogas.isEmpty() && lalKitab.remedies.isEmpty() && lalKitab.predictions.isEmpty()) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    stringResource(R.string.chart_lk_empty),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                if (lalKitab.rinYogas.isEmpty() && lalKitab.remedies.isEmpty() && lalKitab.predictions.isEmpty()) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        stringResource(R.string.chart_lk_empty),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         }
     }
@@ -1749,85 +1754,86 @@ private fun LalKitabCard(lalKitab: ChartLalKitab) {
  * `disclaimer` is shown verbatim (app/services/kundli_narratives.py). */
 @Composable
 private fun NarrativesCard(narratives: ChartNarratives) {
-    if (narratives.nakshatraPhal.text.isBlank() && narratives.ascendantSummary.text.isBlank()) return
-    val graha = LocalGrahaColors.current
-    val dashaPhal = narratives.vimshottariMahadashaPhal
-    // Hindi siblings fall back to English for charts cached before they existed.
-    val hindi = LocalAppLanguage.current.code == "hi"
-    fun pick(en: String?, hi: String?): String? = if (hindi && !hi.isNullOrBlank()) hi else en
-    val planetLines = if (hindi && narratives.planetConsiderationsHi.isNotEmpty()) {
-        narratives.planetConsiderationsHi
-    } else {
-        narratives.planetConsiderations
-    }
+    if (narratives.nakshatraPhal.text.isNotBlank() || narratives.ascendantSummary.text.isNotBlank()) {
+        val graha = LocalGrahaColors.current
+        val dashaPhal = narratives.vimshottariMahadashaPhal
+        // Hindi siblings fall back to English for charts cached before they existed.
+        val hindi = LocalAppLanguage.current.code == "hi"
+        fun pick(en: String?, hi: String?): String? = if (hindi && !hi.isNullOrBlank()) hi else en
+        val planetLines = if (hindi && narratives.planetConsiderationsHi.isNotEmpty()) {
+            narratives.planetConsiderationsHi
+        } else {
+            narratives.planetConsiderations
+        }
 
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(stringResource(R.string.chart_reading), style = MaterialTheme.typography.titleMedium)
-            if (narratives.nakshatraPhal.text.isNotBlank()) {
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    stringResource(
-                        R.string.chart_nakshatra_line,
-                        astroTerm(narratives.nakshatraPhal.nakshatra),
-                        narratives.nakshatraPhal.pada?.toString() ?: "-",
-                        astroTerm(narratives.nakshatraPhal.lord)
-                    ),
-                    style = MaterialTheme.typography.titleSmall
-                )
-                Text(
-                    pick(narratives.nakshatraPhal.text, narratives.nakshatraPhal.textHi).orEmpty(),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-            if (narratives.ascendantSummary.text.isNotBlank()) {
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    stringResource(R.string.chart_ascendant_fmt, astroTerm(narratives.ascendantSummary.sign)),
-                    style = MaterialTheme.typography.titleSmall
-                )
-                Text(
-                    pick(narratives.ascendantSummary.text, narratives.ascendantSummary.textHi).orEmpty(),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-            val mahadashaText = pick(dashaPhal.mahadashaText, dashaPhal.mahadashaTextHi)
-            if (!mahadashaText.isNullOrBlank()) {
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    stringResource(R.string.chart_mahadasha_fmt, astroTerm(dashaPhal.currentMahadasha)),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = dashaPhal.currentMahadasha?.let { grahaColorFor(it, graha) }
-                        ?: MaterialTheme.colorScheme.onSurface
-                )
-                Text(mahadashaText, style = MaterialTheme.typography.bodyMedium)
-                pick(dashaPhal.antardashaNote, dashaPhal.antardashaNoteHi)?.takeIf { it.isNotBlank() }?.let { note ->
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(stringResource(R.string.chart_reading), style = MaterialTheme.typography.titleMedium)
+                if (narratives.nakshatraPhal.text.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        note,
-                        style = MaterialTheme.typography.bodySmall,
+                        stringResource(
+                            R.string.chart_nakshatra_line,
+                            astroTerm(narratives.nakshatraPhal.nakshatra),
+                            narratives.nakshatraPhal.pada?.toString() ?: "-",
+                            astroTerm(narratives.nakshatraPhal.lord)
+                        ),
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                    Text(
+                        pick(narratives.nakshatraPhal.text, narratives.nakshatraPhal.textHi).orEmpty(),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+                if (narratives.ascendantSummary.text.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        stringResource(R.string.chart_ascendant_fmt, astroTerm(narratives.ascendantSummary.sign)),
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                    Text(
+                        pick(narratives.ascendantSummary.text, narratives.ascendantSummary.textHi).orEmpty(),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+                val mahadashaText = pick(dashaPhal.mahadashaText, dashaPhal.mahadashaTextHi)
+                if (!mahadashaText.isNullOrBlank()) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        stringResource(R.string.chart_mahadasha_fmt, astroTerm(dashaPhal.currentMahadasha)),
+                        style = MaterialTheme.typography.titleSmall,
+                        color = dashaPhal.currentMahadasha?.let { grahaColorFor(it, graha) }
+                            ?: MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(mahadashaText, style = MaterialTheme.typography.bodyMedium)
+                    pick(dashaPhal.antardashaNote, dashaPhal.antardashaNoteHi)?.takeIf { it.isNotBlank() }?.let { note ->
+                        Text(
+                            note,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+                if (planetLines.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(stringResource(R.string.chart_planet_placements), style = MaterialTheme.typography.titleSmall)
+                    planetLines.forEach { line ->
+                        Text(
+                            "· $line",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
+                }
+                if (narratives.disclaimer.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        pick(narratives.disclaimer, narratives.disclaimerHi).orEmpty(),
+                        style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-            }
-            if (planetLines.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(stringResource(R.string.chart_planet_placements), style = MaterialTheme.typography.titleSmall)
-                planetLines.forEach { line ->
-                    Text(
-                        "· $line",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
-                }
-            }
-            if (narratives.disclaimer.isNotBlank()) {
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    pick(narratives.disclaimer, narratives.disclaimerHi).orEmpty(),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
             }
         }
     }
@@ -1863,29 +1869,30 @@ private fun ChartMoonChart.toPlanetInfoMap(): Map<String, PlanetInfo> =
  * KP's Krishnamurti one (app/services/houses.py: build_houses_block). */
 @Composable
 private fun HouseCuspsCard(houses: ChartHouses) {
-    if (houses.cusps.isEmpty()) return
+    if (houses.cusps.isNotEmpty()) {
 
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(stringResource(R.string.chart_house_cusps), style = MaterialTheme.typography.titleMedium)
-            Text(
-                stringResource(R.string.chart_house_cusps_subtitle, houses.system),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            houses.cusps.sortedBy { it.house }.forEach { cusp ->
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(stringResource(CoreR.string.common_house_short, cusp.house), style = MaterialTheme.typography.bodyMedium)
-                    Text(
-                        "${astroTerm(cusp.sign)} ${cusp.absoluteDms ?: "${cusp.degree.toInt()}°"}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(stringResource(R.string.chart_house_cusps), style = MaterialTheme.typography.titleMedium)
+                Text(
+                    stringResource(R.string.chart_house_cusps_subtitle, houses.system),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                houses.cusps.sortedBy { it.house }.forEach { cusp ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(stringResource(CoreR.string.common_house_short, cusp.house), style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            "${astroTerm(cusp.sign)} ${cusp.absoluteDms ?: "${cusp.degree.toInt()}°"}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
             }
         }
@@ -1918,95 +1925,101 @@ private fun DashaSystemSelector(selected: DashaSystem, onSelect: (DashaSystem) -
 private fun CurrentDashaCard(chart: ChartSummaryResponse, system: DashaSystem) {
     when (system) {
         DashaSystem.VIMSHOTTARI -> {
-            val current = chart.vimshottari.current ?: return
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(stringResource(R.string.chart_current_vimshottari), style = MaterialTheme.typography.titleMedium)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    DashaRow(stringResource(R.string.chart_mahadasha), current.mahadasha)
-                    DashaRow(stringResource(R.string.chart_antardasha), current.antardasha)
-                    DashaRow(stringResource(R.string.chart_pratyantar), current.resolvedPratyantar)
-                    current.meaning?.let { meaning ->
+            val current = chart.vimshottari.current
+            if (current != null) {
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(stringResource(R.string.chart_current_vimshottari), style = MaterialTheme.typography.titleMedium)
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            meaning.forLanguage(LocalAppLanguage.current.code),
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                }
-            }
-        }
-        DashaSystem.YOGINI -> {
-            val md = currentYoginiMahadasha(chart.yogini) ?: return
-            val ad = currentYoginiAntardasha(md)
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(stringResource(R.string.chart_current_yogini), style = MaterialTheme.typography.titleMedium)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Column(modifier = Modifier.padding(vertical = 4.dp)) {
-                        Text(
-                            stringResource(
-                                R.string.chart_dasha_row_fmt,
-                                stringResource(R.string.chart_mahadasha),
-                                yoginiName(md.yogini, md.lord)
-                            ),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                        Text(
-                            "${fmtIso(md.start)} → ${fmtIso(md.end)}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    if (ad != null) {
-                        Column(modifier = Modifier.padding(vertical = 4.dp)) {
+                        DashaRow(stringResource(R.string.chart_mahadasha), current.mahadasha)
+                        DashaRow(stringResource(R.string.chart_antardasha), current.antardasha)
+                        DashaRow(stringResource(R.string.chart_pratyantar), current.resolvedPratyantar)
+                        current.meaning?.let { meaning ->
+                            Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                stringResource(
-                                    R.string.chart_dasha_row_fmt,
-                                    stringResource(R.string.chart_antardasha),
-                                    yoginiName(ad.yogini, ad.lord)
-                                ),
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                            Text(
-                                "${fmtIso(ad.start)} → ${fmtIso(ad.end)}",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                meaning.forLanguage(LocalAppLanguage.current.code),
+                                style = MaterialTheme.typography.bodyMedium
                             )
                         }
                     }
                 }
             }
         }
-        DashaSystem.CHARA -> {
-            val md = currentCharaMahadasha(chart.charaDasha) ?: return
-            val ad = currentCharaAntardasha(md)
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(stringResource(R.string.chart_current_chara), style = MaterialTheme.typography.titleMedium)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Column(modifier = Modifier.padding(vertical = 4.dp)) {
-                        Text(
-                            stringResource(R.string.chart_dasha_row_fmt, stringResource(R.string.chart_mahadasha), astroTerm(md.sign)),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                        Text(
-                            "${fmtIso(md.start)} → ${fmtIso(md.end)}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    if (ad != null) {
+        DashaSystem.YOGINI -> {
+            val md = currentYoginiMahadasha(chart.yogini)
+            if (md != null) {
+                val ad = currentYoginiAntardasha(md)
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(stringResource(R.string.chart_current_yogini), style = MaterialTheme.typography.titleMedium)
+                        Spacer(modifier = Modifier.height(8.dp))
                         Column(modifier = Modifier.padding(vertical = 4.dp)) {
                             Text(
-                                stringResource(R.string.chart_dasha_row_fmt, stringResource(R.string.chart_antardasha), astroTerm(ad.sign)),
+                                stringResource(
+                                    R.string.chart_dasha_row_fmt,
+                                    stringResource(R.string.chart_mahadasha),
+                                    yoginiName(md.yogini, md.lord)
+                                ),
                                 style = MaterialTheme.typography.bodyLarge
                             )
                             Text(
-                                "${fmtIso(ad.start)} → ${fmtIso(ad.end)}",
+                                "${fmtIso(md.start)} → ${fmtIso(md.end)}",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
+                        }
+                        if (ad != null) {
+                            Column(modifier = Modifier.padding(vertical = 4.dp)) {
+                                Text(
+                                    stringResource(
+                                        R.string.chart_dasha_row_fmt,
+                                        stringResource(R.string.chart_antardasha),
+                                        yoginiName(ad.yogini, ad.lord)
+                                    ),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                                Text(
+                                    "${fmtIso(ad.start)} → ${fmtIso(ad.end)}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        DashaSystem.CHARA -> {
+            val md = currentCharaMahadasha(chart.charaDasha)
+            if (md != null) {
+                val ad = currentCharaAntardasha(md)
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(stringResource(R.string.chart_current_chara), style = MaterialTheme.typography.titleMedium)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Column(modifier = Modifier.padding(vertical = 4.dp)) {
+                            Text(
+                                stringResource(R.string.chart_dasha_row_fmt, stringResource(R.string.chart_mahadasha), astroTerm(md.sign)),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            Text(
+                                "${fmtIso(md.start)} → ${fmtIso(md.end)}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        if (ad != null) {
+                            Column(modifier = Modifier.padding(vertical = 4.dp)) {
+                                Text(
+                                    stringResource(R.string.chart_dasha_row_fmt, stringResource(R.string.chart_antardasha), astroTerm(ad.sign)),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                                Text(
+                                    "${fmtIso(ad.start)} → ${fmtIso(ad.end)}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                         }
                     }
                 }
@@ -2049,17 +2062,18 @@ private fun currentCharaAntardasha(md: CharaMahadasha): CharaAntardasha? {
 
 @Composable
 private fun DashaRow(label: String, period: DashaPeriod?) {
-    if (period == null) return
-    Column(modifier = Modifier.padding(vertical = 4.dp)) {
-        Text(
-            stringResource(R.string.chart_dasha_row_fmt, label, astroTerm(period.lord)),
-            style = MaterialTheme.typography.bodyLarge
-        )
-        Text(
-            text = "${fmtIso(period.start)} → ${fmtIso(period.end)}",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+    if (period != null) {
+        Column(modifier = Modifier.padding(vertical = 4.dp)) {
+            Text(
+                stringResource(R.string.chart_dasha_row_fmt, label, astroTerm(period.lord)),
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Text(
+                text = "${fmtIso(period.start)} → ${fmtIso(period.end)}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }
 

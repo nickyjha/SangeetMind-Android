@@ -1,5 +1,7 @@
 package com.sangeetmind.features.astrology.referrals
 
+import com.sangeetmind.core.common.language.withAppLanguage
+import com.sangeetmind.core.network.friendlyErrorMessage
 import android.content.Context
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.di.IoDispatcher
@@ -27,7 +29,7 @@ class ReferralRepository @Inject constructor(
             try {
                 Result.Success(referralApi.applyReferral(ApplyReferralRequest(referrerUserId)))
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: context.getString(R.string.referrals_error_apply_code))
+                Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), context.withAppLanguage(languageManager.current).getString(R.string.referrals_error_apply_code)))
             }
         }
 
@@ -35,7 +37,7 @@ class ReferralRepository @Inject constructor(
         try {
             Result.Success(referralApi.getStats(lang = languageManager.current.code))
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: context.getString(R.string.referrals_error_load_stats))
+            Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), context.withAppLanguage(languageManager.current).getString(R.string.referrals_error_load_stats)))
         }
     }
 }

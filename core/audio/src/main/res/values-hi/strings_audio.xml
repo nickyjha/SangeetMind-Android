@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Media playback notification channel (PlayerService). -->
+    <string name="audio_channel_name">ऑडियो चलाना</string>
+    <string name="audio_channel_desc">गाना चलाने के कंट्रोल</string>
+</resources>

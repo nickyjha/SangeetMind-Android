@@ -35,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.components.ErrorCard
 import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.core.ui.language.astroTerm
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
@@ -81,18 +82,11 @@ fun NumerologyGlossaryScreen(
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
                 uiState.error != null && uiState.systems.isEmpty() -> {
-                    Column(
-                        modifier = Modifier.align(Alignment.Center).padding(24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = uiState.error!!,
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        TextButton(onClick = viewModel::refresh) { Text(stringResource(CoreR.string.common_retry)) }
-                    }
+                    ErrorCard(
+                        message = uiState.error,
+                        onRetry = { viewModel.refresh() },
+                        modifier = Modifier.align(Alignment.Center).padding(24.dp)
+                    )
                 }
                 else -> {
                     GlossaryContent(
@@ -218,15 +212,16 @@ private fun NumberDetailCard(detail: NumerologyNumberInterpretation) {
 
 @Composable
 private fun DetailSection(title: String, items: List<String>) {
-    if (items.isEmpty()) return
-    Spacer(modifier = Modifier.height(10.dp))
-    Text(title, style = MaterialTheme.typography.titleSmall)
-    items.forEach { line ->
-        Text(
-            "· $line",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(top = 4.dp)
-        )
+    if (items.isNotEmpty()) {
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(title, style = MaterialTheme.typography.titleSmall)
+        items.forEach { line ->
+            Text(
+                "· $line",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
     }
 }

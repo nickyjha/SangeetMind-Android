@@ -16,6 +16,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.core.ui.components.ErrorCard
+import com.sangeetmind.core.ui.text.MarkdownText
+import com.sangeetmind.core.ui.text.markdownInline
 import com.sangeetmind.core.ui.language.astroTerm
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.features.astrology.R
@@ -67,8 +70,9 @@ fun HoroscopeScreen(
             Box(modifier = Modifier.fillMaxSize()) {
                 when {
                     uiState.isLoading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                    uiState.error != null -> Text(
-                        text = uiState.error!!,
+                    uiState.error != null -> ErrorCard(
+                        message = uiState.error,
+                        onRetry = { viewModel.load() },
                         modifier = Modifier.align(Alignment.Center).padding(24.dp)
                     )
                     else -> Column(
@@ -112,7 +116,7 @@ private fun DailyContent(horoscope: DailyHoroscope) {
         Spacer(modifier = Modifier.height(16.dp))
         Text(stringResource(R.string.horoscope_todays_insight), style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(4.dp))
-        Text(interpretation, style = MaterialTheme.typography.bodyMedium)
+        MarkdownText(interpretation, style = MaterialTheme.typography.bodyMedium)
     }
 
     enhanced?.whatToDoToday?.takeIf { it.isNotEmpty() }?.let { items ->
@@ -120,7 +124,7 @@ private fun DailyContent(horoscope: DailyHoroscope) {
         Text(stringResource(R.string.horoscope_what_to_do), style = MaterialTheme.typography.titleMedium)
         items.forEach { item ->
             Text(
-                text = "• $item",
+                text = markdownInline("• $item"),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(top = 4.dp)
             )
@@ -132,7 +136,7 @@ private fun DailyContent(horoscope: DailyHoroscope) {
         Text(stringResource(R.string.horoscope_what_to_avoid), style = MaterialTheme.typography.titleMedium)
         items.forEach { item ->
             Text(
-                text = "• $item",
+                text = markdownInline("• $item"),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 4.dp)
@@ -251,7 +255,7 @@ private fun MantraCard(mantra: EnhancedMantra) {
             }
             if (mantra.reason.isNotBlank()) {
                 Spacer(modifier = Modifier.height(6.dp))
-                Text(mantra.reason, style = MaterialTheme.typography.bodySmall)
+                Text(markdownInline(mantra.reason), style = MaterialTheme.typography.bodySmall)
             }
         }
     }
@@ -270,7 +274,7 @@ private fun DaanCard(daan: DaanDonation) {
             }
             if (daan.reason.isNotBlank()) {
                 Spacer(modifier = Modifier.height(6.dp))
-                Text(daan.reason, style = MaterialTheme.typography.bodySmall)
+                Text(markdownInline(daan.reason), style = MaterialTheme.typography.bodySmall)
             }
         }
     }

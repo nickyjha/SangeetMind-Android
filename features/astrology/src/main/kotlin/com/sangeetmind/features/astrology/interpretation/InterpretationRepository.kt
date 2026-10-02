@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.interpretation
 
+import com.sangeetmind.core.network.friendlyErrorMessage
 import android.content.Context
 import androidx.annotation.StringRes
 import com.sangeetmind.core.common.Result
@@ -66,7 +67,7 @@ class InterpretationRepository @Inject constructor(
 
                 Result.Success(InterpretationData(chart, analysis))
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: str(R.string.interpretation_err_load_reading))
+                Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), str(R.string.interpretation_err_load_reading)))
             }
         }
 }

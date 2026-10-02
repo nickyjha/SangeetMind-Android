@@ -14,7 +14,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.core.ui.components.ErrorCard
 import com.sangeetmind.core.ui.language.astroTerm
+import com.sangeetmind.core.ui.text.MarkdownText
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.interpretation.InterpretationViewModel
 import com.sangeetmind.libs.models.ChartSummaryResponse
@@ -58,10 +60,10 @@ fun InterpretationScreen(
                     )
                 }
                 uiState.error != null -> {
-                    Text(
-                        text = uiState.error!!,
-                        modifier = Modifier.align(Alignment.Center).padding(24.dp),
-                        color = MaterialTheme.colorScheme.error
+                    ErrorCard(
+                        message = uiState.error,
+                        onRetry = viewModel::refresh,
+                        modifier = Modifier.align(Alignment.Center).padding(16.dp)
                     )
                 }
                 uiState.data != null -> {
@@ -133,11 +135,14 @@ private fun ChartSummaryCard(chart: ChartSummaryResponse) {
             Spacer(modifier = Modifier.height(12.dp))
             Text(stringResource(R.string.interpretation_planetary_positions), style = MaterialTheme.typography.labelLarge)
             Spacer(modifier = Modifier.height(4.dp))
-            chart.planets.forEach { (name, planet) ->
+            // Navagraha only, in classical order (the map also carries Uranus/Neptune/Pluto).
+            NAVAGRAHA.mapNotNull { name -> chart.planets[name]?.let { name to it } }.forEach { (name, planet) ->
                 Row(modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp)) {
                     Text(astroTerm(name), modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
+                    // Rahu/Ketu are always retrograde by definition — never flag them.
+                    val showRetro = planet.retrograde && name != "Rahu" && name != "Ketu"
                     Text(
-                        if (planet.retrograde) stringResource(R.string.interpretation_sign_retrograde_fmt, astroTerm(planet.sign))
+                        if (showRetro) stringResource(R.string.interpretation_sign_retrograde_fmt, astroTerm(planet.sign))
                         else astroTerm(planet.sign),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -148,18 +153,23 @@ private fun ChartSummaryCard(chart: ChartSummaryResponse) {
     }
 }
 
+private val NAVAGRAHA = listOf("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu")
+
 @Composable
 private fun DashaCard(chart: ChartSummaryResponse) {
-    val current = chart.vimshottari.current ?: return
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(stringResource(R.string.interpretation_current_dasha), style = MaterialTheme.typography.titleMedium)
-            Spacer(modifier = Modifier.height(4.dp))
-            current.mahadasha?.let {
-                Text(stringResource(R.string.interpretation_mahadasha_fmt, astroTerm(it.lord)), style = MaterialTheme.typography.bodyMedium)
-            }
-            current.antardasha?.let {
-                Text(stringResource(R.string.interpretation_antardasha_fmt, astroTerm(it.lord)), style = MaterialTheme.typography.bodyMedium)
+    // No early return inside a composable — wrap in if instead.
+    val current = chart.vimshottari.current
+    if (current != null) {
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(stringResource(R.string.interpretation_current_dasha), style = MaterialTheme.typography.titleMedium)
+                Spacer(modifier = Modifier.height(4.dp))
+                current.mahadasha?.let {
+                    Text(stringResource(R.string.interpretation_mahadasha_fmt, astroTerm(it.lord)), style = MaterialTheme.typography.bodyMedium)
+                }
+                current.antardasha?.let {
+                    Text(stringResource(R.string.interpretation_antardasha_fmt, astroTerm(it.lord)), style = MaterialTheme.typography.bodyMedium)
+                }
             }
         }
     }
@@ -168,8 +178,8 @@ private fun DashaCard(chart: ChartSummaryResponse) {
 @Composable
 private fun NarrativeCard(narrative: String) {
     Card(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = narrative,
+        MarkdownText(
+            markdown = narrative,
             modifier = Modifier.padding(16.dp),
             style = MaterialTheme.typography.bodyLarge
         )
@@ -200,7 +210,7 @@ private fun EffectCard(effect: RuleEffect, isPositive: Boolean) {
         Column(modifier = Modifier.padding(12.dp)) {
             Text(astroTerm(effect.ruleName), style = MaterialTheme.typography.titleSmall)
             Spacer(modifier = Modifier.height(4.dp))
-            Text(effect.content, style = MaterialTheme.typography.bodyMedium)
+            MarkdownText(effect.content, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }

@@ -1,5 +1,11 @@
 package com.sangeetmind.features.astrology.muhurat
 
+import android.content.Context
+import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.core.common.language.withAppLanguage
+import com.sangeetmind.core.network.friendlyErrorMessage
+import com.sangeetmind.features.astrology.R
+import dagger.hilt.android.qualifiers.ApplicationContext
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.di.IoDispatcher
 import com.sangeetmind.core.network.MuhuratApi
@@ -16,9 +22,13 @@ import javax.inject.Singleton
 
 @Singleton
 class MuhuratRepository @Inject constructor(
+    @ApplicationContext private val appContext: Context,
+    private val languageManager: LanguageManager,
     private val muhuratApi: MuhuratApi,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
+    private fun localized(): Context = appContext.withAppLanguage(languageManager.current)
+
     suspend fun findMuhurat(
         intent: String,
         windowStart: String,
@@ -32,7 +42,7 @@ class MuhuratRepository @Inject constructor(
             )
             Result.Success(response)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: "Failed to find muhurat")
+            Result.Error(e, friendlyErrorMessage(e, localized(), localized().getString(R.string.muhurat_error_find_failed)))
         }
     }
 
@@ -66,7 +76,7 @@ class MuhuratRepository @Inject constructor(
             )
             Result.Success(response)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: "Failed to find muhurat")
+            Result.Error(e, friendlyErrorMessage(e, localized(), localized().getString(R.string.muhurat_error_find_failed)))
         }
     }
 }

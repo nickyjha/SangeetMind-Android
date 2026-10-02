@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.marketplace
 
+import com.sangeetmind.core.network.friendlyErrorMessage
 import android.content.Context
 import androidx.annotation.StringRes
 import com.sangeetmind.core.common.Result
@@ -33,7 +34,7 @@ class MarketplaceRepository @Inject constructor(
             try {
                 Result.Success(marketplaceApi.listAstrologers(onlineOnly).astrologers)
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: str(R.string.marketplace_error_load_astrologers))
+                Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), str(R.string.marketplace_error_load_astrologers)))
             }
         }
 
@@ -41,7 +42,7 @@ class MarketplaceRepository @Inject constructor(
         try {
             Result.Success(marketplaceApi.getAstrologer(id))
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: str(R.string.marketplace_error_load_astrologer))
+            Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), str(R.string.marketplace_error_load_astrologer)))
         }
     }
 
@@ -51,7 +52,7 @@ class MarketplaceRepository @Inject constructor(
                 marketplaceApi.submitReview(astrologerId, SubmitReviewRequest(rating, comment))
                 Result.Success(Unit)
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: str(R.string.marketplace_error_submit_review))
+                Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), str(R.string.marketplace_error_submit_review)))
             }
         }
 
@@ -62,7 +63,7 @@ class MarketplaceRepository @Inject constructor(
                     marketplaceApi.debitChatMinute(DebitChatMinuteRequest(astrologerId, idempotencyKey))
                 )
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: str(R.string.marketplace_error_bill_minute))
+                Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), str(R.string.marketplace_error_bill_minute)))
             }
         }
 }

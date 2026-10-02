@@ -25,7 +25,7 @@ object Constants {
 
     // Notification
     const val NOTIFICATION_CHANNEL_ID = "sangeetmind_playback"
-    const val NOTIFICATION_CHANNEL_NAME = "Audio Playback"
+    // Channel name/description are string resources (core/audio R.string.audio_channel_*).
     const val NOTIFICATION_ID = 1001
 
     // Languages

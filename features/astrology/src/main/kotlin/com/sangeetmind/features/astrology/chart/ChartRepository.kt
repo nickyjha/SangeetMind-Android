@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.chart
 
+import com.sangeetmind.core.network.friendlyErrorMessage
 import android.content.Context
 import androidx.annotation.StringRes
 import com.sangeetmind.core.common.Result
@@ -42,7 +43,7 @@ class ChartRepository @Inject constructor(
                 )
                 Result.Success(chart)
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: str(R.string.chart_error_calculate))
+                Result.Error(e, friendlyErrorMessage(e, appContext.withAppLanguage(languageManager.current), str(R.string.chart_error_calculate)))
             }
         }
 }

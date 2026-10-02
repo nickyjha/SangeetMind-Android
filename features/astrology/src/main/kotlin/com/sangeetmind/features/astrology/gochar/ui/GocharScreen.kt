@@ -50,6 +50,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.components.ErrorCard
 import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.core.ui.language.astroTerm
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
@@ -122,20 +123,11 @@ fun GocharScreen(
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
-                uiState.error != null -> {
-                    Column(
-                        modifier = Modifier.align(Alignment.Center).padding(24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = uiState.error!!,
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        TextButton(onClick = viewModel::refresh) { Text(stringResource(CoreR.string.common_retry)) }
-                    }
-                }
+                uiState.error != null -> ErrorCard(
+                    message = uiState.error,
+                    onRetry = { viewModel.refresh() },
+                    modifier = Modifier.align(Alignment.Center).padding(24.dp)
+                )
                 else -> {
                     GocharContent(
                         uiState = uiState,
@@ -375,42 +367,43 @@ private fun UpcomingCard(transit: TransitResponse, date: LocalDate) {
             p.nextStation?.let { station -> parseLocal(station.date)?.let { GocharEvent(it, name, null, station.type, null) } }
         )
     }.sortedBy { it.at }
-    if (events.isEmpty()) return
+    if (events.isNotEmpty()) {
 
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(stringResource(R.string.gochar_upcoming_title), style = MaterialTheme.typography.titleMedium)
-            Text(
-                stringResource(R.string.gochar_upcoming_legend),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            events.forEachIndexed { index, event ->
-                if (index > 0) Divider()
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        eventDate(event.at, date, withTime = false),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.width(92.dp)
-                    )
-                    val text = when {
-                        event.sign != null -> stringResource(R.string.gochar_event_enters_fmt, astroTerm(event.planet), astroTerm(event.sign))
-                        event.station == "retrograde" -> stringResource(R.string.gochar_event_retrograde_fmt, astroTerm(event.planet))
-                        else -> stringResource(R.string.gochar_event_direct_fmt, astroTerm(event.planet))
-                    }
-                    Text(
-                        text,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = grahaColorFor(event.planet, graha),
-                        modifier = Modifier.weight(1f)
-                    )
-                    event.house?.let {
-                        Chip(stringResource(R.string.gochar_event_house_fmt, it), MaterialTheme.colorScheme.primary)
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(stringResource(R.string.gochar_upcoming_title), style = MaterialTheme.typography.titleMedium)
+                Text(
+                    stringResource(R.string.gochar_upcoming_legend),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                events.forEachIndexed { index, event ->
+                    if (index > 0) Divider()
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            eventDate(event.at, date, withTime = false),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.width(92.dp)
+                        )
+                        val text = when {
+                            event.sign != null -> stringResource(R.string.gochar_event_enters_fmt, astroTerm(event.planet), astroTerm(event.sign))
+                            event.station == "retrograde" -> stringResource(R.string.gochar_event_retrograde_fmt, astroTerm(event.planet))
+                            else -> stringResource(R.string.gochar_event_direct_fmt, astroTerm(event.planet))
+                        }
+                        Text(
+                            text,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = grahaColorFor(event.planet, graha),
+                            modifier = Modifier.weight(1f)
+                        )
+                        event.house?.let {
+                            Chip(stringResource(R.string.gochar_event_house_fmt, it), MaterialTheme.colorScheme.primary)
+                        }
                     }
                 }
             }

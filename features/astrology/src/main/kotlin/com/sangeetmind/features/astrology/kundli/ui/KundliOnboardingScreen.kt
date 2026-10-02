@@ -8,7 +8,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
@@ -35,6 +37,7 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun KundliOnboardingScreen(
     onSaved: () -> Unit,
+    onNavigateBack: (() -> Unit)? = null,
     viewModel: KundliOnboardingViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -45,157 +48,165 @@ fun KundliOnboardingScreen(
         if (uiState.saved) onSaved()
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            // No Scaffold here: under edge-to-edge (Android 15+) keep the form clear of
-            // the status/navigation bars. Zero on older devices, so no change there.
-            .systemBarsPadding()
-            .verticalScroll(rememberScrollState())
-            .padding(24.dp)
-    ) {
-        Text(
-            text = stringResource(R.string.kundli_onboarding_title),
-            style = MaterialTheme.typography.headlineSmall
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = stringResource(R.string.kundli_onboarding_subtitle),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Quick fill: paste a WhatsApp-style line and let BirthDetailsParser fill the fields.
-        OutlinedTextField(
-            value = uiState.pasteText,
-            onValueChange = viewModel::onPasteTextChange,
-            label = { Text(stringResource(R.string.kundli_paste_label)) },
-            placeholder = { Text(stringResource(R.string.kundli_paste_hint)) },
-            modifier = Modifier.fillMaxWidth(),
-            minLines = 2,
-            maxLines = 4,
-            supportingText = uiState.pasteNotice?.let { { Text(it, color = MaterialTheme.colorScheme.primary) } }
-        )
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-            TextButton(
-                onClick = viewModel::fillFromPaste,
-                enabled = uiState.pasteText.isNotBlank()
-            ) { Text(stringResource(R.string.kundli_paste_fill)) }
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = uiState.fullName,
-            onValueChange = viewModel::onFullNameChange,
-            label = { Text(stringResource(R.string.kundli_field_name)) },
-            leadingIcon = { Icon(Icons.Default.Person, null) },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next)
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Box(modifier = Modifier.fillMaxWidth()) {
-            OutlinedTextField(
-                value = uiState.birthDate,
-                onValueChange = {},
-                readOnly = true,
-                label = { Text(stringResource(R.string.kundli_field_dob)) },
-                trailingIcon = { Icon(Icons.Default.DateRange, null) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
-            )
-            Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ) { showDatePicker = true }
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Box(modifier = Modifier.fillMaxWidth()) {
-            OutlinedTextField(
-                value = uiState.birthTime,
-                onValueChange = {},
-                readOnly = true,
-                label = { Text(stringResource(R.string.kundli_field_tob)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
-            )
-            Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ) { showTimePicker = true }
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = uiState.birthPlaceQuery,
-            onValueChange = viewModel::onBirthPlaceQueryChange,
-            label = { Text(stringResource(R.string.kundli_field_place)) },
-            leadingIcon = { Icon(Icons.Default.LocationOn, null) },
-            trailingIcon = {
-                if (uiState.isSearchingPlace) {
-                    CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+    // Back arrow: the caller's handler when given, otherwise the system back stack.
+    val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(R.string.kundli_onboarding_title)) },
+                navigationIcon = {
+                    IconButton(onClick = { onNavigateBack?.invoke() ?: backDispatcher?.onBackPressed() }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(CoreR.string.common_back))
+                    }
                 }
-            },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done)
-        )
+            )
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 24.dp, vertical = 8.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.kundli_onboarding_subtitle),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
 
-        if (uiState.placeSuggestions.isNotEmpty()) {
-            Card(modifier = Modifier.fillMaxWidth().padding(top = 4.dp)) {
-                LazyColumn(modifier = Modifier.heightIn(max = 240.dp)) {
-                    items(uiState.placeSuggestions) { suggestion ->
-                        ListItem(
-                            headlineContent = { Text(suggestion.label) },
-                            modifier = Modifier.clickable { viewModel.onPlaceSelected(suggestion) }
-                        )
-                        Divider()
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Quick fill: paste a WhatsApp-style line and let BirthDetailsParser fill the fields.
+            OutlinedTextField(
+                value = uiState.pasteText,
+                onValueChange = viewModel::onPasteTextChange,
+                label = { Text(stringResource(R.string.kundli_paste_label)) },
+                placeholder = { Text(stringResource(R.string.kundli_paste_hint)) },
+                modifier = Modifier.fillMaxWidth(),
+                minLines = 2,
+                maxLines = 4,
+                supportingText = uiState.pasteNotice?.let { { Text(it, color = MaterialTheme.colorScheme.primary) } }
+            )
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                TextButton(
+                    onClick = viewModel::fillFromPaste,
+                    enabled = uiState.pasteText.isNotBlank()
+                ) { Text(stringResource(R.string.kundli_paste_fill)) }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = uiState.fullName,
+                onValueChange = viewModel::onFullNameChange,
+                label = { Text(stringResource(R.string.kundli_field_name)) },
+                leadingIcon = { Icon(Icons.Default.Person, null) },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Box(modifier = Modifier.fillMaxWidth()) {
+                OutlinedTextField(
+                    value = uiState.birthDate,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text(stringResource(R.string.kundli_field_dob)) },
+                    trailingIcon = { Icon(Icons.Default.DateRange, null) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
+                )
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) { showDatePicker = true }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Box(modifier = Modifier.fillMaxWidth()) {
+                OutlinedTextField(
+                    value = uiState.birthTime,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text(stringResource(R.string.kundli_field_tob)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
+                )
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) { showTimePicker = true }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = uiState.birthPlaceQuery,
+                onValueChange = viewModel::onBirthPlaceQueryChange,
+                label = { Text(stringResource(R.string.kundli_field_place)) },
+                leadingIcon = { Icon(Icons.Default.LocationOn, null) },
+                trailingIcon = {
+                    if (uiState.isSearchingPlace) {
+                        CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done)
+            )
+
+            if (uiState.placeSuggestions.isNotEmpty()) {
+                Card(modifier = Modifier.fillMaxWidth().padding(top = 4.dp)) {
+                    LazyColumn(modifier = Modifier.heightIn(max = 240.dp)) {
+                        items(uiState.placeSuggestions) { suggestion ->
+                            ListItem(
+                                headlineContent = { Text(suggestion.label) },
+                                modifier = Modifier.clickable { viewModel.onPlaceSelected(suggestion) }
+                            )
+                            Divider()
+                        }
                     }
                 }
             }
-        }
 
-        if (uiState.error != null) {
-            Spacer(modifier = Modifier.height(16.dp))
-            Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)) {
-                Row(
-                    modifier = Modifier.padding(12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(Icons.Default.Warning, null, tint = MaterialTheme.colorScheme.error)
-                    Text(uiState.error!!, color = MaterialTheme.colorScheme.onErrorContainer)
+            if (uiState.error != null) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)) {
+                    Row(
+                        modifier = Modifier.padding(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(Icons.Default.Warning, null, tint = MaterialTheme.colorScheme.error)
+                        Text(uiState.error!!, color = MaterialTheme.colorScheme.onErrorContainer)
+                    }
                 }
             }
-        }
 
-        Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-        Button(
-            onClick = viewModel::save,
-            modifier = Modifier.fillMaxWidth().height(56.dp),
-            enabled = !uiState.isSaving
-        ) {
-            if (uiState.isSaving) {
-                CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary)
-            } else {
-                Text(stringResource(R.string.kundli_generate))
+            Button(
+                onClick = viewModel::save,
+                modifier = Modifier.fillMaxWidth().height(56.dp),
+                enabled = !uiState.isSaving
+            ) {
+                if (uiState.isSaving) {
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary)
+                } else {
+                    Text(stringResource(R.string.kundli_generate))
+                }
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.kundli
 
+import com.sangeetmind.core.network.friendlyErrorMessage
 import android.content.Context
 import androidx.annotation.StringRes
 import com.sangeetmind.core.common.Result
@@ -31,7 +32,7 @@ class KundliRepository @Inject constructor(
         try {
             Result.Success(kundliApi.listKundlis())
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: str(R.string.kundli_error_load_failed))
+            Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), str(R.string.kundli_error_load_failed)))
         }
     }
 
@@ -50,7 +51,7 @@ class KundliRepository @Inject constructor(
             )
             Result.Success(created)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: str(R.string.kundli_error_save_kundli_failed))
+            Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), str(R.string.kundli_error_save_kundli_failed)))
         }
     }
 
@@ -71,7 +72,7 @@ class KundliRepository @Inject constructor(
             )
             Result.Success(updated)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: str(R.string.kundli_error_update_failed))
+            Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), str(R.string.kundli_error_update_failed)))
         }
     }
 
@@ -79,7 +80,7 @@ class KundliRepository @Inject constructor(
         try {
             Result.Success(kundliApi.setPrimaryKundli(id))
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: str(R.string.kundli_error_set_primary_failed))
+            Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), str(R.string.kundli_error_set_primary_failed)))
         }
     }
 
@@ -88,7 +89,7 @@ class KundliRepository @Inject constructor(
             kundliApi.deleteKundli(id)
             Result.Success(Unit)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: str(R.string.kundli_error_delete_failed))
+            Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), str(R.string.kundli_error_delete_failed)))
         }
     }
 }

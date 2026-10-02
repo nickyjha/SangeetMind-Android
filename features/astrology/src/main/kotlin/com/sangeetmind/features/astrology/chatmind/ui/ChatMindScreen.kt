@@ -17,6 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.core.ui.components.ErrorCard
+import com.sangeetmind.core.ui.text.MarkdownText
 import com.sangeetmind.features.astrology.R
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
@@ -131,12 +133,11 @@ fun ChatMindScreen(
     ) { padding ->
         Column(modifier = Modifier.fillMaxSize().padding(padding)) {
             if (uiState.error != null) {
-                Card(
-                    modifier = Modifier.fillMaxWidth().padding(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
-                ) {
-                    Text(uiState.error!!, modifier = Modifier.padding(12.dp))
-                }
+                ErrorCard(
+                    message = uiState.error,
+                    onRetry = if (uiState.failedQuestion != null) viewModel::retry else null,
+                    modifier = Modifier.padding(12.dp)
+                )
             }
             if (uiState.messages.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {
@@ -183,7 +184,11 @@ private fun ChatBubble(message: ChatMessage) {
                         modifier = Modifier.padding(bottom = 4.dp)
                     )
                 }
-                Text(message.text)
+                if (isUser) {
+                    Text(message.text)
+                } else {
+                    MarkdownText(message.text, style = MaterialTheme.typography.bodyLarge)
+                }
             }
         }
     }

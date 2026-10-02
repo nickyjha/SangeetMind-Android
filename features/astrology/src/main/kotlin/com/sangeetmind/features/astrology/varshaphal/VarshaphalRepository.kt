@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.varshaphal
 
+import com.sangeetmind.core.network.friendlyErrorMessage
 import android.content.Context
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.di.IoDispatcher
@@ -41,8 +42,11 @@ class VarshaphalRepository @Inject constructor(
             } catch (e: Exception) {
                 Result.Error(
                     e,
-                    e.message ?: appContext.withAppLanguage(languageManager.current)
-                        .getString(R.string.varshaphal_error_load)
+                    friendlyErrorMessage(
+                        e,
+                        appContext.withAppLanguage(languageManager.current),
+                        appContext.withAppLanguage(languageManager.current).getString(R.string.varshaphal_error_load)
+                    )
                 )
             }
         }

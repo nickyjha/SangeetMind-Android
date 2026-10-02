@@ -79,10 +79,10 @@ class PlayerService : MediaSessionService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 Constants.NOTIFICATION_CHANNEL_ID,
-                Constants.NOTIFICATION_CHANNEL_NAME,
+                getString(R.string.audio_channel_name),
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
-                description = "Media playback controls"
+                description = getString(R.string.audio_channel_desc)
                 setShowBadge(false)
             }
 

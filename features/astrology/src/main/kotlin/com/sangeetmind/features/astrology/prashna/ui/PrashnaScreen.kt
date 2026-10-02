@@ -36,6 +36,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.components.ErrorCard
 import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.core.ui.language.LocalAppLanguage
 import com.sangeetmind.core.ui.language.astroTerm
@@ -114,8 +115,14 @@ fun PrashnaScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth().padding(top = 6.dp)
             )
-            uiState.error?.let {
-                Text(it, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 6.dp))
+            if (uiState.error != null && uiState.errorRetryable) {
+                ErrorCard(
+                    message = uiState.error,
+                    onRetry = { viewModel.ask() },
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            } else if (uiState.error != null) {
+                Text(uiState.error!!, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 6.dp))
             }
             Spacer(modifier = Modifier.height(12.dp))
             Button(onClick = viewModel::ask, enabled = !uiState.isAsking, modifier = Modifier.fillMaxWidth()) {

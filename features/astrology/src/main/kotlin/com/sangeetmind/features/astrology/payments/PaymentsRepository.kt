@@ -1,5 +1,7 @@
 package com.sangeetmind.features.astrology.payments
 
+import com.sangeetmind.core.common.language.withAppLanguage
+import com.sangeetmind.core.network.friendlyErrorMessage
 import android.content.Context
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.di.IoDispatcher
@@ -41,7 +43,7 @@ class PaymentsRepository @Inject constructor(
         try {
             Result.Success(pricingApi.getSkus(kind, lang = languageManager.current.code).skus)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: context.getString(R.string.payments_error_load_plans))
+            Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), context.withAppLanguage(languageManager.current).getString(R.string.payments_error_load_plans)))
         }
     }
 
@@ -49,7 +51,7 @@ class PaymentsRepository @Inject constructor(
         try {
             Result.Success(razorpayApi.createOrder(CreateOrderRequest(skuId)))
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: context.getString(R.string.payments_error_start_checkout))
+            Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), context.withAppLanguage(languageManager.current).getString(R.string.payments_error_start_checkout)))
         }
     }
 
@@ -67,7 +69,7 @@ class PaymentsRepository @Inject constructor(
             razorpayApi.verifyPayment(VerifyPaymentRequest(orderId, paymentId, signature))
             Result.Success(Unit)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: context.getString(R.string.payments_error_verify_payment))
+            Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), context.withAppLanguage(languageManager.current).getString(R.string.payments_error_verify_payment)))
         }
     }
 
@@ -93,7 +95,7 @@ class PaymentsRepository @Inject constructor(
                 )
             )
         } catch (e: Exception) {
-            Result.Error(e, serverDetail(e) ?: context.getString(R.string.payments_error_verify_payment))
+            Result.Error(e, serverDetail(e) ?: friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), context.withAppLanguage(languageManager.current).getString(R.string.payments_error_verify_payment)))
         }
     }
 
@@ -109,7 +111,7 @@ class PaymentsRepository @Inject constructor(
         try {
             Result.Success(razorpayApi.getPremiumStatus())
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: context.getString(R.string.payments_error_load_premium_status))
+            Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), context.withAppLanguage(languageManager.current).getString(R.string.payments_error_load_premium_status)))
         }
     }
 
@@ -117,7 +119,7 @@ class PaymentsRepository @Inject constructor(
         try {
             Result.Success(walletApi.createOrder(CreateOrderRequest(skuId)))
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: context.getString(R.string.payments_error_start_checkout))
+            Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), context.withAppLanguage(languageManager.current).getString(R.string.payments_error_start_checkout)))
         }
     }
 
@@ -126,7 +128,7 @@ class PaymentsRepository @Inject constructor(
         try {
             Result.Success(walletApi.reconcile())
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: context.getString(R.string.payments_error_load_wallet_balance))
+            Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), context.withAppLanguage(languageManager.current).getString(R.string.payments_error_load_wallet_balance)))
         }
     }
 
@@ -134,7 +136,7 @@ class PaymentsRepository @Inject constructor(
         try {
             Result.Success(walletApi.getBalance())
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: context.getString(R.string.payments_error_load_wallet_balance))
+            Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), context.withAppLanguage(languageManager.current).getString(R.string.payments_error_load_wallet_balance)))
         }
     }
 
@@ -142,7 +144,7 @@ class PaymentsRepository @Inject constructor(
         try {
             Result.Success(walletApi.getTransactions().transactions)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: context.getString(R.string.payments_error_load_transactions))
+            Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), context.withAppLanguage(languageManager.current).getString(R.string.payments_error_load_transactions)))
         }
     }
 
@@ -154,7 +156,7 @@ class PaymentsRepository @Inject constructor(
         try {
             Result.Success(walletApi.debit(WalletDebitRequest(skuId, idempotencyKey, amountPaise)))
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: context.getString(R.string.payments_error_spend_wallet))
+            Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), context.withAppLanguage(languageManager.current).getString(R.string.payments_error_spend_wallet)))
         }
     }
 }

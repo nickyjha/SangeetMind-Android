@@ -1,86 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">AstroGeet</string>
-    
-    <!-- Home Screen -->
-    <string name="home_title">AstroGeet</string>
-    <string name="home_daily_raag">आज का राग</string>
-    <string name="home_recommended">आपके लिए सुझाव</string>
-    
-    <!-- Raag Library -->
-    <string name="raag_library_title">राग लाइब्रेरी</string>
-    <string name="raag_search_hint">राग खोजें...</string>
-    <string name="raag_filter">फ़िल्टर</string>
-    <string name="raag_play">चलाएं</string>
-    <string name="raag_download">डाउनलोड</string>
-    <string name="raag_favorite">पसंदीदा</string>
-    
+
     <!-- Player -->
     <string name="player_play">चलाएं</string>
     <string name="player_pause">रोकें</string>
-    <string name="player_next">अगला</string>
-    <string name="player_previous">पिछला</string>
     <string name="player_shuffle">शफ़ल</string>
     <string name="player_repeat">दोहराएं</string>
     <string name="player_queue">कतार</string>
-    
+
     <!-- Meditation -->
     <string name="meditation_title">ध्यान</string>
-    <string name="meditation_start">सेशन शुरू करें</string>
     <string name="meditation_pause">रोकें</string>
     <string name="meditation_resume">फिर से शुरू करें</string>
-    
-    <!-- Astrology -->
-    <string name="astrology_title">ज्योतिष प्रोफ़ाइल</string>
-    <string name="astrology_name">नाम</string>
-    <string name="astrology_dob">जन्म की तारीख़</string>
-    <string name="astrology_time">जन्म का समय</string>
-    <string name="astrology_place">जन्म की जगह</string>
-    <string name="astrology_generate">सुझाव पाएँ</string>
-    
+
     <!-- Settings -->
     <string name="settings_title">सेटिंग्स</string>
-    <string name="settings_language">भाषा</string>
-    <string name="settings_playback_quality">प्लेबैक क्वालिटी</string>
-    <string name="settings_download_wifi_only">सिर्फ़ Wi-Fi पर डाउनलोड करें</string>
-    <string name="settings_notifications">नोटिफ़िकेशन</string>
-    <string name="settings_privacy">प्राइवेसी</string>
-    <string name="settings_about">ऐप के बारे में</string>
-    
+
     <!-- Auth -->
-    <string name="auth_login">लॉग इन</string>
-    <string name="auth_signup">साइन अप</string>
     <string name="auth_email">ईमेल</string>
     <string name="auth_password">पासवर्ड</string>
     <string name="auth_name">नाम</string>
-    <string name="auth_google_signin">Google से साइन इन करें</string>
-    
+
     <!-- Onboarding -->
-    <string name="onboarding_welcome">AstroGeet में आपका स्वागत है</string>
-    <string name="onboarding_description">रागों के साथ ध्यान करें, मन को सुकून दें</string>
-    <string name="onboarding_next">अगला</string>
-    <string name="onboarding_skip">छोड़ें</string>
     <string name="onboarding_get_started">शुरू करें</string>
-    
+
     <!-- Common -->
-    <string name="loading">लोड हो रहा है…</string>
-    <string name="error_generic">कुछ गड़बड़ हो गई। फिर से कोशिश करें।</string>
-    <string name="retry">फिर से कोशिश करें</string>
     <string name="cancel">रद्द करें</string>
     <string name="ok">ठीक है</string>
-    <string name="save">सेव करें</string>
-    <string name="search">खोजें</string>
-    <string name="filter">फ़िल्टर</string>
 
-    <!-- Content Descriptions (Accessibility) -->
-    <string name="cd_play_button">चलाएं बटन</string>
-    <string name="cd_pause_button">रोकें बटन</string>
-    <string name="cd_next_button">अगला ट्रैक बटन</string>
-    <string name="cd_previous_button">पिछला ट्रैक बटन</string>
-    <string name="cd_favorite_button">पसंदीदा में जोड़ें बटन</string>
-    <string name="cd_download_button">डाउनलोड बटन</string>
-    <string name="cd_search_button">खोज बटन</string>
-    <string name="cd_voice_search_button">वॉइस खोज बटन</string>
-    <string name="cd_raag_artwork">राग की तस्वीर</string>
 </resources>
 

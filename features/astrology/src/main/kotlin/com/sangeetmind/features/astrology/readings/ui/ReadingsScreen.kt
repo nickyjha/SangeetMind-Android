@@ -14,6 +14,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.core.ui.components.ErrorCard
+import com.sangeetmind.core.ui.text.MarkdownText
+import com.sangeetmind.core.ui.text.markdownInline
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.flattenToReadableText
 import com.sangeetmind.features.astrology.readings.CAREER_QUESTIONS
@@ -91,9 +94,7 @@ fun ReadingsScreen(
                     .padding(16.dp)
             ) {
                 if (uiState.error != null) {
-                    Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)) {
-                        Text(uiState.error!!, modifier = Modifier.padding(12.dp))
-                    }
+                    ErrorCard(message = uiState.error, onRetry = viewModel::retry)
                     Spacer(modifier = Modifier.height(16.dp))
                 }
 
@@ -406,41 +407,43 @@ private fun CareerTab(
         if (text != null) {
             Spacer(modifier = Modifier.height(16.dp))
             Card(modifier = Modifier.fillMaxWidth()) {
-                Text(text, modifier = Modifier.padding(16.dp))
+                MarkdownText(text, modifier = Modifier.padding(16.dp))
             }
         }
-        return
-    }
-    val r = answer?.reading ?: return
-    careerVerdictLabel(answer.facts.verdict)?.let { label ->
-        Spacer(modifier = Modifier.height(16.dp))
-        Card(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(stringResource(R.string.readings_career_answer), style = MaterialTheme.typography.labelLarge)
-                Text(
-                    stringResource(label),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.primary
+    } else {
+        val r = answer?.reading
+        if (answer != null && r != null) {
+            careerVerdictLabel(answer.facts.verdict)?.let { label ->
+                Spacer(modifier = Modifier.height(16.dp))
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(stringResource(R.string.readings_career_answer), style = MaterialTheme.typography.labelLarge)
+                        Text(
+                            stringResource(label),
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            }
+            LifeReadingCards(
+                LifeReadingContent(
+                    summary = r.summary,
+                    natureTitle = stringResource(R.string.readings_career_outlook),
+                    nature = r.outlook,
+                    timingTitle = stringResource(R.string.readings_career_timing),
+                    timing = r.timing,
+                    strengthsTitle = stringResource(R.string.readings_children_strengths),
+                    strengths = r.strengths,
+                    careTitle = stringResource(R.string.readings_children_care),
+                    care = r.carePoints,
+                    advice = r.advice,
+                    remedies = r.remedies,
+                    disclaimer = stringResource(R.string.readings_career_disclaimer)
                 )
-            }
+            )
         }
     }
-    LifeReadingCards(
-        LifeReadingContent(
-            summary = r.summary,
-            natureTitle = stringResource(R.string.readings_career_outlook),
-            nature = r.outlook,
-            timingTitle = stringResource(R.string.readings_career_timing),
-            timing = r.timing,
-            strengthsTitle = stringResource(R.string.readings_children_strengths),
-            strengths = r.strengths,
-            careTitle = stringResource(R.string.readings_children_care),
-            care = r.carePoints,
-            advice = r.advice,
-            remedies = r.remedies,
-            disclaimer = stringResource(R.string.readings_career_disclaimer)
-        )
-    )
 }
 
 @StringRes
@@ -502,7 +505,7 @@ private fun StrengthsTab(
                     remedy.mantraText.forEach { line -> Text(line) }
                     remedy.why?.let {
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        MarkdownText(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             }
@@ -519,7 +522,7 @@ private fun SectionCard(title: String, items: List<String>) {
             items.forEach { item ->
                 Row(verticalAlignment = Alignment.Top) {
                     Text("• ")
-                    Text(item)
+                    Text(markdownInline(item))
                 }
             }
         }
@@ -559,47 +562,48 @@ private fun MarriageTab(
         if (isLoading) CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
         else Text(stringResource(R.string.readings_marriage_generate))
     }
-    if (reading == null) return
+    if (reading != null) {
 
-    Spacer(modifier = Modifier.height(16.dp))
-    TextCard(stringResource(R.string.readings_marriage_summary), reading.summary)
-    Spacer(modifier = Modifier.height(12.dp))
-    TextCard(stringResource(R.string.readings_marriage_spouse), reading.spouseNature)
-    if (reading.timing.isNotEmpty()) {
+        Spacer(modifier = Modifier.height(16.dp))
+        TextCard(stringResource(R.string.readings_marriage_summary), reading.summary)
         Spacer(modifier = Modifier.height(12.dp))
-        TimingCard(
-            title = stringResource(
-                if (readingIsForMarried) R.string.readings_marriage_timing_married
-                else R.string.readings_marriage_timing_single
-            ),
-            timing = reading.timing
-        )
-    }
-    if (reading.relationshipStrengths.isNotEmpty()) {
-        Spacer(modifier = Modifier.height(12.dp))
-        SectionCard(stringResource(R.string.readings_marriage_strengths), reading.relationshipStrengths)
-    }
-    if (reading.challenges.isNotEmpty()) {
-        Spacer(modifier = Modifier.height(12.dp))
-        SectionCard(stringResource(R.string.readings_marriage_challenges), reading.challenges)
-    }
-    if (reading.manglikNote.isNotBlank()) {
-        Spacer(modifier = Modifier.height(12.dp))
-        TextCard(stringResource(R.string.readings_marriage_manglik), reading.manglikNote)
-    }
-    if (reading.advice.isNotEmpty()) {
-        Spacer(modifier = Modifier.height(12.dp))
-        SectionCard(stringResource(R.string.readings_marriage_advice), reading.advice)
-    }
-    if (reading.remedies.isNotEmpty()) {
-        Spacer(modifier = Modifier.height(12.dp))
-        SectionCard(
-            stringResource(R.string.readings_marriage_remedies),
-            reading.remedies.map { r ->
-                if (r.forPlanet.isBlank()) r.remedy
-                else stringResource(R.string.readings_marriage_remedy_fmt, r.remedy, astroTerm(r.forPlanet))
-            }
-        )
+        TextCard(stringResource(R.string.readings_marriage_spouse), reading.spouseNature)
+        if (reading.timing.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(12.dp))
+            TimingCard(
+                title = stringResource(
+                    if (readingIsForMarried) R.string.readings_marriage_timing_married
+                    else R.string.readings_marriage_timing_single
+                ),
+                timing = reading.timing
+            )
+        }
+        if (reading.relationshipStrengths.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(12.dp))
+            SectionCard(stringResource(R.string.readings_marriage_strengths), reading.relationshipStrengths)
+        }
+        if (reading.challenges.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(12.dp))
+            SectionCard(stringResource(R.string.readings_marriage_challenges), reading.challenges)
+        }
+        if (reading.manglikNote.isNotBlank()) {
+            Spacer(modifier = Modifier.height(12.dp))
+            TextCard(stringResource(R.string.readings_marriage_manglik), reading.manglikNote)
+        }
+        if (reading.advice.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(12.dp))
+            SectionCard(stringResource(R.string.readings_marriage_advice), reading.advice)
+        }
+        if (reading.remedies.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(12.dp))
+            SectionCard(
+                stringResource(R.string.readings_marriage_remedies),
+                reading.remedies.map { r ->
+                    if (r.forPlanet.isBlank()) r.remedy
+                    else stringResource(R.string.readings_marriage_remedy_fmt, r.remedy, astroTerm(r.forPlanet))
+                }
+            )
+        }
     }
 }
 
@@ -704,12 +708,13 @@ private fun LifeReadingCards(r: LifeReadingContent) {
 
 @Composable
 private fun TextCard(title: String, body: String) {
-    if (body.isBlank()) return
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(title, style = MaterialTheme.typography.titleMedium)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(body)
+    if (body.isNotBlank()) {
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(title, style = MaterialTheme.typography.titleMedium)
+                Spacer(modifier = Modifier.height(8.dp))
+                MarkdownText(body, style = MaterialTheme.typography.bodyLarge)
+            }
         }
     }
 }
@@ -767,7 +772,7 @@ private fun TimingCard(title: String, timing: List<MarriageTiming>) {
                         )
                     }
                     if (w.why.isNotBlank()) {
-                        Text(w.why, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(top = 6.dp))
+                        MarkdownText(w.why, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(top = 6.dp))
                     }
                 }
             }
@@ -803,7 +808,7 @@ private fun PreviewCard(preview: ReadingPreview?) {
                     }
                 }
                 Text(
-                    preview.teaser.forLanguage(languageCode),
+                    markdownInline(preview.teaser.forLanguage(languageCode)),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 8.dp)
                 )
@@ -877,34 +882,35 @@ private fun SmallTab(
         if (isLoading) CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
         else Text(stringResource(R.string.readings_small_generate_fmt, stringResource(smallTopicLabel(topic))))
     }
-    if (reading == null) return
+    if (reading != null) {
 
-    Spacer(modifier = Modifier.height(16.dp))
-    TextCard(stringResource(R.string.readings_marriage_summary), reading.summary)
-    reading.points.forEach { p ->
+        Spacer(modifier = Modifier.height(16.dp))
+        TextCard(stringResource(R.string.readings_marriage_summary), reading.summary)
+        reading.points.forEach { p ->
+            Spacer(modifier = Modifier.height(12.dp))
+            TextCard(p.title, p.text)
+        }
+        if (reading.tip.isNotBlank()) {
+            Spacer(modifier = Modifier.height(12.dp))
+            TextCard(stringResource(R.string.readings_small_tip), reading.tip)
+        }
+        if (reading.remedies.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(12.dp))
+            SectionCard(
+                stringResource(R.string.readings_marriage_remedies),
+                reading.remedies.map { rem ->
+                    if (rem.forPlanet.isBlank()) rem.remedy
+                    else stringResource(R.string.readings_marriage_remedy_fmt, rem.remedy, astroTerm(rem.forPlanet))
+                }
+            )
+        }
         Spacer(modifier = Modifier.height(12.dp))
-        TextCard(p.title, p.text)
-    }
-    if (reading.tip.isNotBlank()) {
-        Spacer(modifier = Modifier.height(12.dp))
-        TextCard(stringResource(R.string.readings_small_tip), reading.tip)
-    }
-    if (reading.remedies.isNotEmpty()) {
-        Spacer(modifier = Modifier.height(12.dp))
-        SectionCard(
-            stringResource(R.string.readings_marriage_remedies),
-            reading.remedies.map { rem ->
-                if (rem.forPlanet.isBlank()) rem.remedy
-                else stringResource(R.string.readings_marriage_remedy_fmt, rem.remedy, astroTerm(rem.forPlanet))
-            }
+        Text(
+            stringResource(R.string.readings_small_disclaimer),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
-    Spacer(modifier = Modifier.height(12.dp))
-    Text(
-        stringResource(R.string.readings_small_disclaimer),
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
-    )
 }
 
 /** Lifetime dasha story: description, generate button, then summary, "right now" and one card
@@ -922,81 +928,82 @@ private fun DashaStoryTab(isLoading: Boolean, onGenerate: () -> Unit, reading: D
         if (isLoading) CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
         else Text(stringResource(R.string.readings_dasha_generate))
     }
-    reading ?: return
-    val graha = LocalGrahaColors.current
-    val locale = LocalConfiguration.current.locales[0]
-    val fmt = DateTimeFormatter.ofPattern("MMM yyyy", locale)
-    fun month(iso: String) = runCatching { LocalDate.parse(iso).format(fmt) }.getOrDefault(iso)
+    if (reading != null) {
+        val graha = LocalGrahaColors.current
+        val locale = LocalConfiguration.current.locales[0]
+        val fmt = DateTimeFormatter.ofPattern("MMM yyyy", locale)
+        fun month(iso: String) = runCatching { LocalDate.parse(iso).format(fmt) }.getOrDefault(iso)
 
-    Spacer(modifier = Modifier.height(16.dp))
-    TextCard(stringResource(R.string.readings_marriage_summary), reading.summary)
-    Spacer(modifier = Modifier.height(12.dp))
-    TextCard(stringResource(R.string.readings_dasha_now), reading.now)
-    if (reading.timing.isNotEmpty()) {
         Spacer(modifier = Modifier.height(16.dp))
-        Text(stringResource(R.string.readings_dasha_chapters), style = MaterialTheme.typography.titleMedium)
-    }
-    reading.timing.forEach { ch ->
+        TextCard(stringResource(R.string.readings_marriage_summary), reading.summary)
         Spacer(modifier = Modifier.height(12.dp))
-        val current = ch.phase == "current"
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = if (current) {
-                CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-            } else {
-                CardDefaults.cardColors()
-            }
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    stringResource(R.string.readings_dasha_chapter_title, astroTerm(ch.mahadasha), ch.title),
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Text(
-                    stringResource(R.string.readings_dasha_chapter_span, month(ch.start), month(ch.end), ch.ageFrom, ch.ageTo),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                FlowRow(
-                    modifier = Modifier.padding(top = 6.dp),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    when (ch.phase) {
-                        "current" -> Chip(stringResource(R.string.readings_dasha_when_current), graha.surya)
-                        "past" -> Chip(stringResource(R.string.readings_dasha_when_past), MaterialTheme.colorScheme.onSurfaceVariant)
-                        "future" -> Chip(stringResource(R.string.readings_dasha_when_future), graha.budha)
-                    }
-                    when (ch.kind) {
-                        "growth" -> Chip(stringResource(R.string.readings_dasha_kind_growth), graha.guru)
-                        "steady" -> Chip(stringResource(R.string.readings_dasha_kind_steady), graha.chandra)
-                        "sensitive" -> Chip(stringResource(R.string.readings_dasha_kind_sensitive), graha.mangala)
-                    }
+        TextCard(stringResource(R.string.readings_dasha_now), reading.now)
+        if (reading.timing.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(stringResource(R.string.readings_dasha_chapters), style = MaterialTheme.typography.titleMedium)
+        }
+        reading.timing.forEach { ch ->
+            Spacer(modifier = Modifier.height(12.dp))
+            val current = ch.phase == "current"
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = if (current) {
+                    CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                } else {
+                    CardDefaults.cardColors()
                 }
-                if (ch.why.isNotBlank()) {
-                    Text(ch.why, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(top = 8.dp))
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        stringResource(R.string.readings_dasha_chapter_title, astroTerm(ch.mahadasha), ch.title),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Text(
+                        stringResource(R.string.readings_dasha_chapter_span, month(ch.start), month(ch.end), ch.ageFrom, ch.ageTo),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    FlowRow(
+                        modifier = Modifier.padding(top = 6.dp),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        when (ch.phase) {
+                            "current" -> Chip(stringResource(R.string.readings_dasha_when_current), graha.surya)
+                            "past" -> Chip(stringResource(R.string.readings_dasha_when_past), MaterialTheme.colorScheme.onSurfaceVariant)
+                            "future" -> Chip(stringResource(R.string.readings_dasha_when_future), graha.budha)
+                        }
+                        when (ch.kind) {
+                            "growth" -> Chip(stringResource(R.string.readings_dasha_kind_growth), graha.guru)
+                            "steady" -> Chip(stringResource(R.string.readings_dasha_kind_steady), graha.chandra)
+                            "sensitive" -> Chip(stringResource(R.string.readings_dasha_kind_sensitive), graha.mangala)
+                        }
+                    }
+                    if (ch.why.isNotBlank()) {
+                        MarkdownText(ch.why, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(top = 8.dp))
+                    }
                 }
             }
         }
-    }
-    if (reading.advice.isNotEmpty()) {
+        if (reading.advice.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(12.dp))
+            SectionCard(stringResource(R.string.readings_marriage_advice), reading.advice)
+        }
+        if (reading.remedies.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(12.dp))
+            SectionCard(
+                stringResource(R.string.readings_marriage_remedies),
+                reading.remedies.map { rem ->
+                    if (rem.forPlanet.isBlank()) rem.remedy
+                    else stringResource(R.string.readings_marriage_remedy_fmt, rem.remedy, astroTerm(rem.forPlanet))
+                }
+            )
+        }
         Spacer(modifier = Modifier.height(12.dp))
-        SectionCard(stringResource(R.string.readings_marriage_advice), reading.advice)
-    }
-    if (reading.remedies.isNotEmpty()) {
-        Spacer(modifier = Modifier.height(12.dp))
-        SectionCard(
-            stringResource(R.string.readings_marriage_remedies),
-            reading.remedies.map { rem ->
-                if (rem.forPlanet.isBlank()) rem.remedy
-                else stringResource(R.string.readings_marriage_remedy_fmt, rem.remedy, astroTerm(rem.forPlanet))
-            }
+        Text(
+            stringResource(R.string.readings_dasha_disclaimer),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
-    Spacer(modifier = Modifier.height(12.dp))
-    Text(
-        stringResource(R.string.readings_dasha_disclaimer),
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
-    )
 }

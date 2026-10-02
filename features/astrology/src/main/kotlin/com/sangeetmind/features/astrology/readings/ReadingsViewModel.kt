@@ -141,6 +141,26 @@ class ReadingsViewModel @Inject constructor(
         loadPreview()
     }
 
+    /** "Try again" on the error card: re-runs the open tab's reading (charged only on success). */
+    fun retry() {
+        if (_uiState.value.isLoading) return
+        when (_uiState.value.tab) {
+            ReadingTab.CAREER -> generateCareerReading()
+            ReadingTab.STRENGTHS -> generateStrengthsReading()
+            ReadingTab.MARRIAGE -> generateMarriageReading()
+            ReadingTab.SMALL -> generateSmallReading()
+            ReadingTab.CHILDREN -> generateChildrenReading()
+            ReadingTab.FOREIGN -> generateForeignReading()
+            ReadingTab.WEALTH -> generateWealthReading()
+            ReadingTab.PROPERTY -> generatePropertyReading()
+            ReadingTab.EDUCATION -> generateEducationReading()
+            ReadingTab.DEBT -> generateDebtReading()
+            ReadingTab.RELATIONSHIP -> generateRelationshipReading()
+            ReadingTab.HEALTH -> generateHealthReading()
+            ReadingTab.DASHA -> generateDashaStoryReading()
+        }
+    }
+
     fun setTab(tab: ReadingTab) {
         updateAndPreview { it.copy(tab = tab, error = null) }
     }

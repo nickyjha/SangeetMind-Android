@@ -3,4 +3,10 @@
     <!-- Transport failures shown instead of raw socket/DNS messages (FriendlyNetworkErrorInterceptor). -->
     <string name="net_err_offline">Can’t reach AstroGeet. Check your internet connection and try again.</string>
     <string name="net_err_timeout">AstroGeet is taking too long to respond. Please try again in a moment.</string>
+    <!-- friendlyErrorMessage(): HTTP / parse failures. -->
+    <string name="net_err_sign_in_again">Please sign in again.</string>
+    <string name="net_err_rate_limited">Too many requests. Please wait a moment and try again.</string>
+    <string name="net_err_bad_request">Something went wrong with that request.</string>
+    <string name="net_err_server">AstroGeet is having trouble right now. Please try again shortly.</string>
+    <string name="net_err_generic">Something went wrong. Please try again.</string>
 </resources>

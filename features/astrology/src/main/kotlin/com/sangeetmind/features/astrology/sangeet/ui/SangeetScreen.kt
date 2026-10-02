@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -54,6 +55,39 @@ private fun grahaToneFor(planetName: String): Color {
     }
 }
 
+/** Raag (lowercased) -> its traditional time + mood. The backend's per-track `purpose`
+ * is the same "Balance <lord> dasha" placeholder for every row, so show this instead. */
+private val RAAG_MOODS: Map<String, Int> = mapOf(
+    "bhairavi" to R.string.sangeet_raag_mood_bhairavi,
+    "ramkali" to R.string.sangeet_raag_mood_ramkali,
+    "yaman" to R.string.sangeet_raag_mood_yaman,
+    "darbari" to R.string.sangeet_raag_mood_darbari,
+    "darbari kanada" to R.string.sangeet_raag_mood_darbari_kanada,
+    "bhairav" to R.string.sangeet_raag_mood_bhairav,
+    "hindol" to R.string.sangeet_raag_mood_hindol,
+    "desh" to R.string.sangeet_raag_mood_desh,
+    "bageshri" to R.string.sangeet_raag_mood_bageshri,
+    "hansadhwani" to R.string.sangeet_raag_mood_hansadhwani,
+    "bihag" to R.string.sangeet_raag_mood_bihag,
+    "miyan ki malhar" to R.string.sangeet_raag_mood_miyan_ki_malhar,
+    "charukeshi" to R.string.sangeet_raag_mood_charukeshi,
+    "malkauns" to R.string.sangeet_raag_mood_malkauns,
+    "todi" to R.string.sangeet_raag_mood_todi,
+    "marwa" to R.string.sangeet_raag_mood_marwa,
+    "multani" to R.string.sangeet_raag_mood_multani,
+    "puriya dhanashri" to R.string.sangeet_raag_mood_puriya_dhanashri,
+    "shanmukhapriya" to R.string.sangeet_raag_mood_shanmukhapriya,
+    "natabhairavi" to R.string.sangeet_raag_mood_natabhairavi,
+    "kalyani" to R.string.sangeet_raag_mood_kalyani,
+    "hamsadhwani" to R.string.sangeet_raag_mood_hamsadhwani,
+    "mohanam" to R.string.sangeet_raag_mood_mohanam,
+    "abheri" to R.string.sangeet_raag_mood_abheri,
+    "hindolam" to R.string.sangeet_raag_mood_hindolam,
+    "suddha saveri" to R.string.sangeet_raag_mood_suddha_saveri,
+    "shankarabharanam" to R.string.sangeet_raag_mood_shankarabharanam,
+    "kambhoji" to R.string.sangeet_raag_mood_kambhoji
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SangeetScreen(
@@ -81,26 +115,28 @@ fun SangeetScreen(
         }
     ) { padding ->
         Column(modifier = Modifier.fillMaxSize().padding(padding)) {
-            ScrollableTabRow(selectedTabIndex = uiState.tab.ordinal) {
+            // Fixed (not scrollable) so all four tabs are always visible; labels may wrap
+            // to two lines instead of "Sound Healing" being cut off at the screen edge.
+            TabRow(selectedTabIndex = uiState.tab.ordinal) {
                 Tab(
                     selected = uiState.tab == SangeetTab.RAAG,
                     onClick = { viewModel.setTab(SangeetTab.RAAG) },
-                    text = { Text(stringResource(R.string.sangeet_tab_daily_raag)) }
+                    text = { Text(stringResource(R.string.sangeet_tab_daily_raag), maxLines = 2, textAlign = TextAlign.Center, style = MaterialTheme.typography.labelMedium) }
                 )
                 Tab(
                     selected = uiState.tab == SangeetTab.JAPA,
                     onClick = { viewModel.setTab(SangeetTab.JAPA) },
-                    text = { Text(stringResource(R.string.sangeet_tab_japa)) }
+                    text = { Text(stringResource(R.string.sangeet_tab_japa), maxLines = 2, textAlign = TextAlign.Center, style = MaterialTheme.typography.labelMedium) }
                 )
                 Tab(
                     selected = uiState.tab == SangeetTab.VOICE_HOROSCOPE,
                     onClick = { viewModel.setTab(SangeetTab.VOICE_HOROSCOPE) },
-                    text = { Text(stringResource(R.string.sangeet_tab_voice_horoscope)) }
+                    text = { Text(stringResource(R.string.sangeet_tab_voice_horoscope), maxLines = 2, textAlign = TextAlign.Center, style = MaterialTheme.typography.labelMedium) }
                 )
                 Tab(
                     selected = uiState.tab == SangeetTab.SOUND_HEALING,
                     onClick = { viewModel.setTab(SangeetTab.SOUND_HEALING) },
-                    text = { Text(stringResource(R.string.sangeet_tab_sound_healing)) }
+                    text = { Text(stringResource(R.string.sangeet_tab_sound_healing), maxLines = 2, textAlign = TextAlign.Center, style = MaterialTheme.typography.labelMedium) }
                 )
             }
 
@@ -186,8 +222,12 @@ private fun DailyRaagTab(playlist: com.sangeetmind.libs.models.RaagPlaylist?) {
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(astroTerm(track.raag), style = MaterialTheme.typography.titleMedium)
+                    // Traditional time + mood per raag; the generic dasha line (already in
+                    // the header) is only a fallback for a raag we don't know.
+                    val moodRes = RAAG_MOODS[track.raag.trim().lowercase()]
                     Text(
-                        stringResource(R.string.sangeet_raag_track_purpose_fmt, mahadasha),
+                        if (moodRes != null) stringResource(moodRes)
+                        else stringResource(R.string.sangeet_raag_track_purpose_fmt, mahadasha),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -238,7 +278,7 @@ private fun JapaTab(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Column {
-                                Text(tally.mantraId, style = MaterialTheme.typography.bodyMedium)
+                                Text(mantraDisplayName(tally.mantraId), style = MaterialTheme.typography.bodyMedium)
                                 Text(
                                     if (tally.sessions == 1) stringResource(R.string.sangeet_japa_session_one)
                                     else stringResource(R.string.sangeet_japa_sessions_fmt, tally.sessions),
@@ -254,6 +294,18 @@ private fun JapaTab(
         }
     }
 }
+
+/** Server mantra ids are slugs ("generic", "gayatri_mantra") — show a readable name. */
+@Composable
+private fun mantraDisplayName(mantraId: String): String =
+    if (mantraId.isBlank() || mantraId.equals("generic", ignoreCase = true)) {
+        stringResource(R.string.sangeet_japa_mantra_generic)
+    } else {
+        astroTerm(
+            mantraId.replace('_', ' ').replace('-', ' ').trim()
+                .split(' ').filter { it.isNotEmpty() }.joinToString(" ") { w -> w.replaceFirstChar { it.uppercase() } }
+        )
+    }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

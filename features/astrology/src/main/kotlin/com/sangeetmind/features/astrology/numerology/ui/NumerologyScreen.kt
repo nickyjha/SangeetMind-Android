@@ -22,6 +22,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.components.ErrorCard
 import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.core.ui.language.astroTerm
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
@@ -145,16 +146,7 @@ fun NumerologyScreen(
 
             if (uiState.error != null) {
                 Spacer(modifier = Modifier.height(12.dp))
-                Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)) {
-                    Row(
-                        modifier = Modifier.padding(12.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(Icons.Default.Warning, null, tint = MaterialTheme.colorScheme.error)
-                        Text(uiState.error!!, color = MaterialTheme.colorScheme.onErrorContainer)
-                    }
-                }
+                ErrorCard(message = uiState.error, onRetry = { viewModel.analyze() })
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -328,53 +320,54 @@ private fun VedicNumberRow(label: String, detail: VedicNumberDetail) {
 
 @Composable
 private fun LoShuGridCard(grid: LoShuGrid) {
-    if (grid.gridDisplay.isEmpty()) return
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(stringResource(R.string.numerology_lo_shu_grid), style = MaterialTheme.typography.titleMedium)
-            if (grid.interpretationSummary.isNotBlank()) {
-                Text(
-                    grid.interpretationSummary,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 2.dp)
-                )
-            }
-            Spacer(modifier = Modifier.height(12.dp))
-            grid.gridDisplay.forEach { row ->
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    row.forEach { cell ->
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .aspectRatio(1f)
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(MaterialTheme.colorScheme.surfaceVariant),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(cell.ifBlank { "–" }, style = MaterialTheme.typography.titleMedium)
+    if (grid.gridDisplay.isNotEmpty()) {
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(stringResource(R.string.numerology_lo_shu_grid), style = MaterialTheme.typography.titleMedium)
+                if (grid.interpretationSummary.isNotBlank()) {
+                    Text(
+                        grid.interpretationSummary,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 2.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                grid.gridDisplay.forEach { row ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        row.forEach { cell ->
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .aspectRatio(1f)
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(MaterialTheme.colorScheme.surfaceVariant),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(cell.ifBlank { "–" }, style = MaterialTheme.typography.titleMedium)
+                            }
                         }
                     }
                 }
-            }
-            if (grid.missingNumbers.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    stringResource(R.string.numerology_missing_fmt, grid.missingNumbers.joinToString(", ")),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            if (grid.repeatedNumbers.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    stringResource(R.string.numerology_repeated_fmt, grid.repeatedNumbers.joinToString(", ")),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                if (grid.missingNumbers.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        stringResource(R.string.numerology_missing_fmt, grid.missingNumbers.joinToString(", ")),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                if (grid.repeatedNumbers.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        stringResource(R.string.numerology_repeated_fmt, grid.repeatedNumbers.joinToString(", ")),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         }
     }

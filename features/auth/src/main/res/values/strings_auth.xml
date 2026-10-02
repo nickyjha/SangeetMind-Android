@@ -54,4 +54,7 @@
     <!-- Google -->
     <string name="auth_error_google_failed">Google sign in failed</string>
     <string name="auth_error_google_not_configured">Google sign in is not set up for this build</string>
+    <string name="auth_error_wrong_credentials">Email or password is wrong. Please check and try again.</string>
+    <string name="auth_error_email_in_use">An account with this email already exists. Please log in instead.</string>
+    <string name="auth_error_no_google_account">No Google account found on this phone</string>
 </resources>

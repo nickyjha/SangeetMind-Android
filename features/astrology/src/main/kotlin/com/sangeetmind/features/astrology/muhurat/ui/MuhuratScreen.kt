@@ -19,6 +19,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangeetmind.core.ui.components.ErrorCard
 import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.core.ui.language.astroTerm
 import com.sangeetmind.features.astrology.R
@@ -124,16 +125,7 @@ fun MuhuratScreen(
 
             if (uiState.error != null) {
                 Spacer(modifier = Modifier.height(16.dp))
-                Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)) {
-                    Row(
-                        modifier = Modifier.padding(12.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(Icons.Default.Warning, null, tint = MaterialTheme.colorScheme.error)
-                        Text(uiState.error!!, color = MaterialTheme.colorScheme.onErrorContainer)
-                    }
-                }
+                ErrorCard(message = uiState.error, onRetry = { viewModel.findMuhurat() })
             }
 
             Spacer(modifier = Modifier.height(20.dp))

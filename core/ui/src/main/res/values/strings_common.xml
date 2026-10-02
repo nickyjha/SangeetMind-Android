@@ -5,6 +5,7 @@
     <string name="common_app_name">AstroGeet</string>
     <string name="common_back">Back</string>
     <string name="common_retry">Retry</string>
+    <string name="common_try_again">Try again</string>
     <string name="common_refresh">Refresh</string>
     <string name="common_loading">Loading…</string>
     <string name="common_error_generic">Something went wrong. Please try again.</string>

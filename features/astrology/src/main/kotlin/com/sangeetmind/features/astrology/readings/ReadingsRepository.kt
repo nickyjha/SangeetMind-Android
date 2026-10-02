@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.readings
 
+import com.sangeetmind.core.network.friendlyErrorMessage
 import android.content.Context
 import androidx.annotation.StringRes
 import com.sangeetmind.core.common.Result
@@ -151,7 +152,7 @@ class ReadingsRepository @Inject constructor(
             try {
                 Result.Success(llmApi.getReadingPreview(ReadingPreviewRequest(birthDetails(kundli), topic, status)))
             } catch (e: Exception) {
-                Result.Error(e, e.message ?: "")
+                Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current)))
             }
         }
 
@@ -192,7 +193,7 @@ class ReadingsRepository @Inject constructor(
         val response = try {
             call(kundli)
         } catch (e: Exception) {
-            return@withContext Result.Error(e, e.message ?: str(errorRes))
+            return@withContext Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), str(errorRes)))
         }
         if (!succeeded(response)) {
             return@withContext Result.Error(IllegalStateException("Reading failed"), str(errorRes))

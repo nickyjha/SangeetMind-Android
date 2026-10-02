@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.horoscope
 
+import com.sangeetmind.core.network.friendlyErrorMessage
 import android.content.Context
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.di.IoDispatcher
@@ -31,7 +32,7 @@ class HoroscopeRepository @Inject constructor(
         try {
             Result.Success(horoscopeApi.getDailyForSign(sign, lang = languageManager.current.code).horoscope)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: str(R.string.horoscope_error_daily))
+            Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), str(R.string.horoscope_error_daily)))
         }
     }
 
@@ -39,7 +40,7 @@ class HoroscopeRepository @Inject constructor(
         try {
             Result.Success(horoscopeApi.getWeekly(sign, lang = languageManager.current.code).horoscope)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: str(R.string.horoscope_error_weekly))
+            Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), str(R.string.horoscope_error_weekly)))
         }
     }
 
@@ -47,7 +48,7 @@ class HoroscopeRepository @Inject constructor(
         try {
             Result.Success(horoscopeApi.getMonthly(sign, lang = languageManager.current.code).horoscope)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: str(R.string.horoscope_error_monthly))
+            Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), str(R.string.horoscope_error_monthly)))
         }
     }
 
@@ -55,7 +56,7 @@ class HoroscopeRepository @Inject constructor(
         try {
             Result.Success(horoscopeApi.getYearly(sign, lang = languageManager.current.code).horoscope)
         } catch (e: Exception) {
-            Result.Error(e, e.message ?: str(R.string.horoscope_error_yearly))
+            Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), str(R.string.horoscope_error_yearly)))
         }
     }
 }

@@ -8,6 +8,7 @@ import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -33,72 +34,21 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sangeetmind.core.common.language.findActivity
 import com.sangeetmind.core.network.SangeetMindMessagingService
 import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.core.ui.components.ErrorCard
 import com.sangeetmind.core.ui.language.LanguagePickerAction
 import com.sangeetmind.core.ui.language.astroTerm
-import com.sangeetmind.core.ui.theme.GrahaBudha
-import com.sangeetmind.core.ui.theme.GrahaBudhaDeep
-import com.sangeetmind.core.ui.theme.GrahaChandra
-import com.sangeetmind.core.ui.theme.GrahaChandraDeep
-import com.sangeetmind.core.ui.theme.GrahaGuru
-import com.sangeetmind.core.ui.theme.GrahaGuruDeep
-import com.sangeetmind.core.ui.theme.GrahaMangala
-import com.sangeetmind.core.ui.theme.GrahaMangalaDeep
-import com.sangeetmind.core.ui.theme.GrahaRahu
-import com.sangeetmind.core.ui.theme.GrahaRahuDeep
-import com.sangeetmind.core.ui.theme.GrahaShani
-import com.sangeetmind.core.ui.theme.GrahaShaniDeep
-import com.sangeetmind.core.ui.theme.GrahaShukra
-import com.sangeetmind.core.ui.theme.GrahaShukraDeep
-import com.sangeetmind.core.ui.theme.GrahaSurya
-import com.sangeetmind.core.ui.theme.GrahaSuryaDeep
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.dashboard.DashboardViewModel
 import com.sangeetmind.features.astrology.dashboard.NotificationNudge
+import com.sangeetmind.features.astrology.home.TabRootTopBar
+import com.sangeetmind.features.astrology.home.themedTone
 import com.sangeetmind.libs.models.DailyHoroscope
 import com.sangeetmind.libs.models.PanchangResponse
 import com.sangeetmind.libs.models.toTitleCase
 
-/** Which graha (if any) a destination is tinted with — see [Graha.tones]. */
+/** Which graha (if any) a destination is tinted with — see home/MainTabs.kt themedTone(). */
 enum class Graha { SURYA, CHANDRA, MANGALA, BUDHA, GURU, SHUKRA, SHANI, RAHU }
-
-/**
- * A graha's two fixed tones (bright/deep, from Color.kt) plus [themed] — whichever of
- * the two is correct for the theme active right now. [themed] is what a plain icon or
- * top-bar tint should use; [bright]/[deep] together are for a featured tile's gradient,
- * which deliberately uses both ends in every theme (see [DestinationCard]).
- */
-private data class GrahaTones(val bright: Color, val deep: Color, val themed: Color)
-
-@Composable
-private fun Graha.tones(): GrahaTones {
-    val local = LocalGrahaColors.current
-    return when (this) {
-        Graha.SURYA -> GrahaTones(GrahaSurya, GrahaSuryaDeep, local.surya)
-        Graha.CHANDRA -> GrahaTones(GrahaChandra, GrahaChandraDeep, local.chandra)
-        Graha.MANGALA -> GrahaTones(GrahaMangala, GrahaMangalaDeep, local.mangala)
-        Graha.BUDHA -> GrahaTones(GrahaBudha, GrahaBudhaDeep, local.budha)
-        Graha.GURU -> GrahaTones(GrahaGuru, GrahaGuruDeep, local.guru)
-        Graha.SHUKRA -> GrahaTones(GrahaShukra, GrahaShukraDeep, local.shukra)
-        Graha.SHANI -> GrahaTones(GrahaShani, GrahaShaniDeep, local.shani)
-        Graha.RAHU -> GrahaTones(GrahaRahu, GrahaRahuDeep, local.rahu)
-    }
-}
-
-/**
- * [graha] is the destination's Navagraha association, if any — the Navagraha system
- * (see the design pitch): each core astrology feature is tinted with the planet that
- * traditionally governs it, so a returning user recognizes tiles by color before
- * reading the label. Secondary/monetization destinations (no graha association)
- * pass null and render as calm, neutral tiles so the core features keep the eye.
- */
-data class DashboardDestination(
-    val label: String,
-    val icon: ImageVector,
-    val graha: Graha? = null,
-    val featured: Boolean = false,
-    val onClick: () -> Unit
-)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -106,27 +56,12 @@ fun DashboardScreen(
     onOpenKundliList: () -> Unit,
     onOpenKundliOnboarding: () -> Unit,
     onOpenHoroscope: () -> Unit,
-    onOpenPanchang: () -> Unit,
-    onOpenMuhurat: () -> Unit,
-    onOpenMatch: () -> Unit,
-    onOpenNumerology: () -> Unit,
-    onOpenInterpretation: () -> Unit,
     onOpenChart: () -> Unit,
-    onOpenChatMind: () -> Unit,
-    onOpenPayments: () -> Unit,
-    onOpenReports: () -> Unit,
     onOpenReadings: () -> Unit,
-    onOpenSettings: () -> Unit = {},
-    onOpenMarketplace: () -> Unit,
-    onOpenReferrals: () -> Unit,
-    onOpenSangeet: () -> Unit,
-    onOpenVarshaphal: () -> Unit,
-    onOpenGochar: () -> Unit,
-    onOpenEclipses: () -> Unit,
-    onOpenFestivals: () -> Unit,
-    onOpenPrashna: () -> Unit,
+    onOpenMatch: () -> Unit,
+    onOpenPanchang: () -> Unit,
+    onOpenChatMind: () -> Unit,
     onAskChatMind: (String) -> Unit,
-    onOpenHolistic: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -162,43 +97,27 @@ fun DashboardScreen(
 
     // Resolved here (composable scope) rather than inside the LazyColumn builder, which
     // is a LazyListScope lambda where stringResource() can't be called.
-    val destinations = listOf(
-        DashboardDestination(stringResource(R.string.dashboard_dest_birth_chart), Icons.Default.DonutLarge, Graha.SHANI, featured = true, onClick = onOpenChart),
-        DashboardDestination(stringResource(R.string.dashboard_dest_horoscope), Icons.Default.Insights, Graha.SURYA, featured = true, onClick = onOpenHoroscope),
-        DashboardDestination(stringResource(R.string.dashboard_dest_panchang), Icons.Default.CalendarMonth, Graha.CHANDRA, onClick = onOpenPanchang),
-        DashboardDestination(stringResource(R.string.dashboard_dest_gochar), Icons.Default.Public, Graha.SHANI, onClick = onOpenGochar),
-        DashboardDestination(stringResource(R.string.dashboard_dest_eclipses), Icons.Default.DarkMode, Graha.RAHU, onClick = onOpenEclipses),
-        DashboardDestination(stringResource(R.string.dashboard_dest_festivals), Icons.Default.Celebration, Graha.SHUKRA, onClick = onOpenFestivals),
-        DashboardDestination(stringResource(R.string.dashboard_dest_prashna), Icons.Default.HelpOutline, Graha.BUDHA, onClick = onOpenPrashna),
-        DashboardDestination(stringResource(R.string.dashboard_dest_muhurat), Icons.Default.Schedule, Graha.GURU, onClick = onOpenMuhurat),
-        DashboardDestination(stringResource(R.string.dashboard_dest_match), Icons.Default.Favorite, Graha.MANGALA, onClick = onOpenMatch),
-        DashboardDestination(stringResource(R.string.dashboard_dest_numerology), Icons.Default.Tag, Graha.BUDHA, onClick = onOpenNumerology),
-        DashboardDestination(stringResource(R.string.dashboard_dest_full_reading), Icons.Default.AutoStories, Graha.SHUKRA, onClick = onOpenInterpretation),
-        DashboardDestination(stringResource(R.string.dashboard_dest_chatmind), Icons.Default.Chat, Graha.RAHU, onClick = onOpenChatMind),
-        DashboardDestination(stringResource(R.string.dashboard_dest_varshaphal), Icons.Default.Autorenew, onClick = onOpenVarshaphal),
-        DashboardDestination(stringResource(R.string.dashboard_dest_holistic), Icons.Default.AutoAwesome, onClick = onOpenHolistic),
-        DashboardDestination(stringResource(R.string.dashboard_dest_payments), Icons.Default.AccountBalanceWallet, onClick = onOpenPayments),
-        DashboardDestination(stringResource(R.string.dashboard_dest_reports), Icons.Default.PictureAsPdf, onClick = onOpenReports),
-        DashboardDestination(stringResource(R.string.dashboard_dest_readings), Icons.Default.Psychology, onClick = onOpenReadings),
-        DashboardDestination(stringResource(R.string.dashboard_dest_referrals), Icons.Default.CardGiftcard, onClick = onOpenReferrals),
-        DashboardDestination(stringResource(R.string.dashboard_dest_sangeet), Icons.Default.MusicNote, onClick = onOpenSangeet)
+    val quickActions = listOf(
+        QuickAction(stringResource(R.string.dashboard_home_quick_kundli), Icons.Default.DonutLarge, Graha.SHANI, onOpenChart),
+        QuickAction(stringResource(R.string.dashboard_home_quick_readings), Icons.Default.Psychology, Graha.SHUKRA, onOpenReadings),
+        QuickAction(stringResource(R.string.dashboard_home_quick_match), Icons.Default.Favorite, Graha.MANGALA, onOpenMatch),
+        QuickAction(stringResource(R.string.dashboard_home_quick_panchang), Icons.Default.CalendarMonth, Graha.CHANDRA, onOpenPanchang)
     )
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(CoreR.string.common_app_name)) },
+            // Settings moved to the Me tab; the quick kundli switcher stays here.
+            TabRootTopBar(
+                title = stringResource(CoreR.string.common_app_name),
                 actions = {
                     LanguagePickerAction()
-                    IconButton(onClick = onOpenSettings) {
-                        Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.dashboard_settings))
-                    }
                     IconButton(onClick = onOpenKundliList) {
                         Icon(Icons.Default.People, contentDescription = stringResource(R.string.dashboard_my_kundlis))
                     }
                 }
             )
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         LazyColumn(
             modifier = Modifier
@@ -279,39 +198,20 @@ fun DashboardScreen(
                         }
                     }
                     uiState.error != null -> {
-                        Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)) {
-                            Text(
-                                text = uiState.error!!,
-                                modifier = Modifier.padding(16.dp),
-                                color = MaterialTheme.colorScheme.onErrorContainer
-                            )
-                        }
+                        ErrorCard(message = uiState.error, onRetry = viewModel::refresh)
                     }
                 }
             }
 
             if (!uiState.hasNoKundlis) {
                 item {
-                    Spacer(modifier = Modifier.height(24.dp))
-                    Text(stringResource(R.string.dashboard_explore), style = MaterialTheme.typography.titleMedium)
-                    Spacer(modifier = Modifier.height(12.dp))
-                }
-
-                items(destinations.chunked(2)) { row ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        row.forEach { destination ->
-                            Box(modifier = Modifier.weight(1f)) {
-                                DestinationCard(destination)
-                            }
-                        }
-                        if (row.size == 1) {
-                            Spacer(modifier = Modifier.weight(1f))
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Text(stringResource(R.string.dashboard_home_quick_actions), style = MaterialTheme.typography.titleMedium)
+                    Spacer(modifier = Modifier.height(10.dp))
+                    QuickActionsRow(quickActions)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    AskPromptCard(onClick = onOpenChatMind)
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         }
@@ -379,6 +279,27 @@ private val TODAY_COLOR_MAP: Map<String, Color> = mapOf(
     "cream" to Color(0xFFE8DCC0)
 )
 
+private val COLOR_ALIASES: Map<String, String> = mapOf(
+    "saffron" to "orange", "grey" to "silver", "gray" to "silver", "golden" to "gold",
+    "navy" to "blue", "indigo" to "purple", "lavender" to "purple", "magenta" to "pink"
+)
+
+/**
+ * Free-text colour ("Light Blue", "Saffron", "dark green") -> swatch, matched by the
+ * colour word it contains (the last one wins: in "sky blue" the noun comes last).
+ * Returns null when no known colour word appears, so the caller can hide the dot.
+ */
+internal fun luckySwatch(name: String): Color? {
+    val words = name.lowercase().split(Regex("[^a-z]+")).filter { it.isNotEmpty() }
+    val key = words.asReversed().firstNotNullOfOrNull { w ->
+        when {
+            TODAY_COLOR_MAP.containsKey(w) -> w
+            else -> COLOR_ALIASES[w]
+        }
+    }
+    return key?.let { TODAY_COLOR_MAP[it] }
+}
+
 /** The dashboard's daily-engagement hub: mood (from ProfileSummaryCard above), lucky
  * color/auspicious window (from the daily horoscope's LLM enhancement), and a Panchang
  * snapshot — all auto-loaded with the profile, no extra tap needed. Tapping through opens
@@ -396,8 +317,8 @@ private fun TodayCard(
     val interpretation = enhanced?.interpretation?.takeIf { it.isNotBlank() }
         ?: horoscope?.theme?.longText?.takeIf { it.isNotBlank() }
 
-    if (horoscope == null && panchang == null) return
-
+    // No early return mid-composition (crashed the app before) — just skip the card.
+    if (horoscope != null || panchang != null) {
     Card(modifier = Modifier.fillMaxWidth(), onClick = onOpenHoroscope) {
         Column(modifier = Modifier.padding(20.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -420,15 +341,18 @@ private fun TodayCard(
                 Spacer(modifier = Modifier.height(14.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
                     if (luckyColor != null) {
-                        val swatch = TODAY_COLOR_MAP[luckyColor.trim().lowercase()] ?: surya
+                        val swatch = luckySwatch(luckyColor)
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(
-                                modifier = Modifier
-                                    .size(12.dp)
-                                    .clip(CircleShape)
-                                    .background(swatch)
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
+                            // Unknown colour name -> no dot (better than a wrong one).
+                            if (swatch != null) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(12.dp)
+                                        .clip(CircleShape)
+                                        .background(swatch)
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                            }
                             Column {
                                 Text(stringResource(R.string.dashboard_lucky_color), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 Text(luckyColor, style = MaterialTheme.typography.bodyMedium)
@@ -452,6 +376,7 @@ private fun TodayCard(
             )
         }
     }
+    }
 }
 
 @Composable
@@ -473,67 +398,76 @@ private fun SummaryRow(label: String, value: String, highlight: Boolean = false)
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+private data class QuickAction(val label: String, val icon: ImageVector, val graha: Graha, val onClick: () -> Unit)
+
+/** Four compact shortcuts (tinted circle + label) instead of the old 19-tile grid;
+ * everything else lives in the Kundli / Calendar / Me tabs. */
 @Composable
-private fun DestinationCard(destination: DashboardDestination) {
-    val tones = destination.graha?.tones()
-    when {
-        destination.featured && tones != null -> {
-            // Deep-to-bright gradient, deep end under the text (left, where the label
-            // sits) so white text stays legible in both themes; the bright end still
-            // lets the tile pop against the page. See the GrahaXDeep contrast notes
-            // in Color.kt — this is why it's not just a flat `accent` fill.
-            Card(
-                modifier = Modifier.fillMaxWidth().height(96.dp),
-                onClick = destination.onClick,
-                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+private fun QuickActionsRow(actions: List<QuickAction>) {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        actions.forEach { action ->
+            val tone = action.graha.themedTone()
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(MaterialTheme.shapes.medium)
+                    .clickable(onClick = action.onClick)
+                    .padding(vertical = 8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
+                Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .background(Brush.horizontalGradient(colors = listOf(tones.deep, tones.bright)))
-                        .padding(14.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.Start
+                        .size(52.dp)
+                        .clip(CircleShape)
+                        .background(tone.copy(alpha = 0.16f)),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Icon(destination.icon, contentDescription = null, tint = Color.White)
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Text(
-                        destination.label,
-                        style = MaterialTheme.typography.labelLarge,
-                        color = Color.White
-                    )
+                    Icon(action.icon, contentDescription = null, tint = tone, modifier = Modifier.size(26.dp))
                 }
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    action.label,
+                    style = MaterialTheme.typography.labelLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
-        else -> {
-            val tint = tones?.themed ?: MaterialTheme.colorScheme.onSurfaceVariant
-            Card(
-                modifier = Modifier.fillMaxWidth().height(96.dp),
-                onClick = destination.onClick
+    }
+}
+
+/** Nudge toward the core AI feature (also the raised centre tab). */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AskPromptCard(onClick: () -> Unit) {
+    val rahu = LocalGrahaColors.current.rahu
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onClick,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+    ) {
+        Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(rahu.copy(alpha = 0.25f)),
+                contentAlignment = Alignment.Center
             ) {
-                Column(
-                    modifier = Modifier.fillMaxSize().padding(14.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(30.dp)
-                            .clip(CircleShape)
-                            .background(tint.copy(alpha = 0.16f)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            destination.icon,
-                            contentDescription = null,
-                            tint = tint,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Text(destination.label, style = MaterialTheme.typography.labelLarge)
-                }
+                Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = MaterialTheme.colorScheme.onSecondaryContainer)
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    stringResource(R.string.dashboard_home_ask_title),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+                Text(
+                    stringResource(R.string.dashboard_home_ask_body),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                )
             }
         }
     }

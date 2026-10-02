@@ -1,6 +1,8 @@
 package com.sangeetmind.core.network
 
+import android.content.Context
 import com.google.android.gms.tasks.Tasks
+import dagger.hilt.android.qualifiers.ApplicationContext
 import com.google.firebase.auth.FirebaseAuth
 import com.sangeetmind.core.common.Constants
 import com.squareup.moshi.Moshi
@@ -65,12 +67,15 @@ object NetworkModule {
     @Singleton
     @BaseOkHttpClient
     fun provideBaseOkHttpClient(
+        @ApplicationContext context: Context,
         loggingInterceptor: HttpLoggingInterceptor,
         languageManager: LanguageManager
     ): OkHttpClient = OkHttpClient.Builder()
         .connectTimeout(Constants.API_TIMEOUT_SECONDS, TimeUnit.SECONDS)
         .readTimeout(Constants.API_TIMEOUT_SECONDS, TimeUnit.SECONDS)
         .writeTimeout(Constants.API_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+        // First in the chain so it sees every transport failure from the interceptors below.
+        .addInterceptor(FriendlyNetworkErrorInterceptor(context, languageManager))
         // Every request carries the display language. Endpoints that take an explicit
         // lang/language param still get it in the body/query; this header is the
         // future-proof default for any endpoint that starts honouring Accept-Language.

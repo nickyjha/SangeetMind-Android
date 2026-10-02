@@ -18,7 +18,7 @@ val keystoreProps = Properties().apply {
 
 android {
     namespace = "com.sangeetmind.app"
-    compileSdk = 34
+    compileSdk = 36
 
     signingConfigs {
         if (keystoreProps.containsKey("storeFile")) {
@@ -34,7 +34,7 @@ android {
     defaultConfig {
         applicationId = "com.sangeetmind.app"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0.0"
 

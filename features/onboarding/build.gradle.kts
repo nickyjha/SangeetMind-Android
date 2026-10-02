@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.sangeetmind.features.onboarding"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 24

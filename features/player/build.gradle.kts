@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.sangeetmind.features.player"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 24

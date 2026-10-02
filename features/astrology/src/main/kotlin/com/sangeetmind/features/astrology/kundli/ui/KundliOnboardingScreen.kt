@@ -48,6 +48,9 @@ fun KundliOnboardingScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            // No Scaffold here: under edge-to-edge (Android 15+) keep the form clear of
+            // the status/navigation bars. Zero on older devices, so no change there.
+            .systemBarsPadding()
             .verticalScroll(rememberScrollState())
             .padding(24.dp)
     ) {

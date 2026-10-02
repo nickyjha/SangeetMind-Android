@@ -1,5 +1,7 @@
 package com.sangeetmind.features.astrology.dashboard.ui
 
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.WindowInsets
 import android.Manifest
 import android.content.Intent
 import android.net.Uri
@@ -105,6 +107,8 @@ fun DashboardScreen(
     )
 
     Scaffold(
+        // Tab roots sit above the bottom bar, which already covers the system nav bar.
+        contentWindowInsets = WindowInsets.statusBars,
         topBar = {
             // Settings moved to the Me tab; the quick kundli switcher stays here.
             TabRootTopBar(

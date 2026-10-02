@@ -1,5 +1,6 @@
 package com.sangeetmind.app.navigation
 
+import androidx.compose.foundation.layout.consumeWindowInsets
 import android.net.Uri
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -65,6 +66,7 @@ import com.sangeetmind.features.settings.ui.SettingsScreen
  * Tabs are siblings above Home in the back stack (popUpTo "dashboard"), so back from any
  * tab root lands on Home and back from Home exits the app.
  */
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
 fun SangeetMindNavHost(
     navController: NavHostController = rememberNavController(),
@@ -121,7 +123,9 @@ fun SangeetMindNavHost(
     NavHost(
         navController = navController,
         startDestination = startDestination,
-        modifier = Modifier.fillMaxSize().padding(shellPadding)
+        // consumeWindowInsets: the bottom bar already covers the system nav bar,
+        // so tab screens must not pad for it a second time.
+        modifier = Modifier.fillMaxSize().padding(shellPadding).consumeWindowInsets(shellPadding)
     ) {
         // Onboarding
         composable("onboarding") {

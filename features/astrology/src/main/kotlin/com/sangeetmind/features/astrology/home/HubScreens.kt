@@ -1,5 +1,7 @@
 package com.sangeetmind.features.astrology.home
 
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -53,6 +55,8 @@ import com.sangeetmind.features.astrology.dashboard.ui.Graha
 @Composable
 private fun HubScaffold(title: String, content: LazyListScope.() -> Unit) {
     Scaffold(
+        // Tab roots sit above the bottom bar, which already covers the system nav bar.
+        contentWindowInsets = WindowInsets.statusBars,
         topBar = { TabRootTopBar(title) },
         containerColor = MaterialTheme.colorScheme.background
     ) { padding ->

@@ -1,5 +1,7 @@
 package com.sangeetmind.features.astrology.chatmind.ui
 
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -60,7 +62,8 @@ fun ChatMindScreen(
         },
         bottomBar = {
             Surface(tonalElevation = 3.dp) {
-                Column {
+                // Keep the input above the system navigation bar and the keyboard.
+                Column(modifier = Modifier.navigationBarsPadding().imePadding()) {
                     // Who answers: the persona changes the tone, the tier changes the model.
                     Row(
                         modifier = Modifier

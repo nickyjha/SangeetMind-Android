@@ -1,5 +1,16 @@
 package com.sangeetmind.features.astrology.sangeet.ui
 
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.Card
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
+import com.sangeetmind.features.astrology.sangeet.ChantState
+import com.sangeetmind.features.astrology.sangeet.MantraAudio
 import com.sangeetmind.core.ui.components.AstroTopBar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -167,7 +178,13 @@ fun SangeetScreen(
                         onSelectMantra = viewModel::selectMantra,
                         onTap = viewModel::incrementJapa,
                         onReset = viewModel::resetJapaCount,
-                        onLog = viewModel::logJapaSession
+                        onLog = viewModel::logJapaSession,
+                        hasAudio = MantraAudio.forMantra(uiState.selectedMantraId) != null,
+                        chantState = uiState.chantState,
+                        malaCompleted = uiState.malaCompleted,
+                        onPlayChant = viewModel::playChant,
+                        onPauseChant = viewModel::pauseChant,
+                        onStopChant = viewModel::stopChant
                     )
                     SangeetTab.VOICE_HOROSCOPE -> VoiceHoroscopeTab(
                         script = uiState.voiceHoroscope?.script,
@@ -248,7 +265,13 @@ private fun JapaTab(
     onSelectMantra: (String) -> Unit,
     onTap: () -> Unit,
     onReset: () -> Unit,
-    onLog: () -> Unit
+    onLog: () -> Unit,
+    hasAudio: Boolean = false,
+    chantState: ChantState = ChantState.IDLE,
+    malaCompleted: Int? = null,
+    onPlayChant: () -> Unit = {},
+    onPauseChant: () -> Unit = {},
+    onStopChant: () -> Unit = {}
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
         MantraPicker(
@@ -257,6 +280,17 @@ private fun JapaTab(
             recommendedForLord = recommendedForLord,
             onSelect = onSelectMantra
         )
+        if (hasAudio) {
+            Spacer(modifier = Modifier.height(12.dp))
+            ChantAlongCard(
+                count = count,
+                chantState = chantState,
+                malaCompleted = malaCompleted,
+                onPlay = onPlayChant,
+                onPause = onPauseChant,
+                onStop = onStopChant
+            )
+        }
         Spacer(modifier = Modifier.height(16.dp))
         Text(stringResource(R.string.sangeet_japa_stats_fmt, streakDays, totalJapa), style = MaterialTheme.typography.bodyMedium)
         Spacer(modifier = Modifier.height(24.dp))
@@ -445,3 +479,73 @@ private fun SoundHealingTab(sessions: List<SoundHealingSession>, premiumRequired
         }
     }
 }
+
+/** Plays the recorded chant on a loop; the mala advances by itself up to 108. */
+@Composable
+private fun ChantAlongCard(
+    count: Int,
+    chantState: ChantState,
+    malaCompleted: Int?,
+    onPlay: () -> Unit,
+    onPause: () -> Unit,
+    onStop: () -> Unit
+) {
+    val target = MantraAudio.MALA
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(stringResource(R.string.sangeet_japa_audio_title), style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                stringResource(R.string.sangeet_japa_audio_desc, target),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            LinearProgressIndicator(
+                progress = (count.coerceAtMost(target)) / target.toFloat(),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                stringResource(R.string.sangeet_japa_audio_progress_fmt, count.coerceAtMost(target), target),
+                style = MaterialTheme.typography.labelMedium
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                when (chantState) {
+                    ChantState.PLAYING -> Button(onClick = onPause) {
+                        Icon(Icons.Default.Pause, contentDescription = null)
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(stringResource(R.string.sangeet_japa_audio_pause))
+                    }
+                    ChantState.PAUSED -> Button(onClick = onPlay) {
+                        Icon(Icons.Default.PlayArrow, contentDescription = null)
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(stringResource(R.string.sangeet_japa_audio_resume))
+                    }
+                    ChantState.IDLE -> Button(onClick = onPlay) {
+                        Icon(Icons.Default.PlayArrow, contentDescription = null)
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(stringResource(R.string.sangeet_japa_audio_play))
+                    }
+                }
+                if (chantState != ChantState.IDLE) {
+                    OutlinedButton(onClick = onStop) {
+                        Icon(Icons.Default.Stop, contentDescription = null)
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(stringResource(R.string.sangeet_japa_audio_stop))
+                    }
+                }
+            }
+            if (malaCompleted != null) {
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    stringResource(R.string.sangeet_japa_mala_complete, malaCompleted),
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+    }
+}
+

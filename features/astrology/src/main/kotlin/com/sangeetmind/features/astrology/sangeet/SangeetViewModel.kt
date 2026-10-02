@@ -1,5 +1,7 @@
 package com.sangeetmind.features.astrology.sangeet
 
+import android.content.Context
+import android.media.MediaPlayer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
@@ -9,6 +11,7 @@ import com.sangeetmind.libs.models.RaagPlaylist
 import com.sangeetmind.libs.models.SoundHealingSession
 import com.sangeetmind.libs.models.VoiceHoroscopeResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,6 +21,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 enum class SangeetTab { RAAG, JAPA, VOICE_HOROSCOPE, SOUND_HEALING }
+
+enum class ChantState { IDLE, PLAYING, PAUSED }
 
 data class SangeetUiState(
     val tab: SangeetTab = SangeetTab.RAAG,
@@ -35,15 +40,21 @@ data class SangeetUiState(
     val recommendedForLord: String? = null,
     val voiceHoroscope: VoiceHoroscopeResponse? = null,
     val soundHealingSessions: List<SoundHealingSession> = emptyList(),
-    val soundHealingPremiumRequired: Boolean = false
+    val soundHealingPremiumRequired: Boolean = false,
+    /** Audio chant-along for the selected mantra (only when it has a recorded track). */
+    val chantState: ChantState = ChantState.IDLE,
+    val malaCompleted: Int? = null
 )
 
 @HiltViewModel
 class SangeetViewModel @Inject constructor(
     private val repository: SangeetRepository,
     private val mantraStore: JapaMantraStore,
-    languageManager: LanguageManager
+    languageManager: LanguageManager,
+    @ApplicationContext private val appContext: Context
 ) : ViewModel() {
+
+    private var player: MediaPlayer? = null
 
     private val _uiState = MutableStateFlow(
         SangeetUiState(
@@ -69,6 +80,7 @@ class SangeetViewModel @Inject constructor(
     }
 
     fun setTab(tab: SangeetTab) {
+        if (tab != SangeetTab.JAPA) stopChant()
         _uiState.update { it.copy(tab = tab, error = null) }
         when (tab) {
             SangeetTab.RAAG -> if (_uiState.value.dailyRaag == null) loadDailyRaag()
@@ -104,8 +116,9 @@ class SangeetViewModel @Inject constructor(
     }
 
     fun selectMantra(mantraId: String) {
+        if (mantraId != _uiState.value.selectedMantraId) stopChant()
         mantraStore.lastMantraId = mantraId
-        _uiState.update { it.copy(selectedMantraId = mantraId, japaLogged = false) }
+        _uiState.update { it.copy(selectedMantraId = mantraId, japaLogged = false, malaCompleted = null) }
     }
 
     fun incrementJapa() {
@@ -113,7 +126,8 @@ class SangeetViewModel @Inject constructor(
     }
 
     fun resetJapaCount() {
-        _uiState.update { it.copy(japaCount = 0, japaLogged = false) }
+        stopChant()
+        _uiState.update { it.copy(japaCount = 0, japaLogged = false, malaCompleted = null) }
     }
 
     fun logJapaSession() {
@@ -170,5 +184,57 @@ class SangeetViewModel @Inject constructor(
                 is Result.Loading -> Unit
             }
         }
+    }
+
+    /** Starts (or resumes) the recorded chant; each full play adds its chants to the mala. */
+    fun playChant() {
+        val track = MantraAudio.forMantra(_uiState.value.selectedMantraId) ?: return
+        val existing = player
+        if (existing != null) {
+            existing.start()
+            _uiState.update { it.copy(chantState = ChantState.PLAYING) }
+            return
+        }
+        if (_uiState.value.japaCount >= MantraAudio.MALA) {
+            _uiState.update { it.copy(japaCount = 0) }
+        }
+        val mp = MediaPlayer.create(appContext, track.rawRes) ?: return
+        mp.setOnCompletionListener { finished ->
+            val count = MantraAudio.afterPlay(_uiState.value.japaCount, track)
+            _uiState.update { it.copy(japaCount = count, japaLogged = false) }
+            if (count >= MantraAudio.MALA) {
+                stopChant()
+                _uiState.update { it.copy(malaCompleted = count) }
+                logJapaSession()
+            } else {
+                finished.seekTo(0)
+                finished.start()
+            }
+        }
+        player = mp
+        mp.start()
+        _uiState.update { it.copy(chantState = ChantState.PLAYING, malaCompleted = null, japaLogged = false) }
+    }
+
+    fun pauseChant() {
+        player?.takeIf { it.isPlaying }?.pause()
+        if (player != null) _uiState.update { it.copy(chantState = ChantState.PAUSED) }
+    }
+
+    fun stopChant() {
+        player?.run {
+            setOnCompletionListener(null)
+            runCatching { stop() }
+            release()
+        }
+        player = null
+        if (_uiState.value.chantState != ChantState.IDLE) {
+            _uiState.update { it.copy(chantState = ChantState.IDLE) }
+        }
+    }
+
+    override fun onCleared() {
+        stopChant()
+        super.onCleared()
     }
 }

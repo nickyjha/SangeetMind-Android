@@ -43,15 +43,15 @@
     <string name="sangeet_mantra_mahamrityunjaya">Mahamrityunjaya Mantra</string>
     <string name="sangeet_mantra_om_namah_shivaya">Om Namah Shivaya</string>
     <string name="sangeet_mantra_hanuman_chalisa">Hanuman Chalisa (count each path)</string>
-    <string name="sangeet_mantra_surya">Om Suryaya Namah (Surya)</string>
-    <string name="sangeet_mantra_chandra">Om Chandraya Namah (Chandra)</string>
-    <string name="sangeet_mantra_mangal">Om Bhaumaya Namah (Mangal)</string>
-    <string name="sangeet_mantra_budh">Om Budhaya Namah (Budh)</string>
-    <string name="sangeet_mantra_guru">Om Gurave Namah (Guru)</string>
-    <string name="sangeet_mantra_shukra">Om Shukraya Namah (Shukra)</string>
-    <string name="sangeet_mantra_shani">Om Shanaishcharaya Namah (Shani)</string>
-    <string name="sangeet_mantra_rahu">Om Rahave Namah (Rahu)</string>
-    <string name="sangeet_mantra_ketu">Om Ketave Namah (Ketu)</string>
+    <string name="sangeet_mantra_surya">Surya beej: Om Hraam Hreem Hraum Sah Suryaya Namah</string>
+    <string name="sangeet_mantra_chandra">Chandra beej: Om Shraam Shreem Shraum Sah Chandramase Namah</string>
+    <string name="sangeet_mantra_mangal">Mangal beej: Om Kraam Kreem Kraum Sah Bhaumaya Namah</string>
+    <string name="sangeet_mantra_budh">Budh beej: Om Braam Breem Braum Sah Budhaya Namah</string>
+    <string name="sangeet_mantra_guru">Guru beej: Om Graam Greem Graum Sah Gurave Namah</string>
+    <string name="sangeet_mantra_shukra">Shukra beej: Om Draam Dreem Draum Sah Shukraya Namah</string>
+    <string name="sangeet_mantra_shani">Shani beej: Om Praam Preem Praum Sah Shanaishcharaya Namah</string>
+    <string name="sangeet_mantra_rahu">Rahu beej: Om Bhraam Bhreem Bhraum Sah Rahave Namah</string>
+    <string name="sangeet_mantra_ketu">Ketu beej: Om Sraam Sreem Sraum Sah Ketave Namah</string>
 
     <!-- Traditional time + mood per raag (server sends one generic purpose for all). -->
     <string name="sangeet_raag_mood_bhairavi">Morning · devotional, gentle</string>
@@ -82,4 +82,12 @@
     <string name="sangeet_raag_mood_suddha_saveri">Morning · fresh, auspicious</string>
     <string name="sangeet_raag_mood_shankarabharanam">Any time · full, majestic</string>
     <string name="sangeet_raag_mood_kambhoji">Any time · rich, devotional</string>
+    <string name="sangeet_japa_audio_title">Chant along</string>
+    <string name="sangeet_japa_audio_desc">Play the chant and the mala counts each repetition for you, up to %1$d.</string>
+    <string name="sangeet_japa_audio_play">Play chant</string>
+    <string name="sangeet_japa_audio_pause">Pause</string>
+    <string name="sangeet_japa_audio_resume">Resume</string>
+    <string name="sangeet_japa_audio_stop">Stop</string>
+    <string name="sangeet_japa_audio_progress_fmt">%1$d of %2$d chants</string>
+    <string name="sangeet_japa_mala_complete">Mala complete: %1$d chants. Session saved.</string>
 </resources>

@@ -250,7 +250,10 @@ fun SangeetMindNavHost(
         }
 
         composable("horoscope") {
-            HoroscopeScreen(onNavigateBack = { navController.popFrom(it) })
+            HoroscopeScreen(
+                onNavigateBack = { navController.popFrom(it) },
+                onChantMantra = { id -> navController.navigate("sangeet?mantra=$id") }
+            )
         }
 
         composable("panchang") {
@@ -313,8 +316,16 @@ fun SangeetMindNavHost(
             ReferralScreen(onNavigateBack = { navController.popFrom(it) })
         }
 
-        composable("sangeet") {
-            SangeetScreen(onNavigateBack = { navController.popFrom(it) })
+        composable(
+            "sangeet?mantra={mantra}",
+            arguments = listOf(
+                navArgument("mantra") { type = NavType.StringType; nullable = true; defaultValue = null }
+            )
+        ) { entry ->
+            SangeetScreen(
+                onNavigateBack = { navController.popFrom(entry) },
+                initialMantraId = entry.arguments?.getString("mantra")
+            )
         }
 
         composable("gochar") {

@@ -1,5 +1,7 @@
 package com.sangeetmind.features.astrology.horoscope.ui
 
+import androidx.compose.material3.OutlinedButton
+import com.sangeetmind.features.astrology.sangeet.MantraAudio
 import com.sangeetmind.core.ui.components.AstroTopBar
 import com.sangeetmind.features.astrology.dashboard.ui.luckySwatch
 import androidx.compose.foundation.background
@@ -36,6 +38,7 @@ import com.sangeetmind.libs.models.PeriodHoroscope
 @Composable
 fun HoroscopeScreen(
     onNavigateBack: () -> Unit,
+    onChantMantra: (String) -> Unit = {},
     viewModel: HoroscopeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -76,7 +79,7 @@ fun HoroscopeScreen(
                             .padding(16.dp)
                     ) {
                         when (uiState.selectedTab) {
-                            HoroscopeTab.DAILY -> uiState.daily?.let { DailyContent(it) }
+                            HoroscopeTab.DAILY -> uiState.daily?.let { DailyContent(it, onChantMantra) }
                             HoroscopeTab.WEEKLY -> uiState.weekly?.let { PeriodContent(it) }
                             HoroscopeTab.MONTHLY -> uiState.monthly?.let { PeriodContent(it) }
                             HoroscopeTab.YEARLY -> uiState.yearly?.let { PeriodContent(it) }
@@ -99,7 +102,7 @@ private fun tabLabel(tab: HoroscopeTab): String = stringResource(
 )
 
 @Composable
-private fun DailyContent(horoscope: DailyHoroscope) {
+private fun DailyContent(horoscope: DailyHoroscope, onChantMantra: (String) -> Unit = {}) {
     Text(horoscope.theme?.shortLabel ?: stringResource(CoreR.string.common_today), style = MaterialTheme.typography.titleLarge)
     Spacer(modifier = Modifier.height(8.dp))
     Text(horoscope.theme?.longText ?: "", style = MaterialTheme.typography.bodyLarge)
@@ -152,7 +155,7 @@ private fun DailyContent(horoscope: DailyHoroscope) {
 
     enhanced?.mantra?.takeIf { it.name.isNotBlank() }?.let { mantra ->
         Spacer(modifier = Modifier.height(12.dp))
-        MantraCard(mantra)
+        MantraCard(mantra, onChant = onChantMantra)
     } ?: horoscope.recommendedMantras.firstOrNull()?.name?.let { mantra ->
         Spacer(modifier = Modifier.height(16.dp))
         Text(stringResource(R.string.horoscope_recommended_mantra_fmt, astroTerm(mantra)), style = MaterialTheme.typography.bodyMedium)
@@ -218,7 +221,7 @@ private fun AuspiciousTimeCard(window: AuspiciousTime, modifier: Modifier = Modi
 }
 
 @Composable
-private fun MantraCard(mantra: EnhancedMantra) {
+private fun MantraCard(mantra: EnhancedMantra, onChant: (String) -> Unit = {}) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(stringResource(R.string.horoscope_recommended_mantra), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -235,6 +238,18 @@ private fun MantraCard(mantra: EnhancedMantra) {
             if (mantra.reason.isNotBlank()) {
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(markdownInline(mantra.reason), style = MaterialTheme.typography.bodySmall)
+            }
+            val japaId = MantraAudio.idForMantraText(mantra.name)
+            if (japaId != null) {
+                Spacer(modifier = Modifier.height(10.dp))
+                OutlinedButton(onClick = { onChant(japaId) }) {
+                    Text(
+                        stringResource(
+                            if (MantraAudio.forMantra(japaId) != null) R.string.horoscope_chant_along
+                            else R.string.horoscope_count_japa
+                        )
+                    )
+                }
             }
         }
     }

@@ -114,8 +114,8 @@
     <string name="dashboard_hub_section_app">App</string>
     <string name="dashboard_hub_language_desc">English or Hindi</string>
     <string name="dashboard_hub_settings_desc">Notifications, theme, chart style and account</string>
-    <string name="dashboard_hub_sangeet_title">Sangeet (coming soon)</string>
-    <string name="dashboard_hub_sangeet_desc">Remedy music: raag, japa and sound healing for your dasha. Still being built.</string>
+    <string name="dashboard_hub_sangeet_title">Sangeet: mantras and raag</string>
+    <string name="dashboard_hub_sangeet_desc">Chant along with recorded mantras (the mala counts to 108), plus raag for your dasha.</string>
     <string name="dashboard_hub_section_help">Help &amp; legal</string>
     <string name="dashboard_hub_help_title">Help &amp; support</string>
     <string name="dashboard_hub_help_desc">Visit astrogeet.com</string>

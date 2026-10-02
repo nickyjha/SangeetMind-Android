@@ -23,4 +23,6 @@
     <string name="horoscope_error_weekly">हफ़्ते का राशिफल लोड नहीं हो पाया</string>
     <string name="horoscope_error_monthly">महीने का राशिफल लोड नहीं हो पाया</string>
     <string name="horoscope_error_yearly">साल का राशिफल लोड नहीं हो पाया</string>
+    <string name="horoscope_chant_along">♪ साथ में जप करें (108)</string>
+    <string name="horoscope_count_japa">माला पर जप गिनें</string>
 </resources>

@@ -1,5 +1,8 @@
 package com.sangeetmind.features.astrology.sangeet.ui
 
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Card
 import androidx.compose.material3.OutlinedButton
@@ -105,9 +108,13 @@ private val RAAG_MOODS: Map<String, Int> = mapOf(
 @Composable
 fun SangeetScreen(
     onNavigateBack: () -> Unit,
+    initialMantraId: String? = null,
     viewModel: SangeetViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(initialMantraId) {
+        if (initialMantraId != null) viewModel.openJapa(initialMantraId)
+    }
     val chandra = LocalGrahaColors.current.chandra
 
     Scaffold(
@@ -373,7 +380,10 @@ private fun MantraPicker(
                 DropdownMenuItem(
                     text = {
                         Column {
-                            Text(stringResource(mantra.nameRes))
+                            Text(
+                                stringResource(mantra.nameRes) +
+                                    if (MantraAudio.forMantra(mantra.id) != null) "  ♪" else ""
+                            )
                             if (mantra.id == recommendedMantraId) {
                                 Text(
                                     stringResource(R.string.sangeet_japa_recommended),
@@ -491,6 +501,12 @@ private fun ChantAlongCard(
     onStop: () -> Unit
 ) {
     val target = MantraAudio.MALA
+    // A full mala runs 15-30 minutes: keep the screen awake while the chant plays.
+    val view = LocalView.current
+    DisposableEffect(chantState) {
+        view.keepScreenOn = chantState == ChantState.PLAYING
+        onDispose { view.keepScreenOn = false }
+    }
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(stringResource(R.string.sangeet_japa_audio_title), style = MaterialTheme.typography.titleMedium)

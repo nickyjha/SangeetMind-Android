@@ -115,6 +115,12 @@ class SangeetViewModel @Inject constructor(
         }
     }
 
+    /** Opens the Japa tab with [mantraId] selected (e.g. from a horoscope remedy). */
+    fun openJapa(mantraId: String) {
+        if (JapaMantras.byId(mantraId) != null) selectMantra(mantraId)
+        setTab(SangeetTab.JAPA)
+    }
+
     fun selectMantra(mantraId: String) {
         if (mantraId != _uiState.value.selectedMantraId) stopChant()
         mantraStore.lastMantraId = mantraId

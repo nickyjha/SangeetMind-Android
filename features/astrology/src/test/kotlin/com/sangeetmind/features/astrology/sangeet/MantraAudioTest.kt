@@ -16,4 +16,14 @@ class MantraAudioTest {
         assertEquals(108, MantraAudio.afterPlay(81, track))
         assertEquals(108, MantraAudio.afterPlay(100, track))
     }
+
+    @Test fun horoscopeMantraNamesMapToJapaIds() {
+        assertEquals("chandra_beej", MantraAudio.idForMantraText("Om Chandraya Namaha"))
+        assertEquals("shani_beej", MantraAudio.idForMantraText("Om Sham Shanicharaya Namah"))
+        assertEquals("mahamrityunjaya", MantraAudio.idForMantraText("Maha Mrityunjaya Mantra"))
+        assertEquals("om_namah_shivaya", MantraAudio.idForMantraText("Om Namah Shivaya"))
+        assertEquals("guru_beej", MantraAudio.idForMantraText("Guru Gayatri"))
+        assertEquals("gayatri", MantraAudio.idForMantraText("Gayatri Mantra"))
+        assertNull(MantraAudio.idForMantraText("Lalita Sahasranama"))
+    }
 }

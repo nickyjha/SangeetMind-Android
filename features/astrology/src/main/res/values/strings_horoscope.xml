@@ -23,4 +23,6 @@
     <string name="horoscope_error_weekly">Failed to load weekly horoscope</string>
     <string name="horoscope_error_monthly">Failed to load monthly horoscope</string>
     <string name="horoscope_error_yearly">Failed to load yearly horoscope</string>
+    <string name="horoscope_chant_along">♪ Chant along (108)</string>
+    <string name="horoscope_count_japa">Count japa on the mala</string>
 </resources>

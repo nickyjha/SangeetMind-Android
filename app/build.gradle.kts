@@ -32,7 +32,9 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.sangeetmind.app"
+        // Play/Firebase identity (permanent once uploaded). The code namespace above stays
+        // com.sangeetmind.app so R/BuildConfig packages are unchanged.
+        applicationId = "com.astrogeet.app"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -47,7 +49,7 @@ android {
     buildTypes {
         debug {
             // No applicationIdSuffix: the registered Firebase Android app (and its
-            // google-services.json) is "com.sangeetmind.app" only, with no separate
+            // google-services.json) is "com.astrogeet.app" only, with no separate
             // ".debug" entry. Keeping the suffix would make Firebase Auth unusable
             // in debug builds. Re-add a suffix (and register a second Firebase app
             // for it) if side-by-side debug/release installs are ever needed.

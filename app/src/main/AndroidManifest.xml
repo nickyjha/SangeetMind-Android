@@ -25,6 +25,7 @@
         <!-- Main Activity -->
         <activity
             android:name=".MainActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true"
             android:theme="@style/Theme.SangeetMind"
             android:configChanges="orientation|screenSize|keyboardHidden">

@@ -6,7 +6,7 @@ object Constants {
     const val API_TIMEOUT_SECONDS = 30L
 
     // Public website (legal pages). Change here once the final domain is confirmed.
-    const val WEBSITE_BASE_URL = "https://astrogeet.app"
+    const val WEBSITE_BASE_URL = "https://astrogeet.com"
     const val TERMS_URL = "$WEBSITE_BASE_URL/terms"
     const val PRIVACY_URL = "$WEBSITE_BASE_URL/privacy"
     const val DELETE_ACCOUNT_URL = "$WEBSITE_BASE_URL/delete-account"

@@ -3,7 +3,7 @@
     <string name="app_name">AstroGeet</string>
     
     <!-- Home Screen -->
-    <string name="home_title">संगीतमाइंड</string>
+    <string name="home_title">AstroGeet</string>
     <string name="home_daily_raag">आज का राग</string>
     <string name="home_recommended">आपके लिए सुझाव</string>
     
@@ -56,7 +56,7 @@
     <string name="auth_google_signin">Google से साइन इन करें</string>
     
     <!-- Onboarding -->
-    <string name="onboarding_welcome">संगीतमाइंड में आपका स्वागत है</string>
+    <string name="onboarding_welcome">AstroGeet में आपका स्वागत है</string>
     <string name="onboarding_description">रागों के साथ ध्यान करें, मन को सुकून दें</string>
     <string name="onboarding_next">अगला</string>
     <string name="onboarding_skip">छोड़ें</string>

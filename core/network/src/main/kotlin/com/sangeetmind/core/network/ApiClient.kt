@@ -167,7 +167,7 @@ object NetworkModule {
             .addInterceptor { chain ->
                 chain.proceed(
                     chain.request().newBuilder()
-                        .header("User-Agent", "SangeetMind-Android/1.0")
+                        .header("User-Agent", "AstroGeet-Android/1.0 (https://astrogeet.com)")
                         .build()
                 )
             }

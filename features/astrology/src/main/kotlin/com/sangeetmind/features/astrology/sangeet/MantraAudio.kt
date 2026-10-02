@@ -22,7 +22,8 @@ object MantraAudio {
         "guru_beej" to MantraTrack(R.raw.guru_beej, chantsPerPlay = 1),
         "shukra_beej" to MantraTrack(R.raw.shukra_beej, chantsPerPlay = 1),
         "shani_beej" to MantraTrack(R.raw.shani_beej, chantsPerPlay = 1),
-        "ketu_beej" to MantraTrack(R.raw.ketu_beej, chantsPerPlay = 1)
+        "ketu_beej" to MantraTrack(R.raw.ketu_beej, chantsPerPlay = 1),
+        "gayatri" to MantraTrack(R.raw.gayatri, chantsPerPlay = 1)
     )
 
     fun forMantra(mantraId: String): MantraTrack? = tracks[mantraId]

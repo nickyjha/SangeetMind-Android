@@ -266,8 +266,9 @@ data class ChartFriendship(
     val relations: Map<String, Map<String, String>> = emptyMap()
 )
 
-/** Six-fold planetary strength (Shadbala) — virupas per component, comparable within a
- * chart; not full BPHS arc-minute tables (app/services/shadbala.py). */
+/** Six-fold planetary strength (Shadbala) — full BPHS computation in virupas
+ * (app/services/shadbala.py, method "bphs_full"); extra backend keys such as `details`,
+ * `required_virupas` and `strength_ratio` are ignored here. */
 @JsonClass(generateAdapter = true)
 data class ShadbalaComponents(
     val sthana: Double = 0.0,
@@ -301,8 +302,8 @@ data class ChartShadbala(
     val note: String = ""
 )
 
-/** House strength (Bhavabala), derived from Ashtakvarga SAV + the house lord's Shadbala
- * (app/services/bhavabala.py). */
+/** House strength (Bhavabala), BPHS: lord's Shadbala + bhava dig bala + bhava drishti bala
+ * (app/services/bhavabala.py); `sav_bindus` is informational only. */
 @JsonClass(generateAdapter = true)
 data class BhavabalaHouse(
     val house: Int,

@@ -1278,8 +1278,8 @@ private fun friendshipRelationLabel(relation: String): String = when (relation.t
 
 /** Six-fold planetary strength, strongest graha first. Rupas (virupas/60) is the human
  * unit shown; the bar is driven by virupas so components with very different totals still
- * compare cleanly (app/services/shadbala.py — "simplified_parashari", not full BPHS
- * arc-minute tables). */
+ * compare cleanly (app/services/shadbala.py — full BPHS Shadbala, "bphs_full", calibrated
+ * against AstroSage's table). */
 @Composable
 private fun ShadbalaCard(shadbala: ChartShadbala) {
     if (shadbala.planets.isNotEmpty()) {

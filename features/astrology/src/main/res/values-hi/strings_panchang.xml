@@ -19,4 +19,8 @@
     <string name="panchang_rahu_kalam">राहु काल</string>
     <string name="panchang_abhijit">अभिजीत मुहूर्त</string>
     <string name="panchang_choghadiya">दिन का चौघड़िया</string>
+    <string name="panchang_hora">होरा</string>
+    <string name="panchang_hora_desc">ग्रहों के घंटे: काम उस ग्रह की होरा में शुरू करें जो उसके अनुकूल हो (हरा = शुभ)</string>
+    <string name="panchang_hora_day">दिन (सूर्योदय से सूर्यास्त)</string>
+    <string name="panchang_hora_night">रात (सूर्यास्त से अगले सूर्योदय)</string>
 </resources>

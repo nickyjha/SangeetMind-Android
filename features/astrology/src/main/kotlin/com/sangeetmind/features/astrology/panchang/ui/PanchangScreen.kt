@@ -149,11 +149,48 @@ private fun PanchangResultCard(result: PanchangResponse) {
                 Text(stringResource(R.string.panchang_choghadiya), style = MaterialTheme.typography.titleSmall)
                 ChoghadiyaChips(result.choghadiya)
             }
+            if (result.hora.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(stringResource(R.string.panchang_hora), style = MaterialTheme.typography.titleSmall)
+                Text(
+                    stringResource(R.string.panchang_hora_desc),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                HoraChips(result.hora.filter { it.period == "day" }, stringResource(R.string.panchang_hora_day))
+                HoraChips(result.hora.filter { it.period == "night" }, stringResource(R.string.panchang_hora_night))
+            }
         }
     }
 }
 
 private fun PanchangSpan.span(): String? = if (start != null && end != null) "$start – $end" else null
+
+/** Horas as chips: natural benefic lords green, malefic lords red. */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun HoraChips(slots: List<com.sangeetmind.libs.models.Hora>, title: String) {
+    if (slots.isEmpty()) return
+    val graha = LocalGrahaColors.current
+    Text(
+        title,
+        style = MaterialTheme.typography.labelMedium,
+        modifier = Modifier.padding(top = 8.dp)
+    )
+    FlowRow(
+        modifier = Modifier.padding(top = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        slots.forEach { h ->
+            val color = when (h.lord) {
+                "Jupiter", "Venus", "Mercury", "Moon" -> graha.budha
+                else -> graha.mangala
+            }
+            Chip("${astroTerm(h.lord)} ${h.start.orEmpty()}–${h.end.orEmpty()}", color)
+        }
+    }
+}
 
 /** Day choghadiya as chips, green for auspicious, red for inauspicious. */
 @OptIn(ExperimentalLayoutApi::class)

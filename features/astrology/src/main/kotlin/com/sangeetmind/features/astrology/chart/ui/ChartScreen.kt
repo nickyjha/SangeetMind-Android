@@ -2710,6 +2710,8 @@ private fun GhatakCard(gh: ChartGhatak) {
                 gh.nakshatra.takeIf { it.isNotBlank() }?.let { SummaryChip(stringResource(R.string.chart_ghatak_nakshatra), astroTerm(it)) }
                 local(gh.moonRasi)?.let { SummaryChip(stringResource(R.string.chart_ghatak_moon), it) }
                 local(gh.lagnaSameSex)?.let { SummaryChip(stringResource(R.string.chart_ghatak_lagna), it) }
+                gh.yoga.takeIf { it.isNotBlank() }?.let { SummaryChip(stringResource(R.string.chart_ghatak_yoga), astroTerm(it)) }
+                gh.karana.takeIf { it.isNotBlank() }?.let { SummaryChip(stringResource(R.string.chart_ghatak_karana), astroTerm(it)) }
                 gh.prahara?.let { SummaryChip(stringResource(R.string.chart_ghatak_prahara), it.toString()) }
             }
         }

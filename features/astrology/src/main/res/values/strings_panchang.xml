@@ -19,4 +19,8 @@
     <string name="panchang_rahu_kalam">Rahu Kalam</string>
     <string name="panchang_abhijit">Abhijit muhurat</string>
     <string name="panchang_choghadiya">Day choghadiya</string>
+    <string name="panchang_hora">Hora</string>
+    <string name="panchang_hora_desc">Planetary hours: start work in the hora of a planet that suits it (green = benefic)</string>
+    <string name="panchang_hora_day">Day (sunrise to sunset)</string>
+    <string name="panchang_hora_night">Night (sunset to next sunrise)</string>
 </resources>

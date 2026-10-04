@@ -300,4 +300,6 @@
     <string name="chart_pdf_share">Share kundli PDF</string>
     <string name="chart_pdf_share_title">Share kundli</string>
     <string name="chart_pdf_error">Could not prepare the kundli PDF. Please try again.</string>
+    <string name="chart_ghatak_yoga">Yoga</string>
+    <string name="chart_ghatak_karana">Karana</string>
 </resources>

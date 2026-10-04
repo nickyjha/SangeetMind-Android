@@ -25,6 +25,15 @@ data class Choghadiya(
     val end: String? = null
 )
 
+/** One planetary hour (hora) of the Vedic day: "day" (sunrise→sunset) or "night". */
+@JsonClass(generateAdapter = true)
+data class Hora(
+    val lord: String,
+    val period: String = "day",
+    val start: String? = null,
+    val end: String? = null
+)
+
 /** GET /v1/panchang response (app/services/panchang_service.py::compute_panchang). */
 @JsonClass(generateAdapter = true)
 data class PanchangResponse(
@@ -43,5 +52,6 @@ data class PanchangResponse(
     val sunset: String? = null,
     val rahuKalam: PanchangSpan? = null,
     val abhijitMuhurat: PanchangSpan? = null,
-    val choghadiya: List<Choghadiya> = emptyList()
+    val choghadiya: List<Choghadiya> = emptyList(),
+    val hora: List<Hora> = emptyList()
 )

@@ -499,6 +499,8 @@ data class ChartGhatak(
     @Json(name = "lagna_same_sex") val lagnaSameSex: LocalizedText? = null,
     @Json(name = "lagna_opposite_sex") val lagnaOppositeSex: LocalizedText? = null,
     val prahara: Int? = null,
+    val yoga: String = "",
+    val karana: String = "",
     val note: LocalizedText? = null
 )
 

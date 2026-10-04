@@ -298,4 +298,6 @@
     <string name="chart_pdf_share">कुंडली PDF साझा करें</string>
     <string name="chart_pdf_share_title">कुंडली साझा करें</string>
     <string name="chart_pdf_error">कुंडली PDF तैयार नहीं हो सकी। फिर कोशिश करें।</string>
+    <string name="chart_ghatak_yoga">योग</string>
+    <string name="chart_ghatak_karana">करण</string>
 </resources>

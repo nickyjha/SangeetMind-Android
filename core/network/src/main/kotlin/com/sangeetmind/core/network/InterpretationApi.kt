@@ -8,13 +8,21 @@ import com.sangeetmind.libs.models.TransitRequest
 import com.sangeetmind.libs.models.TransitResponse
 import com.sangeetmind.libs.models.VarshaphalRequest
 import com.sangeetmind.libs.models.VarshaphalResponse
+import okhttp3.ResponseBody
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.Query
+import retrofit2.http.Streaming
 
 interface InterpretationApi {
     @POST("v1/chart")
     suspend fun getChart(@Body body: ChartRequest): ChartSummaryResponse
+
+    /** Printable kundli PDF for the same body as [getChart] (app/api/v1/routes.py chart_pdf). */
+    @Streaming
+    @POST("v1/chart/pdf")
+    suspend fun getChartPdf(@Body body: ChartRequest, @Query("name") name: String?): Response<ResponseBody>
 
     @POST("v1/varshaphal")
     suspend fun getVarshaphal(@Body body: VarshaphalRequest): VarshaphalResponse

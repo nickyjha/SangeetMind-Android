@@ -263,4 +263,41 @@
     <string name="chart_bhav_drishti_title">Aspects on house midpoints</string>
     <string name="chart_bhav_drishti_subtitle">Parashari aspect strength of each graha on each bhava madhya, in virupas (60 = full)</string>
     <string name="chart_bhav_drishti_none">No aspect</string>
+
+    <!-- Ghatak + favourable points -->
+    <string name="chart_ghatak_title">Ghatak chakra</string>
+    <string name="chart_ghatak_subtitle">Times when the Moon-sign chart is weakest</string>
+    <string name="chart_ghatak_month">Month</string>
+    <string name="chart_ghatak_tithi">Tithi</string>
+    <string name="chart_ghatak_day">Day</string>
+    <string name="chart_ghatak_nakshatra">Nakshatra</string>
+    <string name="chart_ghatak_moon">Moon sign</string>
+    <string name="chart_ghatak_lagna">Lagna</string>
+    <string name="chart_ghatak_prahara">Prahara</string>
+    <string name="chart_fav_title">Favourable points</string>
+    <string name="chart_fav_subtitle">From your Moon-sign lord %1$s and its friends</string>
+    <string name="chart_fav_planets">Good planets</string>
+    <string name="chart_fav_days">Lucky days</string>
+    <string name="chart_fav_numbers">Lucky numbers</string>
+    <string name="chart_fav_avoid_numbers">Avoid numbers</string>
+    <string name="chart_fav_signs">Friendly signs</string>
+    <string name="chart_fav_colour">Colour</string>
+    <string name="chart_fav_gem">Gemstone</string>
+
+    <!-- KP views -->
+    <string name="chart_kp_view_planets">Planets</string>
+    <string name="chart_kp_view_ruling">Ruling planets</string>
+    <string name="chart_kp_view_houses">House significators</string>
+    <string name="chart_kp_lords_header">Sign lord / star lord / sub lord</string>
+    <string name="chart_kp_ruling_subtitle">At birth · sign lord / star lord / sub lord</string>
+    <string name="chart_kp_ruling_lagna">Lagna</string>
+    <string name="chart_kp_ruling_moon">Moon</string>
+    <string name="chart_kp_ruling_day">Day lord</string>
+    <string name="chart_kp_no_ruling">Ruling planets are not in this chart yet. Refresh to recompute.</string>
+    <string name="chart_kp_house_sig_subtitle">A in the star of occupants · B occupants · C in the star of the lord · D lord</string>
+
+    <!-- Kundli PDF -->
+    <string name="chart_pdf_share">Share kundli PDF</string>
+    <string name="chart_pdf_share_title">Share kundli</string>
+    <string name="chart_pdf_error">Could not prepare the kundli PDF. Please try again.</string>
 </resources>

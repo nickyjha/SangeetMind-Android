@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,6 +23,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Share
+import android.content.Intent
+import android.widget.Toast
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
+import com.sangeetmind.libs.models.ChartGhatak
+import com.sangeetmind.libs.models.ChartFavourablePoints
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -111,6 +119,23 @@ fun ChartScreen(
     viewModel: ChartViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val pdfChooserTitle = stringResource(R.string.chart_pdf_share_title)
+    LaunchedEffect(uiState.pdfUri, uiState.pdfError) {
+        uiState.pdfUri?.let { uri ->
+            val send = Intent(Intent.ACTION_SEND).apply {
+                type = "application/pdf"
+                putExtra(Intent.EXTRA_STREAM, uri)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            context.startActivity(Intent.createChooser(send, pdfChooserTitle))
+            viewModel.consumePdf()
+        }
+        uiState.pdfError?.let { message ->
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+            viewModel.consumePdf()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -119,6 +144,15 @@ fun ChartScreen(
                 onBack = onNavigateBack,
                 accent = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.shani,
                 actions = {
+                    if (uiState.chart != null) {
+                        IconButton(onClick = viewModel::downloadPdf, enabled = !uiState.pdfBusy) {
+                            if (uiState.pdfBusy) {
+                                CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
+                            } else {
+                                Icon(Icons.Default.Share, contentDescription = stringResource(R.string.chart_pdf_share))
+                            }
+                        }
+                    }
                     IconButton(onClick = viewModel::refresh) {
                         Icon(Icons.Default.Refresh, contentDescription = stringResource(CoreR.string.common_refresh))
                     }
@@ -263,6 +297,12 @@ private fun ChartContent(
                     }
                     chart.birthPanchang?.takeIf { it.tithi != null }?.let { bp ->
                         item { BirthPanchangCard(bp) }
+                    }
+                    chart.ghatak?.takeIf { it.nakshatra.isNotBlank() }?.let { gh ->
+                        item { GhatakCard(gh) }
+                    }
+                    chart.favourablePoints?.takeIf { it.goodPlanets.isNotEmpty() }?.let { fp ->
+                        item { FavourablePointsCard(fp) }
                     }
                     item {
                         YogasCard(chart.yogas)
@@ -1456,7 +1496,10 @@ internal fun grahaColorFor(planet: String, graha: GrahaColors): Color = when (pl
  * significator houses, matching AstroSage AI's dedicated KP System tab
  * (app/services/kp_system.py). */
 private enum class KpView(@StringRes val labelRes: Int) {
-    CUSPS(R.string.chart_kp_cusps), SIGNIFICATORS(R.string.chart_kp_significators)
+    CUSPS(R.string.chart_kp_cusps), SIGNIFICATORS(R.string.chart_kp_significators),
+    PLANETS(R.string.chart_kp_view_planets),
+    RULING(R.string.chart_kp_view_ruling),
+    HOUSES(R.string.chart_kp_view_houses)
 }
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
@@ -1485,6 +1528,88 @@ private fun KpCard(kp: ChartKp) {
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 when (view) {
+                    KpView.PLANETS -> {
+                        Text(
+                            stringResource(R.string.chart_kp_lords_header),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        listOf("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu").forEach { name ->
+                            val planet = kp.planets[name] ?: return@forEach
+                            Row(
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    "${astroTerm(name)} · ${astroTerm(planet.sign)}" +
+                                        (planet.house?.let { " · ${stringResource(CoreR.string.common_house_short, it)}" } ?: ""),
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Text(
+                                    "${astroTerm(planet.signLord)} / ${astroTerm(planet.starLord)} / ${astroTerm(planet.subLord)}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+                    KpView.RULING -> {
+                        val rp = kp.rulingPlanets
+                        if (rp == null) {
+                            Text(stringResource(R.string.chart_kp_no_ruling), style = MaterialTheme.typography.bodySmall)
+                        } else {
+                            Text(
+                                stringResource(R.string.chart_kp_ruling_subtitle),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(modifier = Modifier.height(6.dp))
+                            listOf(
+                                R.string.chart_kp_ruling_lagna to rp.lagna,
+                                R.string.chart_kp_ruling_moon to rp.moon
+                            ).forEach { (labelRes, triple) ->
+                                if (triple != null) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Text(stringResource(labelRes), style = MaterialTheme.typography.bodyMedium)
+                                        Text(
+                                            "${astroTerm(triple.signLord)} / ${astroTerm(triple.starLord)} / ${astroTerm(triple.subLord)}",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                }
+                            }
+                            Row(
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(stringResource(R.string.chart_kp_ruling_day), style = MaterialTheme.typography.bodyMedium)
+                                Text(astroTerm(rp.dayLord), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                        }
+                    }
+                    KpView.HOUSES -> {
+                        Text(
+                            stringResource(R.string.chart_kp_house_sig_subtitle),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        (1..12).forEach { house ->
+                            val sig = kp.houseSignificators[house.toString()] ?: return@forEach
+                            Column(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
+                                Text(stringResource(CoreR.string.common_house_short, house), style = MaterialTheme.typography.bodyMedium)
+                                FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                    listOf("A" to sig.a, "B" to sig.b, "C" to sig.c, "D" to sig.d).forEach { (level, planets) ->
+                                        planets.forEach { planet -> Chip("$level · ${astroTerm(planet)}", grahaColorFor(planet, graha)) }
+                                    }
+                                }
+                            }
+                        }
+                    }
                     KpView.CUSPS -> kp.cusps.sortedBy { it.house }.forEach { cusp ->
                         Row(
                             modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
@@ -2554,6 +2679,67 @@ private fun BhavMadhyaDrishtiCard(rows: List<BhavMadhyaDrishti>) {
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+/** Ghatak chakra: the month, tithi group, weekday, nakshatra, Moon sign and lagna in which
+ * this Moon sign is weakest (app/services/ghatak.py). */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun GhatakCard(gh: ChartGhatak) {
+    val lang = LocalAppLanguage.current.code
+    fun local(t: com.sangeetmind.libs.models.LocalizedText?): String? = t?.forLanguage(lang)?.ifBlank { null }
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(stringResource(R.string.chart_ghatak_title), style = MaterialTheme.typography.titleMedium)
+            Text(
+                local(gh.note) ?: stringResource(R.string.chart_ghatak_subtitle),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                local(gh.month)?.let { SummaryChip(stringResource(R.string.chart_ghatak_month), it) }
+                gh.tithi?.let { t ->
+                    val label = if (lang == "hi" && t.hi.isNotBlank()) t.hi else t.group
+                    SummaryChip(stringResource(R.string.chart_ghatak_tithi), "$label (${t.numbers.joinToString(", ")})")
+                }
+                local(gh.day)?.let { SummaryChip(stringResource(R.string.chart_ghatak_day), it) }
+                gh.nakshatra.takeIf { it.isNotBlank() }?.let { SummaryChip(stringResource(R.string.chart_ghatak_nakshatra), astroTerm(it)) }
+                local(gh.moonRasi)?.let { SummaryChip(stringResource(R.string.chart_ghatak_moon), it) }
+                local(gh.lagnaSameSex)?.let { SummaryChip(stringResource(R.string.chart_ghatak_lagna), it) }
+                gh.prahara?.let { SummaryChip(stringResource(R.string.chart_ghatak_prahara), it.toString()) }
+            }
+        }
+    }
+}
+
+/** Favourable points derived from the Moon-sign lord: good planets, lucky days, numbers,
+ * friendly signs, colour and gemstone (app/services/ghatak.py). */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun FavourablePointsCard(fp: ChartFavourablePoints) {
+    val lang = LocalAppLanguage.current.code
+    val context = LocalContext.current
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(stringResource(R.string.chart_fav_title), style = MaterialTheme.typography.titleMedium)
+            Text(
+                stringResource(R.string.chart_fav_subtitle, astroTerm(fp.rasiLord)),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                if (fp.goodPlanets.isNotEmpty()) SummaryChip(stringResource(R.string.chart_fav_planets), fp.goodPlanets.joinToString(", ") { context.astroTerm(it) })
+                if (fp.luckyDays.isNotEmpty()) SummaryChip(stringResource(R.string.chart_fav_days), fp.luckyDays.joinToString(", ") { context.astroTerm(it) })
+                if (fp.luckyNumbers.isNotEmpty()) SummaryChip(stringResource(R.string.chart_fav_numbers), fp.luckyNumbers.joinToString(", "))
+                if (fp.evilNumbers.isNotEmpty()) SummaryChip(stringResource(R.string.chart_fav_avoid_numbers), fp.evilNumbers.joinToString(", "))
+                if (fp.friendlySigns.isNotEmpty()) SummaryChip(stringResource(R.string.chart_fav_signs), fp.friendlySigns.joinToString(", ") { context.astroTerm(it) })
+                fp.luckyColour?.forLanguage(lang)?.takeIf { it.isNotBlank() }?.let { SummaryChip(stringResource(R.string.chart_fav_colour), it) }
+                fp.gemstone?.forLanguage(lang)?.takeIf { it.isNotBlank() }?.let { SummaryChip(stringResource(R.string.chart_fav_gem), it) }
             }
         }
     }

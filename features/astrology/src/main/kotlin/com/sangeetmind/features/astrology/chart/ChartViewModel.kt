@@ -20,7 +20,11 @@ data class ChartUiState(
     val kundli: Kundli? = null,
     val chart: ChartSummaryResponse? = null,
     val showFullTimeline: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val pdfBusy: Boolean = false,
+    /** A freshly downloaded kundli PDF to share; cleared by [ChartViewModel.consumePdf]. */
+    val pdfUri: android.net.Uri? = null,
+    val pdfError: String? = null
 )
 
 @HiltViewModel
@@ -72,5 +76,22 @@ class ChartViewModel @Inject constructor(
 
     fun toggleFullTimeline() {
         _uiState.update { it.copy(showFullTimeline = !it.showFullTimeline) }
+    }
+
+    fun downloadPdf() {
+        val kundli = _uiState.value.kundli ?: return
+        if (_uiState.value.pdfBusy) return
+        viewModelScope.launch {
+            _uiState.update { it.copy(pdfBusy = true, pdfError = null) }
+            when (val result = chartRepository.downloadKundliPdf(kundli)) {
+                is Result.Success -> _uiState.update { it.copy(pdfBusy = false, pdfUri = result.data) }
+                is Result.Error -> _uiState.update { it.copy(pdfBusy = false, pdfError = result.message) }
+                is Result.Loading -> Unit
+            }
+        }
+    }
+
+    fun consumePdf() {
+        _uiState.update { it.copy(pdfUri = null, pdfError = null) }
     }
 }

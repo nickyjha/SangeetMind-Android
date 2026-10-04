@@ -261,4 +261,41 @@
     <string name="chart_bhav_drishti_title">भाव मध्य पर दृष्टि</string>
     <string name="chart_bhav_drishti_subtitle">हर भाव मध्य पर ग्रहों की पाराशरी दृष्टि, विरूप में (60 = पूरी)</string>
     <string name="chart_bhav_drishti_none">कोई दृष्टि नहीं</string>
+
+    <!-- Ghatak + favourable points -->
+    <string name="chart_ghatak_title">घातक चक्र</string>
+    <string name="chart_ghatak_subtitle">जब चंद्र राशि सबसे कमज़ोर रहती है</string>
+    <string name="chart_ghatak_month">मास</string>
+    <string name="chart_ghatak_tithi">तिथि</string>
+    <string name="chart_ghatak_day">वार</string>
+    <string name="chart_ghatak_nakshatra">नक्षत्र</string>
+    <string name="chart_ghatak_moon">चंद्र राशि</string>
+    <string name="chart_ghatak_lagna">लग्न</string>
+    <string name="chart_ghatak_prahara">प्रहर</string>
+    <string name="chart_fav_title">अनुकूल बातें</string>
+    <string name="chart_fav_subtitle">आपकी चंद्र राशि के स्वामी %1$s और उसके मित्रों से</string>
+    <string name="chart_fav_planets">शुभ ग्रह</string>
+    <string name="chart_fav_days">शुभ दिन</string>
+    <string name="chart_fav_numbers">शुभ अंक</string>
+    <string name="chart_fav_avoid_numbers">बचने वाले अंक</string>
+    <string name="chart_fav_signs">मित्र राशियाँ</string>
+    <string name="chart_fav_colour">रंग</string>
+    <string name="chart_fav_gem">रत्न</string>
+
+    <!-- KP views -->
+    <string name="chart_kp_view_planets">ग्रह</string>
+    <string name="chart_kp_view_ruling">रूलिंग ग्रह</string>
+    <string name="chart_kp_view_houses">भाव कारक</string>
+    <string name="chart_kp_lords_header">राशि स्वामी / नक्षत्र स्वामी / उप स्वामी</string>
+    <string name="chart_kp_ruling_subtitle">जन्म के समय · राशि स्वामी / नक्षत्र स्वामी / उप स्वामी</string>
+    <string name="chart_kp_ruling_lagna">लग्न</string>
+    <string name="chart_kp_ruling_moon">चंद्र</string>
+    <string name="chart_kp_ruling_day">दिन स्वामी</string>
+    <string name="chart_kp_no_ruling">रूलिंग ग्रह अभी इस कुंडली में नहीं हैं। दोबारा लोड करें।</string>
+    <string name="chart_kp_house_sig_subtitle">A भाव में बैठे ग्रहों के नक्षत्र में · B भाव में बैठे ग्रह · C स्वामी के नक्षत्र में · D स्वामी</string>
+
+    <!-- Kundli PDF -->
+    <string name="chart_pdf_share">कुंडली PDF साझा करें</string>
+    <string name="chart_pdf_share_title">कुंडली साझा करें</string>
+    <string name="chart_pdf_error">कुंडली PDF तैयार नहीं हो सकी। फिर कोशिश करें।</string>
 </resources>

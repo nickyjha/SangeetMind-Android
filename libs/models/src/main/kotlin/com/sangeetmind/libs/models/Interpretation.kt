@@ -436,12 +436,40 @@ data class KpCusp(
 data class KpPlanet(
     val longitude: Double = 0.0,
     val sign: String = "",
+    @Json(name = "sign_lord") val signLord: String = "",
     val degree: Double = 0.0,
     @Json(name = "absolute_dms") val absoluteDms: String? = null,
     val house: Int? = null,
     val nakshatra: MoonNakshatraInfo = MoonNakshatraInfo(),
+    @Json(name = "star_lord") val starLord: String = "",
     @Json(name = "sub_lord") val subLord: String = "",
     @Json(name = "sub_sub_lord") val subSubLord: String = ""
+)
+
+@JsonClass(generateAdapter = true)
+data class KpLordTriple(
+    @Json(name = "sign_lord") val signLord: String = "",
+    @Json(name = "star_lord") val starLord: String = "",
+    @Json(name = "sub_lord") val subLord: String = ""
+)
+
+/** KP ruling planets: lagna and Moon sign/star/sub lords plus the day lord (at birth). */
+@JsonClass(generateAdapter = true)
+data class KpRulingPlanets(
+    val basis: String = "birth",
+    val lagna: KpLordTriple? = null,
+    val moon: KpLordTriple? = null,
+    @Json(name = "day_lord") val dayLord: String = ""
+)
+
+/** Four-level KP house significators: A planets in the star of occupants, B occupants,
+ * C planets in the star of the lord, D the lord. */
+@JsonClass(generateAdapter = true)
+data class KpHouseSignificators(
+    @Json(name = "A") val a: List<String> = emptyList(),
+    @Json(name = "B") val b: List<String> = emptyList(),
+    @Json(name = "C") val c: List<String> = emptyList(),
+    @Json(name = "D") val d: List<String> = emptyList()
 )
 
 @JsonClass(generateAdapter = true)
@@ -451,7 +479,42 @@ data class ChartKp(
     val cusps: List<KpCusp> = emptyList(),
     val planets: Map<String, KpPlanet> = emptyMap(),
     /** House numbers each planet signifies, via cusp ownership + occupation. */
-    val significators: Map<String, List<Int>> = emptyMap()
+    val significators: Map<String, List<Int>> = emptyMap(),
+    @Json(name = "house_significators") val houseSignificators: Map<String, KpHouseSignificators> = emptyMap(),
+    @Json(name = "ruling_planets") val rulingPlanets: KpRulingPlanets? = null
+)
+
+/** Ghatak chakra for the Moon sign (app/services/ghatak.py). */
+@JsonClass(generateAdapter = true)
+data class GhatakTithi(val group: String = "", val hi: String = "", val numbers: List<Int> = emptyList())
+
+@JsonClass(generateAdapter = true)
+data class ChartGhatak(
+    @Json(name = "moon_sign") val moonSign: String = "",
+    val month: LocalizedText? = null,
+    val tithi: GhatakTithi? = null,
+    val day: LocalizedText? = null,
+    val nakshatra: String = "",
+    @Json(name = "moon_rasi") val moonRasi: LocalizedText? = null,
+    @Json(name = "lagna_same_sex") val lagnaSameSex: LocalizedText? = null,
+    @Json(name = "lagna_opposite_sex") val lagnaOppositeSex: LocalizedText? = null,
+    val prahara: Int? = null,
+    val note: LocalizedText? = null
+)
+
+/** Favourable points derived from the Moon-sign lord (app/services/ghatak.py). */
+@JsonClass(generateAdapter = true)
+data class ChartFavourablePoints(
+    @Json(name = "rasi_lord") val rasiLord: String = "",
+    @Json(name = "good_planets") val goodPlanets: List<String> = emptyList(),
+    @Json(name = "bad_planets") val badPlanets: List<String> = emptyList(),
+    @Json(name = "lucky_days") val luckyDays: List<String> = emptyList(),
+    @Json(name = "friendly_signs") val friendlySigns: List<String> = emptyList(),
+    @Json(name = "unfriendly_signs") val unfriendlySigns: List<String> = emptyList(),
+    @Json(name = "lucky_numbers") val luckyNumbers: List<Int> = emptyList(),
+    @Json(name = "evil_numbers") val evilNumbers: List<Int> = emptyList(),
+    @Json(name = "lucky_colour") val luckyColour: LocalizedText? = null,
+    val gemstone: LocalizedText? = null
 )
 
 /** Jaimini chara karaka — the 7 classical planets ranked by degree-in-sign, Atmakaraka
@@ -750,6 +813,8 @@ data class ChartSummaryResponse(
     val friendship: ChartFriendship = ChartFriendship(),
     val avakahada: ChartAvakahada? = null,
     @Json(name = "birth_panchang") val birthPanchang: ChartBirthPanchang? = null,
+    val ghatak: ChartGhatak? = null,
+    @Json(name = "favourable_points") val favourablePoints: ChartFavourablePoints? = null,
     val aspects: ChartAspects = ChartAspects(),
     val shadbala: ChartShadbala = ChartShadbala(),
     val bhavabala: ChartBhavabala = ChartBhavabala(),

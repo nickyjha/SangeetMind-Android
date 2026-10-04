@@ -8,6 +8,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException
 import com.sangeetmind.core.common.theme.ThemeManager
 import com.sangeetmind.core.common.theme.ThemePreference
+import com.sangeetmind.core.network.AlertPreferences
+import com.sangeetmind.core.network.PushTokenRegistrar
 import com.sangeetmind.core.network.UsersApi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +25,9 @@ data class SettingsUiState(
     val darkMode: DarkModePreference = DarkModePreference.LIGHT,
     val deleteAccount: DeleteAccountState = DeleteAccountState.Idle,
     /** True once [SettingsViewModel.signOut] has signed the user out. */
-    val signedOut: Boolean = false
+    val signedOut: Boolean = false,
+    /** Push alert kinds switched on (core.network.AlertPreferences). */
+    val alertKinds: Set<String> = AlertPreferences.DEFAULTS
 )
 
 /** Progress of the "Delete account" flow (Settings danger zone). */
@@ -66,13 +70,29 @@ enum class DarkModePreference {
 class SettingsViewModel @Inject constructor(
     private val themeManager: ThemeManager,
     private val usersApi: UsersApi,
-    private val firebaseAuth: FirebaseAuth
+    private val firebaseAuth: FirebaseAuth,
+    private val alertPreferences: AlertPreferences,
+    private val pushTokenRegistrar: PushTokenRegistrar
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
-        SettingsUiState(darkMode = DarkModePreference.from(themeManager.preference.value))
+        SettingsUiState(
+            darkMode = DarkModePreference.from(themeManager.preference.value),
+            alertKinds = alertPreferences.kinds.value
+        )
     )
     val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
+
+    /** Saves the switch and re-registers the device so the server sends only these alerts. */
+    fun setAlert(kind: String, enabled: Boolean) {
+        alertPreferences.setEnabled(kind, enabled)
+        _uiState.update { it.copy(alertKinds = alertPreferences.kinds.value) }
+        viewModelScope.launch {
+            pushTokenRegistrar.registerCurrentToken().onFailure {
+                Log.w(TAG, "Could not save alert choice on the server", it)
+            }
+        }
+    }
 
     fun setDarkMode(preference: DarkModePreference) {
         _uiState.update { it.copy(darkMode = preference) }

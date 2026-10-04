@@ -9,7 +9,7 @@
     <string name="settings_theme_dark">Dark</string>
     <string name="settings_theme_system">System default</string>
     <string name="settings_notifications_title">Notifications</string>
-    <string name="settings_notifications_desc">Choose which alerts you get in phone settings</string>
+    <string name="settings_notifications_desc">Sound, vibration and channels in phone settings</string>
     <string name="settings_version_title">Version</string>
     <string name="settings_privacy_title">Privacy Policy</string>
     <string name="settings_privacy_desc">View our privacy policy</string>
@@ -32,4 +32,19 @@
     <string name="settings_delete_account_confirm">Delete my account</string>
     <string name="settings_delete_account_failed">Could not delete your account. Please check your connection and try again.</string>
     <string name="settings_delete_account_sign_in_again">Your data was deleted. Please sign in again, then delete the account to finish.</string>
+    <!-- Push alert switches -->
+    <string name="settings_alert_daily">Your day</string>
+    <string name="settings_alert_daily_desc">Morning score and action of the day</string>
+    <string name="settings_alert_dasha">Dasha change</string>
+    <string name="settings_alert_dasha_desc">The day a new antardasha begins</string>
+    <string name="settings_alert_festival">Festivals</string>
+    <string name="settings_alert_festival_desc">The evening before a vrat or festival</string>
+    <string name="settings_alert_transit">Planetary updates</string>
+    <string name="settings_alert_transit_desc">When a slow planet changes sign or turns retrograde or direct</string>
+    <string name="settings_alert_chandrashtama">Chandrashtama</string>
+    <string name="settings_alert_chandrashtama_desc">The 2½ days each month when the Moon is 8th from yours</string>
+    <string name="settings_alert_nakshatra">Nakshatra of the day</string>
+    <string name="settings_alert_nakshatra_desc">Today\'s nakshatra and whether its tara is good for you</string>
+    <string name="settings_alert_rahu">Rahu Kaal</string>
+    <string name="settings_alert_rahu_desc">A reminder shortly before Rahu Kaal starts</string>
 </resources>

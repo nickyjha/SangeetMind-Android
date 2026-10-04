@@ -9,7 +9,7 @@
     <string name="settings_theme_dark">डार्क</string>
     <string name="settings_theme_system">सिस्टम डिफ़ॉल्ट</string>
     <string name="settings_notifications_title">नोटिफ़िकेशन</string>
-    <string name="settings_notifications_desc">फ़ोन की सेटिंग में चुनें कि कौन से अलर्ट आएँ</string>
+    <string name="settings_notifications_desc">आवाज़, वाइब्रेशन और चैनल फ़ोन की सेटिंग में</string>
     <string name="settings_version_title">वर्ज़न</string>
     <string name="settings_privacy_title">प्राइवेसी पॉलिसी</string>
     <string name="settings_privacy_desc">हमारी प्राइवेसी पॉलिसी देखें</string>
@@ -32,4 +32,19 @@
     <string name="settings_delete_account_confirm">मेरा अकाउंट हटाएँ</string>
     <string name="settings_delete_account_failed">अकाउंट नहीं हट पाया। इंटरनेट देखें और फिर से कोशिश करें।</string>
     <string name="settings_delete_account_sign_in_again">आपका डेटा हट गया है। कृपया फिर से साइन इन करें और अकाउंट हटाएँ।</string>
+    <!-- Push alert switches -->
+    <string name="settings_alert_daily">आपका दिन</string>
+    <string name="settings_alert_daily_desc">सुबह का स्कोर और आज का काम</string>
+    <string name="settings_alert_dasha">दशा बदलाव</string>
+    <string name="settings_alert_dasha_desc">जिस दिन नई अंतर्दशा शुरू हो</string>
+    <string name="settings_alert_festival">त्योहार</string>
+    <string name="settings_alert_festival_desc">व्रत या त्योहार से एक शाम पहले</string>
+    <string name="settings_alert_transit">ग्रह गोचर</string>
+    <string name="settings_alert_transit_desc">जब कोई धीमा ग्रह राशि बदले या वक्री/मार्गी हो</string>
+    <string name="settings_alert_chandrashtama">चंद्राष्टम</string>
+    <string name="settings_alert_chandrashtama_desc">हर महीने के वो ढाई दिन जब चंद्र आपकी राशि से आठवें हो</string>
+    <string name="settings_alert_nakshatra">आज का नक्षत्र</string>
+    <string name="settings_alert_nakshatra_desc">आज का नक्षत्र और उसकी तारा आपके लिए कैसी है</string>
+    <string name="settings_alert_rahu">राहु काल</string>
+    <string name="settings_alert_rahu_desc">राहु काल शुरू होने से पहले याद दिलाएं</string>
 </resources>

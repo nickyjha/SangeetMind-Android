@@ -22,7 +22,8 @@ class PushTokenRegistrar @Inject constructor(
     @ApplicationContext private val context: Context,
     private val firebaseMessaging: FirebaseMessaging,
     private val deviceApi: DeviceApi,
-    private val languageManager: LanguageManager
+    private val languageManager: LanguageManager,
+    private val alertPreferences: AlertPreferences
 ) {
     suspend fun registerCurrentToken(): Result<Unit> = withContext(Dispatchers.IO) {
         runCatching {
@@ -43,7 +44,8 @@ class PushTokenRegistrar @Inject constructor(
         locale = languageManager.current.code,
         timezone = TimeZone.getDefault().id,
         pushHourLocal = DEFAULT_PUSH_HOUR,
-        appVersion = appVersion()
+        appVersion = appVersion(),
+        alertKinds = alertPreferences.savedKinds()
     )
 
     private fun appVersion(): String? = runCatching {

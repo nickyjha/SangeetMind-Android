@@ -76,7 +76,8 @@ fun SangeetMindNavHost(
         // Only once signed in: the graph starts at onboarding/auth otherwise.
         if (startDestination == "dashboard") {
             when (deepLinkScreen) {
-                "readings", "festivals", "eclipses" -> runCatching { navController.navigate(deepLinkScreen) }
+                "readings", "festivals", "eclipses", "panchang", "gochar" ->
+                    runCatching { navController.navigate(deepLinkScreen) }
                 // "dashboard" now means the Home tab: drop whatever is above it.
                 "dashboard" -> runCatching { navController.popBackStack(MainTab.HOME.route, inclusive = false) }
                 else -> Unit

@@ -14,5 +14,7 @@ data class DeviceRegisterRequest(
     val timezone: String? = null,
     /** Preferred local hour (0-23) for the daily push; the server defaults to 7. */
     @Json(name = "push_hour_local") val pushHourLocal: Int? = null,
-    @Json(name = "app_version") val appVersion: String? = null
+    @Json(name = "app_version") val appVersion: String? = null,
+    /** Push alert kinds this device wants; null = keep the server's choice/defaults. */
+    @Json(name = "alert_kinds") val alertKinds: List<String>? = null
 )

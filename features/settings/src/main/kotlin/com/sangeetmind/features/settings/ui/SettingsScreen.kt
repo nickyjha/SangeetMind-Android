@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sangeetmind.core.common.Constants
+import com.sangeetmind.core.network.AlertPreferences
 import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.core.ui.language.LanguagePickerDialog
 import com.sangeetmind.core.ui.language.LocalAppLanguage
@@ -151,10 +152,19 @@ fun SettingsScreen(
 
             // Notifications Section - opens the system per-app notification settings.
             SettingsSection(title = stringResource(R.string.settings_section_notifications)) {
+                ALERT_SWITCHES.forEach { (kind, labels, icon) ->
+                    SwitchSettingItem(
+                        title = stringResource(labels.first),
+                        description = stringResource(labels.second),
+                        icon = icon,
+                        checked = kind in uiState.alertKinds,
+                        onCheckedChange = { viewModel.setAlert(kind, it) }
+                    )
+                }
                 ActionSettingItem(
                     title = stringResource(R.string.settings_notifications_title),
                     description = stringResource(R.string.settings_notifications_desc),
-                    icon = Icons.Default.Notifications,
+                    icon = Icons.Default.Settings,
                     onClick = { context.openAppNotificationSettings() }
                 )
             }
@@ -223,6 +233,17 @@ private fun Context.appVersionName(): String = runCatching {
     @Suppress("DEPRECATION")
     packageManager.getPackageInfo(packageName, 0).versionName
 }.getOrNull().orEmpty()
+
+/** One switch per push alert kind (backend daily_push.KINDS), in display order. */
+private val ALERT_SWITCHES = listOf(
+    Triple(AlertPreferences.DAILY, R.string.settings_alert_daily to R.string.settings_alert_daily_desc, Icons.Default.Notifications),
+    Triple(AlertPreferences.DASHA, R.string.settings_alert_dasha to R.string.settings_alert_dasha_desc, Icons.Default.DateRange),
+    Triple(AlertPreferences.FESTIVAL, R.string.settings_alert_festival to R.string.settings_alert_festival_desc, Icons.Default.Favorite),
+    Triple(AlertPreferences.TRANSIT, R.string.settings_alert_transit to R.string.settings_alert_transit_desc, Icons.Default.Refresh),
+    Triple(AlertPreferences.CHANDRASHTAMA, R.string.settings_alert_chandrashtama to R.string.settings_alert_chandrashtama_desc, Icons.Default.Warning),
+    Triple(AlertPreferences.NAKSHATRA, R.string.settings_alert_nakshatra to R.string.settings_alert_nakshatra_desc, Icons.Default.Star),
+    Triple(AlertPreferences.RAHU_KAAL, R.string.settings_alert_rahu to R.string.settings_alert_rahu_desc, Icons.Default.Info)
+)
 
 /** Opens Android's notification settings for this app (or app details on API < 26). */
 private fun Context.openAppNotificationSettings() {

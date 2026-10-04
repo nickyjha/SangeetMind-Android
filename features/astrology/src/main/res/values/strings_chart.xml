@@ -219,4 +219,48 @@
     <string name="chart_style_north">North Indian</string>
     <string name="chart_style_south">South Indian</string>
     <string name="chart_subtitle_south_indian">South Indian chart · signs fixed, houses counted from the lagna mark</string>
+
+    <!-- Avakahada chakra -->
+    <string name="chart_avakahada_title">Avakahada chakra</string>
+    <string name="chart_avakahada_subtitle">Basic details from the Moon sign and nakshatra</string>
+    <string name="chart_av_varna">Varna</string>
+    <string name="chart_av_vashya">Vashya</string>
+    <string name="chart_av_yoni">Yoni</string>
+    <string name="chart_av_gana">Gana</string>
+    <string name="chart_av_nadi">Nadi</string>
+    <string name="chart_av_paya">Paya</string>
+    <string name="chart_av_tatva">Tatva</string>
+    <string name="chart_av_name_letter">Name letter</string>
+    <string name="chart_av_rasi_lord">Rasi lord</string>
+    <string name="chart_av_nak_lord">Nakshatra lord</string>
+    <string name="chart_av_lagna_lord">Lagna lord</string>
+    <string name="chart_av_sun_sign">Sun sign</string>
+
+    <!-- Birth panchang -->
+    <string name="chart_birth_panchang_title">Birth panchang</string>
+    <string name="chart_birth_panchang_subtitle">Tithi, nakshatra, yoga and karana at the moment of birth</string>
+    <string name="chart_bp_tithi">Tithi</string>
+    <string name="chart_bp_nakshatra">Nakshatra</string>
+    <string name="chart_bp_yoga">Yoga</string>
+    <string name="chart_bp_karana">Karana</string>
+    <string name="chart_bp_vara">Vedic day</string>
+    <string name="chart_bp_sun_times">Sunrise · sunset</string>
+    <string name="chart_bp_hora">Hora lord</string>
+    <string name="chart_bp_month">Lunar month</string>
+    <string name="chart_bp_ritu">Ritu</string>
+    <string name="chart_bp_year">Year</string>
+    <string name="chart_bp_pada_fmt">%1$s · pada %2$d</string>
+    <string name="chart_bp_vedic_day_fmt">%1$s (lord %2$s)</string>
+    <string name="chart_bp_month_both_fmt">%1$s (amanta) · %2$s (purnimanta)</string>
+    <string name="chart_bp_year_fmt">Shaka %1$d · %2$s</string>
+
+    <!-- Friendship tables -->
+    <string name="chart_friendship_permanent">Natural</string>
+    <string name="chart_friendship_temporal">Temporal</string>
+    <string name="chart_friendship_compound">Compound</string>
+
+    <!-- Aspect on bhav madhya -->
+    <string name="chart_bhav_drishti_title">Aspects on house midpoints</string>
+    <string name="chart_bhav_drishti_subtitle">Parashari aspect strength of each graha on each bhava madhya, in virupas (60 = full)</string>
+    <string name="chart_bhav_drishti_none">No aspect</string>
 </resources>

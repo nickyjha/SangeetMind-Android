@@ -69,7 +69,11 @@ import com.sangeetmind.libs.models.ChartBhavabala
 import com.sangeetmind.libs.models.ChartChalit
 import com.sangeetmind.libs.models.ChartConjunction
 import com.sangeetmind.libs.models.ChartDoshas
+import com.sangeetmind.libs.models.ChartAvakahada
+import com.sangeetmind.libs.models.ChartBirthPanchang
 import com.sangeetmind.libs.models.ChartFriendship
+import com.sangeetmind.libs.models.BhavMadhyaDrishti
+import com.sangeetmind.libs.models.FriendshipTable
 import com.sangeetmind.libs.models.ChartHouses
 import com.sangeetmind.libs.models.ChartJaimini
 import com.sangeetmind.libs.models.ChartKp
@@ -254,6 +258,12 @@ private fun ChartContent(
                     item {
                         DoshaCard(chart.doshas)
                     }
+                    chart.avakahada?.let { av ->
+                        item { AvakahadaCard(av) }
+                    }
+                    chart.birthPanchang?.takeIf { it.tithi != null }?.let { bp ->
+                        item { BirthPanchangCard(bp) }
+                    }
                     item {
                         YogasCard(chart.yogas)
                     }
@@ -364,6 +374,11 @@ private fun ChartContent(
                     }
                     item {
                         HouseCuspsCard(chart.houses)
+                    }
+                    if (chart.aspects.bhavMadhyaDrishti.isNotEmpty()) {
+                        item {
+                            BhavMadhyaDrishtiCard(chart.aspects.bhavMadhyaDrishti)
+                        }
                     }
                 }
             }
@@ -1222,9 +1237,18 @@ private fun AshtakvargaCard(ashtakvarga: ChartAshtakvarga) {
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun FriendshipCard(friendship: ChartFriendship) {
-    if (friendship.relations.isNotEmpty() && friendship.planets.isNotEmpty()) {
-        var selected by remember(friendship) { mutableStateOf(friendship.planets.first()) }
-        val row = friendship.relations[selected].orEmpty()
+    // Naisargika / tatkalika / panchadha tables (backend "friendship.permanent|temporal|panchadha");
+    // older cached charts only carry the top-level permanent relations.
+    val tables = listOfNotNull(
+        friendship.permanent?.takeIf { it.relations.isNotEmpty() }?.let { R.string.chart_friendship_permanent to it },
+        friendship.temporal?.takeIf { it.relations.isNotEmpty() }?.let { R.string.chart_friendship_temporal to it },
+        friendship.panchadha?.takeIf { it.relations.isNotEmpty() }?.let { R.string.chart_friendship_compound to it }
+    )
+    var tableIndex by remember(friendship) { mutableStateOf(0) }
+    val table = tables.getOrNull(tableIndex)?.second ?: FriendshipTable(friendship.planets, friendship.relations)
+    if (table.relations.isNotEmpty() && table.planets.isNotEmpty()) {
+        var selected by remember(friendship) { mutableStateOf(table.planets.first()) }
+        val row = table.relations[selected].orEmpty()
         val graha = LocalGrahaColors.current
 
         Card(modifier = Modifier.fillMaxWidth()) {
@@ -1235,9 +1259,21 @@ private fun FriendshipCard(friendship: ChartFriendship) {
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+                if (tables.size > 1) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        tables.forEachIndexed { index, (labelRes, _) ->
+                            FilterChip(
+                                selected = index == tableIndex,
+                                onClick = { tableIndex = index },
+                                label = { Text(stringResource(labelRes)) }
+                            )
+                        }
+                    }
+                }
                 Spacer(modifier = Modifier.height(10.dp))
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    friendship.planets.forEach { planet ->
+                    table.planets.forEach { planet ->
                         FilterChip(
                             selected = planet == selected,
                             onClick = { selected = planet },
@@ -2373,4 +2409,152 @@ private fun formatCurrentDasha(chart: ChartSummaryResponse): String {
         current.antardasha?.lord,
         current.resolvedPratyantar?.lord
     ).map { astroTerm(it) }.joinToString(" – ")
+}
+
+/** Avakahada chakra — the Moon-based basic details (varna, vashya, yoni, gana, nadi, paya,
+ * tatva, name syllable, lords) that AstroSage and Astroyogi print beside every kundli. */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun AvakahadaCard(av: ChartAvakahada) {
+    val lang = LocalAppLanguage.current.code
+    fun local(t: com.sangeetmind.libs.models.LocalizedText?): String? = t?.forLanguage(lang)?.ifBlank { null }
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(stringResource(R.string.chart_avakahada_title), style = MaterialTheme.typography.titleMedium)
+            Text(
+                stringResource(R.string.chart_avakahada_subtitle),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                local(av.varna)?.let { SummaryChip(stringResource(R.string.chart_av_varna), it) }
+                local(av.vashya)?.let { SummaryChip(stringResource(R.string.chart_av_vashya), it) }
+                local(av.yoni)?.let { SummaryChip(stringResource(R.string.chart_av_yoni), it) }
+                local(av.gana)?.let { SummaryChip(stringResource(R.string.chart_av_gana), it) }
+                local(av.nadi)?.let { SummaryChip(stringResource(R.string.chart_av_nadi), it) }
+                local(av.paya)?.let { SummaryChip(stringResource(R.string.chart_av_paya), it) }
+                local(av.tatva)?.let { SummaryChip(stringResource(R.string.chart_av_tatva), it) }
+                local(av.nameSyllable)?.let { SummaryChip(stringResource(R.string.chart_av_name_letter), it) }
+                av.rasiLord.takeIf { it.isNotBlank() }?.let { SummaryChip(stringResource(R.string.chart_av_rasi_lord), astroTerm(it)) }
+                av.nakshatraLord.takeIf { it.isNotBlank() }?.let { SummaryChip(stringResource(R.string.chart_av_nak_lord), astroTerm(it)) }
+                av.lagnaLord.takeIf { it.isNotBlank() }?.let { SummaryChip(stringResource(R.string.chart_av_lagna_lord), astroTerm(it)) }
+                av.sunSign.takeIf { it.isNotBlank() }?.let { SummaryChip(stringResource(R.string.chart_av_sun_sign), astroTerm(it)) }
+            }
+        }
+    }
+}
+
+/** Panchang at the moment of birth: tithi, nakshatra, yoga, karana, Vedic weekday,
+ * sunrise/sunset, hora lord, lunar month, ritu and the Shaka year. */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun BirthPanchangCard(bp: ChartBirthPanchang) {
+    val lang = LocalAppLanguage.current.code
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(stringResource(R.string.chart_birth_panchang_title), style = MaterialTheme.typography.titleMedium)
+            Text(
+                stringResource(R.string.chart_birth_panchang_subtitle),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                bp.tithi?.let { t ->
+                    SummaryChip(
+                        stringResource(R.string.chart_bp_tithi),
+                        listOfNotNull(t.paksha?.let { astroTerm(it) }, astroTerm(t.name)).joinToString(" ")
+                    )
+                }
+                bp.nakshatra?.let { n ->
+                    val pada = n.pada
+                    SummaryChip(
+                        stringResource(R.string.chart_bp_nakshatra),
+                        if (pada != null) stringResource(R.string.chart_bp_pada_fmt, astroTerm(n.name), pada) else astroTerm(n.name)
+                    )
+                }
+                bp.yoga?.let { SummaryChip(stringResource(R.string.chart_bp_yoga), astroTerm(it.name)) }
+                bp.karana?.let { SummaryChip(stringResource(R.string.chart_bp_karana), astroTerm(it.name)) }
+                bp.vara?.let { v ->
+                    val lord = v.lord
+                    SummaryChip(
+                        stringResource(R.string.chart_bp_vara),
+                        if (lord != null) stringResource(R.string.chart_bp_vedic_day_fmt, astroTerm(v.name), astroTerm(lord)) else astroTerm(v.name)
+                    )
+                }
+                if (bp.sunrise != null && bp.sunset != null) {
+                    SummaryChip(stringResource(R.string.chart_bp_sun_times), "${bp.sunrise} · ${bp.sunset}")
+                }
+                bp.horaLord?.let { SummaryChip(stringResource(R.string.chart_bp_hora), astroTerm(it)) }
+                bp.lunarMonth?.let { m ->
+                    val amanta = m.amanta?.forLanguage(lang).orEmpty()
+                    val purnimanta = m.purnimanta?.forLanguage(lang).orEmpty()
+                    val text = when {
+                        amanta.isBlank() -> purnimanta
+                        purnimanta.isBlank() || purnimanta == amanta -> amanta
+                        else -> stringResource(R.string.chart_bp_month_both_fmt, amanta, purnimanta)
+                    }
+                    if (text.isNotBlank()) SummaryChip(stringResource(R.string.chart_bp_month), text)
+                }
+                bp.ritu?.forLanguage(lang)?.takeIf { it.isNotBlank() }?.let {
+                    SummaryChip(stringResource(R.string.chart_bp_ritu), it)
+                }
+                val shaka = bp.shakaYear
+                if (shaka != null) {
+                    SummaryChip(
+                        stringResource(R.string.chart_bp_year),
+                        stringResource(R.string.chart_bp_year_fmt, shaka, bp.samvatsara.orEmpty())
+                    )
+                }
+            }
+        }
+    }
+}
+
+/** "Aspect on Bhav Madhya": Parashari sputa drishti of each graha on every house midpoint,
+ * strongest first, in virupas. */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun BhavMadhyaDrishtiCard(rows: List<BhavMadhyaDrishti>) {
+    val graha = LocalGrahaColors.current
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(stringResource(R.string.chart_bhav_drishti_title), style = MaterialTheme.typography.titleMedium)
+            Text(
+                stringResource(R.string.chart_bhav_drishti_subtitle),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            rows.sortedBy { it.house }.forEach { row ->
+                Column(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
+                    Text(
+                        "${stringResource(CoreR.string.common_house_short, row.house)} · ${astroTerm(row.sign)}",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    if (row.aspects.isEmpty()) {
+                        Text(
+                            stringResource(R.string.chart_bhav_drishti_none),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    } else {
+                        Spacer(modifier = Modifier.height(4.dp))
+                        FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            row.aspects.forEach { a ->
+                                Chip("${astroTerm(a.planet)} ${a.virupas.toInt()}", grahaColorFor(a.planet, graha))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

@@ -261,9 +261,92 @@ data class ChartAshtakvarga(
 /** Panchadha (five-fold) planetary friendship — the combined permanent+temporal result
  * the backend already returns as its top-level `relations`/`planets`. */
 @JsonClass(generateAdapter = true)
-data class ChartFriendship(
+data class FriendshipTable(
     val planets: List<String> = emptyList(),
     val relations: Map<String, Map<String, String>> = emptyMap()
+)
+
+@JsonClass(generateAdapter = true)
+data class ChartFriendship(
+    val planets: List<String> = emptyList(),
+    val relations: Map<String, Map<String, String>> = emptyMap(),
+    /** Naisargika (fixed), tatkalika (by placement) and the five-fold compound of both. */
+    val permanent: FriendshipTable? = null,
+    val temporal: FriendshipTable? = null,
+    val panchadha: FriendshipTable? = null
+)
+
+/** Avakahada chakra: the Moon-based "basic details" every printed kundli shows
+ * (app/services/avakahada.py). */
+@JsonClass(generateAdapter = true)
+data class ChartAvakahada(
+    @Json(name = "moon_sign") val moonSign: String = "",
+    val nakshatra: String = "",
+    val pada: Int = 0,
+    @Json(name = "rasi_lord") val rasiLord: String = "",
+    @Json(name = "nakshatra_lord") val nakshatraLord: String = "",
+    val lagna: String = "",
+    @Json(name = "lagna_lord") val lagnaLord: String = "",
+    @Json(name = "sun_sign") val sunSign: String = "",
+    val varna: LocalizedText? = null,
+    val vashya: LocalizedText? = null,
+    val yoni: LocalizedText? = null,
+    val gana: LocalizedText? = null,
+    val nadi: LocalizedText? = null,
+    val paya: LocalizedText? = null,
+    val tatva: LocalizedText? = null,
+    @Json(name = "name_syllable") val nameSyllable: LocalizedText? = null
+)
+
+@JsonClass(generateAdapter = true)
+data class PanchangLimb(
+    val number: Int? = null,
+    val index: Int? = null,
+    val name: String = "",
+    val paksha: String? = null,
+    val pada: Int? = null,
+    val lord: String? = null
+)
+
+@JsonClass(generateAdapter = true)
+data class LunarMonth(
+    val amanta: LocalizedText? = null,
+    val purnimanta: LocalizedText? = null,
+    val adhika: Boolean = false
+)
+
+/** Panchang limbs at the birth instant plus the Vedic day, lunar month and Shaka year. */
+@JsonClass(generateAdapter = true)
+data class ChartBirthPanchang(
+    val tithi: PanchangLimb? = null,
+    val nakshatra: PanchangLimb? = null,
+    val yoga: PanchangLimb? = null,
+    val karana: PanchangLimb? = null,
+    val vara: PanchangLimb? = null,
+    @Json(name = "civil_weekday") val civilWeekday: String? = null,
+    val sunrise: String? = null,
+    val sunset: String? = null,
+    @Json(name = "hora_lord") val horaLord: String? = null,
+    @Json(name = "lunar_month") val lunarMonth: LunarMonth? = null,
+    val ritu: LocalizedText? = null,
+    @Json(name = "shaka_year") val shakaYear: Int? = null,
+    val samvatsara: String? = null
+)
+
+@JsonClass(generateAdapter = true)
+data class BhavDrishtiAspect(val planet: String = "", val virupas: Double = 0.0)
+
+@JsonClass(generateAdapter = true)
+data class BhavMadhyaDrishti(
+    val house: Int = 0,
+    val sign: String = "",
+    val aspects: List<BhavDrishtiAspect> = emptyList()
+)
+
+@JsonClass(generateAdapter = true)
+data class ChartAspects(
+    /** Parashari sputa drishti of each graha on each house midpoint, in virupas. */
+    @Json(name = "bhav_madhya_drishti") val bhavMadhyaDrishti: List<BhavMadhyaDrishti> = emptyList()
 )
 
 /** Six-fold planetary strength (Shadbala) — full BPHS computation in virupas
@@ -665,6 +748,9 @@ data class ChartSummaryResponse(
     val doshas: ChartDoshas = ChartDoshas(),
     val ashtakvarga: ChartAshtakvarga = ChartAshtakvarga(),
     val friendship: ChartFriendship = ChartFriendship(),
+    val avakahada: ChartAvakahada? = null,
+    @Json(name = "birth_panchang") val birthPanchang: ChartBirthPanchang? = null,
+    val aspects: ChartAspects = ChartAspects(),
     val shadbala: ChartShadbala = ChartShadbala(),
     val bhavabala: ChartBhavabala = ChartBhavabala(),
     @Json(name = "mutual_aspects") val mutualAspects: List<MutualAspect> = emptyList(),

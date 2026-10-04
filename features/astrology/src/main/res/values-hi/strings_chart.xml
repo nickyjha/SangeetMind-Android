@@ -217,4 +217,48 @@
     <string name="chart_style_north">उत्तर भारतीय</string>
     <string name="chart_style_south">दक्षिण भारतीय</string>
     <string name="chart_subtitle_south_indian">दक्षिण भारतीय कुंडली · राशियाँ तय, भाव लग्न के निशान से गिनें</string>
+
+    <!-- Avakahada chakra -->
+    <string name="chart_avakahada_title">अवकहड़ा चक्र</string>
+    <string name="chart_avakahada_subtitle">चंद्र राशि और नक्षत्र से बनी बुनियादी जानकारी</string>
+    <string name="chart_av_varna">वर्ण</string>
+    <string name="chart_av_vashya">वश्य</string>
+    <string name="chart_av_yoni">योनि</string>
+    <string name="chart_av_gana">गण</string>
+    <string name="chart_av_nadi">नाड़ी</string>
+    <string name="chart_av_paya">पाया</string>
+    <string name="chart_av_tatva">तत्व</string>
+    <string name="chart_av_name_letter">नाम अक्षर</string>
+    <string name="chart_av_rasi_lord">राशि स्वामी</string>
+    <string name="chart_av_nak_lord">नक्षत्र स्वामी</string>
+    <string name="chart_av_lagna_lord">लग्न स्वामी</string>
+    <string name="chart_av_sun_sign">सूर्य राशि</string>
+
+    <!-- Birth panchang -->
+    <string name="chart_birth_panchang_title">जन्म पंचांग</string>
+    <string name="chart_birth_panchang_subtitle">जन्म के समय की तिथि, नक्षत्र, योग और करण</string>
+    <string name="chart_bp_tithi">तिथि</string>
+    <string name="chart_bp_nakshatra">नक्षत्र</string>
+    <string name="chart_bp_yoga">योग</string>
+    <string name="chart_bp_karana">करण</string>
+    <string name="chart_bp_vara">वार (सूर्योदय से)</string>
+    <string name="chart_bp_sun_times">सूर्योदय · सूर्यास्त</string>
+    <string name="chart_bp_hora">होरा स्वामी</string>
+    <string name="chart_bp_month">चंद्र मास</string>
+    <string name="chart_bp_ritu">ऋतु</string>
+    <string name="chart_bp_year">संवत्सर</string>
+    <string name="chart_bp_pada_fmt">%1$s · पद %2$d</string>
+    <string name="chart_bp_vedic_day_fmt">%1$s (स्वामी %2$s)</string>
+    <string name="chart_bp_month_both_fmt">%1$s (अमांत) · %2$s (पूर्णिमांत)</string>
+    <string name="chart_bp_year_fmt">शक %1$d · %2$s</string>
+
+    <!-- Friendship tables -->
+    <string name="chart_friendship_permanent">नैसर्गिक</string>
+    <string name="chart_friendship_temporal">तात्कालिक</string>
+    <string name="chart_friendship_compound">पंचधा</string>
+
+    <!-- Aspect on bhav madhya -->
+    <string name="chart_bhav_drishti_title">भाव मध्य पर दृष्टि</string>
+    <string name="chart_bhav_drishti_subtitle">हर भाव मध्य पर ग्रहों की पाराशरी दृष्टि, विरूप में (60 = पूरी)</string>
+    <string name="chart_bhav_drishti_none">कोई दृष्टि नहीं</string>
 </resources>

@@ -128,4 +128,17 @@
     <string name="dashboard_geet_hint">रिकॉर्डिंग के साथ जप करें, माला 108 तक खुद गिनेगी।</string>
     <string name="dashboard_geet_chant">♪ साथ में जप करें</string>
     <string name="dashboard_geet_open">गीत खोलें</string>
+
+    <!-- "Your current period" countdown card (backend current_period) -->
+    <string name="dashboard_period_title">आपकी अभी की दशा</string>
+    <string name="dashboard_period_chain_sep"> › </string>
+    <string name="dashboard_period_today">आज</string>
+    <string name="dashboard_period_tomorrow">कल</string>
+    <string name="dashboard_period_in_days">%1$d दिन में</string>
+    <string name="dashboard_period_in_weeks">%1$d हफ़्ते में</string>
+    <string name="dashboard_period_in_months">%1$d महीने में</string>
+    <string name="dashboard_period_in_years">%1$d साल में</string>
+    <string name="dashboard_period_praty_ends">%1$s की उप-दशा %2$s खत्म होगी (%3$s)</string>
+    <string name="dashboard_period_antar_ends">%1$s की अंतर्दशा %2$s खत्म होगी (%3$s)</string>
+    <string name="dashboard_period_next_maha">%1$s की महादशा %2$s शुरू होगी · %3$s</string>
 </resources>

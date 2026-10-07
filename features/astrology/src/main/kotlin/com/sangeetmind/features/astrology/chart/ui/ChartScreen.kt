@@ -116,6 +116,8 @@ import java.time.temporal.ChronoUnit
 fun ChartScreen(
     onNavigateBack: () -> Unit,
     onOpenDashaStory: () -> Unit = {},
+    /** Open on the Dasha section (Home's "Your current period" card). */
+    openDasha: Boolean = false,
     viewModel: ChartViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -184,7 +186,8 @@ fun ChartScreen(
                         chart = uiState.chart!!,
                         showFullTimeline = uiState.showFullTimeline,
                         onToggleTimeline = viewModel::toggleFullTimeline,
-                        onOpenDashaStory = onOpenDashaStory
+                        onOpenDashaStory = onOpenDashaStory,
+                        openDasha = openDasha
                     )
                 }
             }
@@ -199,13 +202,16 @@ private fun ChartContent(
     chart: ChartSummaryResponse,
     showFullTimeline: Boolean,
     onToggleTimeline: () -> Unit,
-    onOpenDashaStory: () -> Unit = {}
+    onOpenDashaStory: () -> Unit = {},
+    openDasha: Boolean = false
 ) {
     val moon = chart.planets["Moon"]
     val availableCharts = chart.availableCharts
     var selectedKey by remember(chart) { mutableStateOf("D1") }
     var dashaSystem by remember(chart) { mutableStateOf(DashaSystem.VIMSHOTTARI) }
-    var chartSection by remember(chart) { mutableStateOf(ChartSection.OVERVIEW) }
+    var chartSection by remember(chart) {
+        mutableStateOf(if (openDasha) ChartSection.DASHA else ChartSection.OVERVIEW)
+    }
     val selected = availableCharts.firstOrNull { it.first == selectedKey }
         ?: availableCharts.first()
     val meta = divisionalChartMeta(selected.first)
@@ -312,6 +318,10 @@ private fun ChartContent(
                     }
                     item {
                         PlanetMeaningsCard(chart.planets, chart.conjunctions)
+                    }
+                    // Absent until the backend with functional_roles is deployed.
+                    chart.functionalRoles?.takeIf { it.planets.isNotEmpty() }?.let { roles ->
+                        item { FunctionalRolesCard(roles, chart.lagna.sign) }
                     }
                 }
                 ChartSection.STRENGTH -> {

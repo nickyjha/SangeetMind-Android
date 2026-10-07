@@ -302,4 +302,19 @@
     <string name="chart_pdf_error">Could not prepare the kundli PDF. Please try again.</string>
     <string name="chart_ghatak_yoga">Yoga</string>
     <string name="chart_ghatak_karana">Karana</string>
+
+    <!-- Planet roles (functional_roles) card, Overview section -->
+    <string name="chart_roles_title">Planet roles for your %1$s lagna</string>
+    <string name="chart_roles_subtitle">A planet\'s role depends on which houses it rules from your lagna. Benefic planets support you, malefic ones bring effort, and neutral ones go along with the planets around them.</string>
+    <string name="chart_roles_rules_fmt">rules %1$s</string>
+    <string name="chart_roles_no_sign">no sign of its own</string>
+    <string name="chart_nature_benefic">Benefic</string>
+    <string name="chart_nature_malefic">Malefic</string>
+    <string name="chart_nature_mixed">Mixed</string>
+    <string name="chart_nature_neutral">Neutral</string>
+    <string name="chart_role_yogakaraka">Yogakaraka</string>
+    <string name="chart_role_lagna_lord">Lagna lord</string>
+    <string name="chart_role_trikona_lord">Trikona lord</string>
+    <string name="chart_role_kendra_lord">Kendra lord</string>
+    <string name="chart_role_dusthana_lord">Dusthana lord</string>
 </resources>

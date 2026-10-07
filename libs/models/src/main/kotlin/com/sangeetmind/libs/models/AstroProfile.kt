@@ -25,5 +25,7 @@ data class AstroProfileSummary(
     @Json(name = "current_antardasha") val currentAntardasha: String = "",
     @Json(name = "planet_positions") val planetPositions: Map<String, String> = emptyMap(),
     @Json(name = "astro_mood") val astroMood: String = "",
-    @Json(name = "suggested_raag") val suggestedRaag: String = ""
+    @Json(name = "suggested_raag") val suggestedRaag: String = "",
+    /** Running dasha for "now" + next change (Home countdown card). Null on older backends. */
+    @Json(name = "current_period") val currentPeriod: CurrentPeriod? = null
 )

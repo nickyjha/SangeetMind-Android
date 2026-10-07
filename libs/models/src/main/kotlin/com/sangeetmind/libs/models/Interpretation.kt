@@ -152,6 +152,57 @@ data class VimshottariInfo(
     @Json(name = "balance_at_birth") val balanceAtBirth: DashaBalance? = null
 )
 
+/** `next_mahadasha` in [CurrentPeriod]: only the start matters for the countdown. */
+@JsonClass(generateAdapter = true)
+data class NextDashaStart(
+    val lord: String = "",
+    val start: String = ""
+)
+
+/** `next_change` in [CurrentPeriod]: the next boundary and the highest level changing there. */
+@JsonClass(generateAdapter = true)
+data class DashaChange(
+    /** "pratyantardasha" | "antardasha" | "mahadasha". */
+    val level: String = "",
+    @Json(name = "lord_after") val lordAfter: String? = null,
+    val at: String = ""
+)
+
+/**
+ * `current_period` (backend app/services/dasha_current_period.py), in POST /v1/chart and
+ * /astro/get-profile: the running maha/antar/pratyantar for "now" plus the next change.
+ * Null from a backend that predates it.
+ */
+@JsonClass(generateAdapter = true)
+data class CurrentPeriod(
+    val mahadasha: DashaPeriod? = null,
+    val antardasha: DashaPeriod? = null,
+    val pratyantardasha: DashaPeriod? = null,
+    @Json(name = "next_mahadasha") val nextMahadasha: NextDashaStart? = null,
+    @Json(name = "next_change") val nextChange: DashaChange? = null,
+    val now: String? = null
+)
+
+/** One graha in [FunctionalRoles]: houses it rules from the lagna and its Parashari roles. */
+@JsonClass(generateAdapter = true)
+data class FunctionalRole(
+    val lordships: List<Int> = emptyList(),
+    /** lagna_lord, yogakaraka, trikona_lord, kendra_lord, dusthana_lord, trishadaya_lord. */
+    val roles: List<String> = emptyList(),
+    /** "benefic" | "malefic" | "mixed" | "neutral". */
+    val nature: String = "neutral",
+    @Json(name = "kendradhipati_dosha") val kendradhipatiDosha: Boolean = false,
+    val summary: String = ""
+)
+
+/** `functional_roles` (backend app/services/functional_roles.py). Null on older backends. */
+@JsonClass(generateAdapter = true)
+data class FunctionalRoles(
+    val lagna: String = "",
+    @Json(name = "lagna_type") val lagnaType: String = "",
+    val planets: Map<String, FunctionalRole> = emptyMap()
+)
+
 /** `birth` in POST /v1/chart: the instant the chart was cast for, with the timezone the
  * backend inferred from lat/lon (the app never sends one). Null on charts cached before v19. */
 @JsonClass(generateAdapter = true)
@@ -827,6 +878,8 @@ data class ChartSummaryResponse(
     val narratives: ChartNarratives = ChartNarratives(),
     val yogas: List<ChartYoga> = emptyList(),
     val conjunctions: List<ChartConjunction> = emptyList(),
+    @Json(name = "functional_roles") val functionalRoles: FunctionalRoles? = null,
+    @Json(name = "current_period") val currentPeriod: CurrentPeriod? = null,
     val houses: ChartHouses = ChartHouses(),
     val chalit: ChartChalit = ChartChalit(),
     @Json(name = "moon_chart") val moonChart: ChartMoonChart = ChartMoonChart(),

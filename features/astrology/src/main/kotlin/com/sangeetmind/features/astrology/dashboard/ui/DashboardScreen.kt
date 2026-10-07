@@ -47,6 +47,11 @@ import com.sangeetmind.features.astrology.dashboard.DashboardViewModel
 import com.sangeetmind.features.astrology.dashboard.NotificationNudge
 import com.sangeetmind.features.astrology.home.TabRootTopBar
 import com.sangeetmind.features.astrology.home.themedTone
+import com.sangeetmind.core.ui.components.DateFieldFormat
+import com.sangeetmind.core.ui.language.LocalAppLanguage
+import com.sangeetmind.features.astrology.dashboard.PeriodCountdown
+import com.sangeetmind.features.astrology.dashboard.RelativeSpan
+import com.sangeetmind.libs.models.CurrentPeriod
 import com.sangeetmind.libs.models.DailyHoroscope
 import com.sangeetmind.libs.models.PanchangResponse
 import com.sangeetmind.libs.models.toTitleCase
@@ -61,6 +66,8 @@ fun DashboardScreen(
     onOpenKundliOnboarding: () -> Unit,
     onOpenHoroscope: () -> Unit,
     onOpenChart: () -> Unit,
+    /** The Vimshottari view (chart screen, Dasha section). */
+    onOpenDasha: () -> Unit = onOpenChart,
     onOpenReadings: () -> Unit,
     onOpenMatch: () -> Unit,
     onOpenPanchang: () -> Unit,
@@ -171,6 +178,11 @@ fun DashboardScreen(
                                 dashaLord = uiState.profile!!.currentMahadasha,
                                 onChant = onOpenGeet
                             )
+                            // Hidden until the backend sends current_period (older deploys don't).
+                            uiState.profile!!.currentPeriod?.takeIf { it.mahadasha != null }?.let { period ->
+                                Spacer(modifier = Modifier.height(16.dp))
+                                CurrentPeriodCard(period, onClick = onOpenDasha)
+                            }
                             Spacer(modifier = Modifier.height(16.dp))
                             TodayCard(
                                 horoscope = uiState.todayHoroscope,
@@ -593,3 +605,97 @@ private fun GeetCard(dashaLord: String, onChant: (String?) -> Unit) {
     }
 }
 
+@Composable
+private fun relativeText(span: RelativeSpan): String = when (span) {
+    RelativeSpan.Today -> stringResource(R.string.dashboard_period_today)
+    RelativeSpan.Tomorrow -> stringResource(R.string.dashboard_period_tomorrow)
+    is RelativeSpan.Days -> stringResource(R.string.dashboard_period_in_days, span.count.toInt())
+    is RelativeSpan.Weeks -> stringResource(R.string.dashboard_period_in_weeks, span.count.toInt())
+    is RelativeSpan.Months -> stringResource(R.string.dashboard_period_in_months, span.count.toInt())
+    is RelativeSpan.Years -> stringResource(R.string.dashboard_period_in_years, span.count.toInt())
+}
+
+/**
+ * "Your current period": maha › antar › pratyantar, a countdown to the next sub-period
+ * change and to the next mahadasha. Tapping opens the Vimshottari view.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CurrentPeriodCard(period: CurrentPeriod, onClick: () -> Unit) {
+    val locale = LocalAppLanguage.current.locale
+    val today = remember { java.time.LocalDate.now() }
+    val accent = LocalGrahaColors.current.shani
+    val chain = listOfNotNull(period.mahadasha, period.antardasha, period.pratyantardasha)
+        .map { astroTerm(it.lord) }
+        .joinToString(stringResource(R.string.dashboard_period_chain_sep))
+
+    val change = period.nextChange
+    val changeDate = PeriodCountdown.localDate(change?.at)
+    val changeLine = if (change != null && changeDate != null) {
+        val endingLord = when (change.level) {
+            "pratyantardasha" -> period.pratyantardasha?.lord
+            "antardasha" -> period.antardasha?.lord
+            else -> null
+        }
+        val res = when (change.level) {
+            "pratyantardasha" -> R.string.dashboard_period_praty_ends
+            "antardasha" -> R.string.dashboard_period_antar_ends
+            else -> null
+        }
+        // A mahadasha change is already the next line.
+        if (endingLord != null && res != null) {
+            stringResource(
+                res,
+                astroTerm(endingLord),
+                relativeText(PeriodCountdown.humanize(today, changeDate)),
+                PeriodCountdown.shortDate(changeDate, locale)
+            )
+        } else null
+    } else null
+
+    val next = period.nextMahadasha
+    val nextDate = PeriodCountdown.localDate(next?.start)
+    val nextLine = if (next != null && next.lord.isNotBlank() && nextDate != null) {
+        stringResource(
+            R.string.dashboard_period_next_maha,
+            astroTerm(next.lord),
+            relativeText(PeriodCountdown.humanize(today, nextDate)),
+            DateFieldFormat.display(DateFieldFormat.toIso(nextDate), locale)
+        )
+    } else null
+
+    Card(modifier = Modifier.fillMaxWidth(), onClick = onClick) {
+        Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            Column(modifier = Modifier.weight(1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.HourglassBottom, contentDescription = null, tint = accent, modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(stringResource(R.string.dashboard_period_title), style = MaterialTheme.typography.titleMedium)
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    chain,
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+                    color = accent
+                )
+                if (changeLine != null) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(changeLine, style = MaterialTheme.typography.bodyMedium)
+                }
+                if (nextLine != null) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        nextLine,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+            Icon(
+                Icons.Default.ChevronRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}

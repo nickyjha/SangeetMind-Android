@@ -184,6 +184,7 @@ fun SangeetMindNavHost(
                 onOpenKundliOnboarding = { navController.navigate("kundli_onboarding") },
                 onOpenHoroscope = { navController.navigate("horoscope") },
                 onOpenChart = { navController.navigate("chart") },
+                onOpenDasha = { navController.navigate("chart?section=dasha") },
                 onOpenReadings = { navController.navigate("readings") },
                 onOpenMatch = { navController.navigate("match") },
                 onOpenPanchang = { navController.navigate("panchang") },
@@ -287,10 +288,14 @@ fun SangeetMindNavHost(
             InterpretationScreen(onNavigateBack = { navController.popFrom(it) })
         }
 
-        composable("chart") {
+        composable(
+            "chart?section={section}",
+            arguments = listOf(navArgument("section") { type = NavType.StringType; nullable = true; defaultValue = null })
+        ) {
             ChartScreen(
                 onNavigateBack = { navController.popFrom(it) },
-                onOpenDashaStory = { navController.navigate("readings?tab=DASHA") }
+                onOpenDashaStory = { navController.navigate("readings?tab=DASHA") },
+                openDasha = it.arguments?.getString("section") == "dasha"
             )
         }
 

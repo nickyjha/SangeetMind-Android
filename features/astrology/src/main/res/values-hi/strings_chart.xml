@@ -300,4 +300,19 @@
     <string name="chart_pdf_error">कुंडली PDF तैयार नहीं हो सकी। फिर कोशिश करें।</string>
     <string name="chart_ghatak_yoga">योग</string>
     <string name="chart_ghatak_karana">करण</string>
+
+    <!-- Planet roles (functional_roles) card, Overview section -->
+    <string name="chart_roles_title">आपके %1$s लग्न में ग्रहों की भूमिका</string>
+    <string name="chart_roles_subtitle">हर ग्रह की भूमिका इस पर टिकी है कि वह आपके लग्न से किन भावों का स्वामी है। शुभ ग्रह साथ देते हैं, अशुभ ग्रह मेहनत करवाते हैं, और सम ग्रह अपने आस-पास के ग्रहों जैसा फल देते हैं।</string>
+    <string name="chart_roles_rules_fmt">भाव %1$s के स्वामी</string>
+    <string name="chart_roles_no_sign">अपनी कोई राशि नहीं</string>
+    <string name="chart_nature_benefic">शुभ</string>
+    <string name="chart_nature_malefic">अशुभ</string>
+    <string name="chart_nature_mixed">मिश्रित</string>
+    <string name="chart_nature_neutral">सम</string>
+    <string name="chart_role_yogakaraka">योगकारक</string>
+    <string name="chart_role_lagna_lord">लग्नेश</string>
+    <string name="chart_role_trikona_lord">त्रिकोणेश</string>
+    <string name="chart_role_kendra_lord">केंद्रेश</string>
+    <string name="chart_role_dusthana_lord">दुःस्थानेश</string>
 </resources>

@@ -1,0 +1,137 @@
+{
+  "lagna": {
+    "sign": "Sagittarius"
+  },
+  "functional_roles": {
+    "lagna": "Sagittarius",
+    "planets": {
+      "Sun": {
+        "lordships": [
+          9
+        ],
+        "roles": [
+          "trikona_lord"
+        ],
+        "nature": "benefic",
+        "kendradhipati_dosha": false,
+        "summary": "Rules your 9th: luck and dharma"
+      },
+      "Moon": {
+        "lordships": [
+          8
+        ],
+        "roles": [
+          "dusthana_lord"
+        ],
+        "nature": "neutral",
+        "kendradhipati_dosha": false,
+        "summary": "Rules your 8th: sudden change"
+      },
+      "Mars": {
+        "lordships": [
+          5,
+          12
+        ],
+        "roles": [
+          "trikona_lord",
+          "dusthana_lord"
+        ],
+        "nature": "benefic",
+        "kendradhipati_dosha": false,
+        "summary": "Rules your 5th and 12th: children and ideas, losses and spirituality"
+      },
+      "Mercury": {
+        "lordships": [
+          7,
+          10
+        ],
+        "roles": [
+          "kendra_lord"
+        ],
+        "nature": "neutral",
+        "kendradhipati_dosha": true,
+        "summary": "Rules your 7th and 10th: partnerships, career; kendra lordship blunts its natural kindness"
+      },
+      "Jupiter": {
+        "lordships": [
+          1,
+          4
+        ],
+        "roles": [
+          "lagna_lord",
+          "trikona_lord",
+          "kendra_lord"
+        ],
+        "nature": "benefic",
+        "kendradhipati_dosha": false,
+        "summary": "Rules your 1st and 4th: self and health, home and mother"
+      },
+      "Venus": {
+        "lordships": [
+          6,
+          11
+        ],
+        "roles": [
+          "dusthana_lord",
+          "trishadaya_lord"
+        ],
+        "nature": "malefic",
+        "kendradhipati_dosha": false,
+        "summary": "Rules your 6th and 11th: rivals and debts, gains"
+      },
+      "Saturn": {
+        "lordships": [
+          2,
+          3
+        ],
+        "roles": [
+          "trishadaya_lord"
+        ],
+        "nature": "malefic",
+        "kendradhipati_dosha": false,
+        "summary": "Rules your 2nd and 3rd: family and money, courage and siblings"
+      },
+      "Rahu": {
+        "lordships": [],
+        "roles": [],
+        "nature": "neutral",
+        "kendradhipati_dosha": false,
+        "summary": "Shadow planet: rules no sign and acts for the lord of the sign it sits in"
+      },
+      "Ketu": {
+        "lordships": [],
+        "roles": [],
+        "nature": "neutral",
+        "kendradhipati_dosha": false,
+        "summary": "Shadow planet: rules no sign and acts for the lord of the sign it sits in"
+      }
+    }
+  },
+  "current_period": {
+    "mahadasha": {
+      "lord": "Saturn",
+      "start": "2008-04-19T15:05:53Z",
+      "end": "2027-04-20T09:05:53Z"
+    },
+    "antardasha": {
+      "lord": "Jupiter",
+      "start": "2024-10-07T01:53:53Z",
+      "end": "2027-04-20T09:05:53Z"
+    },
+    "pratyantardasha": {
+      "lord": "Moon",
+      "start": "2026-07-24T11:59:53Z",
+      "end": "2026-10-09T14:35:53Z"
+    },
+    "next_mahadasha": {
+      "lord": "Mercury",
+      "start": "2027-04-20T09:05:53Z"
+    },
+    "next_change": {
+      "level": "pratyantardasha",
+      "lord_after": "Mars",
+      "at": "2026-10-09T14:35:53Z"
+    },
+    "now": "2026-10-07T00:00:00Z"
+  }
+}

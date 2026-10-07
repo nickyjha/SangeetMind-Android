@@ -128,4 +128,17 @@
     <string name="dashboard_geet_hint">Chant along with the recording; the mala counts to 108 for you.</string>
     <string name="dashboard_geet_chant">♪ Chant along</string>
     <string name="dashboard_geet_open">Open Geet</string>
+
+    <!-- "Your current period" countdown card (backend current_period) -->
+    <string name="dashboard_period_title">Your current period</string>
+    <string name="dashboard_period_chain_sep"> › </string>
+    <string name="dashboard_period_today">today</string>
+    <string name="dashboard_period_tomorrow">tomorrow</string>
+    <string name="dashboard_period_in_days">in %1$d days</string>
+    <string name="dashboard_period_in_weeks">in %1$d weeks</string>
+    <string name="dashboard_period_in_months">in %1$d months</string>
+    <string name="dashboard_period_in_years">in %1$d years</string>
+    <string name="dashboard_period_praty_ends">%1$s sub-period ends %2$s (%3$s)</string>
+    <string name="dashboard_period_antar_ends">%1$s antardasha ends %2$s (%3$s)</string>
+    <string name="dashboard_period_next_maha">%1$s mahadasha begins %2$s · %3$s</string>
 </resources>

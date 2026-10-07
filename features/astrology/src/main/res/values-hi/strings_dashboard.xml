@@ -128,6 +128,11 @@
     <string name="dashboard_geet_hint">रिकॉर्डिंग के साथ जप करें, माला 108 तक खुद गिनेगी।</string>
     <string name="dashboard_geet_chant">♪ साथ में जप करें</string>
     <string name="dashboard_geet_open">गीत खोलें</string>
+    <string name="dashboard_geet_reason_weak">%1$s को ताकत देता है — आपकी कुंडली में इस ग्रह को सहारे की ज़रूरत है</string>
+    <string name="dashboard_geet_reason_running">आपकी चल रही %1$s दशा में साथ देता है</string>
+    <string name="dashboard_geet_reason_upcoming">आने वाली %1$s दशा (%2$s से) के लिए तैयार करता है</string>
+    <string name="dashboard_geet_reason_protection">आपकी कुंडली के लिए रक्षा मंत्र</string>
+    <string name="dashboard_geet_support_label">आपके सहायक मंत्र:</string>
 
     <!-- "Your current period" countdown card (backend current_period) -->
     <string name="dashboard_period_title">आपकी अभी की दशा</string>

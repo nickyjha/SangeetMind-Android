@@ -38,6 +38,7 @@
     <string name="sangeet_japa_choose_mantra">अपना मंत्र चुनें</string>
     <string name="sangeet_japa_recommended">आपकी दशा के लिए सही</string>
     <string name="sangeet_japa_recommended_fmt">अभी %1$s की दशा चल रही है — यह मंत्र उसके लिए अच्छा है।</string>
+    <string name="sangeet_japa_recommended_for_you">आपके लिए सुझाया गया</string>
     <string name="sangeet_mantra_generic">कोई भी मंत्र</string>
     <string name="sangeet_mantra_gayatri">गायत्री मंत्र</string>
     <string name="sangeet_mantra_mahamrityunjaya">महामृत्युंजय मंत्र</string>

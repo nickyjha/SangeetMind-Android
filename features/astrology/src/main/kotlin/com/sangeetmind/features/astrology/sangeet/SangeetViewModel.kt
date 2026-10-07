@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.language.LanguageManager
+import com.sangeetmind.features.astrology.profile.AstroProfileRepository
 import com.sangeetmind.libs.models.JapaStats
 import com.sangeetmind.libs.models.RaagPlaylist
 import com.sangeetmind.libs.models.SoundHealingSession
@@ -38,6 +39,8 @@ data class SangeetUiState(
     val recommendedMantraId: String? = null,
     /** The mahadasha lord behind [recommendedMantraId], e.g. "Saturn". */
     val recommendedForLord: String? = null,
+    /** Personal support mantra ids from the Home profile, tagged "Recommended for you". */
+    val supportMantraIds: Set<String> = emptySet(),
     val voiceHoroscope: VoiceHoroscopeResponse? = null,
     val soundHealingSessions: List<SoundHealingSession> = emptyList(),
     val soundHealingPremiumRequired: Boolean = false,
@@ -50,6 +53,7 @@ data class SangeetUiState(
 class SangeetViewModel @Inject constructor(
     private val repository: SangeetRepository,
     private val mantraStore: JapaMantraStore,
+    astroProfileRepository: AstroProfileRepository,
     languageManager: LanguageManager,
     @ApplicationContext private val appContext: Context
 ) : ViewModel() {
@@ -69,6 +73,12 @@ class SangeetViewModel @Inject constructor(
 
     init {
         loadDailyRaag()
+        viewModelScope.launch {
+            astroProfileRepository.supportMantras.collect { list ->
+                val ids = SupportMantras.usable(list).map { it.mantraId }.toSet()
+                _uiState.update { it.copy(supportMantraIds = ids) }
+            }
+        }
         viewModelScope.launch {
             // The voice horoscope script is the only Sangeet content fetched in a language;
             // regenerate it when the app language changes (skip the initial emission).

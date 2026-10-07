@@ -38,6 +38,7 @@
     <string name="sangeet_japa_choose_mantra">Choose your mantra</string>
     <string name="sangeet_japa_recommended">Recommended for your dasha</string>
     <string name="sangeet_japa_recommended_fmt">%1$s dasha is running — this mantra suits it.</string>
+    <string name="sangeet_japa_recommended_for_you">Recommended for you</string>
     <string name="sangeet_mantra_generic">Any mantra</string>
     <string name="sangeet_mantra_gayatri">Gayatri Mantra</string>
     <string name="sangeet_mantra_mahamrityunjaya">Mahamrityunjaya Mantra</string>

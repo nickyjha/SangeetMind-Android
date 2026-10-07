@@ -63,4 +63,19 @@ class RolesAndPeriodTest {
             moshi.adapter(CurrentPeriod::class.java).toJson(period) + "}"
         assertEquals(period, profileAdapter.fromJson(json)!!.currentPeriod)
     }
+
+    @Test
+    fun parsesSupportMantrasAndDefaultsWhenAbsent() {
+        val json = """{"moon_sign":"Aquarius","lagna":"Sagittarius","support_mantras":[""" +
+            """{"planet":"Jupiter","mantra_id":"guru_beej","reason":"strengthen_weak","period_lord_from":null,"priority":1},""" +
+            """{"planet":"Mercury","mantra_id":"budh_beej","reason":"prepare_upcoming_period","period_lord_from":"2027-04-20","priority":3}]}"""
+        val list = profileAdapter.fromJson(json)!!.supportMantras
+        assertEquals(2, list.size)
+        assertEquals("guru_beej", list[0].mantraId)
+        assertNull(list[0].periodLordFrom)
+        assertEquals(SupportMantra.REASON_UPCOMING, list[1].reason)
+        assertEquals("2027-04-20", list[1].periodLordFrom)
+        val old = profileAdapter.fromJson("""{"moon_sign":"Aquarius","lagna":"Sagittarius"}""")!!
+        assertTrue(old.supportMantras.isEmpty())
+    }
 }

@@ -880,6 +880,7 @@ data class ChartSummaryResponse(
     val conjunctions: List<ChartConjunction> = emptyList(),
     @Json(name = "functional_roles") val functionalRoles: FunctionalRoles? = null,
     @Json(name = "current_period") val currentPeriod: CurrentPeriod? = null,
+    @Json(name = "support_mantras") val supportMantras: List<SupportMantra> = emptyList(),
     val houses: ChartHouses = ChartHouses(),
     val chalit: ChartChalit = ChartChalit(),
     @Json(name = "moon_chart") val moonChart: ChartMoonChart = ChartMoonChart(),

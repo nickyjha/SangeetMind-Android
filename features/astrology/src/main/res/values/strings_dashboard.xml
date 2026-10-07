@@ -128,6 +128,11 @@
     <string name="dashboard_geet_hint">Chant along with the recording; the mala counts to 108 for you.</string>
     <string name="dashboard_geet_chant">♪ Chant along</string>
     <string name="dashboard_geet_open">Open Geet</string>
+    <string name="dashboard_geet_reason_weak">Strengthens %1$s, a planet that needs support in your chart</string>
+    <string name="dashboard_geet_reason_running">Supports your running %1$s period</string>
+    <string name="dashboard_geet_reason_upcoming">Prepares you for your %1$s period (from %2$s)</string>
+    <string name="dashboard_geet_reason_protection">A protective mantra for your chart</string>
+    <string name="dashboard_geet_support_label">Your support mantras:</string>
 
     <!-- "Your current period" countdown card (backend current_period) -->
     <string name="dashboard_period_title">Your current period</string>

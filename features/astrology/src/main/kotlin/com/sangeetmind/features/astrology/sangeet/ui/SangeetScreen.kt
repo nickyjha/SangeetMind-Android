@@ -182,6 +182,7 @@ fun SangeetScreen(
                         selectedMantraId = uiState.selectedMantraId,
                         recommendedMantraId = uiState.recommendedMantraId,
                         recommendedForLord = uiState.recommendedForLord,
+                        supportMantraIds = uiState.supportMantraIds,
                         onSelectMantra = viewModel::selectMantra,
                         onTap = viewModel::incrementJapa,
                         onReset = viewModel::resetJapaCount,
@@ -269,6 +270,7 @@ private fun JapaTab(
     selectedMantraId: String,
     recommendedMantraId: String?,
     recommendedForLord: String?,
+    supportMantraIds: Set<String> = emptySet(),
     onSelectMantra: (String) -> Unit,
     onTap: () -> Unit,
     onReset: () -> Unit,
@@ -285,6 +287,7 @@ private fun JapaTab(
             selectedMantraId = selectedMantraId,
             recommendedMantraId = recommendedMantraId,
             recommendedForLord = recommendedForLord,
+            supportMantraIds = supportMantraIds,
             onSelect = onSelectMantra
         )
         if (hasAudio) {
@@ -345,16 +348,21 @@ private fun JapaTab(
     }
 }
 
-/** Dropdown of [JapaMantras.all]; the beej mantra for the running dasha is tagged. */
+/**
+ * Dropdown of [JapaMantras.all]. Personal support mantras are tagged "Recommended for you";
+ * the beej mantra for the running dasha keeps its own tag otherwise.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MantraPicker(
     selectedMantraId: String,
     recommendedMantraId: String?,
     recommendedForLord: String?,
+    supportMantraIds: Set<String>,
     onSelect: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val selectedIsSupport = selectedMantraId in supportMantraIds
     val selectedIsRecommended = recommendedMantraId != null && selectedMantraId == recommendedMantraId
     ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
         OutlinedTextField(
@@ -363,7 +371,14 @@ private fun MantraPicker(
             readOnly = true,
             label = { Text(stringResource(R.string.sangeet_japa_choose_mantra)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            supportingText = if (selectedIsRecommended && recommendedForLord != null) {
+            supportingText = if (selectedIsSupport) {
+                {
+                    Text(
+                        stringResource(R.string.sangeet_japa_recommended_for_you),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            } else if (selectedIsRecommended && recommendedForLord != null) {
                 {
                     Text(
                         stringResource(R.string.sangeet_japa_recommended_fmt, astroTerm(recommendedForLord)),
@@ -384,9 +399,14 @@ private fun MantraPicker(
                                 stringResource(mantra.nameRes) +
                                     if (MantraAudio.forMantra(mantra.id) != null) "  ♪" else ""
                             )
-                            if (mantra.id == recommendedMantraId) {
+                            val tagRes = when {
+                                mantra.id in supportMantraIds -> R.string.sangeet_japa_recommended_for_you
+                                mantra.id == recommendedMantraId -> R.string.sangeet_japa_recommended
+                                else -> null
+                            }
+                            if (tagRes != null) {
                                 Text(
-                                    stringResource(R.string.sangeet_japa_recommended),
+                                    stringResource(tagRes),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.primary
                                 )

@@ -27,5 +27,34 @@ data class AstroProfileSummary(
     @Json(name = "astro_mood") val astroMood: String = "",
     @Json(name = "suggested_raag") val suggestedRaag: String = "",
     /** Running dasha for "now" + next change (Home countdown card). Null on older backends. */
-    @Json(name = "current_period") val currentPeriod: CurrentPeriod? = null
+    @Json(name = "current_period") val currentPeriod: CurrentPeriod? = null,
+    /** Ranked graha beej mantras for japa (Home "Today's Geet"). Empty on older backends. */
+    @Json(name = "support_mantras") val supportMantras: List<SupportMantra> = emptyList()
 )
+
+/**
+ * One item of `support_mantras` (backend app/services/support_mantras.py), in
+ * /astro/get-profile and POST /v1/chart.
+ */
+@JsonClass(generateAdapter = true)
+data class SupportMantra(
+    /** English graha name: "Jupiter". */
+    val planet: String = "",
+    /** Japa mantra id: "guru_beej". */
+    @Json(name = "mantra_id") val mantraId: String = "",
+    /**
+     * "strengthen_weak" | "support_running_period" | "prepare_upcoming_period" |
+     * "ongoing_protection".
+     */
+    val reason: String = "",
+    /** ISO date the graha's period starts (prepare_upcoming_period only). */
+    @Json(name = "period_lord_from") val periodLordFrom: String? = null,
+    val priority: Int = 0
+) {
+    companion object {
+        const val REASON_WEAK = "strengthen_weak"
+        const val REASON_RUNNING = "support_running_period"
+        const val REASON_UPCOMING = "prepare_upcoming_period"
+        const val REASON_PROTECTION = "ongoing_protection"
+    }
+}

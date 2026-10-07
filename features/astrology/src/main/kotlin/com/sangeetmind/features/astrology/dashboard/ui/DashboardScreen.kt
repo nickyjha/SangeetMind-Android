@@ -52,6 +52,8 @@ import com.sangeetmind.core.ui.language.LocalAppLanguage
 import com.sangeetmind.features.astrology.dashboard.PeriodCountdown
 import com.sangeetmind.features.astrology.dashboard.RelativeSpan
 import com.sangeetmind.libs.models.CurrentPeriod
+import com.sangeetmind.libs.models.SupportMantra
+import com.sangeetmind.features.astrology.sangeet.SupportMantras
 import com.sangeetmind.libs.models.DailyHoroscope
 import com.sangeetmind.libs.models.PanchangResponse
 import com.sangeetmind.libs.models.toTitleCase
@@ -176,6 +178,7 @@ fun DashboardScreen(
                             Spacer(modifier = Modifier.height(16.dp))
                             GeetCard(
                                 dashaLord = uiState.profile!!.currentMahadasha,
+                                supportMantras = uiState.profile!!.supportMantras,
                                 onChant = onOpenGeet
                             )
                             // Hidden until the backend sends current_period (older deploys don't).
@@ -554,15 +557,46 @@ private fun NotificationNudgeCard(
 }
 
 /**
- * Geet up front: the beej mantra for the running mahadasha, one tap to chant along.
- * Falls back to the Gayatri mantra when the dasha lord is unknown.
+ * Geet up front. With the backend's support mantras, today's pick rotates daily through
+ * them, with a gentle reason line and a chip row of the others. Without them (older
+ * backend), the beej mantra for the running mahadasha; Gayatri when the lord is unknown.
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun GeetCard(dashaLord: String, onChant: (String?) -> Unit) {
+private fun GeetCard(
+    dashaLord: String,
+    supportMantras: List<SupportMantra>,
+    onChant: (String?) -> Unit
+) {
+    val usable = remember(supportMantras) { SupportMantras.usable(supportMantras) }
+    val dayOfYear = remember { java.time.LocalDate.now().dayOfYear }
+    val todays = SupportMantras.forDay(usable, dayOfYear)
     val beej = JapaMantras.beejForLord(dashaLord)
-    val mantra = beej ?: JapaMantras.byId("gayatri")
+    val mantra = todays?.let { JapaMantras.byId(it.mantraId) } ?: beej ?: JapaMantras.byId("gayatri")
     val hasAudio = mantra != null && MantraAudio.forMantra(mantra.id) != null
     val accent = LocalGrahaColors.current.surya
+    val locale = LocalAppLanguage.current.locale
+
+    val reasonRes = todays?.let { SupportMantras.reasonRes(it.reason) }
+    val reasonLine: String? = when {
+        todays == null || reasonRes == null -> null
+        todays.reason == SupportMantra.REASON_UPCOMING -> {
+            val from = todays.periodLordFrom?.let { DateFieldFormat.parseIso(it) }
+            if (from != null) {
+                stringResource(
+                    reasonRes,
+                    astroTerm(todays.planet),
+                    DateFieldFormat.display(DateFieldFormat.toIso(from), locale)
+                )
+            } else {
+                stringResource(R.string.dashboard_geet_reason_running, astroTerm(todays.planet))
+            }
+        }
+        todays.reason == SupportMantra.REASON_PROTECTION -> stringResource(reasonRes)
+        else -> stringResource(reasonRes, astroTerm(todays.planet))
+    }
+    val others = usable.filter { it.mantraId != todays?.mantraId }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -576,16 +610,26 @@ private fun GeetCard(dashaLord: String, onChant: (String?) -> Unit) {
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(stringResource(R.string.dashboard_geet_title), style = MaterialTheme.typography.titleMedium)
             }
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                if (beej != null) stringResource(R.string.dashboard_geet_for_dasha_fmt, astroTerm(dashaLord))
-                else stringResource(R.string.dashboard_geet_general),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            if (todays == null) {
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    if (beej != null) stringResource(R.string.dashboard_geet_for_dasha_fmt, astroTerm(dashaLord))
+                    else stringResource(R.string.dashboard_geet_general),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
             if (mantra != null) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(stringResource(mantra.nameRes), style = MaterialTheme.typography.titleMedium)
+            }
+            if (reasonLine != null) {
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    reasonLine,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text(
@@ -600,6 +644,25 @@ private fun GeetCard(dashaLord: String, onChant: (String?) -> Unit) {
                         if (hasAudio) R.string.dashboard_geet_chant else R.string.dashboard_geet_open
                     )
                 )
+            }
+            if (others.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    stringResource(R.string.dashboard_geet_support_label),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    others.forEach { item ->
+                        val label = astroTerm(item.planet) +
+                            if (MantraAudio.forMantra(item.mantraId) != null) " ♪" else ""
+                        AssistChip(
+                            onClick = { onChant(item.mantraId) },
+                            label = { Text(label) }
+                        )
+                    }
+                }
             }
         }
     }

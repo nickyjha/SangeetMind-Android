@@ -69,7 +69,22 @@ object DateFieldFormat {
     /** True when [date] lies within the optional inclusive bounds. */
     fun isAllowed(date: LocalDate, minDate: LocalDate?, maxDate: LocalDate?): Boolean =
         (minDate == null || !date.isBefore(minDate)) && (maxDate == null || !date.isAfter(maxDate))
+
+    // A bare yyyy-MM-dd: not part of a longer number/ISO timestamp ("2027-04-20T10:00" stays).
+    private val isoDateInText = Regex("(?<![\\d-])(\\d{4}-\\d{2}-\\d{2})(?![\\d-]|T\\d)")
+
+    /**
+     * Every bare ISO date inside free text ("from 2027-04-20 the ...") shown as "20 Apr 2027"
+     * in [locale]; everything else in the text is left untouched, as is any date that does not
+     * exist (2027-13-40).
+     */
+    fun displayDatesInText(text: String, locale: Locale): String =
+        isoDateInText.replace(text) { m -> display(m.value, locale) }
 }
+
+/** Free text with each bare ISO `yyyy-MM-dd` inside it shown as "20 Apr 2027" in the app language. */
+@Composable
+fun isoDatesInText(text: String): String = DateFieldFormat.displayDatesInText(text, LocalAppLanguage.current.locale)
 
 /** An ISO `yyyy-MM-dd` from the server as "2 Oct 2026" in the app language. */
 @Composable

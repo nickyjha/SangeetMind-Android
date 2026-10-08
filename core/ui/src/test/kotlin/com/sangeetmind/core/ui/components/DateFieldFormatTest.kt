@@ -38,6 +38,24 @@ class DateFieldFormatTest {
     }
 
     @Test
+    fun datesInsideTextAreFormattedAndNothingElseChanges() {
+        assertEquals(
+            "**Window:** 20 Apr 2027 to 16 Sep 2029.\n- Saturn moves on 29 Mar 2027",
+            DateFieldFormat.displayDatesInText(
+                "**Window:** 2027-04-20 to 2029-09-16.\n- Saturn moves on 2027-03-29",
+                Locale.ENGLISH
+            )
+        )
+        // Hindi month names for the Hindi app language.
+        assertEquals("20 अप्रैल 2027 से", DateFieldFormat.displayDatesInText("2027-04-20 से", Locale("hi")))
+        // Timestamps, impossible dates, year-month and plain prose are left alone.
+        assertEquals("2027-04-20T10:00", DateFieldFormat.displayDatesInText("2027-04-20T10:00", Locale.ENGLISH))
+        assertEquals("2027-13-40", DateFieldFormat.displayDatesInText("2027-13-40", Locale.ENGLISH))
+        assertEquals("in 2027-04 and 12345-04-20", DateFieldFormat.displayDatesInText("in 2027-04 and 12345-04-20", Locale.ENGLISH))
+        assertEquals("", DateFieldFormat.displayDatesInText("", Locale.ENGLISH))
+    }
+
+    @Test
     fun parseIsoHandlesBlankAndBad() {
         assertNull(DateFieldFormat.parseIso(""))
         assertNull(DateFieldFormat.parseIso("02/10/2026"))

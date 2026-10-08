@@ -159,6 +159,19 @@ data class MarriageRemedy(
     @Json(name = "for_planet") val forPlanet: String = ""
 )
 
+/**
+ * One of the six fixed sections every topic reading now carries (In short / The house and
+ * its lord / What is driving it now / Transits / Next turning point / What to do; Hindi
+ * headings for lang=hi). `body` may hold light Markdown and ISO dates. Older cached
+ * readings have no `sections`, so the list defaults to empty and the UI falls back to the
+ * legacy keys.
+ */
+@JsonClass(generateAdapter = true)
+data class ReadingSection(
+    val heading: String = "",
+    val body: String = ""
+)
+
 @JsonClass(generateAdapter = true)
 data class MarriageReading(
     val summary: String = "",
@@ -168,7 +181,8 @@ data class MarriageReading(
     @Json(name = "manglik_note") val manglikNote: String = "",
     val timing: List<MarriageTiming> = emptyList(),
     val advice: List<String> = emptyList(),
-    val remedies: List<MarriageRemedy> = emptyList()
+    val remedies: List<MarriageRemedy> = emptyList(),
+    @Json(name = "sections") val sections: List<ReadingSection> = emptyList()
 )
 
 @JsonClass(generateAdapter = true)
@@ -200,7 +214,8 @@ data class ChildrenReading(
     @Json(name = "care_points") val carePoints: List<String> = emptyList(),
     val timing: List<MarriageTiming> = emptyList(),
     val advice: List<String> = emptyList(),
-    val remedies: List<MarriageRemedy> = emptyList()
+    val remedies: List<MarriageRemedy> = emptyList(),
+    @Json(name = "sections") val sections: List<ReadingSection> = emptyList()
 )
 
 @JsonClass(generateAdapter = true)
@@ -231,7 +246,8 @@ data class ForeignReading(
     @Json(name = "care_points") val carePoints: List<String> = emptyList(),
     val timing: List<MarriageTiming> = emptyList(),
     val advice: List<String> = emptyList(),
-    val remedies: List<MarriageRemedy> = emptyList()
+    val remedies: List<MarriageRemedy> = emptyList(),
+    @Json(name = "sections") val sections: List<ReadingSection> = emptyList()
 )
 
 @JsonClass(generateAdapter = true)
@@ -262,7 +278,8 @@ data class WealthReading(
     @Json(name = "care_points") val carePoints: List<String> = emptyList(),
     val timing: List<MarriageTiming> = emptyList(),
     val advice: List<String> = emptyList(),
-    val remedies: List<MarriageRemedy> = emptyList()
+    val remedies: List<MarriageRemedy> = emptyList(),
+    @Json(name = "sections") val sections: List<ReadingSection> = emptyList()
 )
 
 @JsonClass(generateAdapter = true)
@@ -293,7 +310,8 @@ data class CareerQuestionReading(
     @Json(name = "care_points") val carePoints: List<String> = emptyList(),
     val timing: List<MarriageTiming> = emptyList(),
     val advice: List<String> = emptyList(),
-    val remedies: List<MarriageRemedy> = emptyList()
+    val remedies: List<MarriageRemedy> = emptyList(),
+    @Json(name = "sections") val sections: List<ReadingSection> = emptyList()
 )
 
 @JsonClass(generateAdapter = true)
@@ -330,7 +348,8 @@ data class PropertyReading(
     @Json(name = "care_points") val carePoints: List<String> = emptyList(),
     val timing: List<MarriageTiming> = emptyList(),
     val advice: List<String> = emptyList(),
-    val remedies: List<MarriageRemedy> = emptyList()
+    val remedies: List<MarriageRemedy> = emptyList(),
+    @Json(name = "sections") val sections: List<ReadingSection> = emptyList()
 )
 
 @JsonClass(generateAdapter = true)
@@ -361,7 +380,8 @@ data class EducationReading(
     @Json(name = "care_points") val carePoints: List<String> = emptyList(),
     val timing: List<MarriageTiming> = emptyList(),
     val advice: List<String> = emptyList(),
-    val remedies: List<MarriageRemedy> = emptyList()
+    val remedies: List<MarriageRemedy> = emptyList(),
+    @Json(name = "sections") val sections: List<ReadingSection> = emptyList()
 )
 
 @JsonClass(generateAdapter = true)
@@ -392,7 +412,8 @@ data class DebtReading(
     @Json(name = "care_points") val carePoints: List<String> = emptyList(),
     val timing: List<MarriageTiming> = emptyList(),
     val advice: List<String> = emptyList(),
-    val remedies: List<MarriageRemedy> = emptyList()
+    val remedies: List<MarriageRemedy> = emptyList(),
+    @Json(name = "sections") val sections: List<ReadingSection> = emptyList()
 )
 
 @JsonClass(generateAdapter = true)
@@ -423,7 +444,8 @@ data class RelationshipReading(
     @Json(name = "care_points") val carePoints: List<String> = emptyList(),
     val timing: List<MarriageTiming> = emptyList(),
     val advice: List<String> = emptyList(),
-    val remedies: List<MarriageRemedy> = emptyList()
+    val remedies: List<MarriageRemedy> = emptyList(),
+    @Json(name = "sections") val sections: List<ReadingSection> = emptyList()
 )
 
 @JsonClass(generateAdapter = true)
@@ -454,7 +476,8 @@ data class HealthReading(
     @Json(name = "care_points") val carePoints: List<String> = emptyList(),
     val timing: List<MarriageTiming> = emptyList(),
     val advice: List<String> = emptyList(),
-    val remedies: List<MarriageRemedy> = emptyList()
+    val remedies: List<MarriageRemedy> = emptyList(),
+    @Json(name = "sections") val sections: List<ReadingSection> = emptyList()
 )
 
 @JsonClass(generateAdapter = true)

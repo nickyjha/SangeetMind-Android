@@ -1,13 +1,19 @@
 package com.sangeetmind.features.astrology.readings.ui
 
 import com.sangeetmind.core.ui.components.AstroTopBar
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -16,6 +22,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sangeetmind.core.ui.R as CoreR
 import com.sangeetmind.core.ui.components.ErrorCard
+import com.sangeetmind.core.ui.components.isoDatesInText
 import com.sangeetmind.core.ui.text.MarkdownText
 import com.sangeetmind.core.ui.text.markdownInline
 import com.sangeetmind.features.astrology.R
@@ -39,6 +46,7 @@ import com.sangeetmind.libs.models.DashaStoryReading
 import com.sangeetmind.libs.models.MarriageRemedy
 import com.sangeetmind.libs.models.MarriageReading
 import com.sangeetmind.libs.models.MarriageTiming
+import com.sangeetmind.libs.models.ReadingSection
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -154,7 +162,8 @@ fun ReadingsScreen(
                                 care = r.carePoints,
                                 advice = r.advice,
                                 remedies = r.remedies,
-                                disclaimer = stringResource(R.string.readings_children_disclaimer)
+                                disclaimer = stringResource(R.string.readings_children_disclaimer),
+                                sections = r.sections
                             )
                         }
                     )
@@ -183,7 +192,8 @@ fun ReadingsScreen(
                                 care = r.carePoints,
                                 advice = r.advice,
                                 remedies = r.remedies,
-                                disclaimer = stringResource(R.string.readings_foreign_disclaimer)
+                                disclaimer = stringResource(R.string.readings_foreign_disclaimer),
+                                sections = r.sections
                             )
                         }
                     )
@@ -209,7 +219,8 @@ fun ReadingsScreen(
                                 care = r.carePoints,
                                 advice = r.advice,
                                 remedies = r.remedies,
-                                disclaimer = stringResource(R.string.readings_wealth_disclaimer)
+                                disclaimer = stringResource(R.string.readings_wealth_disclaimer),
+                                sections = r.sections
                             )
                         }
                     )
@@ -242,7 +253,8 @@ fun ReadingsScreen(
                                 care = r.carePoints,
                                 advice = r.advice,
                                 remedies = r.remedies,
-                                disclaimer = stringResource(R.string.readings_property_disclaimer)
+                                disclaimer = stringResource(R.string.readings_property_disclaimer),
+                                sections = r.sections
                             )
                         }
                     )
@@ -273,7 +285,8 @@ fun ReadingsScreen(
                                 care = r.carePoints,
                                 advice = r.advice,
                                 remedies = r.remedies,
-                                disclaimer = stringResource(R.string.readings_health_disclaimer)
+                                disclaimer = stringResource(R.string.readings_health_disclaimer),
+                                sections = r.sections
                             )
                         }
                     )
@@ -299,7 +312,8 @@ fun ReadingsScreen(
                                 care = r.carePoints,
                                 advice = r.advice,
                                 remedies = r.remedies,
-                                disclaimer = stringResource(R.string.readings_education_disclaimer)
+                                disclaimer = stringResource(R.string.readings_education_disclaimer),
+                                sections = r.sections
                             )
                         }
                     )
@@ -325,7 +339,8 @@ fun ReadingsScreen(
                                 care = r.carePoints,
                                 advice = r.advice,
                                 remedies = r.remedies,
-                                disclaimer = stringResource(R.string.readings_rel_disclaimer)
+                                disclaimer = stringResource(R.string.readings_rel_disclaimer),
+                                sections = r.sections
                             )
                         }
                     )
@@ -351,7 +366,8 @@ fun ReadingsScreen(
                                 care = r.carePoints,
                                 advice = r.advice,
                                 remedies = r.remedies,
-                                disclaimer = stringResource(R.string.readings_debt_disclaimer)
+                                disclaimer = stringResource(R.string.readings_debt_disclaimer),
+                                sections = r.sections
                             )
                         }
                     )
@@ -436,7 +452,8 @@ private fun CareerTab(
                     care = r.carePoints,
                     advice = r.advice,
                     remedies = r.remedies,
-                    disclaimer = stringResource(R.string.readings_career_disclaimer)
+                    disclaimer = stringResource(R.string.readings_career_disclaimer),
+                    sections = r.sections
                 )
             )
         }
@@ -560,13 +577,24 @@ private fun MarriageTab(
         else Text(stringResource(R.string.readings_marriage_generate))
     }
     if (reading != null) {
-
         Spacer(modifier = Modifier.height(16.dp))
+        if (reading.sections.isNotEmpty()) {
+            SectionCards(reading.sections)
+            Spacer(modifier = Modifier.height(12.dp))
+            MoreDetails(key = "marriage") { MarriageLegacyCards(reading, readingIsForMarried) }
+        } else {
+            MarriageLegacyCards(reading, readingIsForMarried)
+        }
+    }
+}
+
+/** The pre-sections marriage layout: summary, spouse, timing, strengths, challenges, manglik, advice, remedies. */
+@Composable
+private fun MarriageLegacyCards(reading: MarriageReading, readingIsForMarried: Boolean) {
+    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         TextCard(stringResource(R.string.readings_marriage_summary), reading.summary)
-        Spacer(modifier = Modifier.height(12.dp))
         TextCard(stringResource(R.string.readings_marriage_spouse), reading.spouseNature)
         if (reading.timing.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(12.dp))
             TimingCard(
                 title = stringResource(
                     if (readingIsForMarried) R.string.readings_marriage_timing_married
@@ -576,23 +604,18 @@ private fun MarriageTab(
             )
         }
         if (reading.relationshipStrengths.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(12.dp))
             SectionCard(stringResource(R.string.readings_marriage_strengths), reading.relationshipStrengths)
         }
         if (reading.challenges.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(12.dp))
             SectionCard(stringResource(R.string.readings_marriage_challenges), reading.challenges)
         }
         if (reading.manglikNote.isNotBlank()) {
-            Spacer(modifier = Modifier.height(12.dp))
             TextCard(stringResource(R.string.readings_marriage_manglik), reading.manglikNote)
         }
         if (reading.advice.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(12.dp))
             SectionCard(stringResource(R.string.readings_marriage_advice), reading.advice)
         }
         if (reading.remedies.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(12.dp))
             SectionCard(
                 stringResource(R.string.readings_marriage_remedies),
                 reading.remedies.map { r ->
@@ -601,6 +624,43 @@ private fun MarriageTab(
                 }
             )
         }
+    }
+}
+
+/** The six structured sections, one card each, in the order the backend sends them. */
+@Composable
+private fun SectionCards(sections: List<ReadingSection>) {
+    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        sections.forEach { section ->
+            TextCard(section.heading, isoDatesInText(section.body), style = MaterialTheme.typography.bodyMedium)
+        }
+    }
+}
+
+/** Collapsed by default: with the six sections as the reading, the legacy blocks (timing,
+ * strengths, care points, advice, remedies) stay one tap away so nothing is lost. */
+@Composable
+private fun MoreDetails(key: String, content: @Composable () -> Unit) {
+    var expanded by rememberSaveable(key) { mutableStateOf(false) }
+    Column(modifier = Modifier.fillMaxWidth().animateContentSize()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { expanded = !expanded }
+                .padding(vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                stringResource(R.string.readings_more_details),
+                style = MaterialTheme.typography.titleSmall,
+                modifier = Modifier.weight(1f)
+            )
+            Icon(
+                if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                contentDescription = stringResource(if (expanded) R.string.holistic_cd_collapse else R.string.holistic_cd_expand)
+            )
+        }
+        if (expanded) content()
     }
 }
 
@@ -617,7 +677,9 @@ private class LifeReadingContent(
     val care: List<String>,
     val advice: List<String>,
     val remedies: List<MarriageRemedy>,
-    val disclaimer: String?
+    val disclaimer: String?,
+    /** The six structured sections; empty for readings made before the backend added them. */
+    val sections: List<ReadingSection> = emptyList()
 )
 
 /** Two status chips, a generate button, then the reading cards. */
@@ -660,38 +722,17 @@ private fun LifeReadingTab(
     content?.let { LifeReadingCards(it) }
 }
 
-/** Summary, nature, timing, strengths, care points, advice, remedies and the disclaimer. */
+/** The six sections first (when the backend sent them) with the legacy blocks under
+ * "More details"; otherwise the legacy blocks as before. Then the disclaimer. */
 @Composable
 private fun LifeReadingCards(r: LifeReadingContent) {
     Spacer(modifier = Modifier.height(16.dp))
-    TextCard(stringResource(R.string.readings_marriage_summary), r.summary)
-    Spacer(modifier = Modifier.height(12.dp))
-    TextCard(r.natureTitle, r.nature)
-    if (r.timing.isNotEmpty()) {
+    if (r.sections.isNotEmpty()) {
+        SectionCards(r.sections)
         Spacer(modifier = Modifier.height(12.dp))
-        TimingCard(title = r.timingTitle, timing = r.timing)
-    }
-    if (r.strengths.isNotEmpty()) {
-        Spacer(modifier = Modifier.height(12.dp))
-        SectionCard(r.strengthsTitle, r.strengths)
-    }
-    if (r.care.isNotEmpty()) {
-        Spacer(modifier = Modifier.height(12.dp))
-        SectionCard(r.careTitle, r.care)
-    }
-    if (r.advice.isNotEmpty()) {
-        Spacer(modifier = Modifier.height(12.dp))
-        SectionCard(stringResource(R.string.readings_marriage_advice), r.advice)
-    }
-    if (r.remedies.isNotEmpty()) {
-        Spacer(modifier = Modifier.height(12.dp))
-        SectionCard(
-            stringResource(R.string.readings_marriage_remedies),
-            r.remedies.map { rem ->
-                if (rem.forPlanet.isBlank()) rem.remedy
-                else stringResource(R.string.readings_marriage_remedy_fmt, rem.remedy, astroTerm(rem.forPlanet))
-            }
-        )
+        MoreDetails(key = "life") { LifeLegacyCards(r) }
+    } else {
+        LifeLegacyCards(r)
     }
     if (r.disclaimer != null) {
         Spacer(modifier = Modifier.height(12.dp))
@@ -703,14 +744,44 @@ private fun LifeReadingCards(r: LifeReadingContent) {
     }
 }
 
+/** Summary, nature, timing, strengths, care points, advice and remedies. */
 @Composable
-private fun TextCard(title: String, body: String) {
+private fun LifeLegacyCards(r: LifeReadingContent) {
+    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        TextCard(stringResource(R.string.readings_marriage_summary), r.summary)
+        TextCard(r.natureTitle, r.nature)
+        if (r.timing.isNotEmpty()) {
+            TimingCard(title = r.timingTitle, timing = r.timing)
+        }
+        if (r.strengths.isNotEmpty()) {
+            SectionCard(r.strengthsTitle, r.strengths)
+        }
+        if (r.care.isNotEmpty()) {
+            SectionCard(r.careTitle, r.care)
+        }
+        if (r.advice.isNotEmpty()) {
+            SectionCard(stringResource(R.string.readings_marriage_advice), r.advice)
+        }
+        if (r.remedies.isNotEmpty()) {
+            SectionCard(
+                stringResource(R.string.readings_marriage_remedies),
+                r.remedies.map { rem ->
+                    if (rem.forPlanet.isBlank()) rem.remedy
+                    else stringResource(R.string.readings_marriage_remedy_fmt, rem.remedy, astroTerm(rem.forPlanet))
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun TextCard(title: String, body: String, style: TextStyle = MaterialTheme.typography.bodyLarge) {
     if (body.isNotBlank()) {
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(title, style = MaterialTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.height(8.dp))
-                MarkdownText(body, style = MaterialTheme.typography.bodyLarge)
+                MarkdownText(body, style = style)
             }
         }
     }

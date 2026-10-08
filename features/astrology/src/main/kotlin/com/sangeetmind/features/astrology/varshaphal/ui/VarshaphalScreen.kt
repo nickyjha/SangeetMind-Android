@@ -42,6 +42,7 @@ import com.sangeetmind.core.ui.theme.GrahaColors
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.chart.ui.HouseChart
+import com.sangeetmind.features.astrology.chart.ui.rememberPlanetSelection
 import com.sangeetmind.features.astrology.chart.ui.PlanetListCard
 import com.sangeetmind.features.astrology.varshaphal.VarshaphalViewModel
 import com.sangeetmind.libs.models.VarshaphalResponse
@@ -122,6 +123,7 @@ private fun VarshaphalContent(
     onYearChange: (Int) -> Unit
 ) {
     val graha = LocalGrahaColors.current
+    val planetSelection = rememberPlanetSelection(year)
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -168,7 +170,8 @@ private fun VarshaphalContent(
                         planets = varshaphal.chart.planets,
                         title = stringResource(R.string.varshaphal_chart_title, year),
                         subtitle = stringResource(R.string.varshaphal_chart_subtitle),
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.padding(16.dp),
+                        selection = planetSelection
                     )
                 }
             }

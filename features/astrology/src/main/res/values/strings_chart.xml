@@ -84,6 +84,19 @@
     <string name="chart_legend_debilitated">↓ Debilitated</string>
     <string name="chart_legend_vargottama">□ Vargottama</string>
 
+    <!-- Tap-a-planet drishti overlay on the house charts -->
+    <string name="chart_drishti_legend_benefic">Benefic drishti</string>
+    <string name="chart_drishti_legend_malefic">Malefic drishti</string>
+    <string name="chart_drishti_hint">Tap a planet to see its drishti (aspects)</string>
+    <!-- "Jupiter aspects houses 5, 7, 9 (5th: full, 7th: full, 9th: full)" -->
+    <string name="chart_drishti_caption_fmt">%1$s aspects houses %2$s (%3$s)</string>
+    <string name="chart_drishti_caption_none_fmt">%1$s has no aspects shown on this chart</string>
+    <!-- %1$d = which aspect (7), %2$s = English suffix ("th"); Hindi ignores the suffix -->
+    <string name="chart_drishti_ordinal_fmt">%1$d%2$s</string>
+    <string name="chart_drishti_aspect_fmt">%1$s: %2$s</string>
+    <string name="chart_drishti_full">full</string>
+    <string name="chart_drishti_partial_fmt">%1$d%%</string>
+
     <!-- Short planet abbreviations drawn inside the chart wheel's house boxes (Canvas text, not stringResource-able in place — resolved once above the Canvas and captured into the draw scope). -->
     <string name="chart_wheel_abbrev_sun">Su</string>
     <string name="chart_wheel_abbrev_moon">Mo</string>

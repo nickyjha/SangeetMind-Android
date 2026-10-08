@@ -6,6 +6,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -16,18 +20,39 @@ import com.sangeetmind.features.astrology.R
 import com.sangeetmind.libs.models.LagnaInfo
 import com.sangeetmind.libs.models.PlanetInfo
 
-/** A house chart in the user's chosen style ([LocalChartStyle]); every screen draws through this. */
+/**
+ * Which planet's drishti a chart shows. [onTap] is the tap-to-toggle rule: a new planet
+ * selects it, the same planet again (or empty space, null) clears the selection.
+ */
+class PlanetSelection(val planet: String?, val onTap: (String?) -> Unit)
+
+/** Hoisted, process-death-safe selection for one chart; it resets whenever [keys] change (e.g. the chart shown). */
+@Composable
+fun rememberPlanetSelection(vararg keys: Any?): PlanetSelection {
+    var selected by rememberSaveable(*keys) { mutableStateOf<String?>(null) }
+    return PlanetSelection(selected) { tapped -> selected = if (tapped == null || tapped == selected) null else tapped }
+}
+
+/**
+ * A house chart in the user's chosen style ([LocalChartStyle]); every screen draws through this.
+ * Pass a [selection] (see [rememberPlanetSelection]) to let the viewer tap a planet and see
+ * its drishti; [moonWaxing] colours the Moon's lines as benefic or malefic.
+ */
 @Composable
 fun HouseChart(
     lagna: LagnaInfo,
     planets: Map<String, PlanetInfo>,
     title: String,
     subtitle: String? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    selection: PlanetSelection? = null,
+    moonWaxing: Boolean = true
 ) {
+    val selected = selection?.planet
+    val onTap = selection?.onTap ?: {}
     when (LocalChartStyle.current) {
-        ChartStyle.SOUTH -> SouthIndianHouseChart(lagna, planets, title, subtitle, modifier)
-        ChartStyle.NORTH -> NorthIndianHouseChart(lagna, planets, title, subtitle, modifier)
+        ChartStyle.SOUTH -> SouthIndianHouseChart(lagna, planets, title, subtitle, modifier, selected, onTap, moonWaxing)
+        ChartStyle.NORTH -> NorthIndianHouseChart(lagna, planets, title, subtitle, modifier, selected, onTap, moonWaxing)
     }
 }
 

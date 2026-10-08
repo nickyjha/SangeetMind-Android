@@ -219,6 +219,11 @@ private fun ChartContent(
     val selected = availableCharts.firstOrNull { it.first == selectedKey }
         ?: availableCharts.first()
     val meta = divisionalChartMeta(selected.first)
+    // Tap-a-planet drishti selection for each chart on this screen (reset when the chart changes).
+    val moonWaxing = chart.birthPanchang?.tithi?.paksha?.contains("shukla", ignoreCase = true) ?: true
+    val mainSelection = rememberPlanetSelection(selected.first)
+    val chalitSelection = rememberPlanetSelection("chalit")
+    val moonChartSelection = rememberPlanetSelection("moon")
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -275,7 +280,9 @@ private fun ChartContent(
                     planets = selected.second.planets,
                     title = meta?.first ?: selected.first,
                     subtitle = meta?.second ?: chartStyleSubtitle(),
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(16.dp),
+                    selection = mainSelection,
+                    moonWaxing = moonWaxing
                 )
             }
         }
@@ -397,7 +404,9 @@ private fun ChartContent(
                                     planets = chalitPlanets,
                                     title = stringResource(R.string.chart_chalit_title),
                                     subtitle = stringResource(R.string.chart_chalit_subtitle),
-                                    modifier = Modifier.padding(16.dp)
+                                    modifier = Modifier.padding(16.dp),
+                                    selection = chalitSelection,
+                                    moonWaxing = moonWaxing
                                 )
                             }
                         }
@@ -418,7 +427,9 @@ private fun ChartContent(
                                     planets = moonChartPlanets,
                                     title = stringResource(R.string.chart_moon_chart_title),
                                     subtitle = stringResource(R.string.chart_moon_chart_subtitle),
-                                    modifier = Modifier.padding(16.dp)
+                                    modifier = Modifier.padding(16.dp),
+                                    selection = moonChartSelection,
+                                    moonWaxing = moonWaxing
                                 )
                             }
                         }

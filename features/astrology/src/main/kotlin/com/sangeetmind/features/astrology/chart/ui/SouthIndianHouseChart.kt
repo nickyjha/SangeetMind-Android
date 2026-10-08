@@ -1,6 +1,7 @@
 package com.sangeetmind.features.astrology.chart.ui
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -11,9 +12,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -30,7 +34,7 @@ import com.sangeetmind.libs.models.PlanetInfo
 
 /** Sign index (0 = Aries) → grid cell (column, row) in the fixed South Indian layout:
  * Pisces top-left, then Aries, Taurus, Gemini across the top, clockwise round to Aquarius. */
-private val SOUTH_CELLS: Map<Int, Pair<Int, Int>> = mapOf(
+internal val SOUTH_CELLS: Map<Int, Pair<Int, Int>> = mapOf(
     11 to (0 to 0), 0 to (1 to 0), 1 to (2 to 0), 2 to (3 to 0),
     3 to (3 to 1), 4 to (3 to 2), 5 to (3 to 3),
     6 to (2 to 3), 7 to (1 to 3), 8 to (0 to 3),
@@ -40,7 +44,8 @@ private val SOUTH_CELLS: Map<Int, Pair<Int, Int>> = mapOf(
 /**
  * South Indian chart: signs sit in fixed cells, the lagna's cell carries the classical
  * corner stroke, and houses are counted clockwise from it (the small number in each cell).
- * Same inputs and planet labels as [NorthIndianHouseChart], so the two are interchangeable.
+ * Same inputs and planet labels as [NorthIndianHouseChart], so the two are interchangeable;
+ * [selectedPlanet], [onPlanetTap] and [moonWaxing] mean the same there.
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -49,7 +54,10 @@ fun SouthIndianHouseChart(
     planets: Map<String, PlanetInfo>,
     title: String,
     subtitle: String? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    selectedPlanet: String? = null,
+    onPlanetTap: (String?) -> Unit = {},
+    moonWaxing: Boolean = true
 ) {
     val lagnaSign = lagna.sign.ifBlank { "Aries" }
     val lagnaIdx = ZODIAC_SIGNS.indexOfFirst { it.equals(lagnaSign, ignoreCase = true) }.coerceAtLeast(0)
@@ -80,6 +88,18 @@ fun SouthIndianHouseChart(
     val signArgb = MaterialTheme.colorScheme.onSurfaceVariant.toArgb()
     val houseArgb = MaterialTheme.colorScheme.primary.toArgb()
     val planetArgb = MaterialTheme.colorScheme.onSurface.toArgb()
+    val highlightColor = MaterialTheme.colorScheme.onSurface
+
+    // Drishti selection: houses are counted clockwise from the lagna's sign cell.
+    val planetHouse: Map<String, Int> = signToPlanets.flatMap { (signIdx, items) ->
+        items.map { it.first to ((signIdx - lagnaIdx + 12) % 12) + 1 }
+    }.toMap()
+    val selectedInfo = selectedPlanet?.let { planets[it] }
+    val selectedHouse = selectedPlanet?.let { planetHouse[it] }
+    val selectedAspects = if (selectedInfo != null && selectedHouse != null) effectiveAspects(selectedInfo, selectedHouse) else null
+    val selectedNature = selectedPlanet?.let { drishtiNature(it, moonWaxing) }
+    val labelRects = remember { mutableListOf<PlanetLabelRect>() }
+    val currentOnTap = rememberUpdatedState(onPlanetTap)
 
     Column(modifier = modifier.fillMaxWidth()) {
         Text(title, style = MaterialTheme.typography.titleMedium)
@@ -95,9 +115,16 @@ fun SouthIndianHouseChart(
                 .fillMaxWidth()
                 .aspectRatio(1f)
                 .padding(vertical = 8.dp)
+                .pointerInput(Unit) {
+                    val slop = 8.dp.toPx()
+                    detectTapGestures { p ->
+                        currentOnTap.value(hitTestPlanet(ChartPoint(p.x, p.y), labelRects, slop))
+                    }
+                }
         ) {
             val scale = size.minDimension / 400f
             val cell = 100f * scale
+            labelRects.clear()
 
             // The empty centre gets the same soft glow as the North chart.
             drawCircle(
@@ -155,21 +182,42 @@ fun SouthIndianHouseChart(
                 val house = ((signIdx - lagnaIdx + 12) % 12) + 1
                 drawContext.canvas.nativeCanvas.drawText(signLabels[signIdx], left + 4f * scale, top + 11f * scale, signPaint)
                 drawContext.canvas.nativeCanvas.drawText(house.toString(), left + cell - 4f * scale, top + 12f * scale, housePaint)
-                val lines = signToPlanets.getValue(signIdx).map { (name, data) -> planetLabel(name, data, planetAbbrev) }
+                val items = signToPlanets.getValue(signIdx)
+                val lines = items.map { (name, data) -> planetLabel(name, data, planetAbbrev) }
+                val widths = lines.map { measurePerUnitFont(planetPaint, it) }
                 // Below the sign/house header row; 2 columns or a smaller font when crowded.
                 val layout = layoutHouseLabels(
                     rect = SafeRect(cx = col * 100f + 50f, cy = row * 100f + 57f, width = 92f, height = 80f),
-                    labelWidthsPerUnitFont = lines.map { measurePerUnitFont(planetPaint, it) },
+                    labelWidthsPerUnitFont = widths,
                     baseFont = baseFont,
                     minFont = minFont
                 )
+                items.forEachIndexed { i, (name, _) ->
+                    if (name != "Lagna") {
+                        labelRects += planetLabelRect(name, layout.labels[i], widths[i], layout.fontSize).scaled(scale)
+                    }
+                }
                 planetPaint.textSize = layout.fontSize * scale
                 lines.forEachIndexed { i, line ->
                     val p = layout.labels[i]
                     drawContext.canvas.nativeCanvas.drawText(line, p.x * scale, p.y * scale, planetPaint)
                 }
             }
+
+            val selectedRect = selectedPlanet?.let { sel -> labelRects.firstOrNull { it.planet == sel } }
+            if (selectedRect != null) {
+                val lines = drishtiLines(selectedRect.centre, selectedAspects.orEmpty()) { h ->
+                    southHouseCentre(h, lagnaIdx)?.scaled(scale)
+                }
+                drawDrishtiOverlay(selectedRect, lines, selectedNature, highlightColor, scale)
+            }
         }
+
+        DrishtiLegend(
+            selectedPlanet = selectedPlanet?.takeIf { it in planetHouse },
+            selectedAspects = selectedAspects,
+            modifier = Modifier.padding(bottom = 6.dp)
+        )
 
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(12.dp),

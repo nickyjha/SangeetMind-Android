@@ -1,6 +1,7 @@
 package com.sangeetmind.features.astrology.chart.ui
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -11,8 +12,11 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -52,7 +56,7 @@ internal val DEFAULT_WHEEL_PLANET_ORDER = listOf(
 )
 
 /** North Indian chart polygons in a 400×400 viewBox. */
-private val HOUSE_POLYGONS: Map<Int, List<Offset>> = mapOf(
+internal val NORTH_HOUSE_POLYGONS: Map<Int, List<Offset>> = mapOf(
     1 to listOf(Offset(200f, 0f), Offset(300f, 100f), Offset(200f, 200f), Offset(100f, 100f)),
     2 to listOf(Offset(0f, 0f), Offset(100f, 100f), Offset(200f, 0f)),
     3 to listOf(Offset(0f, 0f), Offset(0f, 200f), Offset(100f, 100f)),
@@ -110,6 +114,12 @@ internal fun degreeDisplay(planet: PlanetInfo): String? {
     return null
 }
 
+/**
+ * @param selectedPlanet planet whose drishti is drawn (dashed lines to each aspected house)
+ *   and whose label is boxed; null for none. Tapping a label reports it through
+ *   [onPlanetTap]; tapping empty space reports null.
+ * @param moonWaxing colours the Moon's drishti as benefic (waxing) or malefic (waning).
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun NorthIndianHouseChart(
@@ -117,7 +127,10 @@ fun NorthIndianHouseChart(
     planets: Map<String, PlanetInfo>,
     title: String,
     subtitle: String? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    selectedPlanet: String? = null,
+    onPlanetTap: (String?) -> Unit = {},
+    moonWaxing: Boolean = true
 ) {
     val lagnaSign = lagna.sign.ifBlank { "Aries" }
     val houseToPlanets = (1..12).associateWith { mutableListOf<Pair<String, PlanetInfo>>() }.toMutableMap()
@@ -148,6 +161,17 @@ fun NorthIndianHouseChart(
     val innerLineColor = LocalGrahaColors.current.rahu
     val rashiArgb = MaterialTheme.colorScheme.primary.toArgb()
     val planetArgb = MaterialTheme.colorScheme.onSurface.toArgb()
+    val highlightColor = MaterialTheme.colorScheme.onSurface
+
+    // Drishti selection: which house each planet sits in, and the selected planet's aspects.
+    val planetHouse: Map<String, Int> = houseToPlanets.flatMap { (h, items) -> items.map { it.first to h } }.toMap()
+    val selectedInfo = selectedPlanet?.let { planets[it] }
+    val selectedHouse = selectedPlanet?.let { planetHouse[it] }
+    val selectedAspects = if (selectedInfo != null && selectedHouse != null) effectiveAspects(selectedInfo, selectedHouse) else null
+    val selectedNature = selectedPlanet?.let { drishtiNature(it, moonWaxing) }
+    // Label bounds in pixels, refilled on every draw and read by the tap handler (both on the UI thread).
+    val labelRects = remember { mutableListOf<PlanetLabelRect>() }
+    val currentOnTap = rememberUpdatedState(onPlanetTap)
 
     Column(modifier = modifier.fillMaxWidth()) {
         Text(title, style = MaterialTheme.typography.titleMedium)
@@ -163,9 +187,16 @@ fun NorthIndianHouseChart(
                 .fillMaxWidth()
                 .aspectRatio(1f)
                 .padding(vertical = 8.dp)
+                .pointerInput(Unit) {
+                    val slop = 8.dp.toPx()
+                    detectTapGestures { p ->
+                        currentOnTap.value(hitTestPlanet(ChartPoint(p.x, p.y), labelRects, slop))
+                    }
+                }
         ) {
             val scale = size.minDimension / 400f
             fun Offset.scaled() = Offset(x * scale, y * scale)
+            labelRects.clear()
 
             // Soft radial glow behind the lagna house, echoing the sun at the chart's center.
             drawCircle(
@@ -178,7 +209,7 @@ fun NorthIndianHouseChart(
                 center = Offset(200f, 200f).scaled()
             )
 
-            HOUSE_POLYGONS.forEach { (houseNum, points) ->
+            NORTH_HOUSE_POLYGONS.forEach { (houseNum, points) ->
                 val path = Path().apply {
                     val first = points.first().scaled()
                     moveTo(first.x, first.y)
@@ -214,13 +245,20 @@ fun NorthIndianHouseChart(
             for (houseNum in 1..12) {
                 val items = houseToPlanets.getValue(houseNum)
                 val lines = items.map { (name, data) -> planetLabel(name, data, planetAbbrev) }
+                val widths = lines.map { measurePerUnitFont(planetPaint, it) }
                 val layout = layoutHouseLabels(
                     rect = NORTH_SAFE_RECTS.getValue(houseNum),
-                    labelWidthsPerUnitFont = lines.map { measurePerUnitFont(planetPaint, it) },
+                    labelWidthsPerUnitFont = widths,
                     baseFont = baseFont,
                     minFont = minFont,
                     headerFont = headerFont
                 )
+                items.forEachIndexed { i, (name, _) ->
+                    // The lagna marker has no drishti, so it is not tappable.
+                    if (name != "Lagna") {
+                        labelRects += planetLabelRect(name, layout.labels[i], widths[i], layout.fontSize).scaled(scale)
+                    }
+                }
                 layout.header?.let { pos ->
                     drawContext.canvas.nativeCanvas.drawText(
                         houseToRashi.getValue(houseNum).toString(),
@@ -235,7 +273,22 @@ fun NorthIndianHouseChart(
                     drawContext.canvas.nativeCanvas.drawText(line, pos.x * scale, pos.y * scale, planetPaint)
                 }
             }
+
+            // Selected planet: dashed drishti lines to each aspected house, then the highlight box.
+            val selectedRect = selectedPlanet?.let { sel -> labelRects.firstOrNull { it.planet == sel } }
+            if (selectedRect != null) {
+                val lines = drishtiLines(selectedRect.centre, selectedAspects.orEmpty()) { h ->
+                    NORTH_HOUSE_CENTRES[h]?.scaled(scale)
+                }
+                drawDrishtiOverlay(selectedRect, lines, selectedNature, highlightColor, scale)
+            }
         }
+
+        DrishtiLegend(
+            selectedPlanet = selectedPlanet?.takeIf { it in planetHouse },
+            selectedAspects = selectedAspects,
+            modifier = Modifier.padding(bottom = 6.dp)
+        )
 
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(12.dp),

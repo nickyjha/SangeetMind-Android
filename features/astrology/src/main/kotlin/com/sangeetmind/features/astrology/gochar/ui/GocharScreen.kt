@@ -56,6 +56,7 @@ import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.chart.ui.Chip
 import com.sangeetmind.features.astrology.chart.ui.HouseChart
+import com.sangeetmind.features.astrology.chart.ui.rememberPlanetSelection
 import com.sangeetmind.features.astrology.chart.ui.grahaColorFor
 import com.sangeetmind.features.astrology.gochar.GocharUiState
 import com.sangeetmind.features.astrology.gochar.GocharViewModel
@@ -167,6 +168,7 @@ private fun GocharContent(
     // Resolved here, not in the LazyColumn builder (a non-composable LazyListScope lambda).
     val chartTitle = stringResource(R.string.gochar_chart_title, dateLabel)
     val chartSubtitle = stringResource(R.string.gochar_chart_subtitle)
+    val planetSelection = rememberPlanetSelection(uiState.date)
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -202,7 +204,8 @@ private fun GocharContent(
                         planets = transit.transit.planets.mapValues { (_, p) -> p.toPlanetInfo() },
                         title = chartTitle,
                         subtitle = chartSubtitle,
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.padding(16.dp),
+                        selection = planetSelection
                     )
                 }
             }
@@ -466,5 +469,7 @@ private fun TransitPlanet.toPlanetInfo() = PlanetInfo(
     retrograde = retrograde,
     combust = combust,
     exalted = exalted,
-    debilitated = debilitated
+    debilitated = debilitated,
+    // The transit chart is drawn in natal houses, so these are the houses its drishti lines reach.
+    aspects = aspectsNatalHouses
 )

@@ -83,6 +83,16 @@
     <string name="chart_legend_debilitated">↓ नीच</string>
     <string name="chart_legend_vargottama">□ वर्गोत्तम</string>
 
+    <string name="chart_drishti_legend_benefic">शुभ दृष्टि</string>
+    <string name="chart_drishti_legend_malefic">अशुभ दृष्टि</string>
+    <string name="chart_drishti_hint">किसी ग्रह पर टैप करें, उसकी दृष्टि दिखेगी</string>
+    <string name="chart_drishti_caption_fmt">%1$s की दृष्टि भाव %2$s पर है (%3$s)</string>
+    <string name="chart_drishti_caption_none_fmt">इस कुंडली में %1$s की दृष्टि नहीं दिखाई गई</string>
+    <string name="chart_drishti_ordinal_fmt">%1$dवीं</string>
+    <string name="chart_drishti_aspect_fmt">%1$s: %2$s</string>
+    <string name="chart_drishti_full">पूरी</string>
+    <string name="chart_drishti_partial_fmt">%1$d%%</string>
+
     <string name="chart_wheel_abbrev_sun">सू</string>
     <string name="chart_wheel_abbrev_moon">चं</string>
     <string name="chart_wheel_abbrev_mercury">बु</string>

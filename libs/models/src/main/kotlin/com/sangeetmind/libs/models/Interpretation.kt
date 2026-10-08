@@ -423,7 +423,16 @@ data class ShadbalaPlanet(
     /** BPHS capacity (0-60) to give good results. */
     @Json(name = "ishta_phala") val ishtaPhala: Double? = null,
     /** BPHS capacity (0-60) to give difficult results. */
-    @Json(name = "kashta_phala") val kashtaPhala: Double? = null
+    @Json(name = "kashta_phala") val kashtaPhala: Double? = null,
+    /** total / required virupas; >= 1 means the planet meets its own BPHS minimum. */
+    @Json(name = "strength_ratio") val strengthRatio: Double? = null,
+    /** very_strong | strong | adequate | weak | very_weak (backend rule table). */
+    @Json(name = "strength_label") val strengthLabel: String? = null,
+    /** 1 (strongest) .. 7 by strength_ratio. */
+    @Json(name = "rank_by_ratio") val rankByRatio: Int? = null,
+    /** One plain-words sentence (no planet name; the client prefixes it). */
+    val summary: String? = null,
+    @Json(name = "summary_hi") val summaryHi: String? = null
 )
 
 @JsonClass(generateAdapter = true)
@@ -432,10 +441,19 @@ data class ShadbalaRanking(
     @Json(name = "total_virupas") val totalVirupas: Double = 0.0
 )
 
+/** Top-level plain-words summary of the Shadbala block (weak = strength_ratio < 1). */
+@JsonClass(generateAdapter = true)
+data class ShadbalaSummary(
+    val strongest: String? = null,
+    val weakest: String? = null,
+    @Json(name = "weak_planets") val weakPlanets: List<String> = emptyList()
+)
+
 @JsonClass(generateAdapter = true)
 data class ChartShadbala(
     val planets: Map<String, ShadbalaPlanet> = emptyMap(),
     val ranking: List<ShadbalaRanking> = emptyList(),
+    val summary: ShadbalaSummary? = null,
     val method: String = "",
     val note: String = ""
 )

@@ -295,6 +295,7 @@ fun SangeetMindNavHost(
             ChartScreen(
                 onNavigateBack = { navController.popFrom(it) },
                 onOpenDashaStory = { navController.navigate("readings?tab=DASHA") },
+                onOpenGeet = { id -> navController.navigate("sangeet?mantra=$id") },
                 openDasha = it.arguments?.getString("section") == "dasha"
             )
         }

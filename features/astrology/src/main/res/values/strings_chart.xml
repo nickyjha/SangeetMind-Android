@@ -118,7 +118,10 @@
     <string name="chart_rel_intimate">Intimate</string>
     <string name="chart_rel_bitter_enemy">Bitter Enemy</string>
     <string name="chart_shadbala">Shadbala</string>
-    <string name="chart_shadbala_subtitle">Six-fold planetary strength, strongest first</string>
+    <string name="chart_shadbala_subtitle">Strength vs each planet\'s own minimum, strongest first</string>
+    <string name="chart_shadbala_strong">Strong</string>
+    <string name="chart_shadbala_weak">Weak</string>
+    <string name="chart_shadbala_chant_fmt">♪ Chant %1$s beej</string>
     <string name="chart_rupas_fmt">%1$s rupas</string>
     <string name="chart_bhavabala">Bhavabala</string>
     <string name="chart_bhavabala_subtitle">House strength · strongest is House %1$s</string>

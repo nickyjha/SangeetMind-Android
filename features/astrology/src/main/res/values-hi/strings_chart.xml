@@ -116,7 +116,10 @@
     <string name="chart_rel_intimate">अति मित्र</string>
     <string name="chart_rel_bitter_enemy">अति शत्रु</string>
     <string name="chart_shadbala">षड्बल</string>
-    <string name="chart_shadbala_subtitle">छह तरह का ग्रह बल, सबसे मज़बूत पहले</string>
+    <string name="chart_shadbala_subtitle">हर ग्रह की अपनी ज़रूरत के मुकाबले बल, सबसे मज़बूत पहले</string>
+    <string name="chart_shadbala_strong">मज़बूत</string>
+    <string name="chart_shadbala_weak">कमज़ोर</string>
+    <string name="chart_shadbala_chant_fmt">♪ %1$s बीज मंत्र जपें</string>
     <string name="chart_rupas_fmt">%1$s रूपा</string>
     <string name="chart_bhavabala">भावबल</string>
     <string name="chart_bhavabala_subtitle">भाव बल · सबसे मज़बूत भाव %1$s</string>

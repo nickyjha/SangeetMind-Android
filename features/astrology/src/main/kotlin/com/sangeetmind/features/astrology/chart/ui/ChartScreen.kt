@@ -93,7 +93,6 @@ import com.sangeetmind.libs.models.ChartShadbala
 import com.sangeetmind.libs.models.ChartSummaryResponse
 import com.sangeetmind.libs.models.ChartYoga
 import com.sangeetmind.libs.models.ExtraDosha
-import com.sangeetmind.libs.models.ShadbalaRanking
 import com.sangeetmind.libs.models.DashaPeriod
 import com.sangeetmind.libs.models.DivisionalChart
 import com.sangeetmind.libs.models.LagnaInfo
@@ -117,6 +116,8 @@ import java.time.temporal.ChronoUnit
 fun ChartScreen(
     onNavigateBack: () -> Unit,
     onOpenDashaStory: () -> Unit = {},
+    /** Open Geet on a japa mantra id (e.g. "guru_beej") — Shadbala's "Chant … beej" buttons. */
+    onOpenGeet: (String) -> Unit = {},
     /** Open on the Dasha section (Home's "Your current period" card). */
     openDasha: Boolean = false,
     viewModel: ChartViewModel = hiltViewModel()
@@ -188,6 +189,7 @@ fun ChartScreen(
                         showFullTimeline = uiState.showFullTimeline,
                         onToggleTimeline = viewModel::toggleFullTimeline,
                         onOpenDashaStory = onOpenDashaStory,
+                        onOpenGeet = onOpenGeet,
                         openDasha = openDasha
                     )
                 }
@@ -204,6 +206,7 @@ private fun ChartContent(
     showFullTimeline: Boolean,
     onToggleTimeline: () -> Unit,
     onOpenDashaStory: () -> Unit = {},
+    onOpenGeet: (String) -> Unit = {},
     openDasha: Boolean = false
 ) {
     val moon = chart.planets["Moon"]
@@ -333,7 +336,7 @@ private fun ChartContent(
                         FriendshipCard(chart.friendship)
                     }
                     item {
-                        ShadbalaCard(chart.shadbala)
+                        ShadbalaCard(chart.shadbala, onOpenGeet)
                     }
                     item {
                         BhavabalaCard(chart.bhavabala)
@@ -1363,20 +1366,22 @@ private fun friendshipRelationLabel(relation: String): String = when (relation.t
     else -> astroTerm(relation)
 }
 
-/** Six-fold planetary strength, strongest graha first. Rupas (virupas/60) is the human
- * unit shown; the bar is driven by virupas so components with very different totals still
- * compare cleanly (app/services/shadbala.py — full BPHS Shadbala, "bphs_full", calibrated
- * against AstroSage's table). */
+/** Six-fold planetary strength, strongest graha first. Rows are ordered (and the bar is
+ * driven) by `strength_ratio` — each planet against its own BPHS minimum — so a Strong/Weak
+ * chip, the rupas and the plain-words `summary` all tell the same story; without ratios
+ * (older backend) it falls back to the raw virupas ranking and hides the new bits
+ * (app/services/shadbala.py — full BPHS Shadbala, "bphs_full", calibrated against
+ * AstroSage's table). Weak planets (ratio < 1) get a "Chant <graha> beej" button into Geet. */
 @Composable
-private fun ShadbalaCard(shadbala: ChartShadbala) {
+private fun ShadbalaCard(shadbala: ChartShadbala, onOpenGeet: (String) -> Unit = {}) {
     if (shadbala.planets.isNotEmpty()) {
         val graha = LocalGrahaColors.current
-        val ranked = shadbala.ranking.ifEmpty {
-            shadbala.planets.entries
-                .map { (planet, data) -> ShadbalaRanking(planet, data.totalVirupas) }
-                .sortedByDescending { it.totalVirupas }
-        }
-        val maxVirupas = (ranked.maxOfOrNull { it.totalVirupas } ?: 1.0).coerceAtLeast(1.0)
+        val languageCode = LocalAppLanguage.current.code
+        val order = shadbalaDisplayOrder(shadbala)
+        val weak = weakShadbalaPlanets(shadbala).toSet()
+        val maxVirupas = (shadbala.planets.values.maxOfOrNull { it.totalVirupas } ?: 1.0).coerceAtLeast(1.0)
+        val maxRatio = (shadbala.planets.values.mapNotNull { it.strengthRatio }.maxOrNull() ?: 1.0)
+            .coerceAtLeast(0.01)
 
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(16.dp)) {
@@ -1394,50 +1399,93 @@ private fun ShadbalaCard(shadbala: ChartShadbala) {
                     )
                 }
                 Spacer(modifier = Modifier.height(12.dp))
-                ranked.forEach { entry ->
-                    val planet = shadbala.planets[entry.planet] ?: return@forEach
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            astroTerm(entry.planet),
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.width(72.dp)
-                        )
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(8.dp)
-                                .clip(RoundedCornerShape(4.dp))
-                                .background(MaterialTheme.colorScheme.surfaceVariant)
+                order.forEach { name ->
+                    val planet = shadbala.planets[name]
+                    if (planet != null) {
+                        val ratio = planet.strengthRatio
+                        val fraction = if (ratio != null) ratio / maxRatio else planet.totalVirupas / maxVirupas
+                        val tone = shadbalaTone(ratio, planet.strengthLabel)
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
+                            Text(
+                                astroTerm(name),
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier.width(72.dp)
+                            )
                             Box(
                                 modifier = Modifier
-                                    .fillMaxHeight()
-                                    .fillMaxWidth(
-                                        fraction = (entry.totalVirupas / maxVirupas).toFloat().coerceIn(0.05f, 1f)
-                                    )
+                                    .weight(1f)
+                                    .height(8.dp)
                                     .clip(RoundedCornerShape(4.dp))
-                                    .background(grahaColorFor(entry.planet, graha))
+                                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .fillMaxWidth(fraction = fraction.toFloat().coerceIn(0.05f, 1f))
+                                        .clip(RoundedCornerShape(4.dp))
+                                        .background(grahaColorFor(name, graha))
+                                )
+                            }
+                            Text(
+                                stringResource(R.string.chart_rupas_fmt, planet.totalRupas.toString()),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.width(72.dp).padding(start = 8.dp)
                             )
                         }
-                        Text(
-                            stringResource(R.string.chart_rupas_fmt, planet.totalRupas.toString()),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.width(72.dp).padding(start = 8.dp)
-                        )
-                    }
-                    val ishta = planet.ishtaPhala
-                    val kashta = planet.kashtaPhala
-                    if (ishta != null && kashta != null) {
-                        Text(
-                            stringResource(R.string.chart_phala_fmt, ishta.roundToInt(), kashta.roundToInt()),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(start = 72.dp, bottom = 4.dp)
-                        )
+                        val ishta = planet.ishtaPhala
+                        val kashta = planet.kashtaPhala
+                        if (tone != null || (ishta != null && kashta != null)) {
+                            Row(
+                                modifier = Modifier.padding(start = 72.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                if (tone != null) {
+                                    // Same tones as the dignity chips: jade (budha) = exalted/strong,
+                                    // amber (guru) = debilitated/weak.
+                                    Chip(
+                                        stringResource(
+                                            if (tone == ShadbalaTone.STRONG) R.string.chart_shadbala_strong
+                                            else R.string.chart_shadbala_weak
+                                        ),
+                                        if (tone == ShadbalaTone.STRONG) graha.budha else graha.guru
+                                    )
+                                }
+                                if (ishta != null && kashta != null) {
+                                    Text(
+                                        stringResource(R.string.chart_phala_fmt, ishta.roundToInt(), kashta.roundToInt()),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
+                        }
+                        val summaryText = shadbalaSummaryText(planet, languageCode)
+                        if (summaryText != null) {
+                            Text(
+                                summaryText,
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier.padding(start = 72.dp, top = 2.dp)
+                            )
+                        }
+                        val beej = beejMantraIdFor(name)
+                        if (name in weak && beej != null) {
+                            TextButton(
+                                onClick = { onOpenGeet(beej) },
+                                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
+                                modifier = Modifier.padding(start = 64.dp)
+                            ) {
+                                Text(
+                                    stringResource(R.string.chart_shadbala_chant_fmt, astroTerm(name)),
+                                    style = MaterialTheme.typography.labelMedium
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(4.dp))
                     }
                 }
             }

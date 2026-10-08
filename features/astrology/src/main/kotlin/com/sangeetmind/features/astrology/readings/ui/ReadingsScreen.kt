@@ -32,6 +32,7 @@ import com.sangeetmind.features.astrology.readings.SMALL_TOPICS
 import com.sangeetmind.libs.models.SmallReading
 import com.sangeetmind.features.astrology.readings.ReadingTab
 import com.sangeetmind.features.astrology.readings.ReadingsViewModel
+import com.sangeetmind.features.astrology.readings.stripPricePrefix
 import com.sangeetmind.core.ui.language.LocalAppLanguage
 import com.sangeetmind.libs.models.ReadingPreview
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -50,6 +51,32 @@ import com.sangeetmind.libs.models.ReadingSection
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+/** True while the free beta is on: price lead-ins are dropped from the reading descriptions. */
+private val LocalFreeBeta = compositionLocalOf { false }
+
+/** A reading description, minus its "₹NN, or free with Premium" lead-in during the free beta. */
+@Composable
+private fun readingDescription(@StringRes id: Int): String {
+    val text = stringResource(id)
+    return if (LocalFreeBeta.current) stripPricePrefix(text) else text
+}
+
+/** One slim line at the top of the screen while every reading is free. */
+@Composable
+private fun FreeBetaBanner() {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.tertiaryContainer
+    ) {
+        Text(
+            stringResource(R.string.readings_free_beta_banner),
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onTertiaryContainer
+        )
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReadingsScreen(
@@ -66,7 +93,9 @@ fun ReadingsScreen(
             )
         }
     ) { padding ->
+        CompositionLocalProvider(LocalFreeBeta provides uiState.beta) {
         Column(modifier = Modifier.fillMaxSize().padding(padding)) {
+            if (uiState.beta) FreeBetaBanner()
             val tabLabels = mapOf(
                 ReadingTab.CAREER to R.string.readings_tab_career,
                 ReadingTab.STRENGTHS to R.string.readings_tab_strengths,
@@ -374,6 +403,7 @@ fun ReadingsScreen(
                 }
             }
         }
+        }
     }
 }
 
@@ -407,7 +437,7 @@ private fun CareerTab(
     }
     Spacer(modifier = Modifier.height(12.dp))
     Text(
-        stringResource(if (question == null) R.string.readings_career_desc else R.string.readings_career_q_desc),
+        readingDescription(if (question == null) R.string.readings_career_desc else R.string.readings_career_q_desc),
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )
@@ -491,7 +521,7 @@ private fun StrengthsTab(
     onGenerate: () -> Unit
 ) {
     Text(
-        stringResource(R.string.readings_strengths_desc),
+        readingDescription(R.string.readings_strengths_desc),
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )
@@ -554,7 +584,7 @@ private fun MarriageTab(
     onGenerate: () -> Unit
 ) {
     Text(
-        stringResource(R.string.readings_marriage_desc),
+        readingDescription(R.string.readings_marriage_desc),
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )
@@ -697,7 +727,7 @@ private fun LifeReadingTab(
     content: LifeReadingContent?
 ) {
     Text(
-        stringResource(descRes),
+        readingDescription(descRes),
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )
@@ -935,7 +965,7 @@ private fun SmallTab(
     }
     Spacer(modifier = Modifier.height(12.dp))
     Text(
-        stringResource(
+        readingDescription(
             when (topic) {
                 "love_style" -> R.string.readings_small_love_style_desc
                 "ideal_partner" -> R.string.readings_small_ideal_partner_desc
@@ -987,7 +1017,7 @@ private fun SmallTab(
 @Composable
 private fun DashaStoryTab(isLoading: Boolean, onGenerate: () -> Unit, reading: DashaStoryReading?) {
     Text(
-        stringResource(R.string.readings_dasha_desc),
+        readingDescription(R.string.readings_dasha_desc),
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )

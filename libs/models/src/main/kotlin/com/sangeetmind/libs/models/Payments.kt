@@ -46,7 +46,9 @@ data class VerifyPaymentResponse(
 @JsonClass(generateAdapter = true)
 data class PremiumStatus(
     val premium: Boolean,
-    @Json(name = "endsAt") val endsAt: String? = null
+    @Json(name = "endsAt") val endsAt: String? = null,
+    /** True while the free beta makes Premium free for everyone (no paid plan involved). */
+    @Json(name = "beta") val beta: Boolean = false
 )
 
 @JsonClass(generateAdapter = true)

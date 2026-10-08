@@ -112,6 +112,7 @@ fun PaymentsScreen(
             when (uiState.tab) {
                 PaymentsTab.PREMIUM -> PremiumTab(
                     isPremium = uiState.premiumStatus?.premium == true,
+                    freeBeta = uiState.premiumStatus?.beta == true,
                     premiumEndsAt = uiState.premiumStatus?.endsAt,
                     plans = PlayProducts.premiumPlans,
                     playPrices = uiState.playPrices,
@@ -138,6 +139,7 @@ fun PaymentsScreen(
 @Composable
 private fun PremiumTab(
     isPremium: Boolean,
+    freeBeta: Boolean,
     premiumEndsAt: String?,
     plans: List<PremiumPlan>,
     playPrices: Map<String, String>,
@@ -153,6 +155,7 @@ private fun PremiumTab(
     ) {
         if (isPremium) {
             // Already Premium: only the active state, no subscribe buttons.
+            // During the free beta this is not a paid plan, so say so instead of "member / until".
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -162,9 +165,12 @@ private fun PremiumTab(
                         Icon(Icons.Default.Star, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
                         Column {
-                            Text(stringResource(R.string.payments_premium_member), style = MaterialTheme.typography.titleMedium)
+                            Text(
+                                stringResource(if (freeBeta) R.string.payments_free_beta else R.string.payments_premium_member),
+                                style = MaterialTheme.typography.titleMedium
+                            )
                             val until = premiumEndsAt?.take(10)
-                            if (!until.isNullOrBlank()) {
+                            if (!freeBeta && !until.isNullOrBlank()) {
                                 Text(
                                     stringResource(R.string.payments_premium_until, until),
                                     style = MaterialTheme.typography.bodySmall
@@ -197,12 +203,15 @@ private fun PremiumTab(
                 )
             }
         }
-        item {
-            Text(
-                stringResource(R.string.payments_play_footnote),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+        // The Play billing footnote only makes sense when a paid subscription is involved.
+        if (!freeBeta) {
+            item {
+                Text(
+                    stringResource(R.string.payments_play_footnote),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
 }

@@ -2,6 +2,7 @@
 <resources>
     <!-- Readings: career / strengths AI readings. -->
     <string name="readings_title">Readings</string>
+    <string name="readings_free_beta_banner">Free during beta — all readings are free right now.</string>
     <string name="readings_tab_career">Career</string>
     <string name="readings_tab_strengths">Strengths</string>
     <string name="readings_career_desc">₹99, or free with Premium — a personal career outlook from your kundli\'s D1/D10 charts and current dasha. You\'re only charged if the reading is ready.</string>

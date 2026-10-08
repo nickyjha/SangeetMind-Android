@@ -2,6 +2,7 @@
 <resources>
     <!-- Readings: career / strengths AI readings. -->
     <string name="readings_title">रीडिंग्स</string>
+    <string name="readings_free_beta_banner">बीटा में मुफ़्त — अभी सभी रीडिंग मुफ़्त हैं।</string>
     <string name="readings_tab_career">करियर</string>
     <string name="readings_tab_strengths">खूबियाँ</string>
     <string name="readings_career_desc">₹99, या प्रीमियम में फ़्री — आपकी कुंडली के D1/D10 चार्ट और अभी की दशा से बनी आपकी अपनी करियर रीडिंग। पैसे तभी कटेंगे जब रीडिंग तैयार हो।</string>

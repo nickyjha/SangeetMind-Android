@@ -64,6 +64,8 @@ data class ReadingsUiState(
     val small: Map<String, SmallReadingResponse> = emptyMap(),
     // Free previews by "topic|status" (see previewKey); a missing key is not loaded (yet).
     val previews: Map<String, ReadingPreview> = emptyMap(),
+    // True while the backend reports the free beta (Premium on for everyone, nothing is charged).
+    val beta: Boolean = false,
     val error: String? = null
 ) {
     /** The preview topic and status for the open tab, or null when it has no preview. */
@@ -120,6 +122,9 @@ class ReadingsViewModel @Inject constructor(
 
     init {
         loadPreview()
+        viewModelScope.launch {
+            if (repository.isFreeBeta()) _uiState.update { it.copy(beta = true) }
+        }
     }
 
     /** Fetches the free preview for the open tab and status once; failures just hide it. */

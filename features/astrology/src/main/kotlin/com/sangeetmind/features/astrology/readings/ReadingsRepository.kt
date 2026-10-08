@@ -106,6 +106,12 @@ class ReadingsRepository @Inject constructor(
         is Result.Loading -> Result.Loading
     }
 
+    /** True while the backend's free beta makes every reading free; false on any error. */
+    suspend fun isFreeBeta(): Boolean {
+        val status = paymentsRepository.getPremiumStatus()
+        return status is Result.Success && status.data.beta
+    }
+
     /** Debits [skuId]/[amountPaise] unless the user is already Premium. */
     private suspend fun spendUnlessPremium(skuId: String, amountPaise: Long): Result<Unit> {
         val status = paymentsRepository.getPremiumStatus()

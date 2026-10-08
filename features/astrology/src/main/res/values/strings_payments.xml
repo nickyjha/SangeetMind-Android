@@ -5,6 +5,7 @@
     <string name="payments_tab_premium">Premium</string>
     <string name="payments_tab_wallet">Wallet</string>
     <string name="payments_premium_member">You\'re a Premium member</string>
+    <string name="payments_free_beta">Free beta: Premium is on for everyone</string>
     <string name="payments_subscribe">Subscribe</string>
     <string name="payments_balance">Balance</string>
     <string name="payments_top_up">Top Up</string>

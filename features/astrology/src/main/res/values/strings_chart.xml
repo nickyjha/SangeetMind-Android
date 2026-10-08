@@ -317,4 +317,6 @@
     <string name="chart_role_trikona_lord">Trikona lord</string>
     <string name="chart_role_kendra_lord">Kendra lord</string>
     <string name="chart_role_dusthana_lord">Dusthana lord</string>
+    <string name="chart_phala_legend">Helpful = Ishta phala, difficult = Kashta phala (0 to 60): how much good or hard results a planet can give</string>
+    <string name="chart_phala_fmt">Helpful %1$d · Difficult %2$d</string>
 </resources>

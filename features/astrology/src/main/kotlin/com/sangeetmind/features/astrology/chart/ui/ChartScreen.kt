@@ -1,5 +1,6 @@
 package com.sangeetmind.features.astrology.chart.ui
 
+import kotlin.math.roundToInt
 import com.sangeetmind.core.ui.components.AstroTopBar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -1385,6 +1386,13 @@ private fun ShadbalaCard(shadbala: ChartShadbala) {
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+                if (shadbala.planets.values.any { it.ishtaPhala != null }) {
+                    Text(
+                        stringResource(R.string.chart_phala_legend),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
                 Spacer(modifier = Modifier.height(12.dp))
                 ranked.forEach { entry ->
                     val planet = shadbala.planets[entry.planet] ?: return@forEach
@@ -1419,6 +1427,16 @@ private fun ShadbalaCard(shadbala: ChartShadbala) {
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.width(72.dp).padding(start = 8.dp)
+                        )
+                    }
+                    val ishta = planet.ishtaPhala
+                    val kashta = planet.kashtaPhala
+                    if (ishta != null && kashta != null) {
+                        Text(
+                            stringResource(R.string.chart_phala_fmt, ishta.roundToInt(), kashta.roundToInt()),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(start = 72.dp, bottom = 4.dp)
                         )
                     }
                 }

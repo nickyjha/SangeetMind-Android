@@ -419,7 +419,11 @@ data class ShadbalaPlanet(
     val house: Int? = null,
     val components: ShadbalaComponents = ShadbalaComponents(),
     @Json(name = "total_virupas") val totalVirupas: Double = 0.0,
-    @Json(name = "total_rupas") val totalRupas: Double = 0.0
+    @Json(name = "total_rupas") val totalRupas: Double = 0.0,
+    /** BPHS capacity (0-60) to give good results. */
+    @Json(name = "ishta_phala") val ishtaPhala: Double? = null,
+    /** BPHS capacity (0-60) to give difficult results. */
+    @Json(name = "kashta_phala") val kashtaPhala: Double? = null
 )
 
 @JsonClass(generateAdapter = true)

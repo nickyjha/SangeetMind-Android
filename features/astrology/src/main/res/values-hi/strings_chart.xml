@@ -315,4 +315,6 @@
     <string name="chart_role_trikona_lord">त्रिकोणेश</string>
     <string name="chart_role_kendra_lord">केंद्रेश</string>
     <string name="chart_role_dusthana_lord">दुःस्थानेश</string>
+    <string name="chart_phala_legend">शुभ = इष्ट फल, कठिन = कष्ट फल (0 से 60): ग्रह कितने अच्छे या कठिन फल दे सकता है</string>
+    <string name="chart_phala_fmt">शुभ %1$d · कठिन %2$d</string>
 </resources>

@@ -26,6 +26,8 @@ import com.sangeetmind.core.ui.text.MarkdownText
 import com.sangeetmind.core.ui.theme.GrahaColors
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.features.astrology.R
+import com.sangeetmind.features.astrology.accuracy.AccuracySurveyCard
+import com.sangeetmind.features.astrology.accuracy.AccuracySurveyDialog
 import com.sangeetmind.features.astrology.chart.ui.Chip
 import com.sangeetmind.features.astrology.interpretation.InterpretationViewModel
 import com.sangeetmind.libs.models.ChartSummaryResponse
@@ -172,6 +174,12 @@ private fun InterpretationContent(
                 item { SectionHeader(stringResource(R.string.interpretation_house_strengths)) }
                 item { HouseStrengthsCard(phal.houses) }
             }
+        }
+
+        item {
+            var surveyOpen by rememberSaveable { mutableStateOf(false) }
+            AccuracySurveyCard(onOpen = { surveyOpen = true })
+            if (surveyOpen) AccuracySurveyDialog(onDismiss = { surveyOpen = false })
         }
 
         val hasRuleNotes = !narrative.isNullOrBlank() ||

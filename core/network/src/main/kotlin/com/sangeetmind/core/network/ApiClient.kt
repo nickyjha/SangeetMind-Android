@@ -252,6 +252,11 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideAccuracySurveyApi(retrofit: Retrofit): AccuracySurveyApi =
+        retrofit.create(AccuracySurveyApi::class.java)
+
+    @Provides
+    @Singleton
     fun provideReportsApi(retrofit: Retrofit): ReportsApi = retrofit.create(ReportsApi::class.java)
 
     @Provides

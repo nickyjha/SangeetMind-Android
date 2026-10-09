@@ -37,4 +37,12 @@
     <string name="interpretation_label_weak">Needs care</string>
     <string name="interpretation_label_very_weak">Weak</string>
     <string name="interpretation_agreement_conflict">Indicators disagree</string>
+    <string name="interpretation_planets">Planets</string>
+    <string name="interpretation_planets_note">Shadbala says how much a planet can deliver; its placement says what it delivers. Both are shown.</string>
+    <string name="interpretation_shadbala_fmt">Shadbala %1$s</string>
+    <string name="interpretation_strength_very_strong">Very strong</string>
+    <string name="interpretation_strength_strong">Strong</string>
+    <string name="interpretation_strength_adequate">Adequate</string>
+    <string name="interpretation_strength_weak">Weak</string>
+    <string name="interpretation_strength_very_weak">Very weak</string>
 </resources>

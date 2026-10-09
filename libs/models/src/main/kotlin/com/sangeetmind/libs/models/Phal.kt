@@ -63,6 +63,14 @@ data class PhalPlanet(
     val house: Int? = null,
     val label: LocalizedText = LocalizedText(),
     val score: Double = 0.0,
+    /** Shadbala bucket (very_strong / strong / adequate / weak / very_weak); null for Rahu/Ketu. */
+    val strength: LocalizedText? = null,
+    /** Placement favourability (very favourable ... very unfavourable), from the score band. */
+    val placement: LocalizedText? = null,
+    val gives: LocalizedText? = null,
+    val tests: LocalizedText? = null,
+    /** Both sides in one or two sentences: strength and what it gives, placement and its tests. */
+    val reading: LocalizedText? = null,
     val strengths: List<LocalizedText> = emptyList(),
     val cautions: List<LocalizedText> = emptyList()
 )

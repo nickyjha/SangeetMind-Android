@@ -37,4 +37,12 @@
     <string name="interpretation_label_weak">ध्यान दें</string>
     <string name="interpretation_label_very_weak">कमज़ोर</string>
     <string name="interpretation_agreement_conflict">संकेत आपस में भिन्न हैं</string>
+    <string name="interpretation_planets">ग्रह</string>
+    <string name="interpretation_planets_note">षड्बल बताता है ग्रह कितना दे सकता है; स्थिति बताती है क्या देता है। दोनों दिखाए गए हैं।</string>
+    <string name="interpretation_shadbala_fmt">षड्बल %1$s</string>
+    <string name="interpretation_strength_very_strong">बहुत बलवान</string>
+    <string name="interpretation_strength_strong">बलवान</string>
+    <string name="interpretation_strength_adequate">पर्याप्त</string>
+    <string name="interpretation_strength_weak">कमज़ोर</string>
+    <string name="interpretation_strength_very_weak">बहुत कमज़ोर</string>
 </resources>

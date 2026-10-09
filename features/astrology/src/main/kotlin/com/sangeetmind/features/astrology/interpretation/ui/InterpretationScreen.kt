@@ -134,8 +134,18 @@ private fun InterpretationContent(
                 item { PeriodsCard(phal.dasha, phal.sadesati) }
             }
             if (phal.planets.isNotEmpty()) {
-                item { SectionHeader(stringResource(R.string.interpretation_planet_strengths)) }
-                item { PlanetStrengthsCard(phal.planets) }
+                item {
+                    Column {
+                        SectionHeader(stringResource(R.string.interpretation_planets))
+                        Text(
+                            stringResource(R.string.interpretation_planets_note),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = muted,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
+                }
+                items(phal.planets.sortedByDescending { it.score }, key = { it.planet }) { PlanetCard(it) }
             }
             if (phal.houses.isNotEmpty()) {
                 item { SectionHeader(stringResource(R.string.interpretation_house_strengths)) }
@@ -295,37 +305,73 @@ private fun PeriodsCard(periods: List<PhalPeriod>, sadesati: PhalSadeSati?) {
     }
 }
 
+/** One planet, both sides: Shadbala strength (capacity) and placement (what it delivers),
+ * then the engine's two-sentence reading that puts them together. */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun PlanetStrengthsCard(planets: List<PhalPlanet>) {
+private fun PlanetCard(p: PhalPlanet) {
     val code = LocalAppLanguage.current.code
     val graha = LocalGrahaColors.current
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
     Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            planets.sortedByDescending { it.score }.forEach { p ->
-                Column {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            astroTerm(p.planet),
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            "%+.1f".format(Locale.US, p.score),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = muted,
-                            modifier = Modifier.padding(end = 8.dp)
-                        )
-                        Chip(verdictText(p.label.en), verdictColor(p.label.en, graha))
-                    }
-                    val reason = (p.strengths + p.cautions).firstOrNull()?.forLanguage(code)
-                    if (!reason.isNullOrBlank()) {
-                        Text(reason, style = MaterialTheme.typography.bodySmall, color = muted)
-                    }
+        Column(modifier = Modifier.padding(16.dp)) {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(astroTerm(p.planet), style = MaterialTheme.typography.titleMedium)
+                p.strength?.let { s ->
+                    Chip(
+                        stringResource(R.string.interpretation_shadbala_fmt, strengthText(s.en)),
+                        strengthColor(s.en, graha)
+                    )
+                }
+                val placement = p.placement?.forLanguage(code)
+                if (!placement.isNullOrBlank()) {
+                    Chip(placement, verdictColor(p.label.en, graha))
+                }
+            }
+            val sign = p.sign
+            val house = p.house
+            if (sign != null && house != null) {
+                Text(
+                    "${astroTerm(sign)} · ${ordinal(house, code)}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = muted,
+                    modifier = Modifier.padding(top = 2.dp)
+                )
+            }
+            val reading = p.reading?.forLanguage(code)
+            if (!reading.isNullOrBlank()) {
+                Text(
+                    reading,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            } else {
+                val reason = (p.strengths + p.cautions).firstOrNull()?.forLanguage(code)
+                if (!reason.isNullOrBlank()) {
+                    Text(reason, style = MaterialTheme.typography.bodySmall, color = muted, modifier = Modifier.padding(top = 8.dp))
                 }
             }
         }
     }
+}
+
+@Composable
+private fun strengthText(label: String): String = when (label) {
+    "very_strong" -> stringResource(R.string.interpretation_strength_very_strong)
+    "strong" -> stringResource(R.string.interpretation_strength_strong)
+    "adequate" -> stringResource(R.string.interpretation_strength_adequate)
+    "weak" -> stringResource(R.string.interpretation_strength_weak)
+    "very_weak" -> stringResource(R.string.interpretation_strength_very_weak)
+    else -> label
+}
+
+private fun strengthColor(label: String, graha: GrahaColors): Color = when (label) {
+    "very_strong", "strong" -> graha.budha
+    "adequate" -> graha.guru
+    else -> graha.mangala
 }
 
 @Composable

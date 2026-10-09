@@ -45,4 +45,6 @@
     <string name="interpretation_strength_adequate">पर्याप्त</string>
     <string name="interpretation_strength_weak">कमज़ोर</string>
     <string name="interpretation_strength_very_weak">बहुत कमज़ोर</string>
+    <string name="interpretation_married_toggle">विवाहित</string>
+    <string name="interpretation_married_note">चालू होने पर मंगल दोष विवाह के निर्णय में नहीं गिना जाता: वह मिलान का विषय है, विवाहित जीवन का निर्णय नहीं।</string>
 </resources>

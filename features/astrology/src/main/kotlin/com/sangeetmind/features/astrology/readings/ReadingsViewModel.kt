@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
+import com.sangeetmind.core.common.profile.MaritalStatusManager
 import com.sangeetmind.libs.models.CareerReadingResponse
 import com.sangeetmind.libs.models.ChildrenReadingResponse
 import com.sangeetmind.libs.models.ForeignReadingResponse
@@ -107,6 +108,7 @@ data class ReadingsUiState(
 @HiltViewModel
 class ReadingsViewModel @Inject constructor(
     private val repository: ReadingsRepository,
+    private val maritalStatusManager: MaritalStatusManager,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -115,7 +117,8 @@ class ReadingsViewModel @Inject constructor(
         ?.let { name -> ReadingTab.values().firstOrNull { it.name == name } }
         ?: ReadingTab.CAREER
 
-    private val _uiState = MutableStateFlow(ReadingsUiState(tab = initialTab))
+    private val _uiState =
+        MutableStateFlow(ReadingsUiState(tab = initialTab, married = maritalStatusManager.married.value))
     val uiState: StateFlow<ReadingsUiState> = _uiState.asStateFlow()
 
     private val previewsLoading = mutableSetOf<String>()
@@ -210,6 +213,7 @@ class ReadingsViewModel @Inject constructor(
     }
 
     fun setMarried(married: Boolean) {
+        maritalStatusManager.setMarried(married) // one setting shared with the Full Reading
         updateAndPreview { it.copy(married = married) }
     }
 

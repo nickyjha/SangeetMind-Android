@@ -86,6 +86,8 @@ fun InterpretationScreen(
                     InterpretationContent(
                         chart = data.chart,
                         phal = data.phal,
+                        married = uiState.married,
+                        onMarriedChange = viewModel::setMarried,
                         narrative = data.analysis?.narrative,
                         positives = data.analysis?.positiveEffects.orEmpty(),
                         challenges = data.analysis?.challenges.orEmpty(),
@@ -97,10 +99,13 @@ fun InterpretationScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun InterpretationContent(
     chart: ChartSummaryResponse,
     phal: PhalSummary?,
+    married: Boolean,
+    onMarriedChange: (Boolean) -> Unit,
     narrative: String?,
     positives: List<RuleEffect>,
     challenges: List<RuleEffect>,
@@ -116,6 +121,22 @@ private fun InterpretationContent(
         item { DashaCard(chart) }
 
         if (phal != null) {
+            item {
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                    FilterChip(
+                        selected = married,
+                        onClick = { onMarriedChange(!married) },
+                        label = { Text(stringResource(R.string.interpretation_married_toggle)) }
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        stringResource(R.string.interpretation_married_note),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = muted,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
             item {
                 Column {
                     SectionHeader(stringResource(R.string.interpretation_life_areas))

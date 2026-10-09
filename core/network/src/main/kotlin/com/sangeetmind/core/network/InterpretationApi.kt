@@ -33,7 +33,10 @@ interface InterpretationApi {
 
     /** Compact phal-engine verdicts for the Full Reading screen (app/api/v1/routes.py phal_summary). */
     @POST("v1/phal/summary")
-    suspend fun getPhalSummary(@Body body: ChartRequest): PhalSummary
+    suspend fun getPhalSummary(
+        @Body body: ChartRequest,
+        @Query("married") married: Boolean? = null // drops the Mangal-dosha matching penalty
+    ): PhalSummary
 
     @POST("rules-engine/analyze-chart")
     suspend fun analyzeChart(

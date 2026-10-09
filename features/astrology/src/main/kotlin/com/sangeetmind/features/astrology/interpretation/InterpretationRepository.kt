@@ -40,7 +40,7 @@ class InterpretationRepository @Inject constructor(
         context.withAppLanguage(languageManager.current).getString(id)
 
     /** The rules-engine narrative/effects come back in the app's current display language. */
-    suspend fun getInterpretation(kundli: Kundli): Result<InterpretationData> =
+    suspend fun getInterpretation(kundli: Kundli, married: Boolean = false): Result<InterpretationData> =
         withContext(ioDispatcher) {
             try {
                 val request = ChartRequest(
@@ -52,7 +52,9 @@ class InterpretationRepository @Inject constructor(
                     lon = kundli.longitude
                 )
                 val chart = interpretationApi.getChart(request)
-                val phal = runCatching { interpretationApi.getPhalSummary(request) }.getOrNull()
+                val phal = runCatching {
+                    interpretationApi.getPhalSummary(request, married = if (married) true else null)
+                }.getOrNull()
                 val analysis = runCatching {
                     interpretationApi.analyzeChart(
                         ChartAnalysisRequest(

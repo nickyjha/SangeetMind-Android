@@ -45,4 +45,6 @@
     <string name="interpretation_strength_adequate">Adequate</string>
     <string name="interpretation_strength_weak">Weak</string>
     <string name="interpretation_strength_very_weak">Very weak</string>
+    <string name="interpretation_married_toggle">Married</string>
+    <string name="interpretation_married_note">When on, Mangal dosha is left out of the Marriage verdict: it is a matching factor, not a verdict on married life.</string>
 </resources>

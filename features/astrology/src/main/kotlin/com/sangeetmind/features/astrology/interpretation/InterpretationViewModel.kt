@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.sangeetmind.core.common.Result
 import com.sangeetmind.core.common.language.LanguageManager
 import com.sangeetmind.core.common.language.withAppLanguage
+import com.sangeetmind.core.common.profile.MaritalStatusManager
 import com.sangeetmind.features.astrology.R
 import com.sangeetmind.features.astrology.kundli.KundliRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +23,8 @@ import javax.inject.Inject
 data class InterpretationUiState(
     val isLoading: Boolean = false,
     val data: InterpretationData? = null,
+    /** Mirrors MaritalStatusManager; the phal verdicts are fetched with it. */
+    val married: Boolean = false,
     val hasNoKundli: Boolean = false,
     val error: String? = null
 )
@@ -31,6 +34,7 @@ class InterpretationViewModel @Inject constructor(
     private val kundliRepository: KundliRepository,
     private val interpretationRepository: InterpretationRepository,
     private val languageManager: LanguageManager,
+    private val maritalStatusManager: MaritalStatusManager,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -47,11 +51,18 @@ class InterpretationViewModel @Inject constructor(
             // changes (skip the initial emission — refresh() above already covers it).
             languageManager.language.drop(1).collect { refresh() }
         }
+        viewModelScope.launch {
+            // The married flag changes the Marriage verdict (Mangal dosha is a matching factor).
+            maritalStatusManager.married.drop(1).collect { refresh() }
+        }
     }
+
+    fun setMarried(married: Boolean) = maritalStatusManager.setMarried(married)
 
     fun refresh() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = null) }
+            val married = maritalStatusManager.married.value
+            _uiState.update { it.copy(isLoading = true, error = null, married = married) }
             when (val kundliResult = kundliRepository.listKundlis()) {
                 is Result.Success -> {
                     val primary = kundliResult.data.firstOrNull { it.isPrimary }
@@ -60,7 +71,7 @@ class InterpretationViewModel @Inject constructor(
                         _uiState.update { it.copy(isLoading = false, hasNoKundli = true) }
                         return@launch
                     }
-                    when (val result = interpretationRepository.getInterpretation(primary)) {
+                    when (val result = interpretationRepository.getInterpretation(primary, married)) {
                         is Result.Success -> _uiState.update {
                             it.copy(isLoading = false, data = result.data, hasNoKundli = false)
                         }

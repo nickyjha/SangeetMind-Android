@@ -26,7 +26,8 @@ import com.sangeetmind.core.ui.components.isoDatesInText
 import com.sangeetmind.core.ui.text.MarkdownText
 import com.sangeetmind.core.ui.text.markdownInline
 import com.sangeetmind.features.astrology.R
-import com.sangeetmind.libs.models.flattenToReadableText
+import com.sangeetmind.libs.models.careerLegacyText
+import com.sangeetmind.libs.models.careerSections
 import com.sangeetmind.features.astrology.readings.CAREER_QUESTIONS
 import com.sangeetmind.features.astrology.readings.SMALL_TOPICS
 import com.sangeetmind.libs.models.SmallReading
@@ -142,7 +143,8 @@ fun ReadingsScreen(
                         isLoading = uiState.isLoading,
                         question = uiState.careerQuestion,
                         onQuestionChange = viewModel::setCareerQuestion,
-                        text = uiState.career?.let { it.analysis?.flattenToReadableText() ?: it.rawModelText },
+                        sections = uiState.career?.analysis?.careerSections().orEmpty(),
+                        text = uiState.career?.let { it.analysis?.careerLegacyText() ?: it.rawModelText },
                         answer = uiState.careerAnswer?.takeIf { it.question == uiState.careerQuestion },
                         onGenerate = viewModel::generateCareerReading
                     )
@@ -414,6 +416,7 @@ private fun CareerTab(
     isLoading: Boolean,
     question: String?,
     onQuestionChange: (String?) -> Unit,
+    sections: List<ReadingSection>,
     text: String?,
     answer: CareerQuestionResponse?,
     onGenerate: () -> Unit
@@ -447,7 +450,20 @@ private fun CareerTab(
         else Text(stringResource(if (question == null) R.string.readings_career_generate else R.string.readings_career_q_generate))
     }
     if (question == null) {
-        if (text != null) {
+        // The six structured sections are the reading; the model's legacy JSON (key facts,
+        // fields, timing, risks...) stays one tap away so nothing is lost.
+        if (sections.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(16.dp))
+            SectionCards(sections)
+            if (text != null) {
+                Spacer(modifier = Modifier.height(12.dp))
+                MoreDetails(key = "career") {
+                    Card(modifier = Modifier.fillMaxWidth()) {
+                        MarkdownText(text, modifier = Modifier.padding(16.dp))
+                    }
+                }
+            }
+        } else if (text != null) {
             Spacer(modifier = Modifier.height(16.dp))
             Card(modifier = Modifier.fillMaxWidth()) {
                 MarkdownText(text, modifier = Modifier.padding(16.dp))

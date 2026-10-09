@@ -128,6 +128,21 @@ fun Map<String, Any>.flattenToReadableText(indent: String = ""): String =
         }
     }
 
+/** The six structured sections of the full career reading (heading + body), in backend order. */
+fun Map<String, Any>.careerSections(): List<ReadingSection> =
+    (this["sections"] as? List<*>).orEmpty().mapNotNull { item ->
+        val m = item as? Map<*, *> ?: return@mapNotNull null
+        val heading = m["heading"]?.toString().orEmpty()
+        val body = m["body"]?.toString().orEmpty()
+        if (heading.isBlank() && body.isBlank()) null else ReadingSection(heading, body)
+    }
+
+/** The model's legacy career analysis (everything except the sections and raw key facts), flattened. */
+fun Map<String, Any>.careerLegacyText(): String? =
+    filterKeys { it !in setOf("sections", "chart_style", "extracted_key_facts", "confidence_notes") }
+        .takeIf { it.isNotEmpty() }
+        ?.flattenToReadableText()
+
 // ---- Marriage reading: POST /llm/marriage ----
 // Timing windows are computed server-side; Gemini only explains them (by window id), so
 // every date here comes from the calculation (app/services/llm_marriage_service.py).

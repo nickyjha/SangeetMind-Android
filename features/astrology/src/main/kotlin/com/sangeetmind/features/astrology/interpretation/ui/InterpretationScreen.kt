@@ -1,28 +1,50 @@
 package com.sangeetmind.features.astrology.interpretation.ui
 
-import com.sangeetmind.core.ui.components.AstroTopBar
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sangeetmind.core.ui.R as CoreR
+import com.sangeetmind.core.ui.components.AstroTopBar
 import com.sangeetmind.core.ui.components.ErrorCard
+import com.sangeetmind.core.ui.language.LocalAppLanguage
 import com.sangeetmind.core.ui.language.astroTerm
 import com.sangeetmind.core.ui.text.MarkdownText
+import com.sangeetmind.core.ui.theme.GrahaColors
+import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.features.astrology.R
+import com.sangeetmind.features.astrology.chart.ui.Chip
 import com.sangeetmind.features.astrology.interpretation.InterpretationViewModel
 import com.sangeetmind.libs.models.ChartSummaryResponse
+import com.sangeetmind.libs.models.PhalHouse
+import com.sangeetmind.libs.models.PhalPeriod
+import com.sangeetmind.libs.models.PhalPlanet
+import com.sangeetmind.libs.models.PhalSadeSati
+import com.sangeetmind.libs.models.PhalSummary
+import com.sangeetmind.libs.models.PhalTopic
 import com.sangeetmind.libs.models.RuleEffect
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
+/**
+ * Full Reading: the phal engine's deterministic verdicts (POST /v1/phal/summary) for the
+ * eight life areas, the running dasha periods, today's transits and every planet and house,
+ * each with the reasons behind it. The older rules-engine text sits collapsed at the end.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InterpretationScreen(
@@ -36,7 +58,7 @@ fun InterpretationScreen(
             AstroTopBar(
                 title = stringResource(R.string.interpretation_title),
                 onBack = onNavigateBack,
-                accent = com.sangeetmind.core.ui.theme.LocalGrahaColors.current.shukra
+                accent = LocalGrahaColors.current.shukra
             )
         }
     ) { padding ->
@@ -60,12 +82,14 @@ fun InterpretationScreen(
                     )
                 }
                 uiState.data != null -> {
+                    val data = uiState.data!!
                     InterpretationContent(
-                        chart = uiState.data!!.chart,
-                        narrative = uiState.data!!.analysis?.narrative,
-                        positives = uiState.data!!.analysis?.positiveEffects.orEmpty(),
-                        challenges = uiState.data!!.analysis?.challenges.orEmpty(),
-                        remedies = uiState.data!!.analysis?.remedies.orEmpty()
+                        chart = data.chart,
+                        phal = data.phal,
+                        narrative = data.analysis?.narrative,
+                        positives = data.analysis?.positiveEffects.orEmpty(),
+                        challenges = data.analysis?.challenges.orEmpty(),
+                        remedies = data.analysis?.remedies.orEmpty()
                     )
                 }
             }
@@ -76,11 +100,13 @@ fun InterpretationScreen(
 @Composable
 private fun InterpretationContent(
     chart: ChartSummaryResponse,
+    phal: PhalSummary?,
     narrative: String?,
     positives: List<RuleEffect>,
     challenges: List<RuleEffect>,
     remedies: List<RuleEffect>
 ) {
+    val muted = MaterialTheme.colorScheme.onSurfaceVariant
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
@@ -89,24 +115,350 @@ private fun InterpretationContent(
         item { ChartSummaryCard(chart) }
         item { DashaCard(chart) }
 
-        if (!narrative.isNullOrBlank()) {
-            item { NarrativeCard(narrative) }
+        if (phal != null) {
+            item {
+                Column {
+                    SectionHeader(stringResource(R.string.interpretation_life_areas))
+                    Text(
+                        stringResource(R.string.interpretation_life_areas_note),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = muted,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
+            }
+            items(phal.topics, key = { it.topic }) { TopicCard(it) }
+
+            if (phal.dasha.isNotEmpty() || phal.sadesati != null) {
+                item { SectionHeader(stringResource(R.string.interpretation_running_periods)) }
+                item { PeriodsCard(phal.dasha, phal.sadesati) }
+            }
+            if (phal.planets.isNotEmpty()) {
+                item { SectionHeader(stringResource(R.string.interpretation_planet_strengths)) }
+                item { PlanetStrengthsCard(phal.planets) }
+            }
+            if (phal.houses.isNotEmpty()) {
+                item { SectionHeader(stringResource(R.string.interpretation_house_strengths)) }
+                item { HouseStrengthsCard(phal.houses) }
+            }
         }
 
-        if (positives.isNotEmpty()) {
-            item { SectionHeader(stringResource(R.string.interpretation_section_strengths)) }
-            items(positives, key = { it.ruleId }) { EffectCard(it, isPositive = true) }
-        }
-        if (challenges.isNotEmpty()) {
-            item { SectionHeader(stringResource(R.string.interpretation_section_challenges)) }
-            items(challenges, key = { it.ruleId }) { EffectCard(it, isPositive = false) }
-        }
-        if (remedies.isNotEmpty()) {
-            item { SectionHeader(stringResource(R.string.interpretation_section_remedies)) }
-            items(remedies, key = { it.ruleId }) { EffectCard(it, isPositive = true) }
+        val hasRuleNotes = !narrative.isNullOrBlank() ||
+            positives.isNotEmpty() || challenges.isNotEmpty() || remedies.isNotEmpty()
+        if (hasRuleNotes) {
+            item {
+                RuleNotes(
+                    narrative = narrative,
+                    positives = positives,
+                    challenges = challenges,
+                    remedies = remedies,
+                    startExpanded = phal == null
+                )
+            }
         }
     }
 }
+
+// ---- Phal engine cards -------------------------------------------------------------------
+
+@Composable
+private fun TopicCard(topic: PhalTopic) {
+    val code = LocalAppLanguage.current.code
+    val graha = LocalGrahaColors.current
+    val muted = MaterialTheme.colorScheme.onSurfaceVariant
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    topic.name(code),
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.weight(1f)
+                )
+                Chip(verdictText(topic.label.en), verdictColor(topic.label.en, graha))
+            }
+            ScoreBar(topic.score, verdictColor(topic.label.en, graha))
+            val house = topic.mainHouse
+            val lord = topic.lord
+            if (house != null && lord != null) {
+                Text(
+                    stringResource(R.string.interpretation_house_lord_fmt, ordinal(house, code), astroTerm(lord)),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = muted
+                )
+            }
+            if (topic.agreement == "mixed") {
+                Text(
+                    stringResource(R.string.interpretation_agreement_conflict),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = muted
+                )
+            }
+            if (topic.strengths.isNotEmpty() || topic.cautions.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+            topic.strengths.forEach { ReasonLine("+", it.forLanguage(code), graha.budha) }
+            topic.cautions.forEach { ReasonLine("−", it.forLanguage(code), graha.mangala) }
+            if (topic.dasha.isNotEmpty() || topic.gochar != null) {
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+            topic.dasha.forEach { tone ->
+                Text(
+                    stringResource(
+                        R.string.interpretation_dasha_tone_fmt,
+                        astroTerm(tone.lord),
+                        levelText(tone.level),
+                        shortDate(tone.end),
+                        verdictText(tone.label.en)
+                    ),
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+            topic.gochar?.let { g ->
+                val why = (g.cautions + g.strengths).firstOrNull()?.forLanguage(code)
+                val base = stringResource(R.string.interpretation_transit_tone_fmt, verdictText(g.label.en))
+                Text(
+                    if (why.isNullOrBlank()) base else "$base · $why",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = muted
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ReasonLine(sign: String, text: String, color: Color) {
+    Row(modifier = Modifier.padding(top = 2.dp)) {
+        Text(
+            sign,
+            style = MaterialTheme.typography.bodySmall,
+            color = color,
+            modifier = Modifier.width(14.dp)
+        )
+        Text(text, style = MaterialTheme.typography.bodySmall, modifier = Modifier.weight(1f))
+    }
+}
+
+/** -3..+3 shown as a bar with the midpoint at the centre. */
+@Composable
+private fun ScoreBar(score: Double, color: Color) {
+    val fraction = ((score + 3.0) / 6.0).coerceIn(0.0, 1.0).toFloat()
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth().padding(top = 6.dp, bottom = 4.dp)
+    ) {
+        LinearProgressIndicator(
+            progress = fraction,
+            color = color,
+            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+            modifier = Modifier.weight(1f).height(6.dp)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            "%+.1f".format(Locale.US, score),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
+@Composable
+private fun PeriodsCard(periods: List<PhalPeriod>, sadesati: PhalSadeSati?) {
+    val graha = LocalGrahaColors.current
+    val muted = MaterialTheme.colorScheme.onSurfaceVariant
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            periods.forEach { p ->
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        stringResource(
+                            R.string.interpretation_period_fmt,
+                            astroTerm(p.lord),
+                            levelText(p.level),
+                            shortDate(p.start),
+                            shortDate(p.end)
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Chip(verdictText(p.label.en), verdictColor(p.label.en, graha))
+                }
+            }
+            sadesati?.takeIf { it.phase.isNotBlank() }?.let { s ->
+                Text(
+                    stringResource(R.string.interpretation_sadesati_fmt, s.phase, shortDate(s.endDate)),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = muted
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun PlanetStrengthsCard(planets: List<PhalPlanet>) {
+    val code = LocalAppLanguage.current.code
+    val graha = LocalGrahaColors.current
+    val muted = MaterialTheme.colorScheme.onSurfaceVariant
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            planets.sortedByDescending { it.score }.forEach { p ->
+                Column {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            astroTerm(p.planet),
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            "%+.1f".format(Locale.US, p.score),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = muted,
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+                        Chip(verdictText(p.label.en), verdictColor(p.label.en, graha))
+                    }
+                    val reason = (p.strengths + p.cautions).firstOrNull()?.forLanguage(code)
+                    if (!reason.isNullOrBlank()) {
+                        Text(reason, style = MaterialTheme.typography.bodySmall, color = muted)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun HouseStrengthsCard(houses: List<PhalHouse>) {
+    val code = LocalAppLanguage.current.code
+    val graha = LocalGrahaColors.current
+    val muted = MaterialTheme.colorScheme.onSurfaceVariant
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            houses.forEach { h ->
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        h.name(code),
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.weight(1f)
+                    )
+                    val lord = h.lord
+                    if (lord != null) {
+                        Text(
+                            astroTerm(lord),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = muted,
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+                    }
+                    Chip(verdictText(h.label.en), verdictColor(h.label.en, graha))
+                }
+            }
+        }
+    }
+}
+
+/** The older rules-engine output, collapsed by default once the phal verdicts are present. */
+@Composable
+private fun RuleNotes(
+    narrative: String?,
+    positives: List<RuleEffect>,
+    challenges: List<RuleEffect>,
+    remedies: List<RuleEffect>,
+    startExpanded: Boolean
+) {
+    var expanded by rememberSaveable { mutableStateOf(startExpanded) }
+    Column(modifier = Modifier.fillMaxWidth().animateContentSize()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { expanded = !expanded }
+                .padding(vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    stringResource(R.string.interpretation_rule_notes),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    stringResource(R.string.interpretation_rule_notes_desc),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Icon(
+                if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                contentDescription = null
+            )
+        }
+        if (expanded) {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                if (!narrative.isNullOrBlank()) NarrativeCard(narrative)
+                if (positives.isNotEmpty()) {
+                    SectionHeader(stringResource(R.string.interpretation_section_strengths))
+                    positives.forEach { EffectCard(it, isPositive = true) }
+                }
+                if (challenges.isNotEmpty()) {
+                    SectionHeader(stringResource(R.string.interpretation_section_challenges))
+                    challenges.forEach { EffectCard(it, isPositive = false) }
+                }
+                if (remedies.isNotEmpty()) {
+                    SectionHeader(stringResource(R.string.interpretation_section_remedies))
+                    remedies.forEach { EffectCard(it, isPositive = true) }
+                }
+            }
+        }
+    }
+}
+
+// ---- helpers -----------------------------------------------------------------------------
+
+@Composable
+private fun verdictText(label: String): String = when (label) {
+    "very_strong" -> stringResource(R.string.interpretation_label_very_strong)
+    "strong" -> stringResource(R.string.interpretation_label_strong)
+    "mixed" -> stringResource(R.string.interpretation_label_mixed)
+    "weak" -> stringResource(R.string.interpretation_label_weak)
+    "very_weak" -> stringResource(R.string.interpretation_label_very_weak)
+    else -> label
+}
+
+private fun verdictColor(label: String, graha: GrahaColors): Color = when (label) {
+    "very_strong", "strong" -> graha.budha
+    "mixed" -> graha.guru
+    "weak" -> graha.surya
+    else -> graha.mangala
+}
+
+@Composable
+private fun levelText(level: String): String = when (level) {
+    "mahadasha" -> stringResource(R.string.interpretation_level_mahadasha)
+    "antardasha" -> stringResource(R.string.interpretation_level_antardasha)
+    "pratyantardasha" -> stringResource(R.string.interpretation_level_pratyantardasha)
+    else -> level
+}
+
+private fun ordinal(n: Int, code: String): String {
+    if (code == "hi") return n.toString()
+    val suffix = if (n % 100 in 11..13) "th" else when (n % 10) {
+        1 -> "st"
+        2 -> "nd"
+        3 -> "rd"
+        else -> "th"
+    }
+    return "$n$suffix"
+}
+
+/** "2027-04-20T09:05:53Z" (or a bare date) -> "20 Apr 2027"; blank when absent. */
+private fun shortDate(iso: String?): String {
+    val day = iso?.take(10) ?: return ""
+    return runCatching {
+        LocalDate.parse(day).format(DateTimeFormatter.ofPattern("d MMM yyyy", Locale.getDefault()))
+    }.getOrDefault(day)
+}
+
+// ---- existing cards ----------------------------------------------------------------------
 
 @Composable
 private fun ChartSummaryCard(chart: ChartSummaryResponse) {
@@ -116,29 +468,28 @@ private fun ChartSummaryCard(chart: ChartSummaryResponse) {
                 stringResource(R.string.interpretation_lagna_fmt, astroTerm(chart.lagna.sign)),
                 style = MaterialTheme.typography.titleMedium
             )
+            Spacer(modifier = Modifier.height(4.dp))
             Text(
                 stringResource(
                     R.string.interpretation_moon_nakshatra_fmt,
                     chart.moonNakshatra.pada,
                     astroTerm(chart.moonNakshatra.lord)
                 ),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                style = MaterialTheme.typography.bodyMedium
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             Text(stringResource(R.string.interpretation_planetary_positions), style = MaterialTheme.typography.labelLarge)
-            Spacer(modifier = Modifier.height(4.dp))
-            // Navagraha only, in classical order (the map also carries Uranus/Neptune/Pluto).
-            NAVAGRAHA.mapNotNull { name -> chart.planets[name]?.let { name to it } }.forEach { (name, planet) ->
-                Row(modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp)) {
-                    Text(astroTerm(name), modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
-                    // Rahu/Ketu are always retrograde by definition — never flag them.
-                    val showRetro = planet.retrograde && name != "Rahu" && name != "Ketu"
+            chart.planets.forEach { (name, planet) ->
+                val showRetro = planet.retrograde == true
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(astroTerm(name), style = MaterialTheme.typography.bodySmall)
                     Text(
                         if (showRetro) stringResource(R.string.interpretation_sign_retrograde_fmt, astroTerm(planet.sign))
                         else astroTerm(planet.sign),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        style = MaterialTheme.typography.bodySmall
                     )
                 }
             }
@@ -146,11 +497,8 @@ private fun ChartSummaryCard(chart: ChartSummaryResponse) {
     }
 }
 
-private val NAVAGRAHA = listOf("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu")
-
 @Composable
 private fun DashaCard(chart: ChartSummaryResponse) {
-    // No early return inside a composable — wrap in if instead.
     val current = chart.vimshottari.current
     if (current != null) {
         Card(modifier = Modifier.fillMaxWidth()) {
@@ -171,11 +519,9 @@ private fun DashaCard(chart: ChartSummaryResponse) {
 @Composable
 private fun NarrativeCard(narrative: String) {
     Card(modifier = Modifier.fillMaxWidth()) {
-        MarkdownText(
-            markdown = narrative,
-            modifier = Modifier.padding(16.dp),
-            style = MaterialTheme.typography.bodyLarge
-        )
+        Column(modifier = Modifier.padding(16.dp)) {
+            MarkdownText(narrative, style = MaterialTheme.typography.bodyMedium)
+        }
     }
 }
 

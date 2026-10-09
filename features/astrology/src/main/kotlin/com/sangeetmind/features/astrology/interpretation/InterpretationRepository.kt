@@ -14,6 +14,7 @@ import com.sangeetmind.libs.models.ChartAnalysisRequest
 import com.sangeetmind.libs.models.ChartRequest
 import com.sangeetmind.libs.models.ChartSummaryResponse
 import com.sangeetmind.libs.models.Kundli
+import com.sangeetmind.libs.models.PhalSummary
 import com.sangeetmind.libs.models.RulesEngineBirthDetails
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
@@ -23,7 +24,9 @@ import javax.inject.Singleton
 
 data class InterpretationData(
     val chart: ChartSummaryResponse,
-    val analysis: ChartAnalysis?
+    val analysis: ChartAnalysis?,
+    /** Deterministic phal-engine verdicts; null only when that call failed. */
+    val phal: PhalSummary? = null
 )
 
 @Singleton
@@ -40,16 +43,16 @@ class InterpretationRepository @Inject constructor(
     suspend fun getInterpretation(kundli: Kundli): Result<InterpretationData> =
         withContext(ioDispatcher) {
             try {
-                val chart = interpretationApi.getChart(
-                    ChartRequest(
-                        date = kundli.birthDate,
-                        time = kundli.birthTime,
-                        timezone = kundli.timezone,
-                        place = kundli.birthPlace,
-                        lat = kundli.latitude,
-                        lon = kundli.longitude
-                    )
+                val request = ChartRequest(
+                    date = kundli.birthDate,
+                    time = kundli.birthTime,
+                    timezone = kundli.timezone,
+                    place = kundli.birthPlace,
+                    lat = kundli.latitude,
+                    lon = kundli.longitude
                 )
+                val chart = interpretationApi.getChart(request)
+                val phal = runCatching { interpretationApi.getPhalSummary(request) }.getOrNull()
                 val analysis = runCatching {
                     interpretationApi.analyzeChart(
                         ChartAnalysisRequest(
@@ -65,7 +68,7 @@ class InterpretationRepository @Inject constructor(
                     ).analysis
                 }.getOrNull()
 
-                Result.Success(InterpretationData(chart, analysis))
+                Result.Success(InterpretationData(chart, analysis, phal))
             } catch (e: Exception) {
                 Result.Error(e, friendlyErrorMessage(e, context.withAppLanguage(languageManager.current), str(R.string.interpretation_err_load_reading)))
             }

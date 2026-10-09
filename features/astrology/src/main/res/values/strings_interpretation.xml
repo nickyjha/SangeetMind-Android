@@ -15,4 +15,26 @@
     <string name="interpretation_antardasha_fmt">Antardasha: %1$s</string>
     <string name="interpretation_err_load_reading">Failed to load your reading</string>
     <string name="interpretation_err_load">Failed to load</string>
+    <!-- Full Reading: phal-engine verdicts (deterministic, same engine that grounds the AI readings). -->
+    <string name="interpretation_life_areas">Life areas</string>
+    <string name="interpretation_life_areas_note">Each verdict weighs the houses, their lords, the significators, yogas, the running dasha and today’s transits together. Scores run from −3 to +3.</string>
+    <string name="interpretation_house_lord_fmt">%1$s house · lord %2$s</string>
+    <string name="interpretation_dasha_tone_fmt">%1$s %2$s until %3$s: %4$s</string>
+    <string name="interpretation_transit_tone_fmt">Transits now: %1$s</string>
+    <string name="interpretation_running_periods">Running periods</string>
+    <string name="interpretation_period_fmt">%1$s %2$s · %3$s – %4$s</string>
+    <string name="interpretation_sadesati_fmt">Sade Sati, %1$s phase, until %2$s</string>
+    <string name="interpretation_planet_strengths">Planet strengths</string>
+    <string name="interpretation_house_strengths">House strengths</string>
+    <string name="interpretation_rule_notes">Classical rule notes</string>
+    <string name="interpretation_rule_notes_desc">Text-book rule hits from the older rules engine, kept for reference.</string>
+    <string name="interpretation_level_mahadasha">Mahadasha</string>
+    <string name="interpretation_level_antardasha">Antardasha</string>
+    <string name="interpretation_level_pratyantardasha">Pratyantar</string>
+    <string name="interpretation_label_very_strong">Very strong</string>
+    <string name="interpretation_label_strong">Strong</string>
+    <string name="interpretation_label_mixed">Mixed</string>
+    <string name="interpretation_label_weak">Needs care</string>
+    <string name="interpretation_label_very_weak">Weak</string>
+    <string name="interpretation_agreement_conflict">Indicators disagree</string>
 </resources>

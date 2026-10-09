@@ -3,6 +3,7 @@ package com.sangeetmind.core.network
 import com.sangeetmind.libs.models.ChartAnalysisRequest
 import com.sangeetmind.libs.models.ChartAnalysisResponse
 import com.sangeetmind.libs.models.ChartRequest
+import com.sangeetmind.libs.models.PhalSummary
 import com.sangeetmind.libs.models.ChartSummaryResponse
 import com.sangeetmind.libs.models.TransitRequest
 import com.sangeetmind.libs.models.TransitResponse
@@ -29,6 +30,10 @@ interface InterpretationApi {
 
     @POST("v1/transit")
     suspend fun getTransit(@Body body: TransitRequest): TransitResponse
+
+    /** Compact phal-engine verdicts for the Full Reading screen (app/api/v1/routes.py phal_summary). */
+    @POST("v1/phal/summary")
+    suspend fun getPhalSummary(@Body body: ChartRequest): PhalSummary
 
     @POST("rules-engine/analyze-chart")
     suspend fun analyzeChart(

@@ -15,4 +15,26 @@
     <string name="interpretation_antardasha_fmt">अंतर्दशा: %1$s</string>
     <string name="interpretation_err_load_reading">आपका फलादेश लोड नहीं हो पाया</string>
     <string name="interpretation_err_load">लोड नहीं हो पाया</string>
+    <!-- Full Reading: phal-engine verdicts. -->
+    <string name="interpretation_life_areas">जीवन के क्षेत्र</string>
+    <string name="interpretation_life_areas_note">हर निर्णय में भाव, उनके स्वामी, कारक ग्रह, योग, चल रही दशा और आज के गोचर को एक साथ तौला गया है। अंक −3 से +3 तक हैं।</string>
+    <string name="interpretation_house_lord_fmt">%1$s भाव · स्वामी %2$s</string>
+    <string name="interpretation_dasha_tone_fmt">%1$s %2$s, %3$s तक: %4$s</string>
+    <string name="interpretation_transit_tone_fmt">अभी का गोचर: %1$s</string>
+    <string name="interpretation_running_periods">चल रही दशाएँ</string>
+    <string name="interpretation_period_fmt">%1$s %2$s · %3$s – %4$s</string>
+    <string name="interpretation_sadesati_fmt">साढ़े साती, %1$s चरण, %2$s तक</string>
+    <string name="interpretation_planet_strengths">ग्रहों की ताक़त</string>
+    <string name="interpretation_house_strengths">भावों की ताक़त</string>
+    <string name="interpretation_rule_notes">शास्त्रीय नियम-टिप्पणियाँ</string>
+    <string name="interpretation_rule_notes_desc">पुराने नियम-इंजन के पाठ्य-पुस्तकीय नियम, संदर्भ के लिए।</string>
+    <string name="interpretation_level_mahadasha">महादशा</string>
+    <string name="interpretation_level_antardasha">अंतर्दशा</string>
+    <string name="interpretation_level_pratyantardasha">प्रत्यंतर</string>
+    <string name="interpretation_label_very_strong">बहुत मज़बूत</string>
+    <string name="interpretation_label_strong">मज़बूत</string>
+    <string name="interpretation_label_mixed">मिला-जुला</string>
+    <string name="interpretation_label_weak">ध्यान दें</string>
+    <string name="interpretation_label_very_weak">कमज़ोर</string>
+    <string name="interpretation_agreement_conflict">संकेत आपस में भिन्न हैं</string>
 </resources>

@@ -1,13 +1,8 @@
 package com.sangeetmind.features.astrology.interpretation.ui
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExpandLess
-import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -22,7 +17,6 @@ import com.sangeetmind.core.ui.components.AstroTopBar
 import com.sangeetmind.core.ui.components.ErrorCard
 import com.sangeetmind.core.ui.language.LocalAppLanguage
 import com.sangeetmind.core.ui.language.astroTerm
-import com.sangeetmind.core.ui.text.MarkdownText
 import com.sangeetmind.core.ui.theme.GrahaColors
 import com.sangeetmind.core.ui.theme.LocalGrahaColors
 import com.sangeetmind.features.astrology.R
@@ -34,10 +28,10 @@ import com.sangeetmind.libs.models.ChartSummaryResponse
 import com.sangeetmind.libs.models.PhalHouse
 import com.sangeetmind.libs.models.PhalPeriod
 import com.sangeetmind.libs.models.PhalPlanet
+import com.sangeetmind.libs.models.PhalRemedy
 import com.sangeetmind.libs.models.PhalSadeSati
 import com.sangeetmind.libs.models.PhalSummary
 import com.sangeetmind.libs.models.PhalTopic
-import com.sangeetmind.libs.models.RuleEffect
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -89,11 +83,7 @@ fun InterpretationScreen(
                         chart = data.chart,
                         phal = data.phal,
                         married = uiState.married,
-                        onMarriedChange = viewModel::setMarried,
-                        narrative = data.analysis?.narrative,
-                        positives = data.analysis?.positiveEffects.orEmpty(),
-                        challenges = data.analysis?.challenges.orEmpty(),
-                        remedies = data.analysis?.remedies.orEmpty()
+                        onMarriedChange = viewModel::setMarried
                     )
                 }
             }
@@ -107,11 +97,7 @@ private fun InterpretationContent(
     chart: ChartSummaryResponse,
     phal: PhalSummary?,
     married: Boolean,
-    onMarriedChange: (Boolean) -> Unit,
-    narrative: String?,
-    positives: List<RuleEffect>,
-    challenges: List<RuleEffect>,
-    remedies: List<RuleEffect>
+    onMarriedChange: (Boolean) -> Unit
 ) {
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
     LazyColumn(
@@ -176,24 +162,16 @@ private fun InterpretationContent(
             }
         }
 
+        val remedies = phal?.remedies.orEmpty()
+        if (remedies.isNotEmpty()) {
+            item { SectionHeader(stringResource(R.string.interpretation_section_remedies)) }
+            items(remedies) { RemedyCard(it) }
+        }
+
         item {
             var surveyOpen by rememberSaveable { mutableStateOf(false) }
             AccuracySurveyCard(onOpen = { surveyOpen = true })
             if (surveyOpen) AccuracySurveyDialog(onDismiss = { surveyOpen = false })
-        }
-
-        val hasRuleNotes = !narrative.isNullOrBlank() ||
-            positives.isNotEmpty() || challenges.isNotEmpty() || remedies.isNotEmpty()
-        if (hasRuleNotes) {
-            item {
-                RuleNotes(
-                    narrative = narrative,
-                    positives = positives,
-                    challenges = challenges,
-                    remedies = remedies,
-                    startExpanded = phal == null
-                )
-            }
         }
     }
 }
@@ -433,56 +411,15 @@ private fun HouseStrengthsCard(houses: List<PhalHouse>) {
     }
 }
 
-/** The older rules-engine output, collapsed by default once the phal verdicts are present. */
+/** A remedy for a debilitated, combust or weak planet, from the phal engine. */
 @Composable
-private fun RuleNotes(
-    narrative: String?,
-    positives: List<RuleEffect>,
-    challenges: List<RuleEffect>,
-    remedies: List<RuleEffect>,
-    startExpanded: Boolean
-) {
-    var expanded by rememberSaveable { mutableStateOf(startExpanded) }
-    Column(modifier = Modifier.fillMaxWidth().animateContentSize()) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { expanded = !expanded }
-                .padding(vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    stringResource(R.string.interpretation_rule_notes),
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Text(
-                    stringResource(R.string.interpretation_rule_notes_desc),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            Icon(
-                if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                contentDescription = null
-            )
-        }
-        if (expanded) {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                if (!narrative.isNullOrBlank()) NarrativeCard(narrative)
-                if (positives.isNotEmpty()) {
-                    SectionHeader(stringResource(R.string.interpretation_section_strengths))
-                    positives.forEach { EffectCard(it, isPositive = true) }
-                }
-                if (challenges.isNotEmpty()) {
-                    SectionHeader(stringResource(R.string.interpretation_section_challenges))
-                    challenges.forEach { EffectCard(it, isPositive = false) }
-                }
-                if (remedies.isNotEmpty()) {
-                    SectionHeader(stringResource(R.string.interpretation_section_remedies))
-                    remedies.forEach { EffectCard(it, isPositive = true) }
-                }
-            }
+private fun RemedyCard(remedy: PhalRemedy) {
+    val code = LocalAppLanguage.current.code
+    val text = if (code == "hi" && remedy.hi.isNotBlank()) remedy.hi else remedy.en
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(astroTerm(remedy.planet), style = MaterialTheme.typography.titleMedium)
+            Text(text, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
@@ -592,39 +529,10 @@ private fun DashaCard(chart: ChartSummaryResponse) {
 }
 
 @Composable
-private fun NarrativeCard(narrative: String) {
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            MarkdownText(narrative, style = MaterialTheme.typography.bodyMedium)
-        }
-    }
-}
-
-@Composable
 private fun SectionHeader(title: String) {
     Text(
         text = title,
         style = MaterialTheme.typography.titleMedium,
         modifier = Modifier.padding(top = 8.dp)
     )
-}
-
-@Composable
-private fun EffectCard(effect: RuleEffect, isPositive: Boolean) {
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = if (isPositive) {
-                MaterialTheme.colorScheme.secondaryContainer
-            } else {
-                MaterialTheme.colorScheme.errorContainer
-            }
-        ),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(modifier = Modifier.padding(12.dp)) {
-            Text(astroTerm(effect.ruleName), style = MaterialTheme.typography.titleSmall)
-            Spacer(modifier = Modifier.height(4.dp))
-            MarkdownText(effect.content, style = MaterialTheme.typography.bodyMedium)
-        }
-    }
 }

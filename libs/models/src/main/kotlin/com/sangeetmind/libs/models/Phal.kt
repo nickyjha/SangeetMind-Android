@@ -107,5 +107,15 @@ data class PhalSummary(
     val dasha: List<PhalPeriod> = emptyList(),
     val planets: List<PhalPlanet> = emptyList(),
     val houses: List<PhalHouse> = emptyList(),
-    val sadesati: PhalSadeSati? = null
+    val sadesati: PhalSadeSati? = null,
+    val remedies: List<PhalRemedy> = emptyList()
+)
+
+/** Mantra / raag / dana for a debilitated, combust or weak planet (phal_engine/remedies.py). */
+@JsonClass(generateAdapter = true)
+data class PhalRemedy(
+    val planet: String = "",
+    val condition: String = "",
+    val en: String = "",
+    val hi: String = ""
 )

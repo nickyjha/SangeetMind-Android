@@ -1,7 +1,5 @@
 package com.sangeetmind.core.network
 
-import com.sangeetmind.libs.models.ChartAnalysisRequest
-import com.sangeetmind.libs.models.ChartAnalysisResponse
 import com.sangeetmind.libs.models.ChartRequest
 import com.sangeetmind.libs.models.PhalSummary
 import com.sangeetmind.libs.models.ChartSummaryResponse
@@ -37,11 +35,4 @@ interface InterpretationApi {
         @Body body: ChartRequest,
         @Query("married") married: Boolean? = null // drops the Mangal-dosha matching penalty
     ): PhalSummary
-
-    @POST("rules-engine/analyze-chart")
-    suspend fun analyzeChart(
-        @Body body: ChartAnalysisRequest,
-        @Query("with_llm") withLlm: Boolean = true,
-        @Query("lang") lang: String = "en" // en | hi | sn (app/routes/rules_engine.py)
-    ): ChartAnalysisResponse
 }

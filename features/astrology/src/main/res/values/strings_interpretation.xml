@@ -17,7 +17,7 @@
     <string name="interpretation_err_load">Failed to load</string>
     <!-- Full Reading: phal-engine verdicts (deterministic, same engine that grounds the AI readings). -->
     <string name="interpretation_life_areas">Life areas</string>
-    <string name="interpretation_life_areas_note">Each verdict weighs the houses, their lords, the significators, yogas, the running dasha and today’s transits together. Scores run from −3 to +3.</string>
+    <string name="interpretation_life_areas_note">Labels follow the classical rules of BPHS, Phaladeepika and Brihat Jataka, weighing the houses, their lords, the significators, yogas, the running dasha and today’s transits. The line under each label shows how it compares with other charts. Scores run from −3 to +3.</string>
     <string name="interpretation_house_lord_fmt">%1$s house · lord %2$s</string>
     <string name="interpretation_dasha_tone_fmt">%1$s %2$s until %3$s: %4$s</string>
     <string name="interpretation_transit_tone_fmt">Transits now: %1$s</string>
@@ -47,4 +47,6 @@
     <string name="interpretation_strength_very_weak">Very weak</string>
     <string name="interpretation_married_toggle">Married</string>
     <string name="interpretation_married_note">When on, Mangal dosha is left out of the Marriage verdict: it is a matching factor, not a verdict on married life.</string>
+    <string name="interpretation_why_verdict">Why this verdict</string>
+    <string name="interpretation_kind_of_work_fmt">Kind of work: %1$s</string>
 </resources>

@@ -39,10 +39,42 @@ data class PhalTopic(
     val strengths: List<LocalizedText> = emptyList(),
     val cautions: List<LocalizedText> = emptyList(),
     val dasha: List<PhalDashaTone> = emptyList(),
-    val gochar: PhalGochar? = null
+    val gochar: PhalGochar? = null,
+    /** Concept shares that add up to the score (phal_engine/breakdown.py), largest first. */
+    val breakdown: List<PhalBreakdownPart> = emptyList(),
+    /** Where the score falls among other charts, e.g. "Stronger than 68% of charts". */
+    val compared: PhalCompared? = null,
+    /** Career only: kind of work (Brihat Jataka 10.1-3, Phaladeepika 5.1-8). */
+    val vocation: PhalVocation? = null
 ) {
     fun name(code: String): String = if (code == "hi") hi.ifBlank { en } else en
 }
+
+@JsonClass(generateAdapter = true)
+data class PhalBreakdownPart(
+    val key: String = "",
+    val en: String = "",
+    val hi: String = "",
+    val weight: Double = 0.0
+) {
+    fun name(code: String): String = if (code == "hi") hi.ifBlank { en } else en
+}
+
+@JsonClass(generateAdapter = true)
+data class PhalCompared(
+    val percentile: Int = 0,
+    val en: String = "",
+    val hi: String = ""
+) {
+    fun text(code: String): String = if (code == "hi") hi.ifBlank { en } else en
+}
+
+@JsonClass(generateAdapter = true)
+data class PhalVocation(
+    val planet: String = "",
+    val work: LocalizedText = LocalizedText(),
+    val source: String? = null
+)
 
 @JsonClass(generateAdapter = true)
 data class PhalPeriod(
@@ -104,6 +136,8 @@ data class PhalSummary(
     val lagna: String? = null,
     val now: String? = null,
     val topics: List<PhalTopic> = emptyList(),
+    /** What the topic labels mean ("By the classical rules ..."). */
+    @Json(name = "label_basis") val labelBasis: LocalizedText? = null,
     val dasha: List<PhalPeriod> = emptyList(),
     val planets: List<PhalPlanet> = emptyList(),
     val houses: List<PhalHouse> = emptyList(),

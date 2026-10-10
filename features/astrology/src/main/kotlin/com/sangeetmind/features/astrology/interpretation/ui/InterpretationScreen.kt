@@ -213,8 +213,35 @@ private fun TopicCard(topic: PhalTopic) {
             if (topic.strengths.isNotEmpty() || topic.cautions.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(8.dp))
             }
+            topic.compared?.let {
+                Text(it.text(code), style = MaterialTheme.typography.labelSmall, color = muted)
+            }
+            topic.vocation?.let { v ->
+                Text(
+                    stringResource(R.string.interpretation_kind_of_work_fmt, v.work.forLanguage(code)),
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
             topic.strengths.forEach { ReasonLine("+", it.forLanguage(code), graha.budha) }
             topic.cautions.forEach { ReasonLine("−", it.forLanguage(code), graha.mangala) }
+            if (topic.breakdown.isNotEmpty()) {
+                var open by rememberSaveable(topic.topic) { mutableStateOf(false) }
+                TextButton(onClick = { open = !open }, contentPadding = PaddingValues(0.dp)) {
+                    Text(stringResource(R.string.interpretation_why_verdict), style = MaterialTheme.typography.labelMedium)
+                }
+                if (open) {
+                    val max = topic.breakdown.maxOf { kotlin.math.abs(it.weight) }.coerceAtLeast(0.01)
+                    topic.breakdown.forEach { part ->
+                        BreakdownBar(
+                            part.name(code),
+                            part.weight,
+                            (kotlin.math.abs(part.weight) / max).toFloat(),
+                            if (part.weight >= 0) graha.budha else graha.mangala
+                        )
+                    }
+                }
+            }
             if (topic.dasha.isNotEmpty() || topic.gochar != null) {
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -240,6 +267,28 @@ private fun TopicCard(topic: PhalTopic) {
                 )
             }
         }
+    }
+}
+
+/** One concept's signed share of a topic score, scaled to the largest share. */
+@Composable
+private fun BreakdownBar(name: String, weight: Double, fraction: Float, color: Color) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 2.dp)) {
+        Text(name, style = MaterialTheme.typography.labelSmall, modifier = Modifier.weight(0.45f))
+        Box(modifier = Modifier.weight(0.4f).height(6.dp)) {
+            LinearProgressIndicator(
+                progress = fraction,
+                modifier = Modifier.fillMaxSize(),
+                color = color,
+                trackColor = MaterialTheme.colorScheme.surfaceVariant
+            )
+        }
+        Text(
+            String.format(Locale.US, "%+.1f", weight),
+            style = MaterialTheme.typography.labelSmall,
+            color = color,
+            modifier = Modifier.weight(0.15f).padding(start = 6.dp)
+        )
     }
 }
 

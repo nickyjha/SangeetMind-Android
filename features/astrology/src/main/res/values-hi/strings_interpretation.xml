@@ -17,7 +17,7 @@
     <string name="interpretation_err_load">लोड नहीं हो पाया</string>
     <!-- Full Reading: phal-engine verdicts. -->
     <string name="interpretation_life_areas">जीवन के क्षेत्र</string>
-    <string name="interpretation_life_areas_note">हर निर्णय में भाव, उनके स्वामी, कारक ग्रह, योग, चल रही दशा और आज के गोचर को एक साथ तौला गया है। अंक −3 से +3 तक हैं।</string>
+    <string name="interpretation_life_areas_note">फल बृहत् पाराशर, फलदीपिका और बृहज्जातक के शास्त्रीय नियमों से हैं, जिनमें भाव, उनके स्वामी, कारक ग्रह, योग, चल रही दशा और आज के गोचर को एक साथ तौला गया है। हर फल के नीचे की पंक्ति बताती है कि यह दूसरी कुंडलियों की तुलना में कैसा है। अंक −3 से +3 तक हैं।</string>
     <string name="interpretation_house_lord_fmt">%1$s भाव · स्वामी %2$s</string>
     <string name="interpretation_dasha_tone_fmt">%1$s %2$s, %3$s तक: %4$s</string>
     <string name="interpretation_transit_tone_fmt">अभी का गोचर: %1$s</string>
@@ -47,4 +47,6 @@
     <string name="interpretation_strength_very_weak">बहुत कमज़ोर</string>
     <string name="interpretation_married_toggle">विवाहित</string>
     <string name="interpretation_married_note">चालू होने पर मंगल दोष विवाह के निर्णय में नहीं गिना जाता: वह मिलान का विषय है, विवाहित जीवन का निर्णय नहीं।</string>
+    <string name="interpretation_why_verdict">यह फल क्यों</string>
+    <string name="interpretation_kind_of_work_fmt">कार्य क्षेत्र: %1$s</string>
 </resources>
